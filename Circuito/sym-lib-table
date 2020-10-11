@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name DomIO32)(type Legacy)(uri C:/Users/walter/Dropbox/Walter/Proyectos/Domotica-IoT/Serie_Wifi/DomIO32/Libs/DomIO32.lib)(options "")(descr ""))
+  (lib (name DomIO32-rescue)(type Legacy)(uri ${KIPRJMOD}/DomIO32-rescue.lib)(options "")(descr ""))
+)
