@@ -61,15 +61,11 @@
 
 #include <string.h>
 
-#include "queue.h"
-
 /*
                          Main application
  */
 int main(void)
 {
-    QueueInit();
-    
     // initialize the device
     SYSTEM_Initialize();
     

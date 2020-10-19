@@ -51,7 +51,6 @@
 #include "xc.h"
 #include "uart1.h"
 
-#include "../queue.h"
 /**
   Section: Data Type Definitions
 */
@@ -66,10 +65,7 @@ static uint8_t * volatile rxTail;
 static uint8_t * rxHead;
 static uint8_t * txTail;
 static uint8_t * volatile txHead;
-//static bool volatile rxOverflowed;
-
-int rxQueue;
-int txQueue;
+static bool volatile rxOverflowed;
 
 /** UART Driver Queue Length
 
@@ -78,8 +74,8 @@ int txQueue;
 
 */
 
-#define UART1_CONFIG_TX_BYTEQ_LENGTH (132+1)
-#define UART1_CONFIG_RX_BYTEQ_LENGTH (132+1)
+#define UART1_CONFIG_TX_BYTEQ_LENGTH (8+1)
+#define UART1_CONFIG_RX_BYTEQ_LENGTH (8+1)
 
 /** UART Driver Queue
 
@@ -88,8 +84,8 @@ int txQueue;
 
 */
 
-static uint8_t txBuffer[UART1_CONFIG_TX_BYTEQ_LENGTH] ;
-static uint8_t rxBuffer[UART1_CONFIG_RX_BYTEQ_LENGTH] ;
+static uint8_t txQueue[UART1_CONFIG_TX_BYTEQ_LENGTH] ;
+static uint8_t rxQueue[UART1_CONFIG_RX_BYTEQ_LENGTH] ;
 
 void (*UART1_TxDefaultInterruptHandler)(void);
 void (*UART1_RxDefaultInterruptHandler)(void);
@@ -111,15 +107,12 @@ void UART1_Initialize (void)
    // BaudRate = 115200; Frequency = 8000000 Hz; BRG 16; 
    U1BRG = 0x10;
    
-   txHead = txBuffer;
-   txTail = txBuffer;
-   rxHead = rxBuffer;
-   rxTail = rxBuffer;
+   txHead = txQueue;
+   txTail = txQueue;
+   rxHead = rxQueue;
+   rxTail = rxQueue;
    
-   rxQueue = QueueOpen(10, UART1_CONFIG_TX_BYTEQ_LENGTH);
-   txQueue = QueueOpen(10, UART1_CONFIG_TX_BYTEQ_LENGTH);
-   
-//   rxOverflowed = 0;
+   rxOverflowed = 0;
 
    UART1_SetTxInterruptHandler(UART1_Transmit_ISR);
 
@@ -145,34 +138,7 @@ void __attribute__ ((vector(_UART1_TX_VECTOR), interrupt(IPL1SOFT))) _UART1_TX (
 }
 
 void UART1_Transmit_ISR(void)
-{
-    if(txHead == txBuffer)
-    {
-        /* Busco nuevo mensaje */
-        if(QueueGet(txQueue, txBuffer))
-        {
-            txHead = txBuffer;
-            txTail = txHead + strlen(txHead);
-        }
-        else
-        {
-            IEC0bits.U1TXIE = 0;
-            return;
-        }
-    }
-    IFS0CLR = 1 << _IFS0_U1TXIF_POSITION;
-    while(!(U1STAbits.UTXBF == 1))
-    {
-        U1TXREG = *txHead++;
-        /* Llegu+e al final? */
-        if(txHead == txTail)
-        {
-            txHead = txBuffer;
-            txTail = txBuffer;
-            break;
-        }
-    }
-#ifdef _OLD_CODE_
+{ 
     if(txHead == txTail)
     {
         IEC0bits.U1TXIE = 0;
@@ -185,9 +151,9 @@ void UART1_Transmit_ISR(void)
     {
         U1TXREG = *txHead++;
 
-        if(txHead == (txBuffer + UART1_CONFIG_TX_BYTEQ_LENGTH))
+        if(txHead == (txQueue + UART1_CONFIG_TX_BYTEQ_LENGTH))
         {
-            txHead = txBuffer;
+            txHead = txQueue;
         }
 
         // Are we empty?
@@ -196,7 +162,6 @@ void UART1_Transmit_ISR(void)
             break;
         }
     }
-#endif /* _OLD_CODE_ */
 }
 
 void UART1_SetRxInterruptHandler(void* handler){
@@ -214,46 +179,27 @@ void UART1_Receive_ISR(void)
     {
         *rxTail = U1RXREG;
 
-        if(rxTail == 0x0a || rxTail == 0x0d)
-        {
-            /* Fin del mensaje */
-            if(rxTail > rxHead)
-            {
-                *rxTail = 0;
-                QueueAdd(rxQueue, rxHead);
-                rxTail = rxHead;
-            }
-        }
-        else if( (rxTail - rxHead) < UART1_CONFIG_RX_BYTEQ_LENGTH)
-        {
-            rxTail++;
-        }
-        else
-        {
-            /* Overflow */
-            rxTail = rxHead;
-        }
-#ifdef _OLD_CODE_
         // Will the increment not result in a wrap and not result in a pure collision?
         // This is most often condition so check first
-        if ( ( rxTail    != (rxBuffer + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
+        if ( ( rxTail    != (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
              ((rxTail+1) != rxHead) )
         {
             rxTail++;
         } 
-        else if ( (rxTail == (rxBuffer + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
-                  (rxHead !=  rxBuffer) )
+        else if ( (rxTail == (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
+                  (rxHead !=  rxQueue) )
         {
             // Pure wrap no collision
-            rxTail = rxBuffer;
+            rxTail = rxQueue;
         } 
         else // must be collision
         {
             rxOverflowed = true;
         }
-#endif /* _OLD_CODE_ */
+
     }
-    IFS0CLR= 1 << _IFS0_U1RXIF_POSITION;
+
+      IFS0CLR= 1 << _IFS0_U1RXIF_POSITION;
 }
 
 void __attribute__ ((vector(_UART1_ERR_VECTOR), interrupt(IPL1SOFT))) _UART1_ERR ( void )
@@ -270,14 +216,8 @@ void __attribute__ ((vector(_UART1_ERR_VECTOR), interrupt(IPL1SOFT))) _UART1_ERR
   Section: UART Driver Client Routines
 */
 
-uint8_t UART1_Read(char *d)
+uint8_t UART1_Read( void)
 {
-    if(QueueGet(rxQueue, d))
-    {
-        return 1;
-    }
-    return 0;
-#ifdef _OLD_CODE_
     uint8_t data = 0;
 
     while (rxHead == rxTail )
@@ -293,14 +233,10 @@ uint8_t UART1_Read(char *d)
         rxHead = rxQueue;
     }
     return data;
-#endif /* _OLD_CODE_ */
 }
 
-void UART1_Write(const char *d)
+void UART1_Write( uint8_t byte)
 {
-    QueueAdd(txQueue, d);
-    IEC0bits.U1TXIE = 1;
-#ifdef _OLD_CODE_
     while(UART1_IsTxReady() == 0)
     {
     }
@@ -309,22 +245,19 @@ void UART1_Write(const char *d)
 
     txTail++;
     
-    if (txTail == (txBuffer + UART1_CONFIG_TX_BYTEQ_LENGTH))
+    if (txTail == (txQueue + UART1_CONFIG_TX_BYTEQ_LENGTH))
     {
-        txTail = txBuffer;
+        txTail = txQueue;
     }
+
     IEC0bits.U1TXIE = 1;
-#endif /* _OLD_CODE_ */
 }
 
-#ifdef _OLD_CODE_
 bool UART1_IsRxReady(void)
 {    
     return !(rxHead == rxTail);
 }
-#endif /* _OLD_CODE_ */
 
-#ifdef _OLD_CODE_
 bool UART1_IsTxReady(void)
 {
     uint16_t size;
@@ -341,9 +274,7 @@ bool UART1_IsTxReady(void)
     
     return (size != 0);
 }
-#endif /* _OLD_CODE_ */
 
-#ifdef _OLD_CODE_
 bool UART1_IsTxDone(void)
 {
     if(txTail == txHead)
@@ -353,9 +284,7 @@ bool UART1_IsTxDone(void)
     
     return false;
 }
-#endif /*_OLD_CODE_*/
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 static uint8_t UART1_RxDataAvailable(void)
 {
@@ -378,17 +307,13 @@ static uint8_t UART1_RxDataAvailable(void)
     
     return size;
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 uint8_t __attribute__((deprecated)) UART1_is_rx_ready(void)
 {
     return UART1_RxDataAvailable();
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 static uint8_t UART1_TxDataAvailable(void)
 {
@@ -411,25 +336,19 @@ static uint8_t UART1_TxDataAvailable(void)
     
     return size;
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 uint8_t __attribute__((deprecated)) UART1_is_tx_ready(void)
 {
     return UART1_TxDataAvailable();
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 bool __attribute__((deprecated)) UART1_is_tx_done(void)
 {
     return UART1_IsTxDone();
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 unsigned int __attribute__((deprecated)) UART1_ReadBuffer( uint8_t *buffer ,  unsigned int numbytes)
 {
@@ -448,9 +367,7 @@ unsigned int __attribute__((deprecated)) UART1_ReadBuffer( uint8_t *buffer ,  un
     
     return rx_count;    
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 unsigned int __attribute__((deprecated)) UART1_WriteBuffer( uint8_t *buffer , unsigned int numbytes )
 {
@@ -469,9 +386,7 @@ unsigned int __attribute__((deprecated)) UART1_WriteBuffer( uint8_t *buffer , un
     
     return tx_count;  
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 UART1_TRANSFER_STATUS __attribute__((deprecated)) UART1_TransferStatusGet (void )
 {
@@ -506,9 +421,7 @@ UART1_TRANSFER_STATUS __attribute__((deprecated)) UART1_TransferStatusGet (void 
 
     return status;    
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 uint8_t __attribute__((deprecated)) UART1_Peek(uint16_t offset)
 {
@@ -521,28 +434,22 @@ uint8_t __attribute__((deprecated)) UART1_Peek(uint16_t offset)
     
     return *peek;
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 bool __attribute__((deprecated)) UART1_ReceiveBufferIsEmpty (void)
 {
     return (UART1_RxDataAvailable() == 0);
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 bool __attribute__((deprecated)) UART1_TransmitBufferIsFull (void)
 {
     return (UART1_TxDataAvailable() == 0);
 }
-#endif
 
-#ifdef _OLD_CODE_
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 UART1_STATUS __attribute__((deprecated)) UART1_StatusGet (void )
 {
     return U1STA;
 }
-#endif
+

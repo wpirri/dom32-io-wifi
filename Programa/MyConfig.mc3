@@ -5,12 +5,12 @@
          <string>class com.microchip.mcc.mcu16.systemManager.DefaultSystemManagerMcu16</string>
       </entry>
       <entry>
-         <string>JTAG</string>
-         <string>class com.microchip.mcc.mcu16.systemManager.jtag.JTAG</string>
-      </entry>
-      <entry>
          <string>Main Manager</string>
          <string>class com.microchip.mcc.mcu16.mainManager.MainManager</string>
+      </entry>
+      <entry>
+         <string>JTAG</string>
+         <string>class com.microchip.mcc.mcu16.systemManager.jtag.JTAG</string>
       </entry>
       <entry>
          <string>CORETIMER</string>
@@ -6505,12 +6505,12 @@
    </tokenMap>
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
-         <file>mcc_generated_files\interrupt_manager.h</file>
-         <hash>5b6ab591defe9fb9ceb2c2ff938be68acbd3352a7bd238d4e2bf7c09541d1a31</hash>
+         <file>mcc_generated_files\mcc.h</file>
+         <hash>a6bd0adace6b0dc6514d77a5d2299279dd7d919e929c06da93fc01fa71b8a2d1</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\mcc.h</file>
-         <hash>c5a7bb02759bac35ef69c2087feff0b02f76942b57d25734227ce738bfbb0ff0</hash>
+         <file>mcc_generated_files\interrupt_manager.h</file>
+         <hash>5b6ab591defe9fb9ceb2c2ff938be68acbd3352a7bd238d4e2bf7c09541d1a31</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\exceptions.h</file>
@@ -6521,12 +6521,12 @@
          <hash>d4a6ab1601c81abf11e19daf709aa6555c4972af4a3be6bd0aac3263b63e3aa1</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\exceptions.c</file>
-         <hash>619be4ad27937ee951c962dac4148ad437a9441e0872d3f880e3559dbd9c5185</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\uart1.c</file>
          <hash>fc9328ac66b32199b313a5daca5d457cf7b06dfc53109914aa44ddb2f129e982</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\exceptions.c</file>
+         <hash>619be4ad27937ee951c962dac4148ad437a9441e0872d3f880e3559dbd9c5185</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\clock.c</file>
@@ -6545,20 +6545,20 @@
          <hash>69539089dccbef0efd7fc8097f3a085830112b8d24c82155f2a0dc5ba15bedc3</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\pin_manager.c</file>
-         <hash>4bc7aa7a5ab41bc1ecc62bd094a3661f26b91c1505af377f936e34e56bbb35a9</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\system.h</file>
          <hash>cfcac97bd571a63bc470695597aee676943a312facba9dfad6558c7c32c4baaa</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\coretimer.c</file>
-         <hash>d414fdbf0954edec74ce2fa8fde3bc9102990a8a960111dc846d569b43549bdc</hash>
+         <file>mcc_generated_files\pin_manager.c</file>
+         <hash>4bc7aa7a5ab41bc1ecc62bd094a3661f26b91c1505af377f936e34e56bbb35a9</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\system.c</file>
-         <hash>76b89f1e2d39cbcc4f678e310274a760481a290f63af98cc526054d8a8c8d1a0</hash>
+         <hash>15aa4a7e4a64e2415a201eff1149b1785ec77b01189c4e84a605762ebfc351e1</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\coretimer.c</file>
+         <hash>d414fdbf0954edec74ce2fa8fde3bc9102990a8a960111dc846d569b43549bdc</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\clock.h</file>
@@ -6573,24 +6573,24 @@
          <hash>0f4458f3820678bc51d800615cc9064216d3456e0adc0101deb5861a7614a2b5</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\interrupt_manager.c</file>
-         <hash>f5a7c44f433fc890784f7d0a7ec29c4bf0ad490f1f0436a730302f941d2a1589</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\mcc.c</file>
          <hash>b2d42e5c683590ff71c0ff755315ab3ac17af04cc2ddf1491f0480491c5485a2</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\interrupt_manager.c</file>
+         <hash>f5a7c44f433fc890784f7d0a7ec29c4bf0ad490f1f0436a730302f941d2a1589</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\memory\flash_demo.c</file>
          <hash>501dc4033c93cd9ed8fea98abafa7d80bf801ab24fa5c8c44385b92fce31f4c0</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\watchdog.h</file>
-         <hash>3b1efb9e582a8859e9453572df050033d0e750abf6dee402ac6a2ac43a60bea3</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\memory\flash.c</file>
          <hash>10162269ef26e2be17cc73730649b40b949fd6382692aefcf0bb627ad334506b</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\watchdog.h</file>
+         <hash>3b1efb9e582a8859e9453572df050033d0e750abf6dee402ac6a2ac43a60bea3</hash>
       </entry>
    </generatedFileHashHistoryMap>
    <mc3libFileHashHistoryMap class="java.util.HashMap"/>
