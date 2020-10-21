@@ -20,6 +20,10 @@
 
 #include <stdbool.h>
 
+#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/uart1.h"
+
 typedef struct
 {
 	char wifi_ap1[33];

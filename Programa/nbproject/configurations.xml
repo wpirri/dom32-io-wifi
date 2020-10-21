@@ -22,6 +22,7 @@
         <itemPath>mcc_generated_files/system.h</itemPath>
       </logicalFolder>
       <itemPath>main.h</itemPath>
+      <itemPath>wifi.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -47,6 +48,7 @@
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
+      <itemPath>wifi.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
