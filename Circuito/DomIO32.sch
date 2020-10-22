@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:DomIO32-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -15,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L DomIO32:ESP-02 U3
+L DomIO32-rescue:ESP-02-DomIO32 U3
 U 1 1 5DCB6F71
 P 7050 1800
 F 0 "U3" H 8600 1167 50  0000 C CNN
@@ -210,12 +209,12 @@ $EndComp
 $Comp
 L Device:C C13
 U 1 1 5DCDBD3D
-P 7600 3150
-F 0 "C13" H 7250 3250 50  0000 L CNN
-F 1 "100nf / 50v" H 7000 3150 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 7638 3000 50  0001 C CNN
-F 3 "~" H 7600 3150 50  0001 C CNN
-	1    7600 3150
+P 7600 3050
+F 0 "C13" H 7250 3150 50  0000 L CNN
+F 1 "100nf / 50v" H 7000 3050 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 7638 2900 50  0001 C CNN
+F 3 "~" H 7600 3050 50  0001 C CNN
+	1    7600 3050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -225,10 +224,6 @@ Wire Wire Line
 Wire Wire Line
 	7600 3550 7800 3550
 Connection ~ 7600 3550
-Wire Wire Line
-	7600 3550 7600 3300
-Wire Wire Line
-	7600 3000 7600 2850
 Connection ~ 7600 2750
 Connection ~ 5500 3200
 $Comp
@@ -255,7 +250,6 @@ F 3 "" H 4000 2050 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7800 2850 7600 2850
-Connection ~ 7600 2850
 Wire Wire Line
 	7600 2850 7600 2750
 Wire Wire Line
@@ -275,7 +269,7 @@ Wire Wire Line
 Wire Wire Line
 	8600 4050 9600 4050
 $Comp
-L DomIO32:PIC32MM0064GPL028-I-SO U2
+L DomIO32-rescue:PIC32MM0064GPL028-I-SO-DomIO32 U2
 U 1 1 5DD039C1
 P 3950 3450
 F 0 "U2" H 4550 3415 50  0000 C CNN
@@ -1282,4 +1276,14 @@ Wire Wire Line
 	5300 4150 8300 4150
 Wire Wire Line
 	8600 4150 9650 4150
+Wire Wire Line
+	7600 3200 7600 3250
+Wire Wire Line
+	7600 2900 7600 2850
+Connection ~ 7600 2850
+Wire Wire Line
+	7800 3250 7600 3250
+Connection ~ 7600 3250
+Wire Wire Line
+	7600 3250 7600 3550
 $EndSCHEMATC
