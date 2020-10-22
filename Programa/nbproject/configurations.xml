@@ -22,8 +22,7 @@
         <itemPath>mcc_generated_files/system.h</itemPath>
       </logicalFolder>
       <itemPath>main.h</itemPath>
-      <itemPath>queue.h</itemPath>
-      <itemPath>wifi_at.h</itemPath>
+      <itemPath>wifi.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -49,8 +48,7 @@
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>queue.c</itemPath>
-      <itemPath>wifi_at.c</itemPath>
+      <itemPath>wifi.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -72,12 +70,14 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.40</languageToolchainVersion>
+        <languageToolchainVersion>2.41</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
         <pack name="PIC32MM-GPL-0XX_DFP" vendor="Microchip" version="1.2.33"/>
       </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
       <compileType>
         <linkerTool>
           <linkerLibItems>
@@ -185,7 +185,7 @@
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value=""/>
         <property key="preprocessor-macros" value=""/>
-        <property key="remove-unused-sections" value="false"/>
+        <property key="remove-unused-sections" value="true"/>
         <property key="report-memory-usage" value="false"/>
         <property key="serial-length" value=""/>
         <property key="serial-origin" value=""/>
@@ -273,7 +273,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d00ffff"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>

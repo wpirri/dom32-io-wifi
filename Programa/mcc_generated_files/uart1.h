@@ -105,7 +105,7 @@ void UART1_Initialize(void);
   @Returns
     A data byte received by the driver.
 */
-uint8_t UART1_Read(char *d);
+uint8_t UART1_Read(void);
 
 /**
   @Summary
@@ -125,7 +125,7 @@ uint8_t UART1_Read(char *d);
   @Param
     byte - data to be written
 */
-void UART1_Write(const char *d);
+void UART1_Write(uint8_t byte);
 
 /**
   @Description
@@ -135,9 +135,8 @@ void UART1_Write(const char *d);
     true if byte can be read.
     false if byte can't be read right now.
 */
-#ifdef _OLD_CODE_
 bool UART1_IsRxReady(void);
-#endif
+
 /**
   @Description
     Indicates if a byte can be written.
@@ -146,9 +145,7 @@ bool UART1_IsRxReady(void);
     true if byte can be written.
     false if byte can't be written right now.
 */
-#ifdef _OLD_CODE_
 bool UART1_IsTxReady(void);
-#endif
 
 /**
   @Description
@@ -158,9 +155,8 @@ bool UART1_IsTxReady(void);
     true if all bytes transfered.
     false if there is still data pending to transfer.
 */
-#ifdef _OLD_CODE_
 bool UART1_IsTxDone(void);
-#endif
+
 void UART1_SetTxInterruptHandler(void* handler);
 void UART1_Transmit_ISR(void);
 

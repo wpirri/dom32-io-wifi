@@ -52,40 +52,36 @@
 /**
   Section: Included Files
 */
-#include "mcc_generated_files/system.h"
-#include "mcc_generated_files/pin_manager.h"
-
 #define _IN_MAIN_C_
 #include "main.h"
 #undef _IN_MAIN_C_
 
 #include <string.h>
 
-#include "queue.h"
-
 /*
                          Main application
  */
 int main(void)
 {
-    QueueInit();
-    
-    // initialize the device
-    SYSTEM_Initialize();
-    
     memset(&g, 0, sizeof(_globals));
+
+    SYSTEM_Initialize();
+    WiFiInit();
+
     
     while (1)
     {
-        // Add your application code
+
+        WiFiTask();
         
         if(g.flag_core_timer)
         {
             g.flag_core_timer = false;
-            
             LED_STATUS_Toggle();
+            WiFiTimer();
+            
+            
         }
-        
     }
     return 1; 
 }
