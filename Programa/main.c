@@ -69,9 +69,9 @@ int main(void)
     WiFiInit();
 
     
-    while (1)
+    while(1)
     {
-
+        WATCHDOG_TimerClear();
         WiFiTask();
         
         if(g.flag_core_timer)

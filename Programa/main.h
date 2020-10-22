@@ -18,11 +18,7 @@
 #ifndef _MAIN_H_    /* Guard against multiple inclusion */
 #define _MAIN_H_
 
-#include <stdbool.h>
-
-#include "mcc_generated_files/system.h"
-#include "mcc_generated_files/pin_manager.h"
-#include "mcc_generated_files/uart1.h"
+#include "mcc_generated_files/mcc.h"
 
 typedef struct
 {
