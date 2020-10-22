@@ -27,6 +27,7 @@ typedef enum
 {
     RESET = 0,
     START,
+    CLEAN,
     INIT,
     CONNECT,
     LOOP,
@@ -36,23 +37,23 @@ typedef enum
 task_stm g_wifi_task_stm;
 unsigned int g_wifi_task_stm_step;
 unsigned int g_wifi_task_stm_delay;
-unsigned int g_wifi_task_waitline_delay;
+unsigned int g_wifi_task_stm_timeout;
 
-char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
-unsigned char g_wifi_read_line_buffer_index;
+unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
+unsigned int g_wifi_read_line_buffer_index;
 
 int WifiReadLine( char *line );
 int WifiWriteLine( const char *line );
-int WifiWaitLine( const char *line, unsigned int cent );
-void WifiNextSTM(unsigned int delay);
-void WifiSetSTM(task_stm stm, unsigned int delay);
-void WifiNextStep(unsigned int delay);
-void WifiNextSTM(unsigned int delay);
+int WifiWaitLine(const char *line);
+void WifiSetSTM(task_stm stm, unsigned int delay, unsigned int timeout);
+void WifiNextStep(unsigned int delay, unsigned int timeout);
+void WifiNextSTM(unsigned int delay, unsigned int timeout);
+int WifiSTMTimeOut( void );
 
 void WiFiInit( void )
 {
-    WifiSetSTM(RESET, 0);
-    g_wifi_task_waitline_delay = 0;
+    WifiSetSTM(RESET, 0, 0);
+    g_wifi_task_stm_timeout = 0;
     g_wifi_read_line_buffer_index = 0;
 }
 
@@ -64,57 +65,69 @@ void WiFiTask( void )
     {
         case RESET:
             WIFI_RESET_SetLow();
-            WifiNextSTM(50);
+            WifiNextSTM(50, 0);
             break;
         case START:
             WIFI_RESET_SetHigh();
-            WifiNextSTM(5);
+            WifiNextSTM(5, 50);
+            break;
+        case CLEAN:
+            /* Me quedo recibiendo un rato la basura del principio */
+            WifiWaitLine("OK");
+            if(WifiSTMTimeOut())
+            {
+                WifiNextSTM(0, 0);
+            }
             break;
         case INIT:
             switch(g_wifi_task_stm_step)
             {
                 case 0:
                     WifiWriteLine("AT");
-                    
-                    WifiSetSTM(RESET, 50);
-
-                    //WifiNextStep(0);
+                    WifiNextStep(0, 25);
                     break;
                 case 1:
-                    if(WifiWaitLine("OK", 30))
+                    if(WifiWaitLine("OK"))
                     {
-                        WifiNextStep(0);
+                        WifiNextStep(0, 0);
                     }
-                    else
+                    else if(WifiSTMTimeOut())
                     {
-                        WifiSetSTM(RESET, 0);
+                        WifiSetSTM(RESET, 0, 0);
                     }
                     break;
                 case 2:
-                    WifiNextSTM(5);
+                    
+                    WifiNextStep(0, 0);
+                    break;
+                case 3:
+                    
+                    WifiNextStep(0, 0);
+                    break;
+                case 4:
+                    
+                    WifiNextStep(0, 0);
+                    break;
+                case 5:
+                    
+                    WifiNextStep(0, 0);
+                    break;
+                case 6:
+                    /* Inicialización finalizada */
+                    WifiNextSTM(5, 0);
                     break;
                 default:
-                    WifiSetSTM(RESET, 0);
+                    WifiSetSTM(RESET, 0, 0);
                     break;
             }
             break;
         case CONNECT:
-            WifiNextSTM(5);
+            WifiNextSTM(5, 0);
             break;
         case LOOP:
             break;
         default:    /* ERROR */
             break;
-    }
-    
-    /* Lectura */
-    while(UART1_IsRxReady())
-    {
-        if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
-        {
-            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index++] = UART1_Read();
-            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
-        }
     }
 }
 
@@ -122,33 +135,7 @@ void WiFiTask( void )
 void WiFiTimer( void )
 {
     if(g_wifi_task_stm_delay) g_wifi_task_stm_delay--;
-    if(g_wifi_task_waitline_delay) g_wifi_task_waitline_delay--;
-}
-
-int WifiReadLine( char *line )
-{
-    int len = 0;
-    char *p;
-    if(strchr(g_wifi_read_line_buffer, '\n'))
-    {
-        p = &g_wifi_read_line_buffer[0];
-        do
-        {
-            if(*p != 0x0D || *p == 0x0A)
-            {
-                *line = 0;
-                return len;
-            }
-            else
-            {
-                *line = *p;
-                line++;
-                p++;
-                len++;
-            }
-        }while(*p != 0x0D && *p != 0x0A);
-    }
-    return len;
+    if(g_wifi_task_stm_timeout) g_wifi_task_stm_timeout--;
 }
 
 int WifiWriteLine( const char *line )
@@ -167,44 +154,62 @@ int WifiWriteLine( const char *line )
     g_wifi_read_line_buffer_index = 0;
 }
 
-int WifiWaitLine( const char *line, unsigned int cent )
+int WifiWaitLine(const char *line)
 {
-    int rc = 0;
-    char tmp[WIFI_READ_LINE_BUFFER_LEN+1];
+    unsigned int rc = 0;
+    unsigned char c;
     
-    g_wifi_task_waitline_delay = cent;
-    do
+    while(UART1_IsRxReady())
     {
-        if(WifiReadLine(tmp))
+        c = UART1_Read();
+        if(c == 0x0D || c ==  0x0A)
         {
-            if( !strcmp(tmp, line))
+            /* Se completa una línea */
+            if(g_wifi_read_line_buffer_index)
             {
-                rc = 1;
-                break;
+                if( !strcmp(line, g_wifi_read_line_buffer))
+                {
+                    rc = g_wifi_read_line_buffer_index;
+                }
+                g_wifi_read_line_buffer_index = 0;
             }
+            break;
+        }
+        else if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
+        {
+            /* Se agrega el caracter a la línea */
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
+            g_wifi_read_line_buffer_index++;
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
         }
     }
-    while(g_wifi_task_waitline_delay);
-    g_wifi_read_line_buffer_index = 0;
     return rc;
 }
 
-void WifiSetSTM(task_stm stm, unsigned int delay)
+void WifiSetSTM(task_stm stm, unsigned int delay, unsigned int timeout)
 {
     g_wifi_task_stm = stm;
     g_wifi_task_stm_delay = delay;
+    g_wifi_task_stm_timeout = timeout;
     g_wifi_task_stm_step = 0;
 }
 
-void WifiNextSTM(unsigned int delay)
+void WifiNextSTM(unsigned int delay, unsigned int timeout)
 {
     g_wifi_task_stm++;
     g_wifi_task_stm_delay = delay;
+    g_wifi_task_stm_timeout = timeout;
     g_wifi_task_stm_step = 0;
 }
 
-void WifiNextStep(unsigned int delay)
+void WifiNextStep(unsigned int delay, unsigned int timeout)
 {
     g_wifi_task_stm_delay = delay;
+    g_wifi_task_stm_timeout = timeout;
     g_wifi_task_stm_step++;
+}
+
+int WifiSTMTimeOut( void )
+{
+    return ((g_wifi_task_stm_timeout)?0:1);
 }
