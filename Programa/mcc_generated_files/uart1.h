@@ -168,6 +168,7 @@ void UART1_Receive_ISR(void);
 
 
 
+#ifdef __DEPRECATED__
 
 /*******************************************************************************
 
@@ -576,6 +577,7 @@ typedef enum
 */
 UART1_STATUS __attribute__((deprecated)) UART1_StatusGet (void );
 
+#endif /*__DEPRECATED__*/
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 

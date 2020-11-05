@@ -57,28 +57,60 @@
 #undef _IN_MAIN_C_
 
 #include <string.h>
+#include <stdio.h>
+#include <sys/time.h>
 
 /*
                          Main application
  */
 int main(void)
 {
+    char timer_count = 0;
+    
     memset(&g, 0, sizeof(_globals));
 
     SYSTEM_Initialize();
+    ConfigInit();
     WiFiInit();
+    ConfigLoad();
 
-    
     while(1)
     {
         WATCHDOG_TimerClear();
+
         WiFiTask();
         
         if(g.flag_core_timer)
         {
             g.flag_core_timer = false;
-            LED_STATUS_Toggle();
+
+            if(++timer_count >= 30) timer_count = 0;
+
             WiFiTimer();
+
+            if(g_wifi_info.status.wifi_conectado)
+            {
+                if(timer_count <= (g_wifi_info.status.wifi_conectado*2))
+                {
+                    LED_STATUS_SetValue(timer_count & 0x01);
+                }
+            }
+            else
+            {
+                LED_STATUS_SetValue(0);
+            }
+           
+            if(g_wifi_info.status.wifi_mode)
+            {
+                if(timer_count <= (g_wifi_info.status.wifi_mode*2))
+                {
+                    LED_MODO_SetValue(timer_count & 0x01);
+                }
+            }
+            else
+            {
+                LED_MODO_SetValue(0);
+            }
             
             
         }

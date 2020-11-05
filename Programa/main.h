@@ -19,20 +19,11 @@
 #define _MAIN_H_
 
 #include "mcc_generated_files/mcc.h"
+#include "config.h"
+#include "wifi.h"
+#include "strfunc.h"
 
-typedef struct
-{
-	char wifi_ap1[33];
-	char wifi_ap1_pass[65];
-	char wifi_ap2[33];
-	char wifi_ap2_pass[65];
-
-	char wifi_host1[33];
-	unsigned int wifi_host1_port;
-	char wifi_host2[33];
-	unsigned int wifi_host2_port;
-} _config;
-
+#include <stdbool.h>
 
 typedef struct 
 {
