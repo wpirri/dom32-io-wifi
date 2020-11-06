@@ -6,12 +6,8 @@
         <group name="Domotica"/>
         <group>
             <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/wifi.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/mcc_generated_files/watchdog.h</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/main.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/config.h</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/mcc_generated_files/uart1.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/main.h</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/config.c</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/http.h</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/http.c</file>
         </group>
     </open-files>
 </project-private>

@@ -28,9 +28,6 @@
 #define WIFI_READ_LINE_BUFFER_LEN 512
 #define TIMER_AP_VALUE 600
 
-const char http_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/html\r\nCache-Control: no-cache\r\n\r\n";
-const char http_404[] = "HTTP/1.1 404 Not found\r\nConnection: close\r\n\r\n404: File not found\r\n";
-
 typedef enum
 {
     INVALID = 0,
@@ -41,6 +38,7 @@ typedef enum
     UPGRADE,
     APMODE,
     STMODE,
+    HTTP,
     LISTAP,
     LOOP,
     ERROR
@@ -51,6 +49,7 @@ unsigned int g_wifi_timer_ap;
 unsigned int g_wifi_task_stm_step;
 unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
+int g_wifi_http_id;
 
 unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 unsigned int g_wifi_read_line_buffer_index;
@@ -59,6 +58,7 @@ int WifiReadLine( char *line );
 void WifiWrite( const char *buffer );
 void WifiWriteLine( const char *line );
 int WifiWaitLine(const char *line);
+int WifiWaitPrompt(const char prompt);
 
 int WifiTaskInit( void );
 int WifiTaskAPMode( void );
@@ -152,6 +152,11 @@ void WiFiTask( void )
             if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
             else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
+        case HTTP:
+            rc = WifiTaskHttp();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
         case LOOP:
             rc = WifiTaskLoop();
             if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
@@ -189,26 +194,27 @@ int WifiCheckUnsol( void )
     char str[16];
     int id;
     int len;
-    char *p, *q;
-    char cmd[512];
+    char *p;
     
     //printf("WifiCheckUnsol: %s\n", g_wifi_read_line_buffer);
     if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
     {
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 11))
+    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
         g_wifi_info.status.wifi_conectado = 0;
         g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "STA_CONNECTED", 14))
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 14))
     {
-        
+        /* Cliente conectado al AP */
+        g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "STA_DISCONNECTED", 11))
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 17))
     {
-        
+        /* Cliente desconectado al AP */
+        g_wifi_timer_ap = 50; // para que ssssssssssssssssssalga en seguida del modo AP
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+CWJAP:", 7)) /* AT+CWJAP? */
     {
@@ -238,33 +244,12 @@ int WifiCheckUnsol( void )
             len = atoi(str);
         }
         /* dejo en el buffer solo el HTTP */
-        p = &g_wifi_read_line_buffer[0];
-        q = strchr(g_wifi_read_line_buffer, ':');
-        if(q)
+        g_wifi_read_line_buffer[len] = 0;
+        p = strchr(g_wifi_read_line_buffer, ':');
+        if(p)
         {
-            q++;
-            while(*q)
-            {
-                *p = *q;
-                p++;
-                q++;
-            }
-            *p = 0;
-            /*
-            GET / HTTP/1.1
-            Host: 192.168.4.1
-            Connection: keep-alive
-            Upgrade-Insecure-Requests: 1
-            User-Agent: Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36
-            Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,+/+;q=0.8,application/signed-exchange;v=b3;q=0.9
-            Accept-Encoding: gzip, deflate
-            Accept-Language: es-ES,es;q=0.9,en;q=0.8
-            */
-            sprintf(cmd, "AT+CIPSEND=%d,$d", id, strlen(http_200));
-            WifiWriteLine(cmd);
-            WifiWrite(http_200);
-            sprintf(cmd, "AT+CIPCLOSE=%d", id);
-            WifiWriteLine(cmd);
+            p++;
+            HTTPAdd(id, p);
         }
     }
     return 0;
@@ -623,31 +608,101 @@ int WifiTaskUpgrade( void )
     return rc;
 }
 
+int WifiTaskHttp( void )
+{
+    int rc = 0;
+    char cmd[32];
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            g_wifi_http_id = HTTPPending();
+            if(g_wifi_http_id >= 0) g_wifi_task_stm_step++;
+            else rc = LOOP;
+            break;
+        case 1:
+            sprintf(cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
+            WifiWriteLine(cmd);
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 10;
+            break;
+        case 2:
+            if(WifiWaitPrompt('>'))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = LOOP;
+            }
+            break;
+        case 3:
+            WifiWrite(HTTPGet(g_wifi_http_id, NULL));
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 4:
+            if(WifiWaitLine("SEND OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = LOOP;
+            }
+            break;
+        case 5:
+            sprintf(cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
+            WifiWriteLine(cmd);
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 6:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = LOOP;
+            }
+            break;
+        default:
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
+
 int WifiTaskLoop( void )
 {
-    int rc;
+    int rc = 0;
 
     /* Espero no solicitados */
-    rc = WifiWaitLine(NULL);
-    if(rc > 0)
+    if((rc = WifiWaitLine(NULL)) > 0)
     {
         return rc;
     }
-    else
+    else if(g_wifi_info.status.wifi_start_ap)
     {
-        if(g_wifi_info.status.wifi_start_ap)
-        {
-            g_wifi_info.status.wifi_start_ap = false;
-            return APMODE;
-        }
-        
-        
-        
-        
-        
-        
-        return 0;
+        g_wifi_info.status.wifi_start_ap = false;
+        return APMODE;
     }
+    else if(HTTPPending() >= 0)
+    {
+        return HTTP;
+    }
+    
+    return 0;
 }
 
 int WifiTaskListAP( void )
@@ -768,4 +823,13 @@ int WifiWaitLine(const char *line)
         }
     }
     return rc;
+}
+
+int WifiWaitPrompt(const char prompt)
+{
+    while(UART1_IsRxReady())
+    {
+        if(UART1_Read() == prompt) return 1;
+    }
+    return 0;
 }

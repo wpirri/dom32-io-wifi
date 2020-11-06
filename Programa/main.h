@@ -21,6 +21,7 @@
 #include "mcc_generated_files/mcc.h"
 #include "config.h"
 #include "wifi.h"
+#include "http.h"
 #include "strfunc.h"
 
 #include <stdbool.h>
