@@ -25,7 +25,7 @@
 
 #include "main.h"
 
-#define WIFI_READ_LINE_BUFFER_LEN 512
+#define WIFI_READ_LINE_BUFFER_LEN 1024
 #define TIMER_AP_VALUE 600
 
 typedef enum
@@ -53,19 +53,7 @@ int g_wifi_http_id;
 
 unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 unsigned int g_wifi_read_line_buffer_index;
-
-int WifiReadLine( char *line );
-void WifiWrite( const char *buffer );
-void WifiWriteLine( const char *line );
-int WifiWaitLine(const char *line);
-int WifiWaitPrompt(const char prompt);
-
-int WifiTaskInit( void );
-int WifiTaskAPMode( void );
-int WifiTaskSTMode( void );
-int WifiTaskUpgrade( void );
-int WifiTaskLoop( void );
-int WifiTaskListAP( void );
+unsigned char g_wifi_read_line_buffer_timer;
 
 unsigned char g_loop_count;
 
@@ -77,118 +65,102 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
     g_wifi_task_stm_step = 0;
 }
 
-/* ****************************************************************************
-
- **************************************************************************** */
-void WiFiInit( void )
+void WifiWrite( const char *buffer )
 {
-    g_wifi_task_stm = RESET;
-    g_wifi_task_stm_delay = 0;
-    g_wifi_task_stm_timeout = 0;
-    g_wifi_task_stm_step = 0;
+	//printf("WifiWrite: %s\n", buffer);
+    /* Reseteo el buffer de lectura */
     g_wifi_read_line_buffer_index = 0;
-    g_wifi_info.status.wifi_need_firmware_update = false;
-    g_loop_count = 0;
-    g_wifi_info.status.wifi_conectado = 0;
-    g_wifi_info.status.wifi_ap_select = 1;
-    g_wifi_info.status.wifi_start_ap = true;
-    g_wifi_timer_ap = 0;
-}
-
-/* ****************************************************************************
-
- **************************************************************************** */
-void WiFiTask( void )
-{
-    int rc;
-    
-    if(g_wifi_task_stm_delay) return;
-    
-    switch(g_wifi_task_stm)
+    if(buffer)
     {
-        case INVALID:
-        case RESET:
-			//printf("RESET\n");
-            WIFI_RESET_SetLow();
-            g_wifi_info.status.wifi_mode = 0;
-            WifiTaskSTMSet(START, 50, 0);
-            break;
-        case START:
-			//printf("START\n");
-            WIFI_RESET_SetHigh();
-            WifiTaskSTMSet(CLEAN, 5, 50);
-            break;
-        case CLEAN:
-            /* Me quedo recibiendo un rato la basura de la POST del ESP-02 */
-            /* No es basura, pero se ve como basura porque está a otra velocidad */
-            WifiWaitLine(NULL);
-            if(g_wifi_task_stm_timeout == 0)
-            {
-                WifiTaskSTMSet(INIT, 0, 0);
-            }
-            break;
-        case INIT:
-            rc = WifiTaskInit();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case UPGRADE:
-            rc = WifiTaskUpgrade();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case APMODE:
-            rc = WifiTaskAPMode();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case STMODE:
-            rc = WifiTaskSTMode();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case LISTAP:
-            rc = WifiTaskListAP();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case HTTP:
-            rc = WifiTaskHttp();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        case LOOP:
-            rc = WifiTaskLoop();
-            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
-            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
-            break;
-        default:    /* ERROR */
-			//printf("***** SOFTWARE ERROR ***** RESET *****\n");
-            WifiTaskSTMSet(RESET, 0, 0);
-            break;
-    }
-}
-
-/* ****************************************************************************
-   Se llama 10 veces por egundo
-
- **************************************************************************** */
-void WiFiTimer( void )
-{
-    if(g_wifi_task_stm_delay) g_wifi_task_stm_delay--;
-    if(g_wifi_task_stm_timeout) g_wifi_task_stm_timeout--;
-    if(g_wifi_timer_ap)
-    {
-        g_wifi_timer_ap--;
-        if(g_wifi_timer_ap == 0)
+        while(*buffer)
         {
-            /* Vuelvo al modo normal */
-            g_wifi_task_stm = STMODE;
+            UART1_Write((uint8_t)*buffer);
+            buffer++;
         }
     }
 }
 
-/* ************************************************************************* */
+void WifiWriteLine( const char *line )
+{
+	//printf("WifiWriteLine: %s\n", line);
+    /* Reseteo el buffer de lectura */
+    g_wifi_read_line_buffer_index = 0;
+    if(line)
+    {
+        while(*line)
+        {
+            UART1_Write((uint8_t)*line);
+            line++;
+        }
+    }
+    UART1_Write('\r');
+    UART1_Write('\n');
+}
+
+/*
+    Return: = 0 - No se recibió lo que se esperaba y ninguna acción no solicitada
+            > 0 - Se recibió algo no solicitado rc = nuevo estado
+            < 0 - Se recibio lo que se esperaba
+*/
+int WifiWaitLine(const char *line)
+{
+    int rc = 0;
+    unsigned char c = 0;
+
+    while(UART1_IsRxReady())
+    {
+        c = UART1_Read();
+        /* COn cada caracter habilito el contador y lo reseteo */
+        g_wifi_read_line_buffer_timer = 1;
+        if(/*c != 0x0A && c != 0x0D && */(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN))
+        {        
+            /* Se agrega el caracter a la línea */
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
+            g_wifi_read_line_buffer_index++;
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
+        }
+    }   
+    
+    /* Detecto el final de linea */
+    if((g_wifi_read_line_buffer[0] != '+' && (c == 0x0A || c == 0x0D)) || g_wifi_read_line_buffer_timer > 3)
+    {
+        g_wifi_read_line_buffer_timer = 0;
+        if(g_wifi_read_line_buffer_index)
+        {
+            if(line)
+            {
+                //printf("WifiWaitLine: esperando:%s\n", line);
+                if( !memcmp(line, g_wifi_read_line_buffer, strlen(line)))
+                {
+                    //printf("               recibido:%s\n", line);
+                    rc = (-1);  /* Se recibió lo que se esperaba */
+                }
+                else
+                {
+                    //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                    rc = WifiCheckUnsol();
+                }
+            }
+            else
+            {
+                //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                rc = WifiCheckUnsol();
+            }
+            g_wifi_read_line_buffer_index = 0;
+        }
+    }
+    return rc;
+}
+
+int WifiWaitPrompt(const char prompt)
+{
+    while(UART1_IsRxReady())
+    {
+        if(UART1_Read() == prompt) return 1;
+    }
+    return 0;
+}
+
 int WifiCheckUnsol( void )
 {
     char str[16];
@@ -244,11 +216,11 @@ int WifiCheckUnsol( void )
             len = atoi(str);
         }
         /* dejo en el buffer solo el HTTP */
-        g_wifi_read_line_buffer[len] = 0;
         p = strchr(g_wifi_read_line_buffer, ':');
         if(p)
         {
             p++;
+            *(p+len) = 0;
             HTTPAdd(id, p);
         }
     }
@@ -270,16 +242,11 @@ int WifiTaskInit( void )
             g_wifi_task_stm_timeout = 100;
             break;
         case 1:
-            if(WifiWaitLine("ready"))
+            if(WifiWaitLine("ready") || g_wifi_task_stm_timeout == 0)
             {
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
-            }
-            else if(g_wifi_task_stm_timeout == 0)
-            {
-                //printf("TIMEOUT esperando ready\n");
-                rc = (-1);
             }
             break;
         case 2:
@@ -741,95 +708,118 @@ int WifiTaskListAP( void )
     return rc;
 }
 
-void WifiWrite( const char *buffer )
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+void WiFiInit( void )
 {
-	//printf("WifiWrite: %s\n", buffer);
-    /* Reseteo el buffer de lectura */
+    g_wifi_task_stm = RESET;
+    g_wifi_task_stm_delay = 0;
+    g_wifi_task_stm_timeout = 0;
+    g_wifi_task_stm_step = 0;
     g_wifi_read_line_buffer_index = 0;
-    if(buffer)
-    {
-        while(*buffer)
-        {
-            UART1_Write((uint8_t)*buffer);
-            buffer++;
-        }
-    }
+    g_wifi_read_line_buffer_timer = 0;
+    g_wifi_info.status.wifi_need_firmware_update = false;
+    g_loop_count = 0;
+    g_wifi_info.status.wifi_conectado = 0;
+    g_wifi_info.status.wifi_ap_select = 1;
+    g_wifi_info.status.wifi_start_ap = true;
+    g_wifi_timer_ap = 0;
 }
 
-void WifiWriteLine( const char *line )
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+void WiFiTask( void )
 {
-	//printf("WifiWriteLine: %s\n", line);
-    /* Reseteo el buffer de lectura */
-    g_wifi_read_line_buffer_index = 0;
-    if(line)
+    int rc;
+    
+    if(g_wifi_task_stm_delay) return;
+    
+    switch(g_wifi_task_stm)
     {
-        while(*line)
-        {
-            UART1_Write((uint8_t)*line);
-            line++;
-        }
-    }
-    UART1_Write('\r');
-    UART1_Write('\n');
-}
-
-/*
-    Return: = 0 - No se recibió lo que se esperaba y ninguna acción no solicitada
-            > 0 - Se recibió algo no solicitado rc = nuevo estado
-            < 0 - Se recibio lo que se esperaba
-*/
-int WifiWaitLine(const char *line)
-{
-    int rc = 0;
-    unsigned char c;
-
-    while(UART1_IsRxReady())
-    {
-        c = UART1_Read();
-        if(c == 0x0D)
-        {
-            /* Se completa una línea */
-            if(g_wifi_read_line_buffer_index)
+        case INVALID:
+        case RESET:
+			//printf("RESET\n");
+            WIFI_RESET_SetLow();
+            g_wifi_info.status.wifi_mode = 0;
+            WifiTaskSTMSet(START, 50, 0);
+            break;
+        case START:
+			//printf("START\n");
+            WIFI_RESET_SetHigh();
+            WifiTaskSTMSet(CLEAN, 5, 50);
+            break;
+        case CLEAN:
+            /* Me quedo recibiendo un rato la basura de la POST del ESP-02 */
+            /* No es basura, pero se ve como basura porque está a otra velocidad */
+            WifiWaitLine(NULL);
+            if(g_wifi_task_stm_timeout == 0)
             {
-                if(line)
-                {
-                    //printf("WifiWaitLine: esperando:%s\n", line);
-                    if( !strcmp(line, g_wifi_read_line_buffer))
-                    {
-                        //printf("               recibido:%s\n", line);
-                        rc = (-1);  /* Se recibió lo que se esperaba */
-                    }
-                    else
-                    {
-                        //printf("               recibido:%s\n", g_wifi_read_line_buffer);
-                        rc = WifiCheckUnsol();
-                    }
-                }
-                else
-                {
-                    //printf("               recibido:%s\n", g_wifi_read_line_buffer);
-                    rc = WifiCheckUnsol();
-                }
-                g_wifi_read_line_buffer_index = 0;
+                WifiTaskSTMSet(INIT, 0, 0);
             }
             break;
-        }
-        else if( (g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN) && c != 0x0A )
-        {
-            /* Se agrega el caracter a la línea */
-            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
-            g_wifi_read_line_buffer_index++;
-            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
-        }
+        case INIT:
+            rc = WifiTaskInit();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case UPGRADE:
+            rc = WifiTaskUpgrade();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case APMODE:
+            rc = WifiTaskAPMode();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case STMODE:
+            rc = WifiTaskSTMode();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case LISTAP:
+            rc = WifiTaskListAP();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case HTTP:
+            rc = WifiTaskHttp();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        case LOOP:
+            rc = WifiTaskLoop();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
+            break;
+        default:    /* ERROR */
+			//printf("***** SOFTWARE ERROR ***** RESET *****\n");
+            WifiTaskSTMSet(RESET, 0, 0);
+            break;
     }
-    return rc;
 }
 
-int WifiWaitPrompt(const char prompt)
+/* *****************************************************************************
+ *    Se llama 10 veces por egundo
+ * ************************************************************************** */
+void WiFiTimer( void )
 {
-    while(UART1_IsRxReady())
+    if(g_wifi_task_stm_delay) g_wifi_task_stm_delay--;
+    if(g_wifi_task_stm_timeout) g_wifi_task_stm_timeout--;
+    if(g_wifi_timer_ap)
     {
-        if(UART1_Read() == prompt) return 1;
+        g_wifi_timer_ap--;
+        if(g_wifi_timer_ap == 0)
+        {
+            /* Vuelvo al modo normal */
+            g_wifi_task_stm = STMODE;
+        }
     }
-    return 0;
+    
+    if(g_wifi_read_line_buffer_timer) g_wifi_read_line_buffer_timer++;
+    
 }
+
+/* ************************************************************************* */

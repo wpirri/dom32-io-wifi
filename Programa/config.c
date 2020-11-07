@@ -30,10 +30,10 @@ void ConfigInit( void )
 
 void ConfigLoad( void )
 {
-    strcpy(g_wifi_info.config.wifi_ap1, "872e-b");
-    strcpy(g_wifi_info.config.wifi_ap1_pass, "00464bab872e");
-    strcpy(g_wifi_info.config.wifi_ap2, "872e-a");
-    strcpy(g_wifi_info.config.wifi_ap2_pass, "00464bab872e");
+//    strcpy(g_wifi_info.config.wifi_ap1, "872e-b");
+//    strcpy(g_wifi_info.config.wifi_ap1_pass, "00464bab872e");
+//    strcpy(g_wifi_info.config.wifi_ap2, "872e-a");
+//    strcpy(g_wifi_info.config.wifi_ap2_pass, "00464bab872e");
 }
 
 void ConfigSave(void)
