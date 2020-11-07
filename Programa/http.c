@@ -127,18 +127,20 @@ void HttpReturnFormConfig(char *out)
             "</body>\n"
             "</html>\n",
             http_200,
-            g_wifi_info.config.wifi_ap1, g_wifi_info.config.wifi_ap1_pass,
-            g_wifi_info.config.wifi_ap2, g_wifi_info.config.wifi_ap2_pass);
+            g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
+            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass);
 }
 
 void HttpProcessFormConfig(char* in, char *out)
 {
-    HttpGetFormData(in, "ap1", g_wifi_info.config.wifi_ap1);
-    HttpGetFormData(in, "ap1p", g_wifi_info.config.wifi_ap1_pass);
-    HttpGetFormData(in, "ap2", g_wifi_info.config.wifi_ap2);
-    HttpGetFormData(in, "ap2p", g_wifi_info.config.wifi_ap2_pass);
+    HttpGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
+    HttpGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
+    HttpGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
+    HttpGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
     
     HttpReturnFormConfig(out);
+    
+    g_wifi_info.status.save_config = 50;
 }
 
 /* *****************************************************************************

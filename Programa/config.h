@@ -19,25 +19,34 @@
 #define _CONFIG_H_
 
 #include <stdbool.h>
+#include <stdint.h>
+
+#define FLASH_ARRAY 32
 
 typedef struct
 {
-    struct
+    union
     {
-        char wifi_ap1[33];
-        char wifi_ap1_pass[65];
-        char wifi_ap2[33];
-        char wifi_ap2_pass[65];
-        char wifi_host1[33];
-        unsigned int wifi_host1_port;
-        char wifi_host2[33];
-        unsigned int wifi_host2_port;
-    } config;
+        struct  /* 2176 bits, 272 bytes */
+        {
+            char wifi_ap1[20];
+            char wifi_ap1_pass[20];
+            char wifi_ap2[20];
+            char wifi_ap2_pass[20];
+            char wifi_host1[20];
+            char wifi_host2[20];
+            uint16_t wifi_host1_port;
+            uint16_t wifi_host2_port;
+            uint32_t flash_ok;
+        } config;
+        uint32_t ui32[FLASH_ARRAY];
+    } f;
     struct
     {
         unsigned char wifi_ap_select;
         unsigned char wifi_conectado;
         unsigned char wifi_mode;
+        unsigned char save_config;
         bool wifi_need_firmware_update;
         bool wifi_start_ap;
 
@@ -53,6 +62,6 @@ extern wifi_info g_wifi_info;
 void ConfigInit( void );
 void ConfigLoad( void );
 void ConfigSave(void);
-
+void ConfigTimer(void);
 
 #endif /* _CONFIG_H_ */

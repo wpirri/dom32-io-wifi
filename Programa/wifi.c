@@ -175,8 +175,12 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
-        g_wifi_info.status.wifi_conectado = 0;
-        g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+        if(g_wifi_info.status.wifi_conectado)
+        {
+            g_wifi_info.status.wifi_conectado = 0;
+            g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+            return STMODE;
+        }
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 14))
     {
@@ -493,8 +497,23 @@ int WifiTaskSTMode( void )
             }
             break;
         case 10:
-            ap = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.config.wifi_ap1:g_wifi_info.config.wifi_ap2);
-            pass = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.config.wifi_ap1_pass:g_wifi_info.config.wifi_ap2_pass);
+            /* Si el actual no existe cambio al que exista */
+            if(g_wifi_info.status.wifi_ap_select == 1 &&
+               g_wifi_info.f.config.wifi_ap1[0] == 0 &&
+               g_wifi_info.f.config.wifi_ap2[0] != 0)
+            {
+                g_wifi_info.status.wifi_ap_select = 2;
+            }
+            
+            if(g_wifi_info.status.wifi_ap_select == 2 &&
+               g_wifi_info.f.config.wifi_ap2[0] == 0 &&
+               g_wifi_info.f.config.wifi_ap1[0] != 0)
+            {
+                g_wifi_info.status.wifi_ap_select = 1;
+            }
+            
+            ap = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2);
+            pass = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1_pass:g_wifi_info.f.config.wifi_ap2_pass);
             if(*ap)
             {
                 /* Connect to AP */
@@ -512,6 +531,7 @@ int WifiTaskSTMode( void )
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 300;
+                g_wifi_info.status.wifi_conectado = 0;
             }
             else
             {
@@ -531,7 +551,7 @@ int WifiTaskSTMode( void )
                 //printf("TIMEOUT esperando OK\n");
                 g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
                 //rc = (-1);
-                rc = LOOP;
+                rc = STMODE;
             }
             break;
         default:

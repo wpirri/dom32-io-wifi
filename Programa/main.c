@@ -118,6 +118,7 @@ int main(void)
 
             WiFiTimer();
             HTTPTimer();
+            ConfigTimer();
             LedControl();
         }
     }

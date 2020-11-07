@@ -8,7 +8,6 @@
                      displayName="MCC Generated Files"
                      projectFiles="true">
         <logicalFolder name="memory" displayName="memory" projectFiles="true">
-          <itemPath>mcc_generated_files/memory/flash_demo.h</itemPath>
           <itemPath>mcc_generated_files/memory/flash.h</itemPath>
         </logicalFolder>
         <itemPath>mcc_generated_files/coretimer.h</itemPath>
@@ -38,7 +37,6 @@
                      displayName="MCC Generated Files"
                      projectFiles="true">
         <logicalFolder name="memory" displayName="memory" projectFiles="true">
-          <itemPath>mcc_generated_files/memory/flash_demo.c</itemPath>
           <itemPath>mcc_generated_files/memory/flash.c</itemPath>
         </logicalFolder>
         <itemPath>mcc_generated_files/system.c</itemPath>
@@ -265,6 +263,7 @@
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>
