@@ -21,24 +21,26 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define FLASH_ARRAY 32
+struct _config_ /* 2176 bits, 272 bytes */
+{
+    char wifi_ap1[33];
+    char wifi_ap1_pass[33];
+    char wifi_ap2[33];
+    char wifi_ap2_pass[33];
+    char wifi_host1[33];
+    char wifi_host2[33];
+    uint16_t wifi_host1_port;
+    uint16_t wifi_host2_port;
+    uint32_t flash_ok;
+};
+
+#define FLASH_ARRAY ((sizeof(struct _config_)/4) + 1)
 
 typedef struct
 {
     union
     {
-        struct  /* 2176 bits, 272 bytes */
-        {
-            char wifi_ap1[20];
-            char wifi_ap1_pass[20];
-            char wifi_ap2[20];
-            char wifi_ap2_pass[20];
-            char wifi_host1[20];
-            char wifi_host2[20];
-            uint16_t wifi_host1_port;
-            uint16_t wifi_host2_port;
-            uint32_t flash_ok;
-        } config;
+        struct _config_ config;
         uint32_t ui32[FLASH_ARRAY];
     } f;
     struct
