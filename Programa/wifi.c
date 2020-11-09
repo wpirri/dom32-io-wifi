@@ -228,6 +228,14 @@ int WifiCheckUnsol( void )
             HTTPAdd(id, p);
         }
     }
+    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
+    {
+        /*
+         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
+         * AT version:1.7.4.0(May 11 2020 19:13:04)
+         */
+        
+    }
     return 0;
 }
 

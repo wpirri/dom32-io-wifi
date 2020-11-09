@@ -33,6 +33,7 @@ static const uint32_t __attribute((space(prog),aligned(FLASH_ERASE_PAGE_SIZE_IN_
 
 void ConfigLoadDefault( void)
 {
+    g_wifi_info.status.save_config = 10;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
     strcpy(g_wifi_info.f.config.wifi_ap1, "WiFiAp1");
     strcpy(g_wifi_info.f.config.wifi_ap1_pass, "Password1");
@@ -48,10 +49,11 @@ void ConfigInit( void )
 void ConfigLoad( void )
 {
     int i;
-
+    uint32_t f = (uint32_t)flash_reserved_space;
+    
     for(i = 0; i < FLASH_ARRAY; i++)
     {
-        g_wifi_info.f.ui32[i] = FLASH_ReadWord( ((uint32_t)flash_reserved_space) + (i*4) );
+        g_wifi_info.f.ui32[i] = FLASH_ReadWord( f + (i*4) );
     }
     
     if(g_wifi_info.f.config.flash_ok != CONFIG_FLASK_OK)
@@ -63,14 +65,23 @@ void ConfigLoad( void )
 void ConfigSave(void)
 {
     int i;
+    uint32_t f = (uint32_t)flash_reserved_space;
 
+    g_wifi_info.status.flash_error = false;
+    g_wifi_info.status.save_config = 0;
+    
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
+    FLASH_ErasePage(f);
+    
     for(i = 0; i < FLASH_ARRAY; i+=2)
     {
-        FLASH_WriteDoubleWord(((uint32_t)flash_reserved_space) + (i*4), 
-                g_wifi_info.f.ui32[i],
-                g_wifi_info.f.ui32[i+1]);
+        if(FLASH_WriteDoubleWord( f + (i*4), 
+                                  g_wifi_info.f.ui32[i],
+                                  g_wifi_info.f.ui32[i+1]) == 0)
+        {
+            g_wifi_info.status.flash_error = true;
+        }
     }
     
     FLASH_Lock();

@@ -49,7 +49,7 @@ typedef struct
         unsigned char save_config;
         bool wifi_need_firmware_update;
         bool wifi_start_ap;
-
+        bool flash_error;
     } status;
 } wifi_info;
 
