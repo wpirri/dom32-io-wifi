@@ -60,6 +60,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 
+bool main_flag_core_timer;
+
 void LedControl( void )
 {
     static char led_count = 0;
@@ -96,30 +98,34 @@ void LedControl( void )
  */
 int main(void)
 {
-    memset(&g, 0, sizeof(_globals));
+    main_flag_core_timer = false;
 
     SYSTEM_Initialize();
     ConfigInit();
-    WiFiInit();
-    HTTPInit();
-    
     ConfigLoad();
 
+    WiFiInit();
+    HTTPInit();
+    CTRLInit();
+    
     while(1)
     {
         WATCHDOG_TimerClear();
 
         WiFiTask();
         HTTPTask();
+        CTRLTask();
         
-        if(g.flag_core_timer)
+        if(main_flag_core_timer)
         {
-            g.flag_core_timer = false;
+            main_flag_core_timer = false;
 
+            LedControl();
+            ConfigTimer();
             WiFiTimer();
             HTTPTimer();
-            ConfigTimer();
-            LedControl();
+            CTRLTimer();
+            
         }
     }
     return 1; 

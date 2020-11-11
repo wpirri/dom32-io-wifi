@@ -25,6 +25,7 @@
 #include <stdint.h>
 
 #include "main.h"
+#include "control.h"
 
 #define CONFIG_FLASK_OK 0xA5A55A5A
 
@@ -33,12 +34,13 @@ static const uint32_t __attribute((space(prog),aligned(FLASH_ERASE_PAGE_SIZE_IN_
 
 void ConfigLoadDefault( void)
 {
-    g_wifi_info.status.save_config = 10;
+    memset(&g_wifi_info.f.config, 0, sizeof(g_wifi_info.f.config));
+    g_wifi_info.f.config.io_config = 0xFF;
+    g_wifi_info.f.config.wifi_host1_port = 80;
+    g_wifi_info.f.config.wifi_host2_port = 80;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
-    strcpy(g_wifi_info.f.config.wifi_ap1, "WiFiAp1");
-    strcpy(g_wifi_info.f.config.wifi_ap1_pass, "Password1");
-    strcpy(g_wifi_info.f.config.wifi_ap2,"WiFiAp2");
-    strcpy(g_wifi_info.f.config.wifi_ap2_pass, "Password2");
+
+    g_wifi_info.status.save_config = 10;
 }
 
 void ConfigInit( void )
@@ -70,6 +72,15 @@ void ConfigSave(void)
     g_wifi_info.status.flash_error = false;
     g_wifi_info.status.save_config = 0;
     
+    g_wifi_info.f.config.an_config =    (g_control_io.ana1)?0x01:0 |
+                                        (g_control_io.ana2)?0x02:0 |
+                                        (g_control_io.ana3)?0x04:0 |
+                                        (g_control_io.ana4)?0x08:0 ;
+    g_wifi_info.f.config.io_config =    (g_control_io.dir1)?0x01:0 |
+                                        (g_control_io.dir2)?0x02:0 |
+                                        (g_control_io.dir3)?0x04:0 |
+                                        (g_control_io.dir4)?0x08:0 ;
+
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
     FLASH_ErasePage(f);

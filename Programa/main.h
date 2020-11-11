@@ -24,20 +24,4 @@
 #include "http.h"
 #include "strfunc.h"
 
-#include <stdbool.h>
-
-typedef struct 
-{
-    bool    flag_core_timer;
-    
-} _globals;
-
-
-
-#ifdef _IN_MAIN_C_
-_globals g;
-#else /* _IN_MAIN_C_ */
-extern _globals g;
-#endif /* _IN_MAIN_C_ */
-
 #endif /* _MAIN_H_ */

@@ -31,6 +31,8 @@ struct _config_ /* 2176 bits, 272 bytes */
     char wifi_host2[33];
     uint16_t wifi_host1_port;
     uint16_t wifi_host2_port;
+    unsigned char io_config;
+    unsigned char an_config;
     uint32_t flash_ok;
 };
 

@@ -22,9 +22,12 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "control.h"
 
+const char xml_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/xml\r\n\r\n";
 const char http_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/html\r\nCache-Control: no-cache\r\n\r\n";
 const char http_404[] = "HTTP/1.1 404 Not found\r\nConnection: close\r\n\r\n404: File not found\r\n";
+char http_rqst[256];
 
 typedef struct
 {
@@ -52,9 +55,10 @@ int HttpGetRequest(const char *buffer, char *request)
 	return rc;
 }
 
-int HttpGetFormData(char *buffer, const char *label, char *value)
+int HTTPGetFormData(char *buffer, const char *label, char *value)
 {
     char *p;
+    int len = 0;
     
     p = buffer;
     do
@@ -71,11 +75,14 @@ int HttpGetFormData(char *buffer, const char *label, char *value)
                     *value = *p;
                     p++;
                     value++;
+                    len++;
                 }
                 *value = 0;
             }
         }
     } while(p);
+    
+    return len;
 }
 /*<html>
 <head>
@@ -120,6 +127,8 @@ void HttpReturnFormConfig(char *out)
             "&nbsp;<input id=\"it\" type=\"text\" name=\"ap1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap1p\" value=\"%s\"><br>\n"
             "<h2>AP2:</h2>\n"
             "&nbsp;<input id=\"it\" type=\"text\" name=\"ap2\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap2p\" value=\"%s\"><br>\n"
+            "<h2>Central:</h2>\n"
+            "&nbsp;<input id=\"it\" type=\"text\" name=\"ce1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ce2\" value=\"%s\"><br>\n"
             "<br>\n"
             "<br>\n"
             "&nbsp;&nbsp;<input  id=\"it\" type=\"submit\" value=\"Guardar\">"
@@ -128,15 +137,50 @@ void HttpReturnFormConfig(char *out)
             "</html>\n",
             http_200,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
-            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass);
+            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
+            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
+}
+
+void HttpReturnIOStatus(char *out)
+{
+    sprintf(out,
+            "%s"
+            "<?xml version=\"1.0\"?>\r\n"
+            "<IO1>%d</IO1>\n"
+            "<IO2>%d</IO2>\n"
+            "<IO3>%d</IO3>\n"
+            "<IO4>%d</IO4>\n",
+            xml_200,
+            (g_control_io.stat1)?1:0,
+            (g_control_io.stat2)?1:0,
+            (g_control_io.stat3)?1:0,
+            (g_control_io.stat4)?1:0);
+}
+
+void HttpReturnIOConfig(char *out)
+{
+    sprintf(out,
+            "%s"
+            "<?xml version=\"1.0\"?>\r\n"
+            "<Dir1>%s</Dir1>\n"
+            "<Dir2>%s</Dir2>\n"
+            "<Dir3>%s</Dir3>\n"
+            "<Dir4>%s</Dir4>\n",
+            xml_200,
+            (g_control_io.dir1)?"in":"out",
+            (g_control_io.dir2)?"in":"out",
+            (g_control_io.dir3)?"in":"out",
+            (g_control_io.dir4)?"in":"out");
 }
 
 void HttpProcessFormConfig(char* in, char *out)
 {
-    HttpGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
-    HttpGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
-    HttpGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
-    HttpGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
+    HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
+    HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
+    HTTPGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
+    HTTPGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
+    HTTPGetFormData(in, "ce1", g_wifi_info.f.config.wifi_host1);
+    HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
     
     HttpReturnFormConfig(out);
     
@@ -157,12 +201,17 @@ void HTTPInit( void )
 void HTTPTask( void )
 {
     static int id = 0;
+    unsigned int rc;
     
     if(htdat[id].type == 'G')
     {
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpReturnFormConfig(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/getio.cgi"))
+        {
+            HttpReturnIOStatus(htdat[id].data);
         }
         else
         {
@@ -175,6 +224,16 @@ void HTTPTask( void )
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessFormConfig(htdat[id].data, htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/setio.cgi"))
+        {
+            CTRLSetIO(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/confio.cgi"))
+        {
+            CTRLConfIO(htdat[id].data);
+            HttpReturnIOConfig(htdat[id].data);
         }
         else
         {
@@ -213,22 +272,41 @@ void HTTPTimer( void )
 void HTTPAdd(int id, const char* buffer)
 {
     char *p;
-    
-    if(htdat[id].type == 0 && (*buffer == 'G' || *buffer == 'P'))
+    if(id >= 0 && id < WIFI_CIP_MAX_CONS)
     {
-        htdat[id].type = *buffer;
-        htdat[id].timeout = 50;
-
-        HttpGetRequest(buffer, htdat[id].rqst);
-
-        if(htdat[id].type == 'P')
+        /* Mensaje entrante */
+        if(htdat[id].type == 0 && (*buffer == 'G' || *buffer == 'P'))
         {
-            p = strstr(buffer, "\r\n\r\n");
-            if(p)
+            htdat[id].type = *buffer;
+            htdat[id].timeout = 50;
+
+            HttpGetRequest(buffer, htdat[id].rqst);
+
+            if(htdat[id].type == 'P')
             {
-                p += 4;
+                p = strstr(buffer, "\r\n\r\n");
+                if(p)
+                {
+                    p += 4;
+                    strncpy(htdat[id].data, p, sizeof(htdat[id].data));
+                    htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                }
+            }
+        }
+    }
+    else if(id < 0)
+    {
+        /* Mensaje Saliente */
+        for(id = 0; id < WIFI_CIP_MAX_CONS; id++)
+        {
+            /* Busco un slot libre */
+            if(htdat[id].type == 0)
+            {
+                htdat[id].timeout = 100;
+                htdat[id].type == 'S';
                 strncpy(htdat[id].data, p, sizeof(htdat[id].data));
                 htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                return;
             }
         }
     }
@@ -242,9 +320,21 @@ int HTTPPending(void)
     int i;
     for(i = 0; i < WIFI_CIP_MAX_CONS; i++)
     {
-        if(htdat[i].type == 'R') break;
+        if(htdat[i].type == 'R' || htdat[i].type == 'S') break;
     }
     return ((i < WIFI_CIP_MAX_CONS)?i:(-1));
+}
+
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+char HTTPGetType(int id)
+{
+    if(id >= 0 && id < WIFI_CIP_MAX_CONS)
+    {
+        return htdat[id].type;
+    }
+    return 0;
 }
 
 /* *****************************************************************************
@@ -263,4 +353,16 @@ const char* HTTPGet(int id, char* buffer)
         return (const char*)&htdat[id].data[0];
     }
     return NULL;
+}
+
+void HTTPNotificarStatus(void)
+{
+    sprintf(http_rqst,
+            "GET /infoio.cgi HTTP/1.1\r\n\r\n"
+            "IO1=%s&IO2=%s&IO3=%s&IO4=%s",
+            (g_control_io.stat1)?"on":"off",
+            (g_control_io.stat2)?"on":"off",
+            (g_control_io.stat3)?"on":"off",
+            (g_control_io.stat4)?"on":"off");
+    HTTPAdd((-1), http_rqst);
 }

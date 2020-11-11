@@ -616,14 +616,25 @@ int WifiTaskHttp( void )
             else rc = LOOP;
             break;
         case 1:
-            sprintf(cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
+            /* Si es una respuesta salteo la conexion */
+            if(HTTPGetType(g_wifi_http_id) == 'R')
+            {
+                g_wifi_task_stm_step += 2;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+                break;
+            }
+            sprintf(cmd, "AT+CIPSTART=%d,\"TCP\",%s,%d",
+                    g_wifi_http_id,
+                    g_wifi_info.f.config.wifi_host1,
+                    (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80);
             WifiWriteLine(cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             break;
         case 2:
-            if(WifiWaitPrompt('>'))
+            if(WifiWaitLine("OK"))
             {
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
@@ -635,13 +646,14 @@ int WifiTaskHttp( void )
             }
             break;
         case 3:
-            WifiWrite(HTTPGet(g_wifi_http_id, NULL));
+            sprintf(cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
+            WifiWriteLine(cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
-            g_wifi_task_stm_timeout = 25;
+            g_wifi_task_stm_timeout = 10;
             break;
         case 4:
-            if(WifiWaitLine("SEND OK"))
+            if(WifiWaitPrompt('>'))
             {
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
@@ -653,13 +665,31 @@ int WifiTaskHttp( void )
             }
             break;
         case 5:
+            WifiWrite(HTTPGet(g_wifi_http_id, NULL));
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 6:
+            if(WifiWaitLine("SEND OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = LOOP;
+            }
+            break;
+        case 7:
             sprintf(cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
             WifiWriteLine(cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 6:
+        case 8:
             if(WifiWaitLine("OK"))
             {
                 g_wifi_task_stm_step++;
