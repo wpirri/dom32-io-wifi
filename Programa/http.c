@@ -304,7 +304,7 @@ void HTTPAdd(int id, const char* buffer)
             {
                 htdat[id].timeout = 100;
                 htdat[id].type == 'S';
-                strncpy(htdat[id].data, p, sizeof(htdat[id].data));
+                strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
                 htdat[id].data[sizeof(htdat[id].data)-1] = 0;
                 return;
             }

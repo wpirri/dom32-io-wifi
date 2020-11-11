@@ -158,7 +158,7 @@ void CTRLTask( void )
 
 void CTRLTimer( void )
 {
-    if(g_control_notificar)
+    if(g_control_notificar && g_wifi_info.status.wifi_conectado)
     {
         g_control_notificar--;
         if(g_control_notificar == 0)
