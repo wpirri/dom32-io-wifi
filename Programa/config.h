@@ -52,6 +52,7 @@ typedef struct
         unsigned char wifi_conectado;
         unsigned char wifi_mode;
         unsigned char save_config;
+        char hw_mac[13];
         bool wifi_need_firmware_update;
         bool wifi_start_ap;
         bool flash_error;

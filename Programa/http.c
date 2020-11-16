@@ -390,7 +390,8 @@ const char* HTTPGet(int id, char* buffer)
 void HTTPNotificarStatus(void)
 {
     sprintf(http_rqst_data, 
-            "IO1=%s&IO2=%s&IO3=%s&IO4=%s",
+            "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s",
+            g_wifi_info.status.hw_mac,
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",

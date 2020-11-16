@@ -186,43 +186,7 @@ int WifiCheckUnsol( void )
     int len;
     char *p;
     
-    //printf("WifiCheckUnsol: %s\n", g_wifi_read_line_buffer);
-    if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
-    {
-        g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
-    }
-    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
-    {
-        if(g_wifi_info.status.wifi_conectado)
-        {
-            g_wifi_info.status.wifi_conectado = 0;
-            g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
-            return STMODE;
-        }
-    }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
-    {
-        /* Cliente conectado al AP */
-        g_wifi_timer_ap = 0; // para que no salga de modo AP
-    }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
-    {
-        /* Cliente desconectado al AP */
-        g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
-    }
-//    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:STAIP,", 13))
-//    {
-//        /* AT+CIFSR
-//         * +CIFSR:STAIP,"0.0.0.0"*/
-//
-//    }
-//    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:STAMAC,", 14))
-//    {
-//        /* AT+CIFSR
-//         * +CIFSR:STAMAC,"80:7d:3a:62:03:60"*/
-//
-//    }
-    else if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
+    if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
     {
         /*
         +IPD,0,442:<datos>
@@ -247,14 +211,60 @@ int WifiCheckUnsol( void )
             HTTPAdd(id, p);
         }
     }
-//    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
-//    {
-//        /*
-//         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
-//         * AT version:1.7.4.0(May 11 2020 19:13:04)
-//         */
-//        
-//    }
+    else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
+    {
+        g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
+    {
+        if(g_wifi_info.status.wifi_conectado)
+        {
+            g_wifi_info.status.wifi_conectado = 0;
+            g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+            return STMODE;
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
+    {
+        /* Cliente conectado al AP */
+        g_wifi_timer_ap = 0; // para que no salga de modo AP
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
+    {
+        /* Cliente desconectado al AP */
+        g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:", 7))
+    {
+        /* AT+CIFSR
+         * +CIFSR:STAIP,"0.0.0.0"
+         * +CIFSR:STAMAC,"80:7d:3a:62:03:60"
+         */
+        if( !memcmp(&g_wifi_read_line_buffer[7], "STAMAC", 6))
+        {
+            g_wifi_info.status.hw_mac[0]  = g_wifi_read_line_buffer[15];
+            g_wifi_info.status.hw_mac[1]  = g_wifi_read_line_buffer[16];
+            g_wifi_info.status.hw_mac[2]  = g_wifi_read_line_buffer[18];
+            g_wifi_info.status.hw_mac[3]  = g_wifi_read_line_buffer[19];
+            g_wifi_info.status.hw_mac[4]  = g_wifi_read_line_buffer[21];
+            g_wifi_info.status.hw_mac[5]  = g_wifi_read_line_buffer[22];
+            g_wifi_info.status.hw_mac[6]  = g_wifi_read_line_buffer[24];
+            g_wifi_info.status.hw_mac[7]  = g_wifi_read_line_buffer[25];
+            g_wifi_info.status.hw_mac[8]  = g_wifi_read_line_buffer[27];
+            g_wifi_info.status.hw_mac[9]  = g_wifi_read_line_buffer[28];
+            g_wifi_info.status.hw_mac[10] = g_wifi_read_line_buffer[30];
+            g_wifi_info.status.hw_mac[11] = g_wifi_read_line_buffer[31];
+            g_wifi_info.status.hw_mac[12] = 0;
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
+    {
+        /*
+         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
+         * AT version:1.7.4.0(May 11 2020 19:13:04)
+         */
+        
+    }
     return 0;
 }
 
@@ -372,29 +382,29 @@ int WifiTaskAPMode( void )
                 rc = (-1);
             }
             break;
-//        case 4:
-//            /* MAC e IP */
-//            WifiWriteLine("AT+CIFSR");
-//            g_wifi_task_stm_step++;
-//            g_wifi_task_stm_delay = 0;
-//            g_wifi_task_stm_timeout = 25;
-//            break;
-//        case 5:
-//            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
-//            {
-//                g_wifi_task_stm_step++;
-//                g_wifi_task_stm_delay = 0;
-//                g_wifi_task_stm_timeout = 0;
-//            }
-//            break;
         case 4:
+            /* MAC e IP */
+            WifiWriteLine("AT+CIFSR");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 5:
+            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 6:
             /* Multiconexion */
             WifiWriteLine("AT+CIPMUX=1");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 5:
+        case 7:
             if(WifiWaitLine("OK"))
             {
                 g_wifi_task_stm_step++;
@@ -406,14 +416,14 @@ int WifiTaskAPMode( void )
                 rc = (-1);
             }
             break;
-        case 6:
+        case 8:
             /* Listen */
             WifiWriteLine("AT+CIPSERVER=1,80");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 7:
+        case 9:
             if(WifiWaitLine("OK"))
             {
                 g_wifi_task_stm_step++;
