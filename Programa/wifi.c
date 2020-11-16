@@ -182,31 +182,32 @@ int WifiCheckUnsol( void )
             return STMODE;
         }
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 14))
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
         /* Cliente conectado al AP */
         g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 17))
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
     {
         /* Cliente desconectado al AP */
-        g_wifi_timer_ap = 50; // para que ssssssssssssssssssalga en seguida del modo AP
+        g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+CWJAP:", 7)) /* AT+CWJAP? */
-    {
-        
-    }
+//    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:STAIP,", 13))
+//    {
+//        /* AT+CIFSR
+//         * +CIFSR:STAIP,"0.0.0.0"*/
+//
+//    }
+//    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:STAMAC,", 14))
+//    {
+//        /* AT+CIFSR
+//         * +CIFSR:STAMAC,"80:7d:3a:62:03:60"*/
+//
+//    }
     else if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
     {
         /*
-        +IPD,0,442:GET / HTTP/1.1
-        Host: 192.168.4.1
-        Connection: keep-alive
-        Upgrade-Insecure-Requests: 1
-        User-Agent: Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36
-        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,+/+;q=0.8,application/signed-exchange;v=b3;q=0.9
-        Accept-Encoding: gzip, deflate
-        Accept-Language: es-ES,es;q=0.9,en;q=0.8
+        +IPD,0,442:<datos>
         */
         id = 0;
         len = 0;
@@ -228,14 +229,14 @@ int WifiCheckUnsol( void )
             HTTPAdd(id, p);
         }
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
-    {
-        /*
-         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
-         * AT version:1.7.4.0(May 11 2020 19:13:04)
-         */
-        
-    }
+//    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
+//    {
+//        /*
+//         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
+//         * AT version:1.7.4.0(May 11 2020 19:13:04)
+//         */
+//        
+//    }
     return 0;
 }
 
@@ -353,6 +354,21 @@ int WifiTaskAPMode( void )
                 rc = (-1);
             }
             break;
+//        case 4:
+//            /* MAC e IP */
+//            WifiWriteLine("AT+CIFSR");
+//            g_wifi_task_stm_step++;
+//            g_wifi_task_stm_delay = 0;
+//            g_wifi_task_stm_timeout = 25;
+//            break;
+//        case 5:
+//            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+//            {
+//                g_wifi_task_stm_step++;
+//                g_wifi_task_stm_delay = 0;
+//                g_wifi_task_stm_timeout = 0;
+//            }
+//            break;
         case 4:
             /* Multiconexion */
             WifiWriteLine("AT+CIPMUX=1");
@@ -624,7 +640,7 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_timeout = 0;
                 break;
             }
-            sprintf(cmd, "AT+CIPSTART=%d,\"TCP\",%s,%d",
+            sprintf(cmd, "AT+CIPSTART=%d,\"TCP\",\"%s\",%d",
                     g_wifi_http_id,
                     g_wifi_info.f.config.wifi_host1,
                     (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80);

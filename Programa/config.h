@@ -29,6 +29,7 @@ struct _config_ /* 2176 bits, 272 bytes */
     char wifi_ap2_pass[33];
     char wifi_host1[33];
     char wifi_host2[33];
+    char rqst_path[33];
     uint16_t wifi_host1_port;
     uint16_t wifi_host2_port;
     unsigned char io_config;

@@ -39,6 +39,7 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.wifi_host1_port = 80;
     g_wifi_info.f.config.wifi_host2_port = 80;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
+    strcpy(g_wifi_info.f.config.rqst_path, "/cgi-bin");
 
     g_wifi_info.status.save_config = 10;
 }

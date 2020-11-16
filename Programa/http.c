@@ -24,10 +24,42 @@
 #include "main.h"
 #include "control.h"
 
-const char xml_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/xml\r\n\r\n";
-const char http_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/html\r\nCache-Control: no-cache\r\n\r\n";
-const char http_404[] = "HTTP/1.1 404 Not found\r\nConnection: close\r\n\r\n404: File not found\r\n";
-char http_rqst[256];
+const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
+                            "Content-Type: text/xml\r\n\r\n";
+const char http_200[] =     "HTTP/1.1 200 OK\r\n"
+                            "Connection: close\r\n"
+                            "Content-Type: text/html\r\n"
+                            "Cache-Control: no-cache\r\n\r\n";
+const char http_404[] =     "HTTP/1.1 404 Not found\r\n"
+                            "Connection: close\r\n\r\n"
+                            "404: File not found\r\n";
+/* POST
+ * 1.- %s: URI
+ * 2.- %s: Host
+ * 3.- %d: Content-Length
+ * 4.- %s: datos
+ */
+const char http_post[] =    "POST %s HTTP/1.1\r\n"
+                            "Host: %s\r\n"
+                            "Connection: keep-alive\r\n"
+                            "Content-Length: %d\r\n"
+                            "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
+                            "Accept: text/html,text/xml\r\n"
+                            "Content-Type: application/x-www-form-urlencoded\r\n\r\n%s";
+/*
+ * GET
+ * 1.- %s: URI
+ * 2.- %s: Host
+ */
+const char http_get[] =     "GET %s HTTP/1.1\r\n"
+                            "Host: %s\r\n"
+                            "Connection: close\r\n"
+                            "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
+                            "Accept: text/html,text/xml\r\n\r\n%s";
+
+char http_rqst[1024];
+char http_rqst_data[256];
+char http_rqst_uri[64];
 
 typedef struct
 {
@@ -303,7 +335,7 @@ void HTTPAdd(int id, const char* buffer)
             if(htdat[id].type == 0)
             {
                 htdat[id].timeout = 100;
-                htdat[id].type == 'S';
+                htdat[id].type = 'S';
                 strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
                 htdat[id].data[sizeof(htdat[id].data)-1] = 0;
                 return;
@@ -357,12 +389,24 @@ const char* HTTPGet(int id, char* buffer)
 
 void HTTPNotificarStatus(void)
 {
-    sprintf(http_rqst,
-            "GET /infoio.cgi HTTP/1.1\r\n\r\n"
+    sprintf(http_rqst_data, 
             "IO1=%s&IO2=%s&IO3=%s&IO4=%s",
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",
             (g_control_io.stat4)?"on":"off");
+    sprintf(http_rqst_uri, "%s/infoio.cgi", 
+            g_wifi_info.f.config.rqst_path);
+/* POST
+ * 1.- %s: URI
+ * 2.- %s: Host
+ * 3.- %d: Content-Length
+ * 4.- %s: datos
+ */
+    sprintf(http_rqst, http_post,
+            http_rqst_uri,
+            g_wifi_info.f.config.wifi_host1,
+            strlen(http_rqst_data),
+            http_rqst_data);
     HTTPAdd((-1), http_rqst);
 }

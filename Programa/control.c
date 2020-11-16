@@ -26,7 +26,7 @@
 
 #include "main.h"
 
-unsigned char g_control_notificar;
+unsigned int g_control_notificar;
 
 void CTRLInit( void )
 {
@@ -51,7 +51,8 @@ void CTRLInit( void )
     if(g_control_io.dir4)   IN4_SetDigitalInput();
     else                    IN4_SetDigitalOutput();
     
-    g_control_notificar = 255;
+    /* Primer notificacion */
+    g_control_notificar = 100;
 }
 
 void CTRLTask( void )
@@ -163,6 +164,8 @@ void CTRLTimer( void )
         g_control_notificar--;
         if(g_control_notificar == 0)
         {
+            /* notifico cada minuto */
+            g_control_notificar = 600;
             HTTPNotificarStatus();
         }
     }
