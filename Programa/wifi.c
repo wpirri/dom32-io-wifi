@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "main.h"
 
@@ -54,6 +55,7 @@ int g_wifi_http_id;
 unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 unsigned int g_wifi_read_line_buffer_index;
 unsigned char g_wifi_read_line_buffer_timer;
+bool g_wifi_read_line_wait_crlf;
 
 unsigned char g_loop_count;
 
@@ -110,21 +112,37 @@ int WifiWaitLine(const char *line)
     while(UART1_IsRxReady())
     {
         c = UART1_Read();
-        /* COn cada caracter habilito el contador y lo reseteo */
-        g_wifi_read_line_buffer_timer = 1;
-        if(/*c != 0x0A && c != 0x0D && */(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN))
-        {        
+        if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
+        {
+            if(g_wifi_read_line_wait_crlf)
+            {
+                if(c == 0x0A || c == 0x0D) break;
+            }
+            g_wifi_read_line_buffer_timer = 3;
             /* Se agrega el caracter a la línea */
             g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
             g_wifi_read_line_buffer_index++;
             g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
+            if(g_wifi_read_line_buffer_index == 4)
+            {
+                /*+IPD*/
+                if(g_wifi_read_line_buffer[0] == '+' &&
+                   g_wifi_read_line_buffer[1] == 'I' &&
+                   g_wifi_read_line_buffer[2] == 'P' &&
+                   g_wifi_read_line_buffer[3] == 'D'  )
+                {
+                    g_wifi_read_line_wait_crlf = false;
+                }
+            }
         }
     }   
     
     /* Detecto el final de linea */
-    if((g_wifi_read_line_buffer[0] != '+' && (c == 0x0A || c == 0x0D)) || g_wifi_read_line_buffer_timer > 3)
+    if( (g_wifi_read_line_wait_crlf && (c == 0x0A || c == 0x0D)) || (g_wifi_read_line_buffer_timer == 0) )
     {
+        g_wifi_read_line_wait_crlf = true;
         g_wifi_read_line_buffer_timer = 0;
+
         if(g_wifi_read_line_buffer_index)
         {
             if(line)
@@ -793,6 +811,8 @@ void WiFiInit( void )
     g_wifi_task_stm_step = 0;
     g_wifi_read_line_buffer_index = 0;
     g_wifi_read_line_buffer_timer = 0;
+    g_wifi_read_line_wait_crlf = true;
+    
     g_wifi_info.status.wifi_need_firmware_update = false;
     g_loop_count = 0;
     g_wifi_info.status.wifi_conectado = 0;
@@ -892,7 +912,7 @@ void WiFiTimer( void )
         }
     }
     
-    if(g_wifi_read_line_buffer_timer) g_wifi_read_line_buffer_timer++;
+    if(g_wifi_read_line_buffer_timer) g_wifi_read_line_buffer_timer--;
     
 }
 
