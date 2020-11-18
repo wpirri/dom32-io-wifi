@@ -66,31 +66,44 @@ void LedControl( void )
 {
     static char led_count = 0;
     
-    if(++led_count >= 50) led_count = 0;
-    if(led_count > 10)
+    if(++led_count >= 50)
     {
-        if(g_wifi_info.status.wifi_conectado)
+        LED_STATUS_SetValue(0);
+        LED_MODO_SetValue(0);
+        led_count = 0;
+    }
+    if(g_wifi_info.status.wifi_ok)
+    {
+        if(led_count > 10)
         {
-            if((led_count-10) <= (g_wifi_info.status.wifi_conectado*2))
+            if(g_wifi_info.status.wifi_conectado)
             {
-                LED_STATUS_SetValue(led_count & 0x01);
+                if((led_count-10) <= (g_wifi_info.status.wifi_conectado*2))
+                {
+                    LED_STATUS_SetValue(led_count & 0x01);
+                }
+            }
+            else
+            {
+                LED_STATUS_SetValue(0);
+            }
+        }
+        if(g_wifi_info.status.wifi_mode)
+        {
+            if(led_count <= (g_wifi_info.status.wifi_mode*2))
+            {
+                LED_MODO_SetValue(led_count & 0x01);
             }
         }
         else
         {
-            LED_STATUS_SetValue(0);
-        }
-    }
-    if(g_wifi_info.status.wifi_mode)
-    {
-        if(led_count <= (g_wifi_info.status.wifi_mode*2))
-        {
-            LED_MODO_SetValue(led_count & 0x01);
+            LED_MODO_SetValue(0);
         }
     }
     else
     {
-        LED_MODO_SetValue(0);
+        LED_STATUS_SetValue(led_count & 0x01);
+        LED_MODO_SetValue(!(led_count & 0x01));
     }
 }
 /*
