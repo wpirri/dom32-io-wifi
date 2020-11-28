@@ -356,10 +356,13 @@ void CTRLTimer( void )
         g_control_notificar--;
         if(g_control_notificar == 0)
         {
-            /* notifico cada minuto */
-            g_control_notificar = 600;
             HTTPNotificarStatus();
         }
+    }
+    else if(g_control_notificar == 0)
+    {
+        /* notifico cada minuto */
+        g_control_notificar = 600;
     }
 }
 
@@ -426,13 +429,119 @@ void CTRLSetIO(char* in)
             }
         }
     }
+    
+    if(g_control_exp.dir1 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP01", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat1 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat1 = 0;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir3 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP03", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat3 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat3 = 0;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir4 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP04", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat4 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat4 = 0;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir5 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP05", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat5 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat5 = 0;
+            }
+        }
+    }
+
+    if(g_control_exp.dir7 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP07", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat7 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat7 = 0;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir8 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP08", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat8 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat8 = 0;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir9 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP09", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat9 = 1;
+            }
+            else if( !strcmp(tmp, "off") )
+            {
+                g_control_exp.stat9 = 0;
+            }
+        }
+    }
+        
 }
 
 void CTRLConfIO(char* in)
 {
     char tmp[10];
     
-    if(HTTPGetFormData(in, "Dir1", tmp))
+    if(HTTPGetFormData(in, "DIR1", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -451,7 +560,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "Dir2", tmp))
+    if(HTTPGetFormData(in, "DIR2", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -470,7 +579,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "Dir3", tmp))
+    if(HTTPGetFormData(in, "DIR3", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -489,7 +598,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "Dir4", tmp))
+    if(HTTPGetFormData(in, "DIR4", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -508,7 +617,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE1", tmp))
+    if(HTTPGetFormData(in, "DIREXP01", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -527,7 +636,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE3", tmp))
+    if(HTTPGetFormData(in, "DIREXP03", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -546,7 +655,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE4", tmp))
+    if(HTTPGetFormData(in, "DIREXP04", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -565,7 +674,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE5", tmp))
+    if(HTTPGetFormData(in, "DIREXP05", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -584,7 +693,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE7", tmp))
+    if(HTTPGetFormData(in, "DIREXP07", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -603,7 +712,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE8", tmp))
+    if(HTTPGetFormData(in, "DIREXP08", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -622,7 +731,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DirE9", tmp))
+    if(HTTPGetFormData(in, "DIREXP09", tmp))
     {
         if( !strcmp(tmp, "in") )
         {

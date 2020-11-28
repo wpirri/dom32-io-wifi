@@ -364,6 +364,7 @@ int WifiTaskAPMode( void )
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
+            g_wifi_info.status.wifi_mode = 0;
             break;
         case 1:
             /* No controlo error */
@@ -380,7 +381,6 @@ int WifiTaskAPMode( void )
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
-            g_wifi_info.status.wifi_mode = 3;
             break;
         case 3:
             if(WifiWaitLine("OK"))
@@ -388,6 +388,8 @@ int WifiTaskAPMode( void )
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.wifi_mode = 3;
+                g_wifi_info.status.wifi_ok = true;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
@@ -397,7 +399,6 @@ int WifiTaskAPMode( void )
             break;
         case 4:
             /* MAC e IP */
-            g_wifi_info.status.wifi_ok = true;
             WifiWriteLine("AT+CIFSR");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
@@ -492,6 +493,7 @@ int WifiTaskSTMode( void )
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 100;
+            g_wifi_info.status.wifi_mode = 0;
             break;
         case 1:
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
@@ -543,7 +545,7 @@ int WifiTaskSTMode( void )
             break;
         case 6:
             /* Listen */
-            WifiWriteLine("AT+CIPSERVER=1,3100");
+            WifiWriteLine("AT+CIPSERVER=1,80");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
@@ -567,7 +569,6 @@ int WifiTaskSTMode( void )
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
-            g_wifi_info.status.wifi_mode = 1;
             break;
         case 9:
             if(WifiWaitLine("OK"))
@@ -575,6 +576,7 @@ int WifiTaskSTMode( void )
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.wifi_mode = 1;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {

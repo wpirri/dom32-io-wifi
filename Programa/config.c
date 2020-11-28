@@ -36,6 +36,7 @@ void ConfigLoadDefault( void)
 {
     memset(&g_wifi_info.f.config, 0, sizeof(g_wifi_info.f.config));
     g_wifi_info.f.config.io_config = 0xFF;
+    g_wifi_info.f.config.exp_io_config = 0xFF;
     g_wifi_info.f.config.wifi_host1_port = 80;
     g_wifi_info.f.config.wifi_host2_port = 80;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
@@ -43,6 +44,8 @@ void ConfigLoadDefault( void)
 
     /* TODO: Sacar esto - solo para pruebas */
     strcpy(g_wifi_info.f.config.wifi_ap1, "872e-b");
+    strcpy(g_wifi_info.f.config.wifi_ap1_pass, "00464bab872e");
+    strcpy(g_wifi_info.f.config.wifi_ap2, "872e-a");
     strcpy(g_wifi_info.f.config.wifi_ap1_pass, "00464bab872e");
     strcpy(g_wifi_info.f.config.wifi_host1, "192.168.10.25");
 
