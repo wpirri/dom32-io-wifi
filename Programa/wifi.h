@@ -19,6 +19,7 @@
 #define _WIFI_H_
 
 #define WIFI_CIP_MAX_CONS 2
+//#define ENABLE_SSL
 
 void WiFiInit( void );
 void WiFiTask( void );

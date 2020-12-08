@@ -291,14 +291,14 @@ int WifiTaskInit( void )
             //printf("--> Init.\n");
             /* Restore a fábrica y espero a que el modulo se reinicie */
             WifiWriteLine("AT+RESTORE");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 100;
             break;
         case 1:
             if(WifiWaitLine("ready") || g_wifi_task_stm_timeout == 0)
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 2;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -307,14 +307,14 @@ int WifiTaskInit( void )
             /* ECHO OFF */
             WifiWriteLine("AT");
             //WifiWriteLine("ATE0");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 3;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 3:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 4;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -327,14 +327,14 @@ int WifiTaskInit( void )
         case 4:
             /* Version */
             WifiWriteLine("AT+GMR");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 5;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 5:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 6;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -361,7 +361,7 @@ int WifiTaskAPMode( void )
             //printf("--> Modo AP.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPSERVER=0");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             g_wifi_info.status.wifi_mode = 0;
@@ -370,7 +370,7 @@ int WifiTaskAPMode( void )
             /* No controlo error */
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 2;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -378,14 +378,14 @@ int WifiTaskAPMode( void )
         case 2:
             /* Modo AP+Sta */
             WifiWriteLine("AT+CWMODE=3");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 3;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 3:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 4;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_mode = 3;
@@ -400,14 +400,14 @@ int WifiTaskAPMode( void )
         case 4:
             /* MAC e IP */
             WifiWriteLine("AT+CIFSR");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 5;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 5:
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 16;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -417,14 +417,14 @@ int WifiTaskAPMode( void )
             sprintf(g_wifi_cmd, "AT+CWSAP=\"Dom32io-%s\",\"\",1,0,4,0",
                     &g_wifi_info.status.hw_mac[6]);
             WifiWriteLine(g_wifi_cmd);
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 7;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 7:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 8;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -436,14 +436,14 @@ int WifiTaskAPMode( void )
         case 8:
             /* Multiconexion */
             WifiWriteLine("AT+CIPMUX=1");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 9;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 9:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 10;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -455,14 +455,14 @@ int WifiTaskAPMode( void )
         case 10:
             /* Listen */
             WifiWriteLine("AT+CIPSERVER=1,80");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 11;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 11:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 12;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -490,7 +490,7 @@ int WifiTaskSTMode( void )
             //printf("--> Modo STA.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPSERVER=0");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 100;
             g_wifi_info.status.wifi_mode = 0;
@@ -498,7 +498,7 @@ int WifiTaskSTMode( void )
         case 1:
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 2;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -506,14 +506,14 @@ int WifiTaskSTMode( void )
         case 2:
             /* Modo Sta */
             WifiWriteLine("AT+CWMODE=1");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 3;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 100;
             break;
         case 3:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 4;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -526,14 +526,14 @@ int WifiTaskSTMode( void )
         case 4:
             /* Multiconexion */
             WifiWriteLine("AT+CIPMUX=1");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 5;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 5:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 6;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -546,14 +546,14 @@ int WifiTaskSTMode( void )
         case 6:
             /* Listen */
             WifiWriteLine("AT+CIPSERVER=1,80");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 7;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 7:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 8;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -566,14 +566,14 @@ int WifiTaskSTMode( void )
         case 8:
             /* Reconnect */
             WifiWriteLine("AT+CWAUTOCONN=1");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 9;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 9:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 10;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_mode = 1;
@@ -616,7 +616,7 @@ int WifiTaskSTMode( void )
                     sprintf(g_wifi_cmd, "AT+CWJAP=\"%s\"", ap);
                 }
                 WifiWriteLine(g_wifi_cmd);
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 11;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 300;
                 g_wifi_info.status.wifi_conectado = 0;
@@ -630,7 +630,7 @@ int WifiTaskSTMode( void )
         case 11:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 12;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -659,14 +659,14 @@ int WifiTaskUpgrade( void )
             //printf("--> Upgrade.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPUPDATE");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 900;
             break;
         case 1:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 2;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -691,14 +691,14 @@ int WifiTaskHttp( void )
     {
         case 0:
             g_wifi_http_id = HTTPPending();
-            if(g_wifi_http_id >= 0) g_wifi_task_stm_step++;
+            if(g_wifi_http_id >= 0) g_wifi_task_stm_step = 1;
             else rc = LOOP;
             break;
         case 1:
             /* Si es una respuesta salteo la conexion */
             if(HTTPGetType(g_wifi_http_id) == 'R')
             {
-                g_wifi_task_stm_step += 2;
+                g_wifi_task_stm_step = 3;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 break;
@@ -708,14 +708,14 @@ int WifiTaskHttp( void )
                     g_wifi_info.f.config.wifi_host1,
                     (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80);
             WifiWriteLine(g_wifi_cmd);
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 2;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             break;
         case 2:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 3;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -729,14 +729,14 @@ int WifiTaskHttp( void )
         case 3:
             sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
             WifiWriteLine(g_wifi_cmd);
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 4;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             break;
         case 4:
             if(WifiWaitPrompt('>'))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 5;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -749,14 +749,14 @@ int WifiTaskHttp( void )
             break;
         case 5:
             WifiWrite(HTTPGet(g_wifi_http_id, NULL));
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 6;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
         case 6:
             if(WifiWaitLine("SEND OK") || g_wifi_task_stm_timeout == 0)
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 7;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -764,7 +764,7 @@ int WifiTaskHttp( void )
         case 7:
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
             WifiWriteLine(g_wifi_cmd);
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 8;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
@@ -812,14 +812,14 @@ int WifiTaskListAP( void )
         case 0:
             //printf("--> List AP.\n");
             WifiWriteLine("AT+CWLAP");
-            g_wifi_task_stm_step++;
+            g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 50;
             break;
         case 1:
             if(WifiWaitLine("OK"))
             {
-                g_wifi_task_stm_step++;
+                g_wifi_task_stm_step = 2;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
