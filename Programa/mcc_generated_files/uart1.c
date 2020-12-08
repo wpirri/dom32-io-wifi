@@ -74,8 +74,8 @@ static bool volatile rxOverflowed;
 
 */
 
-#define UART1_CONFIG_TX_BYTEQ_LENGTH (8+1)
-#define UART1_CONFIG_RX_BYTEQ_LENGTH (8+1)
+#define UART1_CONFIG_TX_BYTEQ_LENGTH (512)
+#define UART1_CONFIG_RX_BYTEQ_LENGTH (512)
 
 /** UART Driver Queue
 
@@ -308,6 +308,7 @@ static uint8_t UART1_RxDataAvailable(void)
     return size;
 }
 
+#ifdef __DEPRECATED__
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 uint8_t __attribute__((deprecated)) UART1_is_rx_ready(void)
 {
@@ -453,3 +454,4 @@ UART1_STATUS __attribute__((deprecated)) UART1_StatusGet (void )
     return U1STA;
 }
 
+#endif /* __DEPRECATED__ */

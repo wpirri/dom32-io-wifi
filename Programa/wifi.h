@@ -18,6 +18,8 @@
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
+#define WIFI_CIP_MAX_CONS 2
+
 void WiFiInit( void );
 void WiFiTask( void );
 void WiFiTimer( void );

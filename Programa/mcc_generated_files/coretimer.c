@@ -84,6 +84,7 @@ uint32_t CORETIMER_CountGet()
 void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIMER_ISR(void)
 {
    uint32_t static compare = 0x61A80;
+   extern bool main_flag_core_timer;
 
    // Update the compare value
    compare = compare + 0x61A80;
@@ -92,7 +93,7 @@ void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIM
 
    IFS0CLR= 1 << _IFS0_CTIF_POSITION;
    // Add your custom code here
-   g.flag_core_timer = true;
+   main_flag_core_timer = true;
 }
 
 /**

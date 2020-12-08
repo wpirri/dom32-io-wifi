@@ -18,38 +18,10 @@
 #ifndef _MAIN_H_    /* Guard against multiple inclusion */
 #define _MAIN_H_
 
-#include <stdbool.h>
-
-#include "mcc_generated_files/system.h"
-#include "mcc_generated_files/pin_manager.h"
-#include "mcc_generated_files/uart1.h"
-
-typedef struct
-{
-	char wifi_ap1[33];
-	char wifi_ap1_pass[65];
-	char wifi_ap2[33];
-	char wifi_ap2_pass[65];
-
-	char wifi_host1[33];
-	unsigned int wifi_host1_port;
-	char wifi_host2[33];
-	unsigned int wifi_host2_port;
-} _config;
-
-
-typedef struct 
-{
-    bool    flag_core_timer;
-    
-} _globals;
-
-
-
-#ifdef _IN_MAIN_C_
-_globals g;
-#else /* _IN_MAIN_C_ */
-extern _globals g;
-#endif /* _IN_MAIN_C_ */
+#include "mcc_generated_files/mcc.h"
+#include "config.h"
+#include "wifi.h"
+#include "http.h"
+#include "strfunc.h"
 
 #endif /* _MAIN_H_ */
