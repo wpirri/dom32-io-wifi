@@ -136,6 +136,7 @@ void ConfigTimer(void)
         if(g_wifi_info.status.save_config == 0)
         {
             ConfigSave();
+            CTRLInit();
         }
     }
     

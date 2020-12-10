@@ -81,8 +81,8 @@ void CTRLInit( void )
     g_control_exp.ana8 = (g_wifi_info.f.config.exp_an_config & 0x20)?1:0;
     g_control_exp.dir8 = (g_wifi_info.f.config.exp_io_config & 0x20)?1:0;
     g_control_exp.stat8 = false;
-    if(g_control_exp.dir8)  {TRISASET = (1 << 11); CNPUASET = (1 << 11);}
-    else                    {TRISACLR = (1 << 11);}
+    if(g_control_exp.dir8)  {TRISASET = (1 << 2); CNPUASET = (1 << 2);}
+    else                    {TRISACLR = (1 << 2);}
     g_control_exp.ana9 = (g_wifi_info.f.config.exp_an_config & 0x40)?1:0;
     g_control_exp.dir9 = (g_wifi_info.f.config.exp_io_config & 0x40)?1:0;
     g_control_exp.stat9 = false;
@@ -110,6 +110,7 @@ void CTRLTask( void )
                 if(IN1_GetValue() != g_control_io.stat1)
                 {
                     g_control_io.stat1 = IN1_GetValue();
+                    g_control_io.change1 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -118,6 +119,7 @@ void CTRLTask( void )
                 if(IN1_GetValue() != g_control_io.stat1)
                 {
                     IN1_SetValue(g_control_io.stat1);
+                    g_control_io.change1 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -132,6 +134,7 @@ void CTRLTask( void )
                 if(IN2_GetValue() != g_control_io.stat2)
                 {
                     g_control_io.stat2 = IN2_GetValue();
+                    g_control_io.change2 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -140,6 +143,7 @@ void CTRLTask( void )
                 if(IN2_GetValue() != g_control_io.stat2)
                 {
                     IN2_SetValue(g_control_io.stat2);
+                    g_control_io.change2 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -154,6 +158,7 @@ void CTRLTask( void )
                 if(IN3_GetValue() != g_control_io.stat3)
                 {
                     g_control_io.stat3 = IN3_GetValue();
+                    g_control_io.change3 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -162,6 +167,7 @@ void CTRLTask( void )
                 if(IN3_GetValue() != g_control_io.stat3)
                 {
                     IN3_SetValue(g_control_io.stat3);
+                    g_control_io.change3 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -176,6 +182,7 @@ void CTRLTask( void )
                 if(IN4_GetValue() != g_control_io.stat4)
                 {
                     g_control_io.stat4 = IN4_GetValue();
+                    g_control_io.change4 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -184,6 +191,7 @@ void CTRLTask( void )
                 if(IN4_GetValue() != g_control_io.stat4)
                 {
                     IN4_SetValue(g_control_io.stat4);
+                    g_control_io.change4 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -198,6 +206,7 @@ void CTRLTask( void )
                 if(EXP01_GetValue() != g_control_exp.stat1)
                 {
                     g_control_exp.stat1 = EXP01_GetValue();
+                    g_control_exp.change1 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -206,6 +215,7 @@ void CTRLTask( void )
                 if(EXP01_GetValue() != g_control_exp.stat1)
                 {
                     EXP01_SetValue(g_control_exp.stat1);
+                    g_control_exp.change1 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -220,6 +230,7 @@ void CTRLTask( void )
                 if(EXP03_GetValue() != g_control_exp.stat3)
                 {
                     g_control_exp.stat3 = EXP03_GetValue();
+                    g_control_exp.change3 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -228,6 +239,7 @@ void CTRLTask( void )
                 if(EXP03_GetValue() != g_control_exp.stat3)
                 {
                     EXP03_SetValue(g_control_exp.stat3);
+                    g_control_exp.change3 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -242,6 +254,7 @@ void CTRLTask( void )
                 if(EXP04_D0_GetValue() != g_control_exp.stat4)
                 {
                     g_control_exp.stat4 = EXP04_D0_GetValue();
+                    g_control_exp.change4 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -250,6 +263,7 @@ void CTRLTask( void )
                 if(EXP04_D0_GetValue() != g_control_exp.stat4)
                 {
                     EXP04_D0_SetValue(g_control_exp.stat4);
+                    g_control_exp.change4 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -264,6 +278,7 @@ void CTRLTask( void )
                 if(EXP05_GetValue() != g_control_exp.stat5)
                 {
                     g_control_exp.stat5 = EXP05_GetValue();
+                    g_control_exp.change5 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -272,6 +287,7 @@ void CTRLTask( void )
                 if(EXP05_GetValue() != g_control_exp.stat5)
                 {
                     EXP05_SetValue(g_control_exp.stat5);
+                    g_control_exp.change5 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -286,6 +302,7 @@ void CTRLTask( void )
                 if(EXP07_GetValue() != g_control_exp.stat7)
                 {
                     g_control_exp.stat7 = EXP07_GetValue();
+                    g_control_exp.change7 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -294,6 +311,7 @@ void CTRLTask( void )
                 if(EXP07_GetValue() != g_control_exp.stat7)
                 {
                     EXP07_SetValue(g_control_exp.stat7);
+                    g_control_exp.change7 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -308,6 +326,7 @@ void CTRLTask( void )
                 if(EXP08_D1_GetValue() != g_control_exp.stat8)
                 {
                     g_control_exp.stat8 = EXP08_D1_GetValue();
+                    g_control_exp.change8 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -316,6 +335,7 @@ void CTRLTask( void )
                 if(EXP08_D1_GetValue() != g_control_exp.stat8)
                 {
                     EXP08_D1_SetValue(g_control_exp.stat8);
+                    g_control_exp.change8 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -330,6 +350,7 @@ void CTRLTask( void )
                 if(EXP09_GetValue() != g_control_exp.stat9)
                 {
                     g_control_exp.stat9 = EXP09_GetValue();
+                    g_control_exp.change9 = true;
                     if(g_control_notificar == 0) g_control_notificar = 5;
                 }
             }
@@ -338,6 +359,7 @@ void CTRLTask( void )
                 if(EXP09_GetValue() != g_control_exp.stat9)
                 {
                     EXP09_SetValue(g_control_exp.stat9);
+                    g_control_exp.change9 = true;
                     if(g_control_notificar == 0) g_control_notificar = 25;
                 }
             }
@@ -432,7 +454,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir1 == 0)
     {
-        if(HTTPGetFormData(in, "EXP01", tmp))
+        if(HTTPGetFormData(in, "EXP1", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -447,7 +469,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir3 == 0)
     {
-        if(HTTPGetFormData(in, "EXP03", tmp))
+        if(HTTPGetFormData(in, "EXP3", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -462,7 +484,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir4 == 0)
     {
-        if(HTTPGetFormData(in, "EXP04", tmp))
+        if(HTTPGetFormData(in, "EXP4", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -477,7 +499,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir5 == 0)
     {
-        if(HTTPGetFormData(in, "EXP05", tmp))
+        if(HTTPGetFormData(in, "EXP5", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -492,7 +514,7 @@ void CTRLSetIO(char* in)
 
     if(g_control_exp.dir7 == 0)
     {
-        if(HTTPGetFormData(in, "EXP07", tmp))
+        if(HTTPGetFormData(in, "EXP7", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -507,7 +529,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir8 == 0)
     {
-        if(HTTPGetFormData(in, "EXP08", tmp))
+        if(HTTPGetFormData(in, "EXP8", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -522,7 +544,7 @@ void CTRLSetIO(char* in)
     
     if(g_control_exp.dir9 == 0)
     {
-        if(HTTPGetFormData(in, "EXP09", tmp))
+        if(HTTPGetFormData(in, "EXP9", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -541,7 +563,7 @@ void CTRLConfIO(char* in)
 {
     char tmp[10];
     
-    if(HTTPGetFormData(in, "DIR1", tmp))
+    if(HTTPGetFormData(in, "IO1", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -560,7 +582,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIR2", tmp))
+    if(HTTPGetFormData(in, "IO2", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -579,7 +601,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIR3", tmp))
+    if(HTTPGetFormData(in, "IO3", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -598,7 +620,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIR4", tmp))
+    if(HTTPGetFormData(in, "IO4", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -617,7 +639,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP01", tmp))
+    if(HTTPGetFormData(in, "EXP1", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -636,7 +658,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP03", tmp))
+    if(HTTPGetFormData(in, "EXP3", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -655,7 +677,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP04", tmp))
+    if(HTTPGetFormData(in, "EXP4", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -674,7 +696,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP05", tmp))
+    if(HTTPGetFormData(in, "EXP5", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -693,7 +715,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP07", tmp))
+    if(HTTPGetFormData(in, "EXP7", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -712,7 +734,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP08", tmp))
+    if(HTTPGetFormData(in, "EXP8", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
@@ -731,7 +753,7 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DIREXP09", tmp))
+    if(HTTPGetFormData(in, "EXP9", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
