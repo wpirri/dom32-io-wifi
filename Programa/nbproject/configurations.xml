@@ -121,7 +121,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value="-Os"/>
+        <property key="optimization-level" value="-O3"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -191,12 +191,12 @@
         <property key="oXC32ld-extra-opts" value=""/>
         <property key="optimization-level" value=""/>
         <property key="preprocessor-macros" value=""/>
-        <property key="remove-unused-sections" value="true"/>
+        <property key="remove-unused-sections" value="false"/>
         <property key="report-memory-usage" value="false"/>
         <property key="serial-length" value=""/>
         <property key="serial-origin" value=""/>
         <property key="stack-size" value=""/>
-        <property key="symbol-stripping" value=""/>
+        <property key="symbol-stripping" value="-s"/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
       </C32-LD>
@@ -232,7 +232,7 @@
       <C32Global>
         <property key="common-include-directories" value=""/>
         <property key="gp-relative-option" value=""/>
-        <property key="legacy-libc" value="false"/>
+        <property key="legacy-libc" value="true"/>
         <property key="mdtcm" value=""/>
         <property key="mitcm" value=""/>
         <property key="mstacktcm" value="false"/>

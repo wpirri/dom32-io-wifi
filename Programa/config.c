@@ -39,15 +39,9 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.exp_io_config = 0xFF;
     g_wifi_info.f.config.wifi_host1_port = 80;
     g_wifi_info.f.config.wifi_host2_port = 80;
-    g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
     strcpy(g_wifi_info.f.config.rqst_path, "/cgi-bin");
 
-    /* TODO: Sacar esto - solo para pruebas */
-    strcpy(g_wifi_info.f.config.wifi_ap1, "872e-b");
-    strcpy(g_wifi_info.f.config.wifi_ap1_pass, "00464bab872e");
-    strcpy(g_wifi_info.f.config.wifi_ap2, "872e-a");
-    strcpy(g_wifi_info.f.config.wifi_ap1_pass, "00464bab872e");
-    strcpy(g_wifi_info.f.config.wifi_host1, "192.168.10.25");
+    g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;
 }
@@ -82,34 +76,34 @@ void ConfigSave(void)
     g_wifi_info.status.save_config = 0;
     
     g_wifi_info.f.config.an_config = (
-            (g_control_io.ana1)?0x01:0 ||
-            (g_control_io.ana2)?0x02:0 ||
-            (g_control_io.ana3)?0x04:0 ||
-            (g_control_io.ana4)?0x08:0 );
+            ((g_control_io.ana1)?0x01:0) |
+            ((g_control_io.ana2)?0x02:0) |
+            ((g_control_io.ana3)?0x04:0) |
+            ((g_control_io.ana4)?0x08:0) );
 
     g_wifi_info.f.config.io_config = (
-            (g_control_io.dir1)?0x01:0 ||
-            (g_control_io.dir2)?0x02:0 ||
-            (g_control_io.dir3)?0x04:0 ||
-            (g_control_io.dir4)?0x08:0 );
+            ((g_control_io.dir1)?0x01:0) |
+            ((g_control_io.dir2)?0x02:0) |
+            ((g_control_io.dir3)?0x04:0) |
+            ((g_control_io.dir4)?0x08:0) );
 
     g_wifi_info.f.config.exp_an_config = (
-            (g_control_exp.ana1)?0x01:0 ||
-            (g_control_exp.ana3)?0x02:0 ||
-            (g_control_exp.ana4)?0x04:0 ||
-            (g_control_exp.ana5)?0x08:0 ||
-            (g_control_exp.ana7)?0x10:0 ||
-            (g_control_exp.ana8)?0x20:0 ||
-            (g_control_exp.ana9)?0x40:0 );
+            ((g_control_exp.ana1)?0x01:0) |
+            ((g_control_exp.ana3)?0x02:0) |
+            ((g_control_exp.ana4)?0x04:0) |
+            ((g_control_exp.ana5)?0x08:0) |
+            ((g_control_exp.ana7)?0x10:0) |
+            ((g_control_exp.ana8)?0x20:0) |
+            ((g_control_exp.ana9)?0x40:0) );
 
     g_wifi_info.f.config.exp_io_config = (
-            (g_control_exp.dir1)?0x01:0 ||
-            (g_control_exp.dir3)?0x02:0 ||
-            (g_control_exp.dir4)?0x04:0 ||
-            (g_control_exp.dir5)?0x08:0 ||
-            (g_control_exp.dir7)?0x10:0 ||
-            (g_control_exp.dir8)?0x20:0 ||
-            (g_control_exp.dir9)?0x40:0 );
+            ((g_control_exp.dir1)?0x01:0) |
+            ((g_control_exp.dir3)?0x02:0) |
+            ((g_control_exp.dir4)?0x04:0) |
+            ((g_control_exp.dir5)?0x08:0) |
+            ((g_control_exp.dir7)?0x10:0) |
+            ((g_control_exp.dir8)?0x20:0) |
+            ((g_control_exp.dir9)?0x40:0) );
 
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 

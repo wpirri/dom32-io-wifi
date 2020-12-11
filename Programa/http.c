@@ -66,7 +66,11 @@ typedef struct
     char type;
     char timeout;
     char rqst[16];
+#ifdef INCLUDE_IO_FORMS    
     char data[1250];
+#else
+    char data[512];
+#endif
 } http_data;
 
 http_data htdat[WIFI_CIP_MAX_CONS];
@@ -318,7 +322,7 @@ void HttpReturnExpConfigForm(char *out)
             "%s"
             "<html>\n"
             "<head>\n"
-            "<title>Dom32IO - Expansion Status</title>\n"
+            "<title>Dom32IO - Expansion Config</title>\n"
             "</head>\n"
             "<style>\n"
             "body{background-color:grey;font-size:24pt;}\n"
@@ -627,6 +631,9 @@ const char* HTTPGet(int id, char* buffer)
     return NULL;
 }
 
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
 void HTTPNotificarStatus(void)
 {
     sprintf(http_rqst_data, 
