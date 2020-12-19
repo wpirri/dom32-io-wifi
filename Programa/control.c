@@ -28,8 +28,17 @@
 
 unsigned int g_control_notificar;
 
+void CTRLNotificarStatus( int time )
+{
+    if(time < g_control_notificar || g_control_notificar == 0)
+    {
+        g_control_notificar = time;
+    }
+}
+
 void CTRLInit( void )
 {
+    g_control_notificar = 0;
     /* Extradas */
     g_control_io.ana1 = (g_wifi_info.f.config.an_config & 0x01)?1:0;
     g_control_io.dir1 = (g_wifi_info.f.config.io_config & 0x01)?1:0;
@@ -90,7 +99,7 @@ void CTRLInit( void )
     else                    {TRISBCLR = (1 << 12);}
     
     /* Primer notificacion */
-    g_control_notificar = 100;
+    CTRLNotificarStatus(100);
 }
 
 void CTRLTask( void )
@@ -111,7 +120,7 @@ void CTRLTask( void )
                 {
                     g_control_io.stat1 = IN1_GetValue();
                     g_control_io.change1 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -120,7 +129,7 @@ void CTRLTask( void )
                 {
                     IN1_SetValue(g_control_io.stat1);
                     g_control_io.change1 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -135,7 +144,7 @@ void CTRLTask( void )
                 {
                     g_control_io.stat2 = IN2_GetValue();
                     g_control_io.change2 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -144,7 +153,7 @@ void CTRLTask( void )
                 {
                     IN2_SetValue(g_control_io.stat2);
                     g_control_io.change2 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -159,7 +168,7 @@ void CTRLTask( void )
                 {
                     g_control_io.stat3 = IN3_GetValue();
                     g_control_io.change3 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -168,7 +177,7 @@ void CTRLTask( void )
                 {
                     IN3_SetValue(g_control_io.stat3);
                     g_control_io.change3 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -183,7 +192,7 @@ void CTRLTask( void )
                 {
                     g_control_io.stat4 = IN4_GetValue();
                     g_control_io.change4 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -192,7 +201,7 @@ void CTRLTask( void )
                 {
                     IN4_SetValue(g_control_io.stat4);
                     g_control_io.change4 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -207,7 +216,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat1 = EXP01_GetValue();
                     g_control_exp.change1 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -216,7 +225,7 @@ void CTRLTask( void )
                 {
                     EXP01_SetValue(g_control_exp.stat1);
                     g_control_exp.change1 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -231,7 +240,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat3 = EXP03_GetValue();
                     g_control_exp.change3 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(25);
                 }
             }
             else                        /* Output */
@@ -240,7 +249,7 @@ void CTRLTask( void )
                 {
                     EXP03_SetValue(g_control_exp.stat3);
                     g_control_exp.change3 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -255,7 +264,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat4 = EXP04_D0_GetValue();
                     g_control_exp.change4 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -264,7 +273,7 @@ void CTRLTask( void )
                 {
                     EXP04_D0_SetValue(g_control_exp.stat4);
                     g_control_exp.change4 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -279,7 +288,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat5 = EXP05_GetValue();
                     g_control_exp.change5 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -288,7 +297,7 @@ void CTRLTask( void )
                 {
                     EXP05_SetValue(g_control_exp.stat5);
                     g_control_exp.change5 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -303,7 +312,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat7 = EXP07_GetValue();
                     g_control_exp.change7 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -312,7 +321,7 @@ void CTRLTask( void )
                 {
                     EXP07_SetValue(g_control_exp.stat7);
                     g_control_exp.change7 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -327,7 +336,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat8 = EXP08_D1_GetValue();
                     g_control_exp.change8 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -336,7 +345,7 @@ void CTRLTask( void )
                 {
                     EXP08_D1_SetValue(g_control_exp.stat8);
                     g_control_exp.change8 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -351,7 +360,7 @@ void CTRLTask( void )
                 {
                     g_control_exp.stat9 = EXP09_GetValue();
                     g_control_exp.change9 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 5;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
@@ -360,7 +369,7 @@ void CTRLTask( void )
                 {
                     EXP09_SetValue(g_control_exp.stat9);
                     g_control_exp.change9 = true;
-                    if(g_control_notificar == 0) g_control_notificar = 25;
+                    CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -381,14 +390,14 @@ void CTRLTimer( void )
             if(HTTPNotificarStatus() == 0 )
             {
                 /* programo un reintento */
-                g_control_notificar = 10;
+                CTRLNotificarStatus(10);
             }
         }
     }
     else if(g_control_notificar == 0)
     {
         /* notifico cada minuto */
-        g_control_notificar = 600;
+        CTRLNotificarStatus(600);
     }
 }
 
@@ -396,7 +405,7 @@ void CTRLSetIO(char* in)
 {
     char tmp[10];
     
-    if(g_control_notificar == 0) g_control_notificar = 5;
+    CTRLNotificarStatus(5);
 
     if(g_control_io.dir1 == 0)
     {
@@ -569,7 +578,7 @@ void CTRLConfIO(char* in)
 {
     char tmp[10];
     
-    if(g_control_notificar == 0) g_control_notificar = 5;
+    CTRLNotificarStatus(5);
     
     if(HTTPGetFormData(in, "IO1", tmp))
     {
