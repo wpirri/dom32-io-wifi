@@ -24,12 +24,12 @@ void HTTPTask( void );
 
 void HTTPTimer( void );
 
-void HTTPAdd(int id, const char* buffer);
+int HTTPAdd(int id, const char* buffer);
 int HTTPPending(void);
 char HTTPGetType(int id);
 const char*  HTTPGet(int id, char* buffer);
 
-void HTTPNotificarStatus(void);
+int HTTPNotificarStatus(void);
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
 

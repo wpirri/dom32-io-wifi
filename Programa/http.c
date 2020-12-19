@@ -303,7 +303,7 @@ void HttpReturnIOConfigForm(char *out)
             "<h1>I/O</h1><hr />\n"
             "PORT 1:&nbsp;"
             "<select id=\"it\" name=\"IO1\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"IO2\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>outon</option></select>\n"
+            "<select id=\"it\" name=\"IO2\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
             "<select id=\"it\" name=\"IO3\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
             "<select id=\"it\" name=\"IO4\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
             "</form>\n"
@@ -545,7 +545,7 @@ void HTTPTimer( void )
 /* *****************************************************************************
  * 
  * ************************************************************************** */
-void HTTPAdd(int id, const char* buffer)
+int HTTPAdd(int id, const char* buffer)
 {
     char *p;
     if(id >= 0 && id < WIFI_CIP_MAX_CONS)
@@ -568,6 +568,7 @@ void HTTPAdd(int id, const char* buffer)
                     htdat[id].data[sizeof(htdat[id].data)-1] = 0;
                 }
             }
+            return 1;
         }
     }
     else if(id < 0)
@@ -582,10 +583,11 @@ void HTTPAdd(int id, const char* buffer)
                 htdat[id].type = 'S';
                 strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
                 htdat[id].data[sizeof(htdat[id].data)-1] = 0;
-                return;
+                return 1;
             }
         }
     }
+    return 0;
 }
 
 /* *****************************************************************************
@@ -634,7 +636,7 @@ const char* HTTPGet(int id, char* buffer)
 /* *****************************************************************************
  * 
  * ************************************************************************** */
-void HTTPNotificarStatus(void)
+int HTTPNotificarStatus(void)
 {
     sprintf(http_rqst_data, 
             "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
@@ -676,7 +678,11 @@ void HTTPNotificarStatus(void)
             g_wifi_info.f.config.wifi_host1,
             strlen(http_rqst_data),
             http_rqst_data);
-    HTTPAdd((-1), http_rqst);
+    if(HTTPAdd((-1), http_rqst) == 0)
+    {
+        /* No fue posible enviar */
+        return 0;
+    }
     
     g_control_io.change1 = 0;
     g_control_io.change2 = 0;

@@ -378,7 +378,11 @@ void CTRLTimer( void )
         g_control_notificar--;
         if(g_control_notificar == 0)
         {
-            HTTPNotificarStatus();
+            if(HTTPNotificarStatus() == 0 )
+            {
+                /* programo un reintento */
+                g_control_notificar = 10;
+            }
         }
     }
     else if(g_control_notificar == 0)
@@ -392,6 +396,8 @@ void CTRLSetIO(char* in)
 {
     char tmp[10];
     
+    if(g_control_notificar == 0) g_control_notificar = 5;
+
     if(g_control_io.dir1 == 0)
     {
         if(HTTPGetFormData(in, "IO1", tmp))
@@ -562,6 +568,8 @@ void CTRLSetIO(char* in)
 void CTRLConfIO(char* in)
 {
     char tmp[10];
+    
+    if(g_control_notificar == 0) g_control_notificar = 5;
     
     if(HTTPGetFormData(in, "IO1", tmp))
     {
