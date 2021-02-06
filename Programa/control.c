@@ -405,7 +405,7 @@ void CTRLSetIO(char* in)
 {
     char tmp[10];
     
-    CTRLNotificarStatus(5);
+//    CTRLNotificarStatus(5);
 
     if(g_control_io.dir1 == 0)
     {
@@ -578,7 +578,7 @@ void CTRLConfIO(char* in)
 {
     char tmp[10];
     
-    CTRLNotificarStatus(5);
+//    CTRLNotificarStatus(5);
     
     if(HTTPGetFormData(in, "IO1", tmp))
     {

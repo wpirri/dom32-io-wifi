@@ -6,8 +6,6 @@
         <group name="Domotica"/>
         <group>
             <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/wifi.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/http.h</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/control.h</file>
             <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/control.c</file>
             <file>file:/C:/Users/walte/OneDrive/Documentos/GitHub/dom32-io-wifi/Programa/http.c</file>
         </group>

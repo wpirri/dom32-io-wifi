@@ -407,7 +407,7 @@ void HttpProcessFormConfig(char* in)
 }
 
 /* *****************************************************************************
- * 
+ * Inicialización, llamar al inicio
  * ************************************************************************** */
 void HTTPInit( void )
 {
@@ -415,7 +415,7 @@ void HTTPInit( void )
 }
 
 /* *****************************************************************************
- * 
+ * Tareas de HTTP, llamar desde el loop de procesamiento
  * ************************************************************************** */
 void HTTPTask( void )
 {
@@ -517,6 +517,12 @@ void HTTPTask( void )
         }
         htdat[id].type = 'R';
     }
+    else if(htdat[id].type == 'H')
+    {
+        /* Se trata de una respuesta HTTP/1... */
+        CTRLConfIO(htdat[id].data);
+        CTRLSetIO(htdat[id].data);
+    }
     
     id++;
     if(id > WIFI_CIP_MAX_CONS) id = 0;
@@ -543,7 +549,9 @@ void HTTPTimer( void )
 }
 
 /* *****************************************************************************
- * 
+ * Agrega un mensaje HTTP a la cola para su tratamiento segun su tipo
+ * P - POST recibido, hay que procesar
+ * G - GET recibido, hay que procesar
  * ************************************************************************** */
 int HTTPAdd(int id, const char* buffer)
 {
@@ -591,7 +599,7 @@ int HTTPAdd(int id, const char* buffer)
 }
 
 /* *****************************************************************************
- * 
+ * Devuelve el indice de un mensaje pendiente de procesar
  * ************************************************************************** */
 int HTTPPending(void)
 {
@@ -604,7 +612,7 @@ int HTTPPending(void)
 }
 
 /* *****************************************************************************
- * 
+ * Devuelte el tipo de mensaje encolado en el índice
  * ************************************************************************** */
 char HTTPGetType(int id)
 {
@@ -616,7 +624,7 @@ char HTTPGetType(int id)
 }
 
 /* *****************************************************************************
- * 
+ * Saca un mensaje de la cola para procesar
  * ************************************************************************** */
 const char* HTTPGet(int id, char* buffer)
 {
@@ -634,7 +642,7 @@ const char* HTTPGet(int id, char* buffer)
 }
 
 /* *****************************************************************************
- * 
+ * Genera un mensaje WEB con formato de formulario POST y lo encola para enviar
  * ************************************************************************** */
 int HTTPNotificarStatus(void)
 {
