@@ -61,6 +61,8 @@
 #include <sys/time.h>
 
 bool main_flag_core_timer;
+int main_flag_core_timer_div_count;
+
 
 void LedControl( void )
 {
@@ -112,6 +114,8 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
+    main_flag_core_timer_div_count = 0;
+
 
     SYSTEM_Initialize();
     ConfigInit();
@@ -120,6 +124,8 @@ int main(void)
     WiFiInit();
     HTTPInit();
     CTRLInit();
+    DHT11Init();
+    WGND_Init();
     
     while(1)
     {
@@ -128,17 +134,26 @@ int main(void)
         WiFiTask();
         HTTPTask();
         CTRLTask();
+        DHT11Task();
+        WGND_Task();
         
         if(main_flag_core_timer)
         {
             main_flag_core_timer = false;
-
-            LedControl();
-            ConfigTimer();
-            WiFiTimer();
-            HTTPTimer();
-            CTRLTimer();
-            
+            main_flag_core_timer_div_count++;
+            if(main_flag_core_timer_div_count >= 10)
+            {
+                main_flag_core_timer_div_count = 0;
+                /* Timer 10 veces por segundo - 100ms */
+                LedControl();
+                ConfigTimer();
+                WiFiTimer();
+                HTTPTimer();
+                CTRLTimer();
+                WGND_Timer();
+            }
+            /* Timer 100 veces por segundo - 10ms */
+            DHT11Timer();
         }
     }
     return 1; 

@@ -24,6 +24,8 @@
 #include "config.h"
 #include "wifi.h"
 #include "http.h"
+#include "wiegand.h"
+#include "dht11.h"
 #include "strfunc.h"
 
 #endif /* _MAIN_H_ */

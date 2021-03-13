@@ -26,6 +26,8 @@
       <itemPath>strfunc.h</itemPath>
       <itemPath>http.h</itemPath>
       <itemPath>control.h</itemPath>
+      <itemPath>dht11.h</itemPath>
+      <itemPath>wiegand.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -55,6 +57,8 @@
       <itemPath>strfunc.c</itemPath>
       <itemPath>http.c</itemPath>
       <itemPath>control.c</itemPath>
+      <itemPath>dht11.c</itemPath>
+      <itemPath>wiegand.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
