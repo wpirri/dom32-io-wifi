@@ -1,0 +1,186 @@
+Mínimo
+---------------------------------------------------------------------------
+clear
+telnet 192.168.10.25 80
+POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 23
+User-Agent: Mozilla/1.0 (mplabxc; DomIO32; pi32mm) Chrome/86.0.4240.99 Mobile Safari/100.0
+Accept: text/html,application/xhtml+xml,application/xml
+Content-Type: application/x-www-form-urlencoded
+
+IO1=1&IO2=1&IO3=1&IO4=1
+
+
+Completo
+----------------------------------------------------------------------------
+clear
+telnet 192.168.10.25 80
+POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 91
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://192.168.10.25
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Referer: http://192.168.10.25/cgi-bin/config.cgi
+Accept-Language: es-ES,es;q=0.9,en;q=0.8
+
+ap1=872e-b&ap1p=00464bab872e&ap2=872e-a&ap2p=00464bab872e&ce1=192.168.10.5&ce2=192.168.20.5
+
+
+
+
+wget http://192.168.10.25:80/cgi-bin/infoio.cgi
+GET /cgi-bin/infoio.cgi HTTP/1.1" 200 1126 "-" "Wget/1.20.1 (linux-gnu)
+
+
+Pruebas
+----------------------------------------------------------------
+clear
+telnet 192.168.10.25 80
+POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 23
+User-Agent: Wget/1.20.1 (linux-gnu)
+Accept: text/html,application/xhtml+xml,application/xml
+Content-Type: application/x-www-form-urlencoded
+
+IO1=1&IO2=1&IO3=1&IO4=1
+----------------------------------------------------------------
+clear
+telnet 192.168.10.25 80
+POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 23
+User-Agent: Dom32io/1.00 (Microchip-PIC32)
+Accept: text/html,application/xhtml+xml,application/xml
+Content-Type: application/x-www-form-urlencoded
+
+IO1=1&IO2=1&IO3=1&IO4=1
+----------------------------------------------------------------
+clear
+telnet 192.168.10.25 80
+POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 23
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+IO1=1&IO2=1&IO3=1&IO4=1
+
+
+
+
+
+
+
+
+
+Trace
+====================================================================================================
+Hypertext Transfer Protocol
+    GET /cgi-bin/config.cgi HTTP/1.1\r\n
+    Host: 192.168.10.25\r\n
+    Connection: keep-alive\r\n
+    Cache-Control: max-age=0\r\n
+    Upgrade-Insecure-Requests: 1\r\n
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36\r\n
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\n
+    Accept-Encoding: gzip, deflate\r\n
+    Accept-Language: es-ES,es;q=0.9,en;q=0.8\r\n
+    \r\n
+<html>
+<head>
+<title>Dom32IO</title>
+</head>
+<style>
+body{background-color:grey;font-size:24pt;}
+#it{height:75;font-size:24pt}
+</style>
+<body>
+<form method="POST" action="/cgi-bin/config.cgi">
+<h1>WiFi</h1><hr /><h2>AP1:</h2>
+&nbsp;<input id="it" type="text" name="ap1" value="872e-b">&nbsp;<input  id="it" type="text" name="ap1p" value="00464bab872e"><br>
+<h2>AP2:</h2>
+&nbsp;<input id="it" type="text" name="ap2" value="872e-a">&nbsp;<input  id="it" type="text" name="ap2p" value="00464bab872e"><br>
+<h2>Central:</h2>
+&nbsp;<input id="it" type="text" name="ce1" value="192.168.10.5">&nbsp;<input  id="it" type="text" name="ce2" value="192.168.20.5"><br>
+<br>
+<br>
+&nbsp;&nbsp;<input  id="it" type="submit" value="Guardar"></form>
+<h2>Datos</h2>
+<pre>
+REMOTE_ADDR:    192.168.10.206
+REQUEST_URI:    /cgi-bin/config.cgi
+REQUEST_METHOD: GET
+CONTENT_LENGTH: 
+POST_DATA:      
+</pre>
+<h2>crudo</h2>
+<pre>
+GATEWAY_INTERFACE=CGI/1.1
+REMOTE_ADDR=192.168.10.206
+QUERY_STRING=
+HTTP_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36
+DOCUMENT_ROOT=/var/www/html
+REMOTE_PORT=60350
+HTTP_UPGRADE_INSECURE_REQUESTS=1
+HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+SERVER_SIGNATURE=<address>Apache/2.4.10 (Raspbian) Server at 192.168.10.25 Port 80</address>
+
+HTTP_CACHE_CONTROL=max-age=0
+CONTEXT_DOCUMENT_ROOT=/usr/lib/cgi-bin/
+SCRIPT_FILENAME=/usr/lib/cgi-bin/config.cgi
+HTTP_HOST=192.168.10.25
+REQUEST_URI=/cgi-bin/config.cgi
+SERVER_SOFTWARE=Apache/2.4.10 (Raspbian)
+HTTP_CONNECTION=keep-alive
+REQUEST_SCHEME=http
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HTTP_ACCEPT_LANGUAGE=es-ES,es;q=0.9,en;q=0.8
+SERVER_PROTOCOL=HTTP/1.1
+HTTP_ACCEPT_ENCODING=gzip, deflate
+REQUEST_METHOD=GET
+SERVER_ADDR=192.168.10.25
+SERVER_ADMIN=webmaster@localhost
+CONTEXT_PREFIX=/cgi-bin/
+PWD=/usr/lib/cgi-bin
+SERVER_PORT=80
+SCRIPT_NAME=/cgi-bin/config.cgi
+SERVER_NAME=192.168.10.25
+</pre>
+</body>
+</html>
+
+==============================================================================================================
+
+Hypertext Transfer Protocol
+    POST /cgi-bin/config.cgi HTTP/1.1\r\n
+    Host: 192.168.10.25\r\n
+    Connection: keep-alive\r\n
+    Content-Length: 91\r\n
+    Cache-Control: max-age=0\r\n
+    Upgrade-Insecure-Requests: 1\r\n
+    Origin: http://192.168.10.25\r\n
+    Content-Type: application/x-www-form-urlencoded\r\n
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36\r\n
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\n
+    Referer: http://192.168.10.25/cgi-bin/config.cgi\r\n
+    Accept-Encoding: gzip, deflate\r\n
+    Accept-Language: es-ES,es;q=0.9,en;q=0.8\r\n
+    \r\n
+
+ap1=872e-b&ap1p=00464bab872e&ap2=872e-a&ap2p=00464bab872e&ce1=192.168.10.5&ce2=192.168.20.5
+
+
+
+

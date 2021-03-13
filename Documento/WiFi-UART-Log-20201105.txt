@@ -1,0 +1,60 @@
+ready
+AT
+
+OK
+AT+GMR
+AT version:1.7.4.0(May 11 2020 19:13:04)
+SDK version:3.0.4(9532ceb)
+compile time:May 27 2020 10:12:20
+Bin version(Wroom 02):1.7.4
+OK
+AT+CIPSERVER=0
+
+ERROR
+AT+CWMODE=3
+
+OK
+AT+CIPMUX=1
+
+OK
+AT+CIPSERVER=1,80
+
+OK
++STA_CONNECTED:"1c:cc:d6:42:44:e9"
++DIST_STA_IP:"1c:cc:d6:42:44:e9","192.168.4.2"
+0,CONNECT
+1,CONNECT
+
++IPD,0,443:GET / HTTP/1.1
+Host: 192.168.4.1
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.110 Mobile Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: es-ES,es;q=0.9,en;q=0.8
+
+AT+CIPSERVER=0
+
+OK
+0,CLOSED
+1,CLOSED
+AT+CWMODE=1
+
+OK
++STA_DISCONNECTED:"1c:cc:d6:42:44:e9"
+AT+CIPMUX=1
+
+OK
+AT+CIPSERVER=1,3100
+
+OK
+AT+CWAUTOCONN=1
+
+OK
+AT+CWJAP="872e-a","00464bab872e"
+WIFI CONNECTED
+WIFI GOT IP
+
+OK
+
