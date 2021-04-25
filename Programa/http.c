@@ -55,7 +55,7 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
                             "Host: %s\r\n"
                             "Connection: close\r\n"
                             "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
-                            "Accept: text/html,text/xml\r\n\r\n%s";
+                            "Accept: text/html,text/xml\r\n\r\n";
 
 char http_rqst[1024];
 char http_rqst_data[256];
@@ -673,6 +673,10 @@ int HTTPNotificarStatus(void)
             (g_control_exp.change7)?'1':'0',
             (g_control_exp.change8)?'1':'0',
             (g_control_exp.change9)?'1':'0');
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
     sprintf(http_rqst_uri, "%s/infoio.cgi", 
             g_wifi_info.f.config.rqst_path);
 /* POST

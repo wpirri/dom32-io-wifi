@@ -17,10 +17,6 @@
  ***************************************************************************/
 #include "wiegand.h"
 
-#include "cconfig.h"
-#include "cctrl.h"
-#include "minipow.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

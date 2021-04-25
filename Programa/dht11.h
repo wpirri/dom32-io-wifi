@@ -18,27 +18,18 @@
 #ifndef _DHT11_H_
 #define	_DHT11_H_
 
-//#define DHT11_POWER_TRIS  
-//#define DHT11_POWER_OUT   
-//#define DHT11_POWER_IN    
-
-#define DHT11_DATA_TRIS   TRISBbits.TRISB12
-#define DHT11_DATA_OUT    LATBbits.LATB12
-#define DHT11_DATA_IN     PORTBbits.RB12
-#define DHT11_DATA_PULLUP CNPUBbits.CNPUB12
+#define DHT11_DATA_TRIS
+#define DHT11_DATA_IO  
+#define DHT11_DATA_IN  
 
 #define DHT11_REFRESH_DELAY 600
 
 void DHT11Init( void );
-
-unsigned char DHT11Task( void );
+void DHT11Task( void );
 void DHT11Timer( void );
 
-/* Para obtener los datos directamente Sin Task ni Timer */
-/*void DHT11GetData( void );*/
-
-unsigned char DHT11Temperatura( void );
-unsigned char DHT11Humedad( void );
+int DHT11Temperatura( void );
+int DHT11Humedad( void );
 
 #endif	/* _DHT11_H_ */
 

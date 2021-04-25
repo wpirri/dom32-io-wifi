@@ -125,7 +125,7 @@ int main(void)
     HTTPInit();
     CTRLInit();
     DHT11Init();
-    WGND_Init();
+    //WGND_Init();
     
     while(1)
     {
@@ -135,7 +135,7 @@ int main(void)
         HTTPTask();
         CTRLTask();
         DHT11Task();
-        WGND_Task();
+        //WGND_Task();
         
         if(main_flag_core_timer)
         {
@@ -150,7 +150,7 @@ int main(void)
                 WiFiTimer();
                 HTTPTimer();
                 CTRLTimer();
-                WGND_Timer();
+                //WGND_Timer();
             }
             /* Timer 100 veces por segundo - 10ms */
             DHT11Timer();

@@ -18,14 +18,14 @@
 #ifndef _MAIN_H_    /* Guard against multiple inclusion */
 #define _MAIN_H_
 
-#define INCLUDE_IO_FORMS
+#define NO_INCLUDE_IO_FORMS
 
 #include "mcc_generated_files/mcc.h"
 #include "config.h"
 #include "wifi.h"
 #include "http.h"
-#include "wiegand.h"
 #include "dht11.h"
+//#include "wiegand.h"
 #include "strfunc.h"
 
 #endif /* _MAIN_H_ */

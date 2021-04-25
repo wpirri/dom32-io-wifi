@@ -18,8 +18,6 @@
 #ifndef _WIEGAND_H_
 #define	_WIEGAND_H_
 
-#include "cconfig.h"
-
 void WGND_Init( void );
 void WGND_Timer( void );
 void WGND_Ack( void );

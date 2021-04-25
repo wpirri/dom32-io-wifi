@@ -26,9 +26,9 @@
 #define MAX_BIT_LEN 100
 #define MAX_HEAD_LEN 150
 
-unsigned char DHT11_temperatura;
-unsigned char DHT11_humedad;
-unsigned int DHT11_refresh_delay;
+int DHT11_temperatura;
+int DHT11_humedad;
+int DHT11_refresh_delay;
 unsigned long DHT11_timeout_delay;
 unsigned char DHT11_bitCount;
 unsigned char DHT11_highlen;
@@ -63,22 +63,7 @@ dht_11 dht11;
 
 void DHT11Init( void )
 {
-    /* Salida para alimentar el sensor */
-    #ifdef DHT11_POWER_TRIS
-    SetOutput(DHT11_POWER_TRIS, DHT11_POWER_BIT);
-    /* Enciendo el sensor */
-    SetBit(DHT11_POWER_OUT, DHT11_POWER_BIT);
-    #endif
-    DHT11_DATA_TRIS = 1;
-    DHT11_DATA_PULLUP = 1;
 
-  
-    DHT11_temperatura = 0;
-    DHT11_humedad = 0;
-
-    DHT11_STM = DHT11_INIT;
-    DHT11_refresh_delay = 0;
-    DHT11_timeout_delay = 0;
 }
 
 /*
@@ -96,223 +81,23 @@ void DHT11Init( void )
            8 bits   Checksum
 
 */
-unsigned char __attribute__((optimize("-O0"))) DHT11Task( void )
+void DHT11Task( void )
 {
-    switch(DHT11_STM)
-    {
-        case DHT11_INIT:
-            //LED = 0;
-            DHT11_bitCount = 0;
 
-            DHT11_bitCount = 0;
-            DHT11_highlen = 0;
-            DHT11_lowlen = 0;
-
-            dht11.buffer[0] = 0;
-            dht11.buffer[1] = 0;
-            dht11.buffer[2] = 0;
-            dht11.buffer[3] = 0;
-            dht11.buffer[4] = 0;
-            DHT11_STM++;
-            break;
-        case DHT11_NONE:
-            break;
-        case DHT11_WAIT:
-            /* Espera el start */
-            if(DHT11_DATA_IN) DHT11_STM++;
-            break;
-        case DHT11_START:
-            /* Salteo el header */
-            while(!DHT11_DATA_IN && ++DHT11_lowlen < MAX_BIT_LEN);
-            if(DHT11_lowlen > MAX_BIT_LEN)
-            {
-                DHT11_STM = DHT11_ERROR;
-                break;
-            }
-            while(DHT11_DATA_IN && ++DHT11_highlen < MAX_BIT_LEN);
-            if(DHT11_highlen > MAX_BIT_LEN)
-            {
-                DHT11_STM = DHT11_ERROR;
-                break;
-            }
-            /* Ac� arrancan los datos */
-            //LED = 1;
-            DHT11_highlen = 0;
-            DHT11_lowlen = 0;
-            DHT11_bitCount = 0;
-            while(DHT11_bitCount < 40)
-            {
-                /* Mientras est� abajo o error */
-                while( !DHT11_DATA_IN && ++DHT11_lowlen < MAX_BIT_LEN);
-                while(  DHT11_DATA_IN && ++DHT11_highlen < MAX_BIT_LEN);
-                if(DHT11_highlen > MAX_BIT_LEN || DHT11_lowlen > MAX_BIT_LEN) break;
-                
-                if(DHT11_highlen > DHT11_lowlen)
-                {
-                    dht11.buffer[DHT11_bitCount/8] |= 1 << (7 - (DHT11_bitCount%8));
-                }
-                DHT11_highlen = 0;
-                DHT11_lowlen = 0;
-                DHT11_bitCount++;
-            }
-            //LED = 0;
-            if(DHT11_highlen > MAX_BIT_LEN || DHT11_lowlen > MAX_BIT_LEN) DHT11_STM = DHT11_ERROR;
-            else DHT11_STM++;
-            break;
-        case DHT11_CONTROL:
-            /* Controlo el checksum */
-            dht11.buffer[4] -= dht11.buffer[3];
-            dht11.buffer[4] -= dht11.buffer[2];
-            dht11.buffer[4] -= dht11.buffer[1];
-            dht11.buffer[4] -= dht11.buffer[0];
-            
-            if(dht11.buffer[4] == 0)
-            {
-                DHT11_temperatura = dht11.data.temp_ent;
-                DHT11_humedad = dht11.data.hum_ent;
-            }
-                
-            DHT11_STM = DHT11_INIT;
-            break;
-        case DHT11_ERROR:
-            DHT11_STM = DHT11_INIT;
-            break;
-    }
-    return ((DHT11_STM<=DHT11_NONE)?0:1);
 }
 
 /* Debe ser llamado 10 veces x seg */
 void DHT11Timer( void )
 {
-    DHT11_refresh_delay++;
 
-    if(DHT11_refresh_delay >= DHT11_REFRESH_DELAY)
-    {
-        DHT11_refresh_delay = 0;
-        /* Genero el pulso para solicitar datos */
-        DHT11_DATA_TRIS = 0;
-        DHT11_DATA_OUT = 0;
-        /* Cada DHT11_REFRESH_DELAY pongo en out en canal de datos 
-           y mando un cero por 20ms (con 18ms alcanza) */
-        __delay_ms(20);
-        /* Fin del pulso, pongo el canal como input, el pull-up deberia mantenerlo arriba */
-        DHT11_DATA_TRIS = 1;
-        /*  */
-        DHT11_STM = DHT11_WAIT;
-        DHT11_timeout_delay = 5;
-    }
-    
-    if(DHT11_timeout_delay)
-    {
-        DHT11_timeout_delay--;
-        if(DHT11_timeout_delay == 0)
-        {
-            DHT11_STM = DHT11_INIT;
-        }
-    }
-    
 }
 
-#ifdef __COMMENT__
-void __attribute__((optimize("-O0"))) DHT11GetData( void )
-{
-    /* Genero el pulso para solicitar datos */
-    DHT11_DATA_TRIS = 0;
-    DHT11_DATA_OUT = 0;
-    /* Cada DHT11_REFRESH_DELAY pongo en out en canal de datos 
-       y mando un cero por 20ms (con 18ms alcanza) */
-    __delay_ms(20);
-    /* Fin del pulso, pongo el canal como input, el pull-up deberia mantenerlo arriba */
-    DHT11_DATA_TRIS = 1;
-    /* mientras espero inicializo las vaiables */
-    DHT11_bitCount = 0;
-
-    DHT11_bitCount = 0;
-    DHT11_highlen = 0;
-    DHT11_lowlen = 0;
-
-    dht11.buffer[0] = 0;
-    dht11.buffer[1] = 0;
-    dht11.buffer[2] = 0;
-    dht11.buffer[3] = 0;
-    dht11.buffer[4] = 0;
-    
-    /* Espera el start */
-    DHT11_timeout_delay = 100000;
-    while( !DHT11_DATA_IN && --DHT11_timeout_delay > 0);
-    if(!DHT11_DATA_IN)
-    {
-        return; /* timer-out esperando el START */
-    }
-    DHT11_timeout_delay = 100;
-    while(DHT11_DATA_IN && --DHT11_timeout_delay > 0);
-    if(DHT11_DATA_IN)
-    {
-        return; /* timer-out esperando el fin del START */
-    }
-    /* Fin del start */
-
-    /* Salteo el header */
-    while(!DHT11_DATA_IN && ++DHT11_lowlen < MAX_HEAD_LEN);
-    if(DHT11_lowlen > MAX_BIT_LEN)
-    {
-        return; /* Time-out en el header */
-    }
-    while(DHT11_DATA_IN && ++DHT11_highlen < MAX_HEAD_LEN);
-    if(DHT11_highlen > MAX_BIT_LEN)    {
-        return; /* Time-out en el header */
-    }
-    /* Fin del header */
-    
-    /* Aca arrancan los datos */
-    //LED = 1;
-    DHT11_highlen = 0;
-    DHT11_lowlen = 0;
-    DHT11_bitCount = 0;
-    while(DHT11_bitCount < 40)
-    {
-        /* Mientras est� abajo o error */
-        while( !DHT11_DATA_IN && ++DHT11_lowlen < MAX_BIT_LEN);
-        while(  DHT11_DATA_IN && ++DHT11_highlen < MAX_BIT_LEN);
-        if(DHT11_highlen > MAX_BIT_LEN || DHT11_lowlen > MAX_BIT_LEN) break;
-
-        if(DHT11_highlen > DHT11_lowlen)
-        {
-            dht11.buffer[DHT11_bitCount/8] |= 1 << (7 - (DHT11_bitCount%8));
-        }
-        DHT11_highlen = 0;
-        DHT11_lowlen = 0;
-        DHT11_bitCount++;
-    }
-    //LED = 0;
-    if(DHT11_highlen > MAX_BIT_LEN || DHT11_lowlen > MAX_BIT_LEN)
-    {
-        return;
-    }
-    /* Fin de datos */
-    
-    /* Controlo el checksum */
-    dht11.buffer[4] -= dht11.buffer[3];
-    dht11.buffer[4] -= dht11.buffer[2];
-    dht11.buffer[4] -= dht11.buffer[1];
-    dht11.buffer[4] -= dht11.buffer[0];
-
-    if(dht11.buffer[4] == 0)
-    {
-        /* Todo OK, lo paso a las variables correspondientes */
-        DHT11_temperatura = dht11.data.temp_ent;
-        DHT11_humedad = dht11.data.hum_ent;
-    }
-}
-
-#endif /* __COMMENT__ */
-
-unsigned char DHT11Temperatura( void )
+int DHT11Temperatura( void )
 {
     return DHT11_temperatura;
 }
 
-unsigned char DHT11Humedad( void )
+int DHT11Humedad( void )
 {
     return DHT11_humedad;
 }

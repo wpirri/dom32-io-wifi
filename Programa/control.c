@@ -788,6 +788,6 @@ void CTRLConfIO(char* in)
             g_control_exp.dir9 = 1;
         }
     }
-    
+    g_wifi_info.f.config.io_config_default = 0;
     g_wifi_info.status.save_config = 50;
 }
