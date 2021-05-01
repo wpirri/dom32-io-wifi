@@ -143,7 +143,7 @@ body{background-color:grey;font-size:24pt;}
 </body>
 </html>
 */
-void HttpReturnFormConfig(char *out)
+void HttpReturnWiFiFormConfig(char *out)
 {
     sprintf(out,
             "%s"
@@ -177,7 +177,79 @@ void HttpReturnFormConfig(char *out)
             g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
 }
 
+void HttpReturnWiFiConfig(char *out)
+{
+    sprintf(out,
+            "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
+            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
+            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port,
+            g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port,
+            g_wifi_info.f.config.rqst_path);
+}
+
+void HttpReturnStatus(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
+            "EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_io.stat1)?"on":"off",
+            (g_control_io.stat2)?"on":"off",
+            (g_control_io.stat3)?"on":"off",
+            (g_control_io.stat4)?"on":"off",
+            (g_control_exp.stat1)?"on":"off",
+            (g_control_exp.stat3)?"on":"off",
+            (g_control_exp.stat4)?"on":"off",
+            (g_control_exp.stat5)?"on":"off",
+            (g_control_exp.stat7)?"on":"off",
+            (g_control_exp.stat8)?"on":"off",
+            (g_control_exp.stat9)?"on":"off");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
 void HttpReturnIOStatus(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_io.stat1)?"on":"off",
+            (g_control_io.stat2)?"on":"off",
+            (g_control_io.stat3)?"on":"off",
+            (g_control_io.stat4)?"on":"off");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
+void HttpReturnExpStatus(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_exp.stat1)?"on":"off",
+            (g_control_exp.stat3)?"on":"off",
+            (g_control_exp.stat4)?"on":"off",
+            (g_control_exp.stat5)?"on":"off",
+            (g_control_exp.stat7)?"on":"off",
+            (g_control_exp.stat8)?"on":"off",
+            (g_control_exp.stat9)?"on":"off");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
+void HttpReturnIOStatusXML(char *out)
 {
     sprintf(out,
             "%s"
@@ -195,7 +267,7 @@ void HttpReturnIOStatus(char *out)
             (g_control_io.stat4)?"on":"off");
 }
 
-void HttpReturnExpStatus(char *out)
+void HttpReturnExpStatusXML(char *out)
 {
     sprintf(out,
             "%s"
@@ -353,7 +425,66 @@ void HttpReturnExpConfigForm(char *out)
 }
 #endif /* INCLUDE_IO_FORMS */
 
+void HttpReturnConfig(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
+            "EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_io.dir1)?"in":"out",
+            (g_control_io.dir2)?"in":"out",
+            (g_control_io.dir3)?"in":"out",
+            (g_control_io.dir4)?"in":"out",
+            (g_control_exp.dir1)?"in":"out",
+            (g_control_exp.dir3)?"in":"out",
+            (g_control_exp.dir4)?"in":"out",
+            (g_control_exp.dir5)?"in":"out",
+            (g_control_exp.dir7)?"in":"out",
+            (g_control_exp.dir8)?"in":"out",
+            (g_control_exp.dir9)?"in":"out");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
 void HttpReturnIOConfig(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_io.dir1)?"in":"out",
+            (g_control_io.dir2)?"in":"out",
+            (g_control_io.dir3)?"in":"out",
+            (g_control_io.dir4)?"in":"out");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
+void HttpReturnExpConfig(char *out)
+{
+    sprintf(out, 
+            "%sID=%s&EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_control_exp.dir1)?"in":"out",
+            (g_control_exp.dir3)?"in":"out",
+            (g_control_exp.dir4)?"in":"out",
+            (g_control_exp.dir5)?"in":"out",
+            (g_control_exp.dir7)?"in":"out",
+            (g_control_exp.dir8)?"in":"out",
+            (g_control_exp.dir9)?"in":"out");
+    if(g_wifi_info.f.config.io_config_default)
+    {
+        strcat(http_rqst_data, "&GETCONF=1");
+    }
+}
+
+void HttpReturnIOConfigXML(char *out)
 {
     sprintf(out,
             "%s"
@@ -371,7 +502,7 @@ void HttpReturnIOConfig(char *out)
             (g_control_io.dir4)?"in":"out");
 }
 
-void HttpReturnExpConfig(char *out)
+void HttpReturnExpConfigXML(char *out)
 {
     sprintf(out,
             "%s"
@@ -395,7 +526,7 @@ void HttpReturnExpConfig(char *out)
             (g_control_exp.dir9)?"in":"out");
 }
 
-void HttpProcessFormConfig(char* in)
+void HttpProcessWiFiFormConfig(char* in)
 {
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
@@ -426,23 +557,47 @@ void HTTPTask( void )
     {
         if( !strcmp(htdat[id].rqst, "/"))
         {
-            HttpReturnFormConfig(htdat[id].data);
+            HttpReturnWiFiFormConfig(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/iostatus.xml"))
+        else if( !strcmp(htdat[id].rqst, "/status.htm"))
+        {
+            HttpReturnStatus(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
         {
             HttpReturnIOStatus(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/exstatus.xml"))
+        else if( !strcmp(htdat[id].rqst, "/exstatus.htm"))
         {
             HttpReturnExpStatus(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/ioconfig.xml"))
+        else if( !strcmp(htdat[id].rqst, "/iostatus.xml"))
+        {
+            HttpReturnIOStatusXML(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/exstatus.xml"))
+        {
+            HttpReturnExpStatusXML(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/config.htm"))
+        {
+            HttpReturnConfig(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/ioconfig.htm"))
         {
             HttpReturnIOConfig(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/exconfig.xml"))
+        else if( !strcmp(htdat[id].rqst, "/exconfig.htm"))
         {
             HttpReturnExpConfig(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/ioconfig.xml"))
+        {
+            HttpReturnIOConfigXML(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/exconfig.xml"))
+        {
+            HttpReturnExpConfigXML(htdat[id].data);
         }
 #ifdef INCLUDE_IO_FORMS
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
@@ -472,8 +627,13 @@ void HTTPTask( void )
     {
         if( !strcmp(htdat[id].rqst, "/"))
         {
-            HttpProcessFormConfig(htdat[id].data);
-            HttpReturnFormConfig(htdat[id].data);
+            HttpProcessWiFiFormConfig(htdat[id].data);
+            HttpReturnWiFiFormConfig(htdat[id].data);
+        }
+        else if( !strcmp(htdat[id].rqst, "/wifi.cgi"))
+        {
+            HttpProcessWiFiFormConfig(htdat[id].data);
+            HttpReturnWiFiConfig(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
         {
