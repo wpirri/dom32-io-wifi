@@ -644,6 +644,11 @@ void HTTPTask( void )
             HttpReturnIOStatus(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
         }
+        else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
+        {
+            CTRLSwitchIO(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
+        }
         else if( !strcmp(htdat[id].rqst, "/exstatus.cgi"))
         {
             CTRLSetIO(htdat[id].data);
@@ -652,6 +657,11 @@ void HTTPTask( void )
 #else
             HttpReturnExpStatus(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
+        }
+        else if( !strcmp(htdat[id].rqst, "/exswitch.cgi"))
+        {
+            CTRLSwitchIO(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
