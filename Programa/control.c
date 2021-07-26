@@ -28,6 +28,21 @@
 
 unsigned int g_control_notificar;
 
+unsigned int g_control_count_in1;
+unsigned int g_control_count_in2;
+unsigned int g_control_count_in3;
+unsigned int g_control_count_in4;
+
+unsigned int g_control_count_ex1;
+unsigned int g_control_count_ex2;
+unsigned int g_control_count_ex3;
+unsigned int g_control_count_ex4;
+unsigned int g_control_count_ex5;
+unsigned int g_control_count_ex6;
+unsigned int g_control_count_ex7;
+unsigned int g_control_count_ex8;
+unsigned int g_control_count_ex9;
+
 void CTRLNotificarStatus( int time )
 {
     if(time < g_control_notificar || g_control_notificar == 0)
@@ -98,6 +113,20 @@ void CTRLInit( void )
     if(g_control_exp.dir9)  {TRISBSET = (1 << 12); CNPUBSET = (1 << 12);}
     else                    {TRISBCLR = (1 << 12);}
     
+    g_control_count_in1 = 0;
+    g_control_count_in2 = 0;
+    g_control_count_in3 = 0;
+    g_control_count_in4 = 0;
+    g_control_count_ex1 = 0;
+    g_control_count_ex2 = 0;
+    g_control_count_ex3 = 0;
+    g_control_count_ex4 = 0;
+    g_control_count_ex5 = 0;
+    g_control_count_ex6 = 0;
+    g_control_count_ex7 = 0;
+    g_control_count_ex8 = 0;
+    g_control_count_ex9 = 0;
+
     /* Primer notificacion */
     CTRLNotificarStatus(100);
 }
@@ -116,9 +145,13 @@ void CTRLTask( void )
             }
             else if(g_control_io.dir1)  /* Input */
             {
-                if(IN1_GetValue() != g_control_io.stat1)
+                if(IN1_GetValue() && g_control_count_in1 < DELAY_INPUT) g_control_count_in1++;
+                else if( !IN1_GetValue() && g_control_count_in1 > 0) g_control_count_in1--;
+                    
+                if( (g_control_count_in1 == 0 && g_control_io.stat1 == 1) ||
+                        (g_control_count_in1 == DELAY_INPUT && g_control_io.stat1 == 0) )
                 {
-                    g_control_io.stat1 = IN1_GetValue();
+                    g_control_io.stat1 = (g_control_count_in1)?1:0;
                     g_control_io.change1 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -140,9 +173,13 @@ void CTRLTask( void )
             }
             else if(g_control_io.dir2)  /* Input */
             {
-                if(IN2_GetValue() != g_control_io.stat2)
+                if(IN2_GetValue() && g_control_count_in2 < DELAY_INPUT) g_control_count_in2++;
+                else if( !IN2_GetValue() && g_control_count_in2 > 0) g_control_count_in2--;
+                    
+                if( (g_control_count_in2 == 0 && g_control_io.stat2 == 1) ||
+                        (g_control_count_in2 == DELAY_INPUT && g_control_io.stat2 == 0) )
                 {
-                    g_control_io.stat2 = IN2_GetValue();
+                    g_control_io.stat2 = (g_control_count_in2)?1:0;
                     g_control_io.change2 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -164,9 +201,13 @@ void CTRLTask( void )
             }
             else if(g_control_io.dir3)  /* Input */
             {
-                if(IN3_GetValue() != g_control_io.stat3)
+                if(IN3_GetValue() && g_control_count_in3 < DELAY_INPUT) g_control_count_in3++;
+                else if( !IN3_GetValue() && g_control_count_in3 > 0) g_control_count_in3--;
+                    
+                if( (g_control_count_in3 == 0 && g_control_io.stat3 == 1) ||
+                        (g_control_count_in3 == DELAY_INPUT && g_control_io.stat3 == 0) )
                 {
-                    g_control_io.stat3 = IN3_GetValue();
+                    g_control_io.stat3 = (g_control_count_in3)?1:0;
                     g_control_io.change3 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -188,9 +229,13 @@ void CTRLTask( void )
             }
             else if(g_control_io.dir4)  /* Input */
             {
-                if(IN4_GetValue() != g_control_io.stat4)
+                if(IN4_GetValue() && g_control_count_in4 < DELAY_INPUT) g_control_count_in4++;
+                else if( !IN4_GetValue() && g_control_count_in4 > 0) g_control_count_in4--;
+                    
+                if( (g_control_count_in4 == 0 && g_control_io.stat4 == 1) ||
+                        (g_control_count_in4 == DELAY_INPUT && g_control_io.stat4 == 0) )
                 {
-                    g_control_io.stat4 = IN4_GetValue();
+                    g_control_io.stat4 = (g_control_count_in4)?1:0;
                     g_control_io.change4 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -212,9 +257,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir1)  /* Input */
             {
-                if(EXP01_GetValue() != g_control_exp.stat1)
+                if(EXP01_GetValue() && g_control_count_ex1 < DELAY_INPUT) g_control_count_ex1++;
+                else if( !EXP01_GetValue() && g_control_count_ex1 > 0) g_control_count_ex1--;
+                    
+                if( (g_control_count_ex1 == 0 && g_control_exp.stat1 == 1) ||
+                        (g_control_count_ex1 == DELAY_INPUT && g_control_exp.stat1 == 0) )
                 {
-                    g_control_exp.stat1 = EXP01_GetValue();
+                    g_control_exp.stat1 = (g_control_count_ex1)?1:0;
                     g_control_exp.change1 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -236,9 +285,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir3)  /* Input */
             {
-                if(EXP03_GetValue() != g_control_exp.stat3)
+                if(EXP03_GetValue() && g_control_count_ex3 < DELAY_INPUT) g_control_count_ex3++;
+                else if( !EXP03_GetValue() && g_control_count_ex3 > 0) g_control_count_ex3--;
+                    
+                if( (g_control_count_ex3 == 0 && g_control_exp.stat3 == 1) ||
+                        (g_control_count_ex3 == DELAY_INPUT && g_control_exp.stat3 == 0) )
                 {
-                    g_control_exp.stat3 = EXP03_GetValue();
+                    g_control_exp.stat3 = (g_control_count_ex3)?1:0;
                     g_control_exp.change3 = true;
                     CTRLNotificarStatus(25);
                 }
@@ -260,9 +313,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir4)  /* Input */
             {
-                if(EXP04_D0_GetValue() != g_control_exp.stat4)
+                if(EXP04_D0_GetValue() && g_control_count_ex4 < DELAY_INPUT) g_control_count_ex4++;
+                else if( !EXP04_D0_GetValue() && g_control_count_ex4 > 0) g_control_count_ex4--;
+                    
+                if( (g_control_count_ex4 == 0 && g_control_exp.stat4 == 1) ||
+                        (g_control_count_ex4 == DELAY_INPUT && g_control_exp.stat4 == 0) )
                 {
-                    g_control_exp.stat4 = EXP04_D0_GetValue();
+                    g_control_exp.stat4 = (g_control_count_ex4)?1:0;
                     g_control_exp.change4 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -284,9 +341,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir5)  /* Input */
             {
-                if(EXP05_GetValue() != g_control_exp.stat5)
+                if(EXP05_GetValue() && g_control_count_ex5 < DELAY_INPUT) g_control_count_ex5++;
+                else if( !EXP05_GetValue() && g_control_count_ex5 > 0) g_control_count_ex5--;
+                    
+                if( (g_control_count_ex5 == 0 && g_control_exp.stat5 == 1) ||
+                        (g_control_count_ex5 == DELAY_INPUT && g_control_exp.stat5 == 0) )
                 {
-                    g_control_exp.stat5 = EXP05_GetValue();
+                    g_control_exp.stat5 = (g_control_count_ex5)?1:0;
                     g_control_exp.change5 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -308,9 +369,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir7)  /* Input */
             {
-                if(EXP07_GetValue() != g_control_exp.stat7)
+                if(EXP07_GetValue() && g_control_count_ex7 < DELAY_INPUT) g_control_count_ex7++;
+                else if( !EXP07_GetValue() && g_control_count_ex7 > 0) g_control_count_ex7--;
+                    
+                if( (g_control_count_ex7 == 0 && g_control_exp.stat7 == 1) ||
+                        (g_control_count_ex7 == DELAY_INPUT && g_control_exp.stat7 == 0) )
                 {
-                    g_control_exp.stat7 = EXP07_GetValue();
+                    g_control_exp.stat7 = (g_control_count_ex7)?1:0;
                     g_control_exp.change7 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -332,9 +397,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir8)  /* Input */
             {
-                if(EXP08_D1_GetValue() != g_control_exp.stat8)
+                if(EXP08_D1_GetValue() && g_control_count_ex8 < DELAY_INPUT) g_control_count_ex8++;
+                else if( !EXP08_D1_GetValue() && g_control_count_ex8 > 0) g_control_count_ex8--;
+                    
+                if( (g_control_count_ex8 == 0 && g_control_exp.stat8 == 1) ||
+                        (g_control_count_ex8 == DELAY_INPUT && g_control_exp.stat8 == 0) )
                 {
-                    g_control_exp.stat8 = EXP08_D1_GetValue();
+                    g_control_exp.stat8 = (g_control_count_ex8)?1:0;
                     g_control_exp.change8 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -356,9 +425,13 @@ void CTRLTask( void )
             }
             else if(g_control_exp.dir9)  /* Input */
             {
-                if(EXP09_GetValue() != g_control_exp.stat9)
+                if(EXP09_GetValue() && g_control_count_ex9 < DELAY_INPUT) g_control_count_ex9++;
+                else if( !EXP09_GetValue() && g_control_count_ex9 > 0) g_control_count_ex9--;
+                    
+                if( (g_control_count_ex9 == 0 && g_control_exp.stat9 == 1) ||
+                        (g_control_count_ex9 == DELAY_INPUT && g_control_exp.stat9 == 0) )
                 {
-                    g_control_exp.stat9 = EXP09_GetValue();
+                    g_control_exp.stat9 = (g_control_count_ex9)?1:0;
                     g_control_exp.change9 = true;
                     CTRLNotificarStatus(5);
                 }
@@ -568,6 +641,133 @@ void CTRLSetIO(char* in)
             else if( !strcmp(tmp, "off") )
             {
                 g_control_exp.stat9 = 0;
+            }
+        }
+    }
+        
+}
+
+void CTRLSwitchIO(char* in)
+{
+    char tmp[10];
+    
+    if(g_control_io.dir1 == 0)
+    {
+        if(HTTPGetFormData(in, "IO1", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_io.stat1 = (g_control_io.stat1)?0:1;
+            }
+        }
+    }
+
+    if(g_control_io.dir2 == 0)
+    {
+        if(HTTPGetFormData(in, "IO2", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_io.stat2 = (g_control_io.stat2)?0:1;
+            }
+        }
+    }
+
+    if(g_control_io.dir3 == 0)
+    {
+        if(HTTPGetFormData(in, "IO3", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_io.stat3 = (g_control_io.stat3)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_io.dir4 == 0)
+    {
+        if(HTTPGetFormData(in, "IO4", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_io.stat4 = (g_control_io.stat4)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir1 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP1", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat1 = (g_control_exp.stat1)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir3 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP3", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat3 = (g_control_exp.stat3)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir4 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP4", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat4 = (g_control_exp.stat4)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir5 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP5", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat5 = (g_control_exp.stat5)?0:1;
+            }
+        }
+    }
+
+    if(g_control_exp.dir7 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP7", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat7 = (g_control_exp.stat7)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir8 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP8", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat8 = (g_control_exp.stat8)?0:1;
+            }
+        }
+    }
+    
+    if(g_control_exp.dir9 == 0)
+    {
+        if(HTTPGetFormData(in, "EXP9", tmp))
+        {
+            if( !strcmp(tmp, "on") )
+            {
+                g_control_exp.stat9 = (g_control_exp.stat9)?0:1;
             }
         }
     }

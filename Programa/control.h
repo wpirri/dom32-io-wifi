@@ -20,6 +20,8 @@
 
 #include <stdbool.h>
 
+#define DELAY_INPUT 1000
+
 typedef struct
 {
     bool dir1;      /* true = input, false = output */
@@ -96,6 +98,7 @@ void CTRLTask( void );
 void CTRLTimer( void );
 
 void CTRLSetIO(char* in);
+void CTRLSwitchIO(char* in);
 void CTRLConfIO(char* in);
 
 #endif /* _CONTROL_H_ */
