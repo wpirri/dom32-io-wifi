@@ -58,7 +58,7 @@ F 3 "" H 5650 7300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C10
+L Device:C_Polarized C10
 U 1 1 5DCB76F2
 P 5600 4550
 F 0 "C10" V 5650 4350 50  0000 L CNN
@@ -405,7 +405,7 @@ Wire Wire Line
 Wire Wire Line
 	5150 7250 5150 7100
 $Comp
-L Device:CP C3
+L Device:C_Polarized C3
 U 1 1 5DD06DD2
 P 3600 1700
 F 0 "C3" H 3650 1550 50  0000 L CNN
@@ -1098,7 +1098,7 @@ F 3 "" H 5900 1500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C14
+L Device:C_Polarized C14
 U 1 1 5ED72089
 P 2500 1700
 F 0 "C14" H 2550 1550 50  0000 L CNN
