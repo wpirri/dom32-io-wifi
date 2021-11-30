@@ -14,7 +14,7 @@
     This header file provides APIs for driver for UART1.
     Generation Information :
         Product Revision  :  Foundation Services Library - pic24-dspic-pic32mm : v1.26
-        Device            :  PIC32MM0064GPL028
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
         Compiler          :  XC32 1.42
         MPLAB             :  MPLAB X 3.45

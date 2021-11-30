@@ -15,7 +15,7 @@
 
     Generation Information : 
         Product Revision  :  Foundation Services Library - pic24-dspic-pic32mm : v1.26
-        Device            :  PIC32MM0064GPL028
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
         Compiler          :  XC32 1.42
         MPLAB 	          :  MPLAB X 3.45
@@ -97,8 +97,8 @@ void (*UART1_RxDefaultInterruptHandler)(void);
 
 void UART1_Initialize (void)
 {
-   IEC0bits.U1TXIE = 0;
-   IEC0bits.U1RXIE = 0;
+   IEC1bits.U1TXIE = 0;
+   IEC1bits.U1RXIE = 0;
    
    // STSEL 1; PDSEL 8N; RTSMD disabled; OVFDIS disabled; ACTIVE disabled; RXINV disabled; WAKE disabled; BRGH enabled; IREN disabled; ON enabled; SLPEN disabled; SIDL disabled; ABAUD disabled; LPBACK disabled; UEN TX_RX; CLKSEL PBCLK; 
    U1MODE = (0x8008 & ~(1<<15));  // disabling UART
@@ -117,7 +117,7 @@ void UART1_Initialize (void)
    UART1_SetTxInterruptHandler(UART1_Transmit_ISR);
 
    UART1_SetRxInterruptHandler(UART1_Receive_ISR);
-   IEC0bits.U1RXIE = 1;
+   IEC1bits.U1RXIE = 1;
    
     //Make sure to set LAT bit corresponding to TxPin as high before UART initialization
    U1STASET = _U1STA_UTXEN_MASK;
@@ -141,11 +141,11 @@ void UART1_Transmit_ISR(void)
 { 
     if(txHead == txTail)
     {
-        IEC0bits.U1TXIE = 0;
+        IEC1bits.U1TXIE = 0;
         return;
     }
 
-    IFS0CLR= 1 << _IFS0_U1TXIF_POSITION;
+    IFS1CLR= 1 << _IFS1_U1TXIF_POSITION;
 
     while(!(U1STAbits.UTXBF == 1))
     {
@@ -199,7 +199,7 @@ void UART1_Receive_ISR(void)
 
     }
 
-      IFS0CLR= 1 << _IFS0_U1RXIF_POSITION;
+      IFS1CLR= 1 << _IFS1_U1RXIF_POSITION;
 }
 
 void __attribute__ ((vector(_UART1_ERR_VECTOR), interrupt(IPL1SOFT))) _UART1_ERR ( void )
@@ -209,7 +209,7 @@ void __attribute__ ((vector(_UART1_ERR_VECTOR), interrupt(IPL1SOFT))) _UART1_ERR
         U1STACLR = _U1STA_OERR_MASK; 
     }
 
-     IFS0CLR= 1 << _IFS0_U1EIF_POSITION;
+     IFS1CLR= 1 << _IFS1_U1EIF_POSITION;
 }
 
 /**
@@ -250,7 +250,7 @@ void UART1_Write( uint8_t byte)
         txTail = txQueue;
     }
 
-    IEC0bits.U1TXIE = 1;
+    IEC1bits.U1TXIE = 1;
 }
 
 bool UART1_IsRxReady(void)

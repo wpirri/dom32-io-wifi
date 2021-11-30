@@ -13,11 +13,11 @@
   @Description:
     This header file provides implementations for driver APIs for all modules selected in the GUI.
     Generation Information :
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.167.0
-        Device            :  PIC32MM0064GPL028
+        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.170.0
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
-        Compiler          :  XC16 v1.50
-        MPLAB             :  MPLAB X v5.35
+        Compiler          :  XC16 v1.61
+        MPLAB             :  MPLAB X v5.45
 */
 
 /*
@@ -50,7 +50,7 @@
 void CLOCK_Initialize(void)
 {
     SYSTEM_RegUnlock();
-    // TUN Center frequency; 
+    // ORPOL disabled; SIDL disabled; SRC SOSC; TUN Center frequency; POL disabled; ON disabled; 
     OSCTUN = 0x00;
     // SBOREN disabled; VREGS disabled; RETEN disabled; 
     PWRCON = 0x00;

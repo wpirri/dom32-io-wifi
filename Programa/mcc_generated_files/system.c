@@ -13,11 +13,11 @@
   @Description:
     This header file provides implementations for driver APIs for all modules selected in the GUI.
     Generation Information :
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.167.0
-        Device            :  PIC32MM0064GPL028
+        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.170.0
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
-        Compiler          :  XC16 v1.50
-        MPLAB             :  MPLAB X v5.35
+        Compiler          :  XC16 v1.61
+        MPLAB             :  MPLAB X v5.45
 */
 
 /*
@@ -46,6 +46,9 @@
 
 // FDEVOPT
 #pragma config SOSCHP = OFF    //Secondary Oscillator High Power Enable bit->SOSC oprerates in normal power mode.
+#pragma config ALTI2C = OFF    //Alternate I2C1 Pins Location Enable bit->Primary I2C1 pins are used
+#pragma config FUSBIDIO = OFF    //USBID pin control->USBID pin is controlled by the USB module
+#pragma config FVBUSIO = OFF    //VBUS Pin Control->VBUS pin is controlled by the USB module
 
 // FICD
 #pragma config JTAGEN = OFF    //JTAG Enable bit->JTAG is disabled
@@ -54,7 +57,7 @@
 // FPOR
 #pragma config BOREN = BOR3    //Brown-out Reset Enable bits->Brown-out Reset enabled in hardware; SBOREN bit disabled
 #pragma config RETVR = OFF    //Retention Voltage Regulator Enable bit->Retention regulator is disabled
-#pragma config LPBOREN = ON    //Low Power Brown-out Enable bit->Low power BOR is enabled, when main BOR is disabled
+#pragma config LPBOREN = ON    //Downside Voltage Protection Enable bit->Low power BOR is enabled, when main BOR is disabled
 
 // FWDT
 #pragma config SWDTPS = PS1048576    //Sleep Mode Watchdog Timer Postscale Selection bits->1:1048576
@@ -80,17 +83,17 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "coretimer.h"
-#include "memory/flash.h"
 #include "uart1.h"
+#include "memory/flash.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
+#include "coretimer.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    CLOCK_Initialize();
     INTERRUPT_Initialize();
+    CLOCK_Initialize();
     CORETIMER_Initialize();
     UART1_Initialize();
     INTERRUPT_GlobalEnable();

@@ -15,11 +15,11 @@
   @Description:
     This source file provides implementations for PIN MANAGER.
     Generation Information :
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.167.0
-        Device            :  PIC32MM0064GPL028
+        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.170.0
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
-        Compiler          :  XC32 v2.40
-        MPLAB 	          :  MPLAB X v5.35
+        Compiler          :  XC32 v2.50
+        MPLAB 	          :  MPLAB X v5.45
 */
 
 /*
@@ -56,12 +56,16 @@
 /**
  Section: File specific functions
 */
+void (*EXP05_D2_InterruptHandler)(void) = NULL;
 void (*EXP08_D1_InterruptHandler)(void) = NULL;
 void (*IN1_InterruptHandler)(void) = NULL;
 void (*IN3_InterruptHandler)(void) = NULL;
 void (*IN2_InterruptHandler)(void) = NULL;
 void (*EXP04_D0_InterruptHandler)(void) = NULL;
 void (*IN4_InterruptHandler)(void) = NULL;
+void (*EXP03_InterruptHandler)(void) = NULL;
+void (*EXP01_InterruptHandler)(void) = NULL;
+void (*EXP07_InterruptHandler)(void) = NULL;
 
 /**
  Section: Driver Interface Function Definitions
@@ -72,14 +76,14 @@ void PIN_MANAGER_Initialize (void)
      * Setting the Output Latch SFR(s)
      ***************************************************************************/
     LATA = 0x0000;
-    LATB = 0x2000;
+    LATB = 0x4000;
     LATC = 0x0000;
 
     /****************************************************************************
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
-    TRISA = 0x0014;
-    TRISB = 0x81FF;
+    TRISA = 0x001C;
+    TRISB = 0x8FFF;
     TRISC = 0x0200;
 
     /****************************************************************************
@@ -88,7 +92,7 @@ void PIN_MANAGER_Initialize (void)
     CNPDA = 0x0000;
     CNPDB = 0x0000;
     CNPDC = 0x0000;
-    CNPUA = 0x0004;
+    CNPUA = 0x000C;
     CNPUB = 0x01F0;
     CNPUC = 0x0000;
 
@@ -103,34 +107,45 @@ void PIN_MANAGER_Initialize (void)
      * Setting the Analog/Digital Configuration SFR(s)
      ***************************************************************************/
     ANSELA = 0x0000;
-    ANSELB = 0x400C;
+    ANSELB = 0x000C;
 
 
     /****************************************************************************
      * Interrupt On Change: any
      ***************************************************************************/
+    CNEN0Abits.CNIE0A2 = 1;    //Pin : RA2
+    CNEN0Abits.CNIE0A3 = 1;    //Pin : RA3
+    CNEN0Bbits.CNIE0B10 = 1;    //Pin : RB10
+    CNEN0Bbits.CNIE0B11 = 1;    //Pin : RB11
     CNEN0Bbits.CNIE0B4 = 1;    //Pin : RB4
     CNEN0Bbits.CNIE0B5 = 1;    //Pin : RB5
     CNEN0Bbits.CNIE0B6 = 1;    //Pin : RB6
     CNEN0Bbits.CNIE0B7 = 1;    //Pin : RB7
+    CNEN0Bbits.CNIE0B8 = 1;    //Pin : RB8
+    CNEN0Bbits.CNIE0B9 = 1;    //Pin : RB9
+    CNEN1Abits.CNIE1A2 = 1;    //Pin : RA2
+    CNEN1Abits.CNIE1A3 = 1;    //Pin : RA3
+    CNEN1Bbits.CNIE1B10 = 1;    //Pin : RB10
+    CNEN1Bbits.CNIE1B11 = 1;    //Pin : RB11
     CNEN1Bbits.CNIE1B4 = 1;    //Pin : RB4
     CNEN1Bbits.CNIE1B5 = 1;    //Pin : RB5
     CNEN1Bbits.CNIE1B6 = 1;    //Pin : RB6
     CNEN1Bbits.CNIE1B7 = 1;    //Pin : RB7
-    /****************************************************************************
-     * Interrupt On Change: negative
-     ***************************************************************************/
-    CNEN1Abits.CNIE1A2 = 1;    //Pin : RA2
     CNEN1Bbits.CNIE1B8 = 1;    //Pin : RB8
+    CNEN1Bbits.CNIE1B9 = 1;    //Pin : RB9
     /****************************************************************************
      * Interrupt On Change: flag
      ***************************************************************************/
     CNFAbits.CNFA2 = 0;    //Pin : RA2
+    CNFAbits.CNFA3 = 0;    //Pin : RA3
+    CNFBbits.CNFB10 = 0;    //Pin : RB10
+    CNFBbits.CNFB11 = 0;    //Pin : RB11
     CNFBbits.CNFB4 = 0;    //Pin : RB4
     CNFBbits.CNFB5 = 0;    //Pin : RB5
     CNFBbits.CNFB6 = 0;    //Pin : RB6
     CNFBbits.CNFB7 = 0;    //Pin : RB7
     CNFBbits.CNFB8 = 0;    //Pin : RB8
+    CNFBbits.CNFB9 = 0;    //Pin : RB9
     /****************************************************************************
      * Interrupt On Change: config
      ***************************************************************************/
@@ -140,12 +155,16 @@ void PIN_MANAGER_Initialize (void)
     CNCONBbits.ON = 1;    //Config for PORTB
     
     /* Initialize IOC Interrupt Handler*/
+    EXP05_D2_SetInterruptHandler(&EXP05_D2_CallBack);
     EXP08_D1_SetInterruptHandler(&EXP08_D1_CallBack);
     IN1_SetInterruptHandler(&IN1_CallBack);
     IN3_SetInterruptHandler(&IN3_CallBack);
     IN2_SetInterruptHandler(&IN2_CallBack);
     EXP04_D0_SetInterruptHandler(&EXP04_D0_CallBack);
     IN4_SetInterruptHandler(&IN4_CallBack);
+    EXP03_SetInterruptHandler(&EXP03_CallBack);
+    EXP01_SetInterruptHandler(&EXP01_CallBack);
+    EXP07_SetInterruptHandler(&EXP07_CallBack);
     
     /****************************************************************************
      * Interrupt On Change: Interrupt Enable
@@ -154,6 +173,11 @@ void PIN_MANAGER_Initialize (void)
     IEC0bits.CNAIE = 1; //Enable CNAI interrupt
     IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
     IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+}
+
+void __attribute__ ((weak)) EXP05_D2_CallBack(void)
+{
+
 }
 
 void __attribute__ ((weak)) EXP08_D1_CallBack(void)
@@ -184,6 +208,33 @@ void __attribute__ ((weak)) EXP04_D0_CallBack(void)
 void __attribute__ ((weak)) IN4_CallBack(void)
 {
 
+}
+
+void __attribute__ ((weak)) EXP03_CallBack(void)
+{
+
+}
+
+void __attribute__ ((weak)) EXP01_CallBack(void)
+{
+
+}
+
+void __attribute__ ((weak)) EXP07_CallBack(void)
+{
+
+}
+
+void EXP05_D2_SetInterruptHandler(void (* InterruptHandler)(void))
+{ 
+    IEC0bits.CNAIE = 0; //Disable CNAI interrupt
+    EXP05_D2_InterruptHandler = InterruptHandler; 
+    IEC0bits.CNAIE = 1; //Enable CNAI interrupt
+}
+
+void EXP05_D2_SetIOCInterruptHandler(void *handler)
+{ 
+    EXP05_D2_SetInterruptHandler(handler);
 }
 
 void EXP08_D1_SetInterruptHandler(void (* InterruptHandler)(void))
@@ -258,11 +309,57 @@ void IN4_SetIOCInterruptHandler(void *handler)
     IN4_SetInterruptHandler(handler);
 }
 
+void EXP03_SetInterruptHandler(void (* InterruptHandler)(void))
+{ 
+    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+    EXP03_InterruptHandler = InterruptHandler; 
+    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+}
+
+void EXP03_SetIOCInterruptHandler(void *handler)
+{ 
+    EXP03_SetInterruptHandler(handler);
+}
+
+void EXP01_SetInterruptHandler(void (* InterruptHandler)(void))
+{ 
+    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+    EXP01_InterruptHandler = InterruptHandler; 
+    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+}
+
+void EXP01_SetIOCInterruptHandler(void *handler)
+{ 
+    EXP01_SetInterruptHandler(handler);
+}
+
+void EXP07_SetInterruptHandler(void (* InterruptHandler)(void))
+{ 
+    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+    EXP07_InterruptHandler = InterruptHandler; 
+    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+}
+
+void EXP07_SetIOCInterruptHandler(void *handler)
+{ 
+    EXP07_SetInterruptHandler(handler);
+}
+
 /* Interrupt service routine for the CNAI interrupt. */
 void __attribute__ ((vector(_CHANGE_NOTICE_A_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_A( void )
 {
     if(IFS0bits.CNAIF == 1)
     {
+        if(CNFAbits.CNFA3 == 1)
+        {
+            if(EXP05_D2_InterruptHandler) 
+            { 
+                EXP05_D2_InterruptHandler(); 
+            }
+            
+            CNFACLR = 0x8;  //Clear CNFAbits.CNFA3
+        }
+        
         if(CNFAbits.CNFA2 == 1)
         {
             if(EXP08_D1_InterruptHandler) 
@@ -331,6 +428,36 @@ void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHA
             }
             
             CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
+        }
+        
+        if(CNFBbits.CNFB9 == 1)
+        {
+            if(EXP03_InterruptHandler) 
+            { 
+                EXP03_InterruptHandler(); 
+            }
+            
+            CNFBCLR = 0x200;  //Clear CNFBbits.CNFB9
+        }
+        
+        if(CNFBbits.CNFB10 == 1)
+        {
+            if(EXP01_InterruptHandler) 
+            { 
+                EXP01_InterruptHandler(); 
+            }
+            
+            CNFBCLR = 0x400;  //Clear CNFBbits.CNFB10
+        }
+        
+        if(CNFBbits.CNFB11 == 1)
+        {
+            if(EXP07_InterruptHandler) 
+            { 
+                EXP07_InterruptHandler(); 
+            }
+            
+            CNFBCLR = 0x800;  //Clear CNFBbits.CNFB11
         }
         
         // Clear the flag

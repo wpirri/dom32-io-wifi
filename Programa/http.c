@@ -538,7 +538,7 @@ void HttpProcessWiFiFormConfig(char* in)
 }
 
 /* *****************************************************************************
- * Inicialización, llamar al inicio
+ * Inicializacion, llamar al inicio
  * ************************************************************************** */
 void HTTPInit( void )
 {
@@ -782,7 +782,7 @@ int HTTPPending(void)
 }
 
 /* *****************************************************************************
- * Devuelte el tipo de mensaje encolado en el índice
+ * Devuelte el tipo de mensaje encolado en el indice
  * ************************************************************************** */
 char HTTPGetType(int id)
 {

@@ -139,7 +139,7 @@ void CTRLTask( void )
     switch(ctrl_stm)
     {
         case 1:
-            if(g_control_io.ana1)       /* Analógico */
+            if(g_control_io.ana1)       /* Analï¿½gico */
             {
                 
             }
@@ -167,7 +167,7 @@ void CTRLTask( void )
             }
             break;
         case 2:
-            if(g_control_io.ana2)       /* Analógico */
+            if(g_control_io.ana2)       /* Analï¿½gico */
             {
                 
             }
@@ -195,7 +195,7 @@ void CTRLTask( void )
             }
             break;
         case 3:
-            if(g_control_io.ana3)       /* Analógico */
+            if(g_control_io.ana3)       /* Analï¿½gico */
             {
                 
             }
@@ -223,7 +223,7 @@ void CTRLTask( void )
             }
             break;
         case 4:
-            if(g_control_io.ana4)       /* Analógico */
+            if(g_control_io.ana4)       /* Analï¿½gico */
             {
                 
             }
@@ -251,7 +251,7 @@ void CTRLTask( void )
             }
             break;
         case 5:
-            if(g_control_exp.ana1)       /* Analógico */
+            if(g_control_exp.ana1)       /* Analï¿½gico */
             {
                 
             }
@@ -279,7 +279,7 @@ void CTRLTask( void )
             }
             break;
         case 6:
-            if(g_control_exp.ana3)       /* Analógico */
+            if(g_control_exp.ana3)       /* Analï¿½gico */
             {
                 
             }
@@ -307,7 +307,7 @@ void CTRLTask( void )
             }
             break;
         case 7:
-            if(g_control_exp.ana4)       /* Analógico */
+            if(g_control_exp.ana4)       /* Analï¿½gico */
             {
                 
             }
@@ -335,14 +335,14 @@ void CTRLTask( void )
             }
             break;
         case 8:
-            if(g_control_exp.ana5)       /* Analógico */
+            if(g_control_exp.ana5)       /* Analï¿½gico */
             {
                 
             }
             else if(g_control_exp.dir5)  /* Input */
             {
-                if(EXP05_GetValue() && g_control_count_ex5 < DELAY_INPUT) g_control_count_ex5++;
-                else if( !EXP05_GetValue() && g_control_count_ex5 > 0) g_control_count_ex5--;
+                if(EXP05_D2_GetValue() && g_control_count_ex5 < DELAY_INPUT) g_control_count_ex5++;
+                else if( !EXP05_D2_GetValue() && g_control_count_ex5 > 0) g_control_count_ex5--;
                     
                 if( (g_control_count_ex5 == 0 && g_control_exp.stat5 == 1) ||
                         (g_control_count_ex5 == DELAY_INPUT && g_control_exp.stat5 == 0) )
@@ -354,16 +354,16 @@ void CTRLTask( void )
             }
             else                        /* Output */
             {
-                if(EXP05_GetValue() != g_control_exp.stat5)
+                if(EXP05_D2_GetValue() != g_control_exp.stat5)
                 {
-                    EXP05_SetValue(g_control_exp.stat5);
+                    EXP05_D2_SetValue(g_control_exp.stat5);
                     g_control_exp.change5 = true;
                     CTRLNotificarStatus(25);
                 }
             }
             break;
         case 9:
-            if(g_control_exp.ana7)       /* Analógico */
+            if(g_control_exp.ana7)       /* Analï¿½gico */
             {
                 
             }
@@ -391,7 +391,7 @@ void CTRLTask( void )
             }
             break;
         case 10:
-            if(g_control_exp.ana8)       /* Analógico */
+            if(g_control_exp.ana8)       /* Analï¿½gico */
             {
                 
             }
@@ -418,8 +418,9 @@ void CTRLTask( void )
                 }
             }
             break;
+#ifdef EXIST_EXP09
         case 11:
-            if(g_control_exp.ana9)       /* Analógico */
+            if(g_control_exp.ana9)       /* Analï¿½gico */
             {
                 
             }
@@ -446,6 +447,7 @@ void CTRLTask( void )
                 }
             }
             break;
+#endif /* EXIST_EXP09 */
         default:
             ctrl_stm = 0;
             break;

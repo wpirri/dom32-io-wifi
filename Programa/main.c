@@ -17,8 +17,8 @@
  ***************************************************************************/
 
 /* *****************************************************************************
- * Asignación de pines para PIC32MM0064GPL028 en DomTerm
- * 1    MCLR / Vpp                      Programación/Debug/Reset
+ * AsignaciÃ³n de pines para PIC32MM0064GPL028 en DomTerm
+ * 1    MCLR / Vpp                      ProgramaciÃ³n/Debug/Reset
  * 2    RA0                 out         Led Status
  * 3    RA1                 out         Led Modo
  * 4    RB0/PGED1                       Programacion/Debug
@@ -40,7 +40,7 @@
  * 20   VCap                            Cap 100n + 10uF
  * 21   RB10/RP17           out         EXP01
  * 22   RB11/RP18           out         EXP07
- * 23   RB12/RP12           out         EXP09
+ * 23   RB12/RP12           out         EXP09 (no existe en micros con USB)
  * 24   RB13/RP13           out/oc      ESP-WROOM-02_Reset-pin15
  * 25   RB14/RP19           tx          U1TX -> ESP-WROOM-02_Rx-pin11
  * 26   RB15/RP10           rx          U1RX -> ESP-WROOM-02_Tx-pin12

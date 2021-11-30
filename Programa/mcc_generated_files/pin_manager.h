@@ -15,11 +15,11 @@
   @Description:
     This source file provides implementations for PIN MANAGER.
     Generation Information :
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.167.0
-        Device            :  PIC32MM0064GPL028
+        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.170.0
+        Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
-        Compiler          :  XC32 v2.40
-        MPLAB 	          :  MPLAB X v5.35
+        Compiler          :  XC32 v2.50
+        MPLAB 	          :  MPLAB X v5.45
 */
 
 /*
@@ -619,11 +619,11 @@ inline static void EXP08_D1_SetValue(bool value)
   @Example
     <code>
     // Set RA3 high (1)
-    EXP05_SetHigh();
+    EXP05_D2_SetHigh();
     </code>
 
 */
-#define EXP05_SetHigh()          ( LATASET = (1 << 3) )
+#define EXP05_D2_SetHigh()          ( LATASET = (1 << 3) )
 /**
   @Summary
     Sets the GPIO pin, RA3, low using LATA3.
@@ -643,11 +643,11 @@ inline static void EXP08_D1_SetValue(bool value)
   @Example
     <code>
     // Set RA3 low (0)
-    EXP05_SetLow();
+    EXP05_D2_SetLow();
     </code>
 
 */
-#define EXP05_SetLow()           ( LATACLR = (1 << 3) )
+#define EXP05_D2_SetLow()           ( LATACLR = (1 << 3) )
 
 /**
   @Summary
@@ -668,19 +668,19 @@ inline static void EXP08_D1_SetValue(bool value)
   @Example
     <code>
     // Set RA3 to low.
-    EXP05_SetValue(false);
+    EXP05_D2_SetValue(false);
     </code>
 
 */
-inline static void EXP05_SetValue(bool value)
+inline static void EXP05_D2_SetValue(bool value)
 {
   if(value)
   {
-    EXP05_SetHigh();
+    EXP05_D2_SetHigh();
   }
   else
   {
-    EXP05_SetLow();
+    EXP05_D2_SetLow();
   }
 }
 
@@ -703,11 +703,11 @@ inline static void EXP05_SetValue(bool value)
   @Example
     <code>
     // Toggle RA3
-    EXP05_Toggle();
+    EXP05_D2_Toggle();
     </code>
 
 */
-#define EXP05_Toggle()           ( LATAINV = (1 << 3) )
+#define EXP05_D2_Toggle()           ( LATAINV = (1 << 3) )
 /**
   @Summary
     Reads the value of the GPIO pin, RA3.
@@ -729,11 +729,11 @@ inline static void EXP05_SetValue(bool value)
     uint16_t portValue;
 
     // Read RA3
-    postValue = EXP05_GetValue();
+    postValue = EXP05_D2_GetValue();
     </code>
 
 */
-#define EXP05_GetValue()         PORTAbits.RA3
+#define EXP05_D2_GetValue()         PORTAbits.RA3
 /**
   @Summary
     Configures the GPIO pin, RA3, as an input.
@@ -753,11 +753,11 @@ inline static void EXP05_SetValue(bool value)
   @Example
     <code>
     // Sets the RA3 as an input
-    EXP05_SetDigitalInput();
+    EXP05_D2_SetDigitalInput();
     </code>
 
 */
-#define EXP05_SetDigitalInput()   ( TRISASET = (1 << 3) )
+#define EXP05_D2_SetDigitalInput()   ( TRISASET = (1 << 3) )
 /**
   @Summary
     Configures the GPIO pin, RA3, as an output.
@@ -777,11 +777,11 @@ inline static void EXP05_SetValue(bool value)
   @Example
     <code>
     // Sets the RA3 as an output
-    EXP05_SetDigitalOutput();
+    EXP05_D2_SetDigitalOutput();
     </code>
 
 */
-#define EXP05_SetDigitalOutput()   ( TRISACLR = (1 << 3) )
+#define EXP05_D2_SetDigitalOutput()   ( TRISACLR = (1 << 3) )
 /**
   @Summary
     Sets the GPIO pin, RB10, high using LATB10.
@@ -1146,188 +1146,6 @@ inline static void EXP07_SetValue(bool value)
 
 */
 #define EXP07_SetDigitalOutput()   ( TRISBCLR = (1 << 11) )
-/**
-  @Summary
-    Sets the GPIO pin, RB12, high using LATB12.
-
-  @Description
-    Sets the GPIO pin, RB12, high using LATB12.
-
-  @Preconditions
-    The RB12 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RB12 high (1)
-    EXP09_SetHigh();
-    </code>
-
-*/
-#define EXP09_SetHigh()          ( LATBSET = (1 << 12) )
-/**
-  @Summary
-    Sets the GPIO pin, RB12, low using LATB12.
-
-  @Description
-    Sets the GPIO pin, RB12, low using LATB12.
-
-  @Preconditions
-    The RB12 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RB12 low (0)
-    EXP09_SetLow();
-    </code>
-
-*/
-#define EXP09_SetLow()           ( LATBCLR = (1 << 12) )
-
-/**
-  @Summary
-    Sets a value to the GPIO pin.
-
-  @Description
-    Sets or Resets the GPIO pin, RB12, low or high using LATB12.
-
-  @Preconditions
-    The RB12 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    bool value; : value to be set to the GPIO pin.
-
-  @Example
-    <code>
-    // Set RB12 to low.
-    EXP09_SetValue(false);
-    </code>
-
-*/
-inline static void EXP09_SetValue(bool value)
-{
-  if(value)
-  {
-    EXP09_SetHigh();
-  }
-  else
-  {
-    EXP09_SetLow();
-  }
-}
-
-/**
-  @Summary
-    Toggles the GPIO pin, RB12, using LATB12.
-
-  @Description
-    Toggles the GPIO pin, RB12, using LATB12.
-
-  @Preconditions
-    The RB12 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Toggle RB12
-    EXP09_Toggle();
-    </code>
-
-*/
-#define EXP09_Toggle()           ( LATBINV = (1 << 12) )
-/**
-  @Summary
-    Reads the value of the GPIO pin, RB12.
-
-  @Description
-    Reads the value of the GPIO pin, RB12.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    uint16_t portValue;
-
-    // Read RB12
-    postValue = EXP09_GetValue();
-    </code>
-
-*/
-#define EXP09_GetValue()         PORTBbits.RB12
-/**
-  @Summary
-    Configures the GPIO pin, RB12, as an input.
-
-  @Description
-    Configures the GPIO pin, RB12, as an input.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RB12 as an input
-    EXP09_SetDigitalInput();
-    </code>
-
-*/
-#define EXP09_SetDigitalInput()   ( TRISBSET = (1 << 12) )
-/**
-  @Summary
-    Configures the GPIO pin, RB12, as an output.
-
-  @Description
-    Configures the GPIO pin, RB12, as an output.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RB12 as an output
-    EXP09_SetDigitalOutput();
-    </code>
-
-*/
-#define EXP09_SetDigitalOutput()   ( TRISBCLR = (1 << 12) )
 /**
   @Summary
     Sets the GPIO pin, RB13, high using LATB13.
@@ -2608,7 +2426,7 @@ inline static void EXP03_SetValue(bool value)
 */
 /**
   @Summary
-    Configures the pin settings of the PIC32MM0064GPL028
+    Configures the pin settings of the PIC32MM0256GPM028
     The peripheral pin select, PPS, configuration is also handled by this manager.
 
   @Description
@@ -2636,6 +2454,27 @@ inline static void EXP03_SetValue(bool value)
 
 */
 void PIN_MANAGER_Initialize (void);
+
+/**
+  @Summary
+    Callback for EXP05_D2 Pin.
+
+  @Description
+    This routine is callback for EXP05_D2 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        EXP05_D2_SetInterruptHandler(&EXP05_D2_CallBack);
+    </code>
+*/
+void EXP05_D2_CallBack(void);
 
 /**
   @Summary
@@ -2763,6 +2602,109 @@ void EXP04_D0_CallBack(void);
 */
 void IN4_CallBack(void);
 
+/**
+  @Summary
+    Callback for EXP03 Pin.
+
+  @Description
+    This routine is callback for EXP03 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        EXP03_SetInterruptHandler(&EXP03_CallBack);
+    </code>
+*/
+void EXP03_CallBack(void);
+
+/**
+  @Summary
+    Callback for EXP01 Pin.
+
+  @Description
+    This routine is callback for EXP01 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        EXP01_SetInterruptHandler(&EXP01_CallBack);
+    </code>
+*/
+void EXP01_CallBack(void);
+
+/**
+  @Summary
+    Callback for EXP07 Pin.
+
+  @Description
+    This routine is callback for EXP07 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        EXP07_SetInterruptHandler(&EXP07_CallBack);
+    </code>
+*/
+void EXP07_CallBack(void);
+
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP05_D2_SetInterruptHandler(&EXP05_D2_CallBack);
+    </code>
+*/
+void EXP05_D2_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP05_D2_SetIOCInterruptHandler(&EXP05_D2_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXP05_D2_SetInterruptHandler instead."))) EXP05_D2_SetIOCInterruptHandler(void *handler);
 
 /**
   @Summary
@@ -3003,6 +2945,126 @@ void IN4_SetInterruptHandler(void (* InterruptHandler)(void));
     </code>
 */
 void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse IN4_SetInterruptHandler instead."))) IN4_SetIOCInterruptHandler(void *handler);
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP03_SetInterruptHandler(&EXP03_CallBack);
+    </code>
+*/
+void EXP03_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP03_SetIOCInterruptHandler(&EXP03_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXP03_SetInterruptHandler instead."))) EXP03_SetIOCInterruptHandler(void *handler);
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP01_SetInterruptHandler(&EXP01_CallBack);
+    </code>
+*/
+void EXP01_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP01_SetIOCInterruptHandler(&EXP01_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXP01_SetInterruptHandler instead."))) EXP01_SetIOCInterruptHandler(void *handler);
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP07_SetInterruptHandler(&EXP07_CallBack);
+    </code>
+*/
+void EXP07_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXP07_SetIOCInterruptHandler(&EXP07_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXP07_SetInterruptHandler instead."))) EXP07_SetIOCInterruptHandler(void *handler);
 
 
 #endif
