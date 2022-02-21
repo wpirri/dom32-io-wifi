@@ -173,8 +173,8 @@ $Comp
 L Device:C C13
 U 1 1 5DCDBCE7
 P 5650 2550
-F 0 "C13" H 5765 2596 50  0000 L CNN
-F 1 "100nf / 50v" H 5765 2505 50  0000 L CNN
+F 0 "C13" H 5550 3000 50  0000 L CNN
+F 1 "100nf / 50v" H 5400 2900 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 5688 2400 50  0001 C CNN
 F 3 "~" H 5650 2550 50  0001 C CNN
 	1    5650 2550
@@ -184,8 +184,8 @@ $Comp
 L Device:C C14
 U 1 1 5DCDBD3D
 P 6100 1300
-F 0 "C14" H 5750 1300 50  0000 L CNN
-F 1 "100nf / 50v" H 5550 1150 50  0000 L CNN
+F 0 "C14" H 6000 1900 50  0000 L CNN
+F 1 "100nf / 50v" H 5900 1800 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 6138 1150 50  0001 C CNN
 F 3 "~" H 6100 1300 50  0001 C CNN
 	1    6100 1300
@@ -398,8 +398,6 @@ Connection ~ 2250 1200
 Connection ~ 3700 1200
 Wire Wire Line
 	3700 1200 4100 1200
-Wire Wire Line
-	5950 1000 6100 1000
 $Comp
 L Connector_Generic:Conn_01x05 J1
 U 1 1 5DE6D3C2
@@ -527,30 +525,10 @@ Wire Wire Line
 	2450 4150 2450 3100
 Wire Wire Line
 	5150 3000 5650 3000
-$Comp
-L power:GND #PWR011
-U 1 1 5DDE0DA2
-P 5900 2850
-F 0 "#PWR011" H 5900 2600 50  0001 C CNN
-F 1 "GND" H 5905 2677 50  0001 C CNN
-F 2 "" H 5900 2850 50  0001 C CNN
-F 3 "" H 5900 2850 50  0001 C CNN
-	1    5900 2850
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5350 2350 5650 2350
 Wire Wire Line
 	5650 2350 5650 2400
-Wire Wire Line
-	5650 2700 5650 2800
-Wire Wire Line
-	5900 2850 5900 2800
-Wire Wire Line
-	5900 2800 5650 2800
-Connection ~ 5650 2800
-Wire Wire Line
-	5650 2800 5650 3000
 $Comp
 L Device:C C4
 U 1 1 5DFE4E5F
@@ -670,12 +648,12 @@ Wire Wire Line
 $Comp
 L Device:D D7
 U 1 1 5EE1D488
-P 5800 1000
-F 0 "D7" H 5900 900 50  0000 C CNN
-F 1 "M7" H 5700 900 50  0000 C CNN
-F 2 "Diode_SMD:D_SMA" H 5800 1000 50  0001 C CNN
-F 3 "~" H 5800 1000 50  0001 C CNN
-	1    5800 1000
+P 5650 1000
+F 0 "D7" H 5750 900 50  0000 C CNN
+F 1 "M7" H 5550 900 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 5650 1000 50  0001 C CNN
+F 3 "~" H 5650 1000 50  0001 C CNN
+	1    5650 1000
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
@@ -730,8 +708,6 @@ Wire Wire Line
 	2000 3600 2850 3600
 Wire Wire Line
 	2000 3650 2000 3600
-Wire Wire Line
-	5650 1000 5350 1000
 Wire Wire Line
 	5150 3100 6300 3100
 Wire Wire Line
@@ -1560,7 +1536,6 @@ Wire Wire Line
 	5350 1000 4100 1000
 Wire Wire Line
 	4100 1000 4100 1200
-Connection ~ 5350 1000
 Connection ~ 4100 1200
 $Comp
 L Device:LED D3
@@ -1606,11 +1581,63 @@ Wire Wire Line
 Wire Wire Line
 	8400 600  2250 600 
 Wire Wire Line
-	2200 2350 2750 2350
-Wire Wire Line
 	2250 600  2250 1200
 Wire Wire Line
 	8400 600  8400 2650
 Wire Wire Line
 	2000 2350 2750 2350
+$Comp
+L Device:C_Polarized C16
+U 1 1 62189655
+P 5850 1300
+F 0 "C16" H 5600 1150 50  0000 L CNN
+F 1 "100uf / 16v" H 5450 1000 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 5888 1150 50  0001 C CNN
+F 3 "~" H 5850 1300 50  0001 C CNN
+	1    5850 1300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5500 1000 5350 1000
+Connection ~ 5350 1000
+Wire Wire Line
+	5800 1000 5850 1000
+Wire Wire Line
+	5850 1150 5850 1000
+Connection ~ 5850 1000
+Wire Wire Line
+	5850 1000 6100 1000
+Wire Wire Line
+	5850 1450 5850 1500
+Wire Wire Line
+	5850 1500 6100 1500
+Wire Wire Line
+	5650 2700 5650 3000
+Wire Wire Line
+	5650 3000 5900 3000
+Wire Wire Line
+	6650 3000 6650 3700
+Connection ~ 5650 3000
+Connection ~ 6650 3700
+$Comp
+L Device:C_Polarized C17
+U 1 1 6221BD48
+P 5900 2550
+F 0 "C17" H 6000 2400 50  0000 L CNN
+F 1 "100uf / 16v" H 5700 2200 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 5938 2400 50  0001 C CNN
+F 3 "~" H 5900 2550 50  0001 C CNN
+	1    5900 2550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5650 2350 5900 2350
+Wire Wire Line
+	5900 2350 5900 2400
+Connection ~ 5650 2350
+Wire Wire Line
+	5900 2700 5900 3000
+Connection ~ 5900 3000
+Wire Wire Line
+	5900 3000 6650 3000
 $EndSCHEMATC
