@@ -53,6 +53,7 @@
 #include "pin_manager.h"
 
 #include "../wifi.h"
+#include "../led.h"
 
 /**
   Section: Core Timer Module APIs

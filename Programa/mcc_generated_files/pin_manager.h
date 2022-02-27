@@ -1148,6 +1148,188 @@ inline static void O1_SetValue(bool value)
 #define O1_SetDigitalOutput()   ( TRISBCLR = (1 << 11) )
 /**
   @Summary
+    Sets the GPIO pin, RB13, high using LATB13.
+
+  @Description
+    Sets the GPIO pin, RB13, high using LATB13.
+
+  @Preconditions
+    The RB13 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB13 high (1)
+    WIFI_RESET_SetHigh();
+    </code>
+
+*/
+#define WIFI_RESET_SetHigh()          ( LATBSET = (1 << 13) )
+/**
+  @Summary
+    Sets the GPIO pin, RB13, low using LATB13.
+
+  @Description
+    Sets the GPIO pin, RB13, low using LATB13.
+
+  @Preconditions
+    The RB13 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB13 low (0)
+    WIFI_RESET_SetLow();
+    </code>
+
+*/
+#define WIFI_RESET_SetLow()           ( LATBCLR = (1 << 13) )
+
+/**
+  @Summary
+    Sets a value to the GPIO pin.
+
+  @Description
+    Sets or Resets the GPIO pin, RB13, low or high using LATB13.
+
+  @Preconditions
+    The RB13 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    bool value; : value to be set to the GPIO pin.
+
+  @Example
+    <code>
+    // Set RB13 to low.
+    WIFI_RESET_SetValue(false);
+    </code>
+
+*/
+inline static void WIFI_RESET_SetValue(bool value)
+{
+  if(value)
+  {
+    WIFI_RESET_SetHigh();
+  }
+  else
+  {
+    WIFI_RESET_SetLow();
+  }
+}
+
+/**
+  @Summary
+    Toggles the GPIO pin, RB13, using LATB13.
+
+  @Description
+    Toggles the GPIO pin, RB13, using LATB13.
+
+  @Preconditions
+    The RB13 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB13
+    WIFI_RESET_Toggle();
+    </code>
+
+*/
+#define WIFI_RESET_Toggle()           ( LATBINV = (1 << 13) )
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB13.
+
+  @Description
+    Reads the value of the GPIO pin, RB13.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB13
+    postValue = WIFI_RESET_GetValue();
+    </code>
+
+*/
+#define WIFI_RESET_GetValue()         PORTBbits.RB13
+/**
+  @Summary
+    Configures the GPIO pin, RB13, as an input.
+
+  @Description
+    Configures the GPIO pin, RB13, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB13 as an input
+    WIFI_RESET_SetDigitalInput();
+    </code>
+
+*/
+#define WIFI_RESET_SetDigitalInput()   ( TRISBSET = (1 << 13) )
+/**
+  @Summary
+    Configures the GPIO pin, RB13, as an output.
+
+  @Description
+    Configures the GPIO pin, RB13, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB13 as an output
+    WIFI_RESET_SetDigitalOutput();
+    </code>
+
+*/
+#define WIFI_RESET_SetDigitalOutput()   ( TRISBCLR = (1 << 13) )
+/**
+  @Summary
     Sets the GPIO pin, RB2, high using LATB2.
 
   @Description
