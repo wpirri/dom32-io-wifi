@@ -63,7 +63,7 @@
 #pragma config SWDTPS = PS1048576    //Sleep Mode Watchdog Timer Postscale Selection bits->1:1048576
 #pragma config FWDTWINSZ = PS25_0    //Watchdog Timer Window Size bits->Watchdog timer window size is 25%
 #pragma config WINDIS = OFF    //Windowed Watchdog Timer Disable bit->Watchdog timer is in non-window mode
-#pragma config RWDTPS = PS1024    //Run Mode Watchdog Timer Postscale Selection bits->1:1024
+#pragma config RWDTPS = PS512    //Run Mode Watchdog Timer Postscale Selection bits->1:512
 #pragma config RCLKSEL = LPRC    //Run Mode Watchdog Timer Clock Source Selection bits->Clock source is LPRC (same as for sleep mode)
 #pragma config FWDTEN = ON    //Watchdog Timer Enable bit->WDT is enabled
 
@@ -75,7 +75,7 @@
 #pragma config POSCMOD = OFF    //Primary Oscillator Selection bit->Primary oscillator is disabled
 #pragma config OSCIOFNC = OFF    //System Clock on CLKO Pin Enable bit->OSCO pin operates as a normal I/O
 #pragma config SOSCSEL = ON    //Secondary Oscillator External Clock Enable bit->SCLKI pin configured for Digital mode
-#pragma config FCKSM = CSDCMD    //Clock Switching and Fail-Safe Clock Monitor Enable bits->Clock switching is disabled; Fail-safe clock monitor is disabled
+#pragma config FCKSM = CSECME    //Clock Switching and Fail-Safe Clock Monitor Enable bits->Clock switching is enabled; Fail-safe clock monitor is enabled
 
 // FSEC
 #pragma config CP = OFF    //Code Protection Enable bit->Code protection is disabled
@@ -83,18 +83,20 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "uart1.h"
+#include "coretimer.h"
 #include "memory/flash.h"
+#include "uart1.h"
+#include "uart2.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
-#include "coretimer.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    INTERRUPT_Initialize();
     CLOCK_Initialize();
+    INTERRUPT_Initialize();
     CORETIMER_Initialize();
+    UART2_Initialize();
     UART1_Initialize();
     INTERRUPT_GlobalEnable();
 }

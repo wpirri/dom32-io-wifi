@@ -60,16 +60,21 @@ void INTERRUPT_Initialize (void)
         IPC0bits.CTIP = 1;
     //    Sub Priority: 0
         IPC0bits.CTIS = 0;
-    //    CNAI: PORT A Change Notification
+    //    UERI: UART 2 Error
     //    Priority: 1
-        IPC2bits.CNAIP = 1;
+        IPC14bits.U2EIP = 1;
     //    Sub Priority: 0
-        IPC2bits.CNAIS = 0;
-    //    CNBI: PORT B Change Notification
+        IPC14bits.U2EIS = 0;
+    //    UTXI: UART 2 Transmission
     //    Priority: 1
-        IPC2bits.CNBIP = 1;
+        IPC14bits.U2TXIP = 1;
     //    Sub Priority: 0
-        IPC2bits.CNBIS = 0;
+        IPC14bits.U2TXIS = 0;
+    //    URXI: UART 2 Reception
+    //    Priority: 1
+        IPC14bits.U2RXIP = 1;
+    //    Sub Priority: 0
+        IPC14bits.U2RXIS = 0;
     //    UERI: UART 1 Error
     //    Priority: 1
         IPC13bits.U1EIP = 1;

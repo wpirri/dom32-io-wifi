@@ -10,3 +10,20 @@ Circuito/fp-info-cache
 Circuito/sym-lib-table
 Documento/bwb_minitekpwr4.2.pdf
 Documento/MOLEX-PS-5556-001.pdf
+/Programa/build/
+/Programa/dist/
+Documento/Placa-LadoA.jpg
+Documento/Placa-LadoB.jpg
+Documento/placa.png
+Documento/WiFi-UART-Log-20201105.txt
+Fabricacion/DOM32IOWIFI - Gerber Mayer - 20201015 - Error Esp02 PIN6.zip
+
+*.tmp
+Circuito/DomIO32.html
+Circuito/DomIO32.wrl
+Circuito/DomIO32.xml
+*.gbr
+*.drl
+Documento/Conpra DigiKey - 20201101.pdf
+Documento/Conpra DigiKey - 20201109.pdf
+Documento/Cotizacion Mayer - 20201014.pdf
