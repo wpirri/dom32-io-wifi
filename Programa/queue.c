@@ -39,6 +39,9 @@ typedef struct _QUEUE_ELEMENT
 
 volatile QUEUE_ELEMENT g_queue_list_buffer[MAX_QUEUE_COUNT];
 
+unsigned int queue_count_opens;
+unsigned int queue_count_max_opens;
+
 char* QueueNextByte(char* buffer_root, unsigned int buffer_len, char* current_byte)
 {
     current_byte++;
@@ -63,6 +66,8 @@ void QueueInit( void )
     {
         g_queue_list_buffer[i].buffer = NULL;
     }
+    queue_count_opens = 0;
+    queue_count_max_opens = 0;
 }
 
 unsigned int QueueOpen(char* buffer, unsigned int buffer_len)
@@ -83,6 +88,12 @@ unsigned int QueueOpen(char* buffer, unsigned int buffer_len)
             g_queue_list_buffer[i].max_element_count = 0;
             g_queue_list_buffer[i].buffer_used = 0;
             g_queue_list_buffer[i].max_buffer_used = 0;
+            
+            queue_count_opens++;
+            if(queue_count_opens > queue_count_max_opens)
+            {
+                queue_count_max_opens = queue_count_opens;
+            }
             return i;
         }
     }
@@ -94,6 +105,7 @@ void QueueClose(unsigned int id)
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
     {
         g_queue_list_buffer[id].buffer = NULL;
+        queue_count_opens--;
     }
 }
 
@@ -395,11 +407,20 @@ bool QueueClean(unsigned int id)
 /* estadisticas de uso de las colas */
 unsigned int QueueOpens( void )
 {
-    return 0;
+    return queue_count_opens;
 }
 
 unsigned int QueueMaxOpens( void )
 {
+    return queue_count_max_opens;
+}
+
+unsigned int QueueElements(unsigned int id)
+{
+    if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
+    {
+        return g_queue_list_buffer[id].element_count;
+    }
     return 0;
 }
 
@@ -407,7 +428,7 @@ unsigned int QueueBufferUsed(unsigned int id)
 {
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
     {
-        return g_queue_list_buffer[id].buffer_used = 0;
+        return g_queue_list_buffer[id].buffer_used;
     }
     return 0;
 }
@@ -416,7 +437,7 @@ unsigned int QueueMaxBufferUsed(unsigned int id)
 {
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
     {
-        return g_queue_list_buffer[id].max_buffer_used = 0;
+        return g_queue_list_buffer[id].max_buffer_used;
     }
     return 0;
 }

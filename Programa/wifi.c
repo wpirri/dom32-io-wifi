@@ -50,6 +50,10 @@ typedef enum
     ST_MODE,
     ST_MODE_STEP,
     ST_MODE_OK,
+
+    DATA_SEND,
+    DATA_SEND_STEP,
+    DATA_SEND_OK,
             
     MAIN,
     MAIN_LOOP,
@@ -58,7 +62,8 @@ typedef enum
     ERROR
 } wifi_task_stm;
 
-#define WIFI_RX_BUFFER_LEN 1024
+#define WIFI_RX_BUFFER_LEN 4096
+#define WIFI_TX_BUFFER_LEN 4096
 
 #define WIFI_MAX_CONN 4
 
@@ -67,6 +72,7 @@ typedef enum
 unsigned int wifi_queue_rx;
 char wifi_buffer_rx[WIFI_RX_BUFFER_LEN];
 unsigned int wifi_queue_tx;
+char wifi_buffer_tx[WIFI_TX_BUFFER_LEN];
 
 wifi_task_stm wifi_stm;
 int wifi_count_stm_no_process;
@@ -92,6 +98,240 @@ typedef struct _wifi_wait_for_st
 } wifi_wait_for_st;
 
 wifi_wait_for_st wwfst;
+
+void WifiSendLine(const char* msg, bool crlf);
+void WiFiCheckUnsol(const char* msg);
+void WiFiWaitFor(const char* wait, wifi_task_stm on_ok, wifi_task_stm on_error, int time_out);
+void ProcessReceiveQueue( void );
+void WiFiInitSeq( wifi_task_stm stm );
+void WiFiAPModeSeq( wifi_task_stm stm );
+void WiFiSTModeSeq( wifi_task_stm stm );
+void WiFiDataSendSeq( wifi_task_stm stm );
+
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+void WiFiInit( void )
+{
+    wifi_stm = RESET;
+    wifi_count_stm_no_process = 0;
+    wifi_count_rx_timer = 0;
+    wifi_count_command_seq = 0;
+    wifi_flag_rx_parse_on_lf = true;
+    wifi_count_config_mode_timer = 0;
+    wifi_count_msg_head = 0;
+    wifi_count_keep_alive = 0;
+    wifi_flag_keep_alive = false;
+    
+    wifi_queue_rx = QueueOpen(wifi_buffer_rx, WIFI_RX_BUFFER_LEN);
+    if(wifi_queue_rx == INVALID_QUEUE) printf("ERROR: Al crear cola de recepcion\r\n");
+
+    wifi_queue_tx = QueueOpen(wifi_buffer_tx, WIFI_TX_BUFFER_LEN);
+    if(wifi_queue_tx == INVALID_QUEUE) printf("ERROR: Al crear cola de transmision\r\n");
+
+    WiFiWaitFor(0, 0, 0, 0);
+}
+
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+void WiFiTask( void )
+{
+    ProcessReceiveQueue();
+    
+    if(wifi_count_stm_no_process) return;
+    switch(wifi_stm)
+    {
+        case RESET:
+            printf("INFO: WiFi RESET\r\n");
+            WIFI_RESET_SetLow();
+            wifi_count_stm_no_process = 30;
+            wifi_stm++;
+            break;
+        case START:
+            WIFI_RESET_SetHigh();
+            wifi_stm++;
+            break;
+        case CHECK_READY:
+            WiFiWaitFor("ready", INIT, FATALERROR, 10);
+            wifi_stm++;
+            break;
+        case WAIT_READY:
+            wifi_count_command_seq = 0;
+            break;
+        case INIT:
+            WiFiInitSeq(INIT_STEP);
+            break;
+        case  INIT_STEP:
+            wifi_count_command_seq++;
+            wifi_stm--;
+            break;
+        case  INIT_OK:
+            printf("INFO: Init OK\r\n");
+            wifi_count_command_seq = 0;
+            wifi_stm++;
+            break;
+        case AP_MODE:
+            WiFiAPModeSeq(AP_MODE_STEP);
+            break;
+        case AP_MODE_STEP:
+            wifi_count_command_seq++;
+            wifi_stm--;
+            break;
+        case AP_MODE_OK:
+            printf("INFO: AP Mode\r\n");
+            Led1(5);
+            Led2(0);
+            wifi_count_command_seq = 0;
+            wifi_count_config_mode_timer = 600;
+            wifi_stm++;
+            break;
+        case HTTP_CONFIG_STATE:
+            /* Configurando... */
+            break;
+        case ST_MODE:
+            WiFiSTModeSeq(ST_MODE_STEP);
+            break;
+        case ST_MODE_STEP:
+            wifi_count_command_seq++;
+            wifi_stm--;
+            break;
+        case ST_MODE_OK:
+            printf("INFO: ST Mode\r\n");
+            wifi_stm = MAIN;
+            break;
+        case DATA_SEND:
+            WiFiDataSendSeq(DATA_SEND_STEP);
+            break;            
+        case DATA_SEND_STEP:
+            wifi_count_command_seq++;
+            wifi_stm--;
+            break;            
+        case DATA_SEND_OK:
+            printf("INFO: Datos Emitidos\r\n");
+            wifi_stm = MAIN;
+            break;            
+        case MAIN:
+            Led1(0);
+            Led2(0);
+            wifi_count_command_seq = 0;
+            wifi_count_keep_alive = KEEP_ALIVE_TIMER;
+            wifi_stm++;
+            break;
+        case MAIN_LOOP:
+            if(QueueElements(wifi_queue_tx))
+            {
+                wifi_count_keep_alive = KEEP_ALIVE_TIMER;
+                wifi_count_command_seq = 0;
+                wifi_stm = DATA_SEND;
+            }
+            else if(wifi_flag_keep_alive)
+            {
+                wifi_flag_keep_alive = false;
+                wifi_count_keep_alive = KEEP_ALIVE_TIMER;
+                WifiSendLine("AT", true);
+            }
+            break;
+        case FATALERROR:
+            WifiSendLine("AT+RESTORE", true);
+        case ERROR:
+        default:
+            printf("ERROR: Se resetea el modem WiFi\r\n");
+            wifi_stm = RESET;
+            break;
+    }
+}
+
+/* *****************************************************************************
+ *    Se llama 10 veces por egundo
+ * ************************************************************************** */
+void WiFiTimer( void )
+{
+    if(wifi_count_rx_timer)
+    {
+        wifi_count_rx_timer--;
+        if(wifi_count_rx_timer==0)
+        {
+            QueueAddByteEnqueue(wifi_queue_rx);
+            wifi_flag_rx_parse_on_lf = true;
+        }
+    }
+
+    if(wifi_count_stm_no_process) wifi_count_stm_no_process--;
+
+    /* Control de time-out en WaitFor */
+    if(wwfst.time_out)
+    {
+        wwfst.time_out--;
+        if(wwfst.time_out == 0)
+        {
+            /* time-out de wait-for */
+            wifi_stm = wwfst.on_error;
+            WiFiWaitFor(0, 0, 0, 0);
+        }
+    }
+    
+    if(wifi_count_config_mode_timer)
+    {
+        wifi_count_config_mode_timer--;
+        if(wifi_count_config_mode_timer == 0)
+        {
+            /* Salgo del modo AP */
+            wifi_stm++;
+        }
+    }
+    
+    if(wifi_count_keep_alive)
+    {
+        wifi_count_keep_alive--;
+        if(wifi_count_keep_alive == 0)
+        {
+            wifi_flag_keep_alive = true;
+        }
+    }
+    
+}
+
+/* *****************************************************************************
+ *    Se llama con cada char que entra por el serial
+ * ************************************************************************** */
+void WiFiNewChar(char ch)
+{
+    wifi_count_rx_timer = 5; /* 500 ms */
+
+    if( wifi_flag_rx_parse_on_lf && (ch == 0x0a || ch == 0x0d) )
+    {
+        wifi_count_rx_timer = 0;
+        if(wifi_count_msg_head)
+        {
+            wifi_count_msg_head = 0;
+            QueueAddByteEnqueue(wifi_queue_rx);
+        }
+    }
+    else
+    {
+        QueueAddByte(wifi_queue_rx, ch);
+        
+        /* Detecto mensajes que no terminan en LF */
+        if(wifi_count_msg_head < 4)
+        {
+            wifi_buffer_msg_head[wifi_count_msg_head] = ch;
+            wifi_count_msg_head++;
+            if(wifi_count_msg_head == 4)
+            {
+                if(wifi_buffer_msg_head[0] == '+' &&
+                   wifi_buffer_msg_head[1] == 'I' &&
+                   wifi_buffer_msg_head[2] == 'P' &&
+                   wifi_buffer_msg_head[3] == 'D'  )
+                {
+                    wifi_flag_rx_parse_on_lf = false;
+                }
+            }
+        }
+    }
+}
+
+/* ************************************************************************* */
 
 void WifiSendLine(const char* msg, bool crlf)
 {
@@ -257,13 +497,13 @@ void WiFiInitSeq( wifi_task_stm stm )
     {
         case 0:
             WifiSendLine("ATE0", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 1: break;
         case 2:
             WifiSendLine("AT+GMR", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 3: break;
@@ -281,45 +521,45 @@ void WiFiAPModeSeq( wifi_task_stm stm )
     {
         case 0:
             WifiSendLine("AT+CIPSERVER=0", true);
-            WiFiWaitFor("OK", stm, stm, 5);
+            WiFiWaitFor("OK", stm, stm, 1);
             wifi_count_command_seq++;
             break;
         case 1: break;
         case 2:
             WifiSendLine("AT+CWMODE=3", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 3: break;
         case 4:
             WifiSendLine("AT+CIFSR", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 3);
             wifi_count_command_seq++;
             break;
         case 5: break;
         case 6:
             sprintf(str, "AT+CWSAP=\"Dom32io-%s\",\"\",1,0,4,0", &wifi_hw_mac[6]);
             WifiSendLine(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 3);
             wifi_count_command_seq++;
             break;
         case 7: break;
         case 8:
             WifiSendLine("AT+CIPMUX=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 9: break;
         case 10:
             sprintf(str, "AT+CIPSERVERMAXCONN=%d", WIFI_MAX_CONN);
             WifiSendLine(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 11: break;
         case 12:
             WifiSendLine("AT+CIPSERVER=1,80", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 3);
             wifi_count_command_seq++;
             break;
         case 13: break;
@@ -338,38 +578,38 @@ void WiFiSTModeSeq( wifi_task_stm stm )
     {
         case 0:
             WifiSendLine("AT+CIPSERVER=0", true);
-            WiFiWaitFor("OK", stm, stm, 5);
+            WiFiWaitFor("OK", stm, stm, 1);
             wifi_count_command_seq++;
             break;
         case 1: break;
         case 2:
             WifiSendLine("AT+CWMODE=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 3: break;
         case 4:
             WifiSendLine("AT+CIPMUX=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 5: break;
         case 6:
             sprintf(str, "AT+CIPSERVERMAXCONN=%d", WIFI_MAX_CONN);
             WifiSendLine(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 7: break;
         case 8:
             WifiSendLine("AT+CIPSERVER=1,80", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 3);
             wifi_count_command_seq++;
             break;
         case 9: break;
         case 10:
             WifiSendLine("AT+CWAUTOCONN=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 5);
+            WiFiWaitFor("OK", stm, ERROR, 1);
             wifi_count_command_seq++;
             break;
         case 11: break;
@@ -394,6 +634,7 @@ void WiFiSTModeSeq( wifi_task_stm stm )
             }
             else
             {
+                printf("WiFi no configurado.\r\n");
                 wifi_stm = MAIN;
             }
             wifi_count_command_seq++;
@@ -405,7 +646,7 @@ void WiFiSTModeSeq( wifi_task_stm stm )
     }
 }
 
-void WiFiRespMessage( wifi_task_stm stm )
+void WiFiDataSendSeq( wifi_task_stm stm )
 {
     char str[64];
 
@@ -429,211 +670,3 @@ void WiFiRespMessage( wifi_task_stm stm )
 
     }
 }
-
-/* *****************************************************************************
- * 
- * ************************************************************************** */
-void WiFiInit( void )
-{
-    wifi_stm = RESET;
-    wifi_count_stm_no_process = 0;
-    wifi_count_rx_timer = 0;
-    wifi_count_command_seq = 0;
-    wifi_flag_rx_parse_on_lf = true;
-    wifi_count_config_mode_timer = 0;
-    wifi_count_msg_head = 0;
-    wifi_count_keep_alive = 0;
-    wifi_flag_keep_alive = false;
-    
-    wifi_queue_rx = QueueOpen(wifi_buffer_rx, WIFI_RX_BUFFER_LEN);
-    if(wifi_queue_rx == INVALID_QUEUE) printf("ERROR: Al crear cola de recepción\r\n");
-
-    WiFiWaitFor(0, 0, 0, 0);
-}
-
-/* *****************************************************************************
- * 
- * ************************************************************************** */
-void WiFiTask( void )
-{
-    ProcessReceiveQueue();
-    
-    if(wifi_count_stm_no_process) return;
-    switch(wifi_stm)
-    {
-        case RESET:
-            printf("INFO: WiFi RESET\r\n");
-            WIFI_RESET_SetLow();
-            wifi_count_stm_no_process = 10;
-            wifi_stm++;
-            break;
-        case START:
-            WIFI_RESET_SetHigh();
-            wifi_stm++;
-            break;
-        case CHECK_READY:
-            WiFiWaitFor("ready", INIT, FATALERROR, 10);
-            wifi_stm++;
-            break;
-        case WAIT_READY:
-            wifi_count_command_seq = 0;
-            break;
-        case INIT:
-            WiFiInitSeq(INIT_STEP);
-            break;
-        case  INIT_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
-            break;
-        case  INIT_OK:
-            printf("INFO: Init OK\r\n");
-            wifi_count_command_seq = 0;
-            wifi_stm++;
-            break;
-        case AP_MODE:
-            WiFiAPModeSeq(AP_MODE_STEP);
-            break;
-        case AP_MODE_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
-            break;
-        case AP_MODE_OK:
-            printf("INFO: AP Mode\r\n");
-            Led1(5);
-            Led2(0);
-            wifi_count_command_seq = 0;
-            wifi_count_config_mode_timer = 600;
-            wifi_stm++;
-            break;
-        case HTTP_CONFIG_STATE:
-            /* Configurando... */
-            break;
-        case ST_MODE:
-            WiFiSTModeSeq(ST_MODE_STEP);
-            break;
-        case ST_MODE_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
-            break;
-        case ST_MODE_OK:
-            printf("INFO: ST Mode\r\n");
-            Led1(2);
-            wifi_count_config_mode_timer = 600;
-            wifi_stm++;
-            break;
-        case MAIN:
-            Led1(0);
-            Led2(0);
-            wifi_count_command_seq = 0;
-            wifi_count_keep_alive = KEEP_ALIVE_TIMER;
-            wifi_stm++;
-            break;
-        case MAIN_LOOP:
-            if(wifi_flag_keep_alive)
-            {
-                wifi_flag_keep_alive = false;
-                wifi_count_keep_alive = KEEP_ALIVE_TIMER;
-                WifiSendLine("AT", true);
-            }
-            break;
-        case FATALERROR:
-            WifiSendLine("AT+RESTORE", true);
-        case ERROR:
-        default:
-            printf("ERROR: Se resetea el modem WiFi\r\n");
-            wifi_count_stm_no_process = 300;
-            wifi_stm = RESET;
-            break;
-    }
-}
-
-/* *****************************************************************************
- *    Se llama 10 veces por egundo
- * ************************************************************************** */
-void WiFiTimer( void )
-{
-    if(wifi_count_rx_timer)
-    {
-        wifi_count_rx_timer--;
-        if(wifi_count_rx_timer==0)
-        {
-            QueueAddByteEnqueue(wifi_queue_rx);
-            wifi_flag_rx_parse_on_lf = true;
-        }
-    }
-
-    if(wifi_count_stm_no_process) wifi_count_stm_no_process--;
-
-    /* Control de time-out en WaitFor */
-    if(wwfst.time_out)
-    {
-        wwfst.time_out--;
-        if(wwfst.time_out == 0)
-        {
-            /* time-out de wait-for */
-            wifi_stm = wwfst.on_error;
-            WiFiWaitFor(0, 0, 0, 0);
-        }
-    }
-    
-    if(wifi_count_config_mode_timer)
-    {
-        wifi_count_config_mode_timer--;
-        if(wifi_count_config_mode_timer == 0)
-        {
-            /* Salgo del modo AP */
-            wifi_stm++;
-        }
-    }
-    
-    if(wifi_count_keep_alive)
-    {
-        wifi_count_keep_alive--;
-        if(wifi_count_keep_alive == 0)
-        {
-            wifi_flag_keep_alive = true;
-        }
-    }
-    
-}
-
-/* *****************************************************************************
- *    Se llama con cada char que entra por el serial
- * ************************************************************************** */
-void WiFiNewChar(char ch)
-{
-    wifi_count_rx_timer = 5; /* 500 ms */
-
-    if( wifi_flag_rx_parse_on_lf && (ch == 0x0a || ch == 0x0d) )
-    {
-        wifi_count_rx_timer = 0;
-        if(wifi_count_msg_head)
-        {
-            wifi_count_msg_head = 0;
-            QueueAddByteEnqueue(wifi_queue_rx);
-        }
-    }
-    else
-    {
-        QueueAddByte(wifi_queue_rx, ch);
-        
-        /* Detecto mensajes que no terminan en LF */
-        if(wifi_count_msg_head < 4)
-        {
-            wifi_buffer_msg_head[wifi_count_msg_head] = ch;
-            wifi_count_msg_head++;
-            if(wifi_count_msg_head == 4)
-            {
-                if(wifi_buffer_msg_head[0] == '+' &&
-                   wifi_buffer_msg_head[1] == 'I' &&
-                   wifi_buffer_msg_head[2] == 'P' &&
-                   wifi_buffer_msg_head[3] == 'D'  )
-                {
-                    wifi_flag_rx_parse_on_lf = false;
-                }
-            }
-        }
-    }
-}
-
-/* ************************************************************************* */

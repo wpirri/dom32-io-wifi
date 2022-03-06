@@ -42,6 +42,7 @@ bool QueueClean(unsigned int id);
 /* estadisticas de uso de las colas */
 unsigned int QueueOpens( void );
 unsigned int QueueMaxOpens( void );
+unsigned int QueueElements(unsigned int id);
 unsigned int QueueBufferUsed(unsigned int id);
 unsigned int QueueMaxBufferUsed(unsigned int id);
 
