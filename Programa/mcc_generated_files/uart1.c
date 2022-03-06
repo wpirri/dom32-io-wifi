@@ -63,11 +63,11 @@
     Defines the object required for the status of the queue.
 */
 
-static uint8_t * volatile rxTail;
-static uint8_t *rxHead;
+//static uint8_t * volatile rxTail;
+//static uint8_t *rxHead;
 static uint8_t *txTail;
 static uint8_t * volatile txHead;
-static bool volatile rxOverflowed;
+//static bool volatile rxOverflowed;
 
 /** UART Driver Queue Length
 
@@ -83,7 +83,7 @@ static bool volatile rxOverflowed;
  * the extra byte.
  */
 #define UART1_CONFIG_TX_BYTEQ_LENGTH (4096+1)
-#define UART1_CONFIG_RX_BYTEQ_LENGTH (8+1)
+//#define UART1_CONFIG_RX_BYTEQ_LENGTH (4096+1)
 
 /** UART Driver Queue
 
@@ -93,7 +93,7 @@ static bool volatile rxOverflowed;
 */
 
 static uint8_t txQueue[UART1_CONFIG_TX_BYTEQ_LENGTH];
-static uint8_t rxQueue[UART1_CONFIG_RX_BYTEQ_LENGTH];
+//static uint8_t rxQueue[UART1_CONFIG_RX_BYTEQ_LENGTH];
 
 void (*UART1_TxDefaultInterruptHandler)(void);
 void (*UART1_RxDefaultInterruptHandler)(void);
@@ -119,11 +119,11 @@ void UART1_Initialize(void)
     
     txHead = txQueue;
     txTail = txQueue;
-    rxHead = rxQueue;
-    rxTail = rxQueue;
+    //rxHead = rxQueue;
+    //rxTail = rxQueue;
    
-    rxOverflowed = false;
-
+    //rxOverflowed = false;
+    
     UART1_SetTxInterruptHandler(&UART1_Transmit_CallBack);
 
     UART1_SetRxInterruptHandler(&UART1_Receive_CallBack);
@@ -205,6 +205,8 @@ void UART1_SetRxInterruptHandler(void (* interruptHandler)(void))
 
 void __attribute__ ((vector(_UART1_RX_VECTOR), interrupt(IPL1SOFT))) _UART1_RX( void )
 {
+    char ch;
+    
     if(UART1_RxDefaultInterruptHandler)
     {
         UART1_RxDefaultInterruptHandler();
@@ -214,27 +216,27 @@ void __attribute__ ((vector(_UART1_RX_VECTOR), interrupt(IPL1SOFT))) _UART1_RX( 
 	
     while((U1STAbits.URXDA == 1))
     {
-        *rxTail = U1RXREG;
-
-        WiFiNewChar(*rxTail);
-
-        // Will the increment not result in a wrap and not result in a pure collision?
-        // This is most often condition so check first
-        if ( ( rxTail    != (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
-             ((rxTail+1) != rxHead) )
-        {
-            rxTail++;
-        } 
-        else if ( (rxTail == (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
-                  (rxHead !=  rxQueue) )
-        {
-            // Pure wrap no collision
-            rxTail = rxQueue;
-        } 
-        else // must be collision
-        {
-            rxOverflowed = true;
-        }
+        ch = U1RXREG;
+        WiFiNewChar(ch);
+//        *rxTail = U1RXREG;
+//
+//        // Will the increment not result in a wrap and not result in a pure collision?
+//        // This is most often condition so check first
+//        if ( ( rxTail    != (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
+//             ((rxTail+1) != rxHead) )
+//        {
+//            rxTail++;
+//        } 
+//        else if ( (rxTail == (rxQueue + UART1_CONFIG_RX_BYTEQ_LENGTH-1)) &&
+//                  (rxHead !=  rxQueue) )
+//        {
+//            // Pure wrap no collision
+//            rxTail = rxQueue;
+//        } 
+//        else // must be collision
+//        {
+//            rxOverflowed = true;
+//        }
     }
 }
 
@@ -253,6 +255,7 @@ void __attribute__ ((vector(_UART1_ERR_VECTOR), interrupt(IPL1SOFT))) _UART1_ERR
     IFS1CLR= 1 << _IFS1_U1EIF_POSITION;
 }
 
+#ifdef __RX_FUNCTION__
 /**
   Section: UART Driver Client Routines
 */
@@ -276,6 +279,8 @@ uint8_t UART1_Read( void)
     return data;
 }
 
+#endif /* __RX_FUNCTION__ */
+
 void UART1_Write( uint8_t byte)
 {
     while(UART1_IsTxReady() == 0)
@@ -294,10 +299,12 @@ void UART1_Write( uint8_t byte)
     IEC1bits.U1TXIE = 1;
 }
 
+#ifdef __RX_FUNCTION__
 bool UART1_IsRxReady(void)
 {    
     return !(rxHead == rxTail);
 }
+#endif /* __RX_FUNCTION__ */
 
 bool UART1_IsTxReady(void)
 {
@@ -326,14 +333,13 @@ bool UART1_IsTxDone(void)
     return false;
 }
 
-
 /*******************************************************************************
 
   !!! Deprecated API !!!
   !!! These functions will not be supported in future releases !!!
 
 *******************************************************************************/
-
+#ifdef __DEPRECATED__
 static uint8_t UART1_RxDataAvailable(void)
 {
     uint16_t size;
@@ -420,29 +426,26 @@ UART1_TRANSFER_STATUS __attribute__((deprecated)) UART1_TransferStatusGet (void 
     uint8_t rx_count = UART1_RxDataAvailable();
     uint8_t tx_count = UART1_TxDataAvailable();
     
-    switch(rx_count)
+    if(rx_count == 0)
     {
-        case 0:
-            status |= UART1_TRANSFER_STATUS_RX_EMPTY;
-            break;
-        case UART1_CONFIG_RX_BYTEQ_LENGTH:
-            status |= UART1_TRANSFER_STATUS_RX_FULL;
-            break;
-        default:
-            status |= UART1_TRANSFER_STATUS_RX_DATA_PRESENT;
-            break;
+        status |= UART1_TRANSFER_STATUS_RX_EMPTY;
+    }
+    else if(rx_count == UART1_CONFIG_RX_BYTEQ_LENGTH)
+    {
+        status |= UART1_TRANSFER_STATUS_RX_FULL;
+    }
+    else
+    {
+        status |= UART1_TRANSFER_STATUS_RX_DATA_PRESENT;
     }
     
-    switch(tx_count)
+    if(tx_count == 0)
     {
-        case 0:
-            status |= UART1_TRANSFER_STATUS_TX_FULL;
-            break;
-        case UART1_CONFIG_RX_BYTEQ_LENGTH:
-            status |= UART1_TRANSFER_STATUS_TX_EMPTY;
-            break;
-        default:
-            break;
+        status |= UART1_TRANSFER_STATUS_TX_FULL;
+    }
+    else if(tx_count == UART1_CONFIG_RX_BYTEQ_LENGTH)
+    {
+        status |= UART1_TRANSFER_STATUS_TX_EMPTY;
     }
 
     return status;    
@@ -520,4 +523,4 @@ void __attribute__((deprecated)) UART1_Disable(void)
     U1STACLR = _U1STA_URXEN_MASK;
     U1MODECLR = _U1MODE_ON_MASK;
 }
-
+#endif /* __DEPRECATED__ */

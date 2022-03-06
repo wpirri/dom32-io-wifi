@@ -49,19 +49,19 @@ void LedTask( void )
 
 void LedTimer( void )
 {
-    if(++led_count_led1 >= 20) led_count_led1 = 0;
+    if(++led_count_led1 >= 21) led_count_led1 = 0;
     if( !(led_count_led1&1) && led_count_led1 && led_status_led1 && ((led_count_led1/2)<=led_status_led1) )
         LED1_SetHigh();
     else
         LED1_SetLow();
 
-    if(++led_count_led2 >= 20) led_count_led2 = 0;
-    if( !(led_count_led2&1) && led_count_led2 && led_status_led2 && ((led_count_led2/2)<=led_status_led2) )
+    if(++led_count_led2 >= 21) led_count_led2 = 0;
+    if(  (led_count_led2&1) && led_count_led2 && led_status_led2 && ((led_count_led2/2)<=led_status_led2) )
         LED2_SetHigh();
     else
         LED2_SetLow();
 
-    if(++led_count_led3 >= 20) led_count_led3 = 0;
+    if(++led_count_led3 >= 21) led_count_led3 = 0;
     if( !(led_count_led3&1) && led_count_led3 && led_status_led3 && ((led_count_led3/2)<=led_status_led3) )
         LED3_SetHigh();
     else
@@ -75,7 +75,7 @@ void Led1(int status)
 
 void Led2(int status)
 {
-    led_status_led3 = status;
+    led_status_led2 = status;
 }
 
 void Led3(int status)

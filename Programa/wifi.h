@@ -1,5 +1,5 @@
 /***************************************************************************
-    Copyright (C) 2020   Walter Pirri
+    Copyright (C) 2022   Walter Pirri
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -18,10 +18,14 @@
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
+#include <stdbool.h>
+
 void WiFiInit( void );
 void WiFiTask( void );
 void WiFiTimer( void );
 
 void WiFiNewChar(char ch);
+
+void WifiSendLine(const char* msg, bool crlf);
 
 #endif /* _WIFI_H_ */

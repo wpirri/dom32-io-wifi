@@ -110,9 +110,9 @@ void UART1_Initialize(void);
   @Example
     None.
 */
-
+#ifdef __RX_FUNCTION__
 uint8_t UART1_Read( void);
-
+#endif /*__RX_FUNCTION__*/
 /**
   @Summary
     Writes a byte of data to the UART1
@@ -146,8 +146,9 @@ void UART1_Write( uint8_t byte);
     true if byte can be read.
     false if byte can't be read right now.
 */
+#ifdef __RX_FUNCTION__
 bool UART1_IsRxReady(void);
-
+#endif /* __RX_FUNCTION__ */
 /**
   @Description
     Indicates if a byte can be written.
@@ -248,7 +249,7 @@ void UART1_SetRxInterruptHandler(void (* interruptHandler)(void));
 */
 void UART1_Receive_CallBack(void);
 
-
+#ifdef __DEPRECATED__
 /*******************************************************************************
 
   !!! Deprecated API and types !!!
@@ -683,6 +684,8 @@ unsigned int __attribute__((deprecated)) UART1_ReceiveBufferSizeGet(void);
 */
 
 unsigned int __attribute__((deprecated)) UART1_TransmitBufferSizeGet(void);
+
+#endif /* __DEPRECATED__ */
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 

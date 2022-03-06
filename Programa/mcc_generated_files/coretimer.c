@@ -54,6 +54,8 @@
 
 #include "../wifi.h"
 #include "../led.h"
+#include "../config.h"
+#include "../http.h"
 
 /**
   Section: Core Timer Module APIs
@@ -98,6 +100,8 @@ void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIM
    // Add your custom code here
    LedTimer();
    WiFiTimer();
+   ConfigTimer();
+   HTTPTimer();
 }
 
 /**

@@ -42,6 +42,39 @@
     TERMS.
 */
 
+/* *****************************************************************************
+ * Asignación de pines para PIC32MM0064GPL028 en DomTerm
+ * 1    MCLR / Vpp                      Programación/Debug/Reset
+ * 2    RA0                 out         Led 1 - Status
+ * 3    RA1                 out         Led 2 - Modo
+ * 4    RB0/PGED1                       Programacion/Debug
+ * 5    RB1/PGEC1                       Programacion/Debug
+ * 6    RB2                 in          I1
+ * 7    RB3                 in          I2
+ * 8    Vss                             Vss
+ * 9    RA2/RP3             in          U2RX
+ * 10   RA3/RP4             out         U1TX
+ * 11   RB4/RP5             in          I3
+ * 12   RA4/RP6             out         Led 3
+ * 13   Vdd                             +3v3
+ * 14   RB5                 in          I4
+ * 15   RB6
+ * 16   RB7                 in          I5
+ * 17   RB8/SCK1            in          I6
+ * 18   RB9/SDO1            out         O4
+ * 19   RC9                 out         O3
+ * 20   VCap                            Cap 100n + 10uF
+ * 21   RB10/RP17           out         O2
+ * 22   RB11/RP18           out         O1
+ * 23   Vusb 3v3
+ * 24   RB13/RP13           out/oc      WIFI_RESET -> ESP-WROOM-02_Reset-pin15
+ * 25   RB14/RP19           tx          U1TX -> ESP-WROOM-02_Rx-pin11
+ * 26   RB15/RP10           rx          U1RX -> ESP-WROOM-02_Tx-pin12
+ * 27   AVss                            Vss
+ * 28   AVdd                            +3v3
+ *
+ * ****************************************************************************/
+
 /**
   Section: Included Files
 */
@@ -53,18 +86,27 @@
 
 #include "led.h"
 #include "wifi.h"
+#include "queue.h"
+#include "config.h"
+#include "http.h"
+
 /*
                          Main application
  */
 int main(void)
 {
     // initialize the device
+    QueueInit();
     SYSTEM_Initialize();
+    ConfigInit();
     LedInit();
+    ConfigLoad();
     WiFiInit();
+    HTTPInit();
     printf("Init complete\r\n");
     
-    Led1(1);
+    Led1(10);
+    Led2(10);
     
     while (1)
     {
@@ -72,7 +114,9 @@ int main(void)
         WATCHDOG_TimerClear();
         
         LedTask();
-        WiFiTask();      
+        WiFiTask();
+        ConfigTask();
+        HTTPTask();
         
     }
     return 1; 
