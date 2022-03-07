@@ -25,6 +25,9 @@
 
 #include "wifi.h"
 #include "config.h"
+#include "queue.h"
+
+extern unsigned int wifi_queue_tx;
 
 const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
                             "Content-Type: text/xml\r\n\r\n";
@@ -59,6 +62,8 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
                             "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
                             "Accept: text/html,text/xml\r\n\r\n";
 
+char http_buffer[2048];
+
 int HttpGetRequest(const char *buffer, char *request)
 {
 	int rc = 0;
@@ -75,7 +80,7 @@ int HttpGetRequest(const char *buffer, char *request)
 	return rc;
 }
 
-int HTTPGetFormData(char *buffer, const char *label, char *value)
+int HTTPGetFormData(const char *buffer, const char *label, char *value)
 {
     char *p;
     int len = 0;
@@ -105,9 +110,10 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
     return len;
 }
 
-void HttpReturnWiFiFormConfig(char *out)
+void HttpReturnWiFiFormConfig(unsigned int socket)
 {
-    sprintf(out,
+    sprintf(http_buffer,
+            "R,%u:"
             "%s"
             "<html>\n"
             "<head>\n"
@@ -133,16 +139,22 @@ void HttpReturnWiFiFormConfig(char *out)
             "</form>\n"
             "</body>\n"
             "</html>\n",
+            socket,
             http_200,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
             g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
+    
+    if( !QueueAddBuffer(wifi_queue_tx, http_buffer, strlen(http_buffer)))
+    {
+        printf("ERROR: Al agregar respuesta a la cola.\r\n");
+    }
 }
 
 void HttpReturnWiFiConfig(char *out)
 {
     sprintf(out,
-            "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
+            "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%u&ce2=%s&ce2p=%u&rqst=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
@@ -467,8 +479,8 @@ void HttpReturnExpConfigXML(char *out)
             (g_control_exp.dir9)?"in":"out");
 }
 #endif /* __COMMENT__ */
-#ifdef __COMMENT__
-void HttpProcessWiFiFormConfig(char* in)
+
+void HttpProcessWiFiFormConfig(const char* in)
 {
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
@@ -478,7 +490,6 @@ void HttpProcessWiFiFormConfig(char* in)
     HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
     g_wifi_info.status.save_config = 50;
 }
-#endif /* __COMMENT__ */
 
 
 void HTTPInit( void )
@@ -496,13 +507,17 @@ void HTTPTimer( void )
     
 }
 
-void HTTPMessage(int socket, char method, const char* url, const char* body, unsigned int body_len)
+void HTTPMessage(unsigned int socket, char method, const char* url, const char* body, unsigned int body_len)
 {
     printf("HTTP: socket: %d url: %s body: [%.80s]/%d", socket, url, body, body_len);
 
     if( !strcmp(url, "/") || !strcmp(url, "/index.htm"))
     {
-        //HttpReturnWiFiFormConfig();
+        if(method == 'P')
+        {
+            HttpProcessWiFiFormConfig(body);
+        }
+        HttpReturnWiFiFormConfig(socket);
     }
     
 }

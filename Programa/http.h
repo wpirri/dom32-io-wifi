@@ -23,7 +23,7 @@ void HTTPInit( void );
 void HTTPTask( void );
 void HTTPTimer( void );
 
-void HTTPMessage(int socket, char method, const char* url, const char* body, unsigned int body_len);
+void HTTPMessage(unsigned int socket, char method, const char* url, const char* body, unsigned int body_len);
 
 #endif	/* _HTTP_H */
 

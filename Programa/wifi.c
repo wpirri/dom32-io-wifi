@@ -45,7 +45,6 @@ typedef enum
     AP_MODE,
     AP_MODE_STEP,
     AP_MODE_OK,
-    HTTP_CONFIG_STATE,
             
     ST_MODE,
     ST_MODE_STEP,
@@ -87,8 +86,6 @@ int wifi_count_msg_head;
 int wifi_count_keep_alive;
 bool wifi_flag_keep_alive;
 
-//char wifi_buffer_http[WIFI_RX_BUFFER_LEN];
-
 typedef struct _wifi_wait_for_st
 {
     char wait[16];
@@ -98,6 +95,12 @@ typedef struct _wifi_wait_for_st
 } wifi_wait_for_st;
 
 wifi_wait_for_st wwfst;
+
+char wifi_data_send_ip_addr[16];
+int wifi_data_send_ip_port;
+int wifi_data_send_conn_id;
+char wifi_data_send_buffer[WIFI_TX_BUFFER_LEN];
+
 
 void WifiSendLine(const char* msg, bool crlf);
 void WiFiCheckUnsol(const char* msg);
@@ -184,10 +187,7 @@ void WiFiTask( void )
             Led2(0);
             wifi_count_command_seq = 0;
             wifi_count_config_mode_timer = 600;
-            wifi_stm++;
-            break;
-        case HTTP_CONFIG_STATE:
-            /* Configurando... */
+            wifi_stm = MAIN;
             break;
         case ST_MODE:
             WiFiSTModeSeq(ST_MODE_STEP);
@@ -223,6 +223,7 @@ void WiFiTask( void )
             {
                 wifi_count_keep_alive = KEEP_ALIVE_TIMER;
                 wifi_count_command_seq = 0;
+                printf("INFO: Modo Data Send\r\n");
                 wifi_stm = DATA_SEND;
             }
             else if(wifi_flag_keep_alive)
@@ -233,7 +234,7 @@ void WiFiTask( void )
             }
             break;
         case FATALERROR:
-            WifiSendLine("AT+RESTORE", true);
+            //WifiSendLine("AT+RESTORE", true);
         case ERROR:
         default:
             printf("ERROR: Se resetea el modem WiFi\r\n");
@@ -648,25 +649,87 @@ void WiFiSTModeSeq( wifi_task_stm stm )
 
 void WiFiDataSendSeq( wifi_task_stm stm )
 {
-    char str[64];
 
+    char *p;
+    char str[64];
+    
     switch(wifi_count_command_seq)
     {
         case 0:
-            WifiSendLine("AT+CIPSERVER=0", true);
-            WiFiWaitFor("OK", stm, stm, 5);
-            wifi_count_command_seq++;
+            if(QueueGet(wifi_queue_tx, wifi_data_send_buffer, WIFI_TX_BUFFER_LEN))
+            {
+                if(wifi_data_send_buffer[0] == 'Q')
+                {
+                    /* Si es un requerimiento nuevo obtengo IP y port para hacer una conexion nnueva */
+                    str_section(wifi_data_send_buffer, 1, wifi_data_send_ip_addr);
+                    str_section(wifi_data_send_buffer, 2, str);
+                    wifi_data_send_ip_port = atoi(str);
+                    wifi_data_send_conn_id++;
+                    sprintf(str, "AT+CIPSTART=%u,\"TCP\",\"%s\",%u", 
+                            wifi_data_send_conn_id,
+                            wifi_data_send_ip_addr,
+                            wifi_data_send_ip_port);
+                    WifiSendLine(str, true);
+                    WiFiWaitFor("OK", stm, stm, 10);
+                    wifi_count_command_seq++;
+                }
+                else if(wifi_data_send_buffer[0] == 'R')
+                {
+                    /* Obtengo el id de la conexion */
+                    str_section(wifi_data_send_buffer, 1, str);
+                    wifi_data_send_conn_id = atoi(str);
+                    wifi_stm = stm;
+                    wifi_count_command_seq++;
+                 }
+                else
+                {
+                    /* Un mensaje que no corresponde */
+                    printf("Un mensaje que no corresponde, Ni Q ni R.\r\n");
+                    wifi_stm = MAIN;
+                }
+            }
+            else
+            {
+                printf("No hay mensajes en la cola.\r\n");
+                wifi_stm = MAIN;
+            }
             break;
         case 1: break;
-
-
-
-
-
-
-
-
-
-
+        case 2:
+            p = strchr(wifi_data_send_buffer, ':');
+            if(p)
+            {
+                p++;
+                sprintf(str, "AT+CIPSEND=%u,%u",
+                        wifi_data_send_conn_id,
+                        strlen(p));
+                WifiSendLine(str, true);
+                WiFiWaitFor(">", stm, stm, 10);
+                wifi_count_command_seq++;
+            }
+            else
+            {
+                /* Un mensaje que no corresponde */
+                printf("Un mensaje que no corresponde. Error de parseo.\r\n");
+                wifi_stm = MAIN;
+            }
+            break;
+        case 3: break;
+        case 4:
+            WifiSendLine(p, false);
+            WiFiWaitFor("SEND OK", stm, stm, 30);
+            wifi_count_command_seq++;
+            break;
+        case 5: break;
+        case 6:
+            sprintf(str, "AT+CIPCLOSE=%u", wifi_data_send_conn_id);
+            WifiSendLine(str, true);
+            WiFiWaitFor("OK", stm, stm, 3);
+            wifi_count_command_seq++;
+            break;
+        case 7: break;
+        case 8:
+            wifi_stm = MAIN;
+            break;
     }
 }
