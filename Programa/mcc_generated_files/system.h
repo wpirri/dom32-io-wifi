@@ -43,7 +43,7 @@
 */
 
 #ifndef _XTAL_FREQ
-#define _XTAL_FREQ  24000000UL
+#define _XTAL_FREQ  12000000UL
 #endif
 #define WDT_CLR_KEY 0x5743
 
