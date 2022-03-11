@@ -112,8 +112,8 @@ void UART2_Initialize(void)
     U2STA = 0x00;
     // U2TXREG 0; 
     U2TXREG = 0x00;
-    // BaudRate = 115200; Frequency = 8000000 Hz; BRG 16; 
-    U2BRG = 0x10;
+    // BaudRate = 115200; Frequency = 24000000 Hz; BRG 51; 
+    U2BRG = 0x33;
     
     txHead = txQueue;
     txTail = txQueue;

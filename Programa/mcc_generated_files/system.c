@@ -63,12 +63,12 @@
 #pragma config SWDTPS = PS1048576    //Sleep Mode Watchdog Timer Postscale Selection bits->1:1048576
 #pragma config FWDTWINSZ = PS25_0    //Watchdog Timer Window Size bits->Watchdog timer window size is 25%
 #pragma config WINDIS = OFF    //Windowed Watchdog Timer Disable bit->Watchdog timer is in non-window mode
-#pragma config RWDTPS = PS512    //Run Mode Watchdog Timer Postscale Selection bits->1:512
-#pragma config RCLKSEL = LPRC    //Run Mode Watchdog Timer Clock Source Selection bits->Clock source is LPRC (same as for sleep mode)
+#pragma config RWDTPS = PS262144    //Run Mode Watchdog Timer Postscale Selection bits->1:262144
+#pragma config RCLKSEL = FRC    //Run Mode Watchdog Timer Clock Source Selection bits->Clock source is FRC oscillator
 #pragma config FWDTEN = ON    //Watchdog Timer Enable bit->WDT is enabled
 
 // FOSCSEL
-#pragma config FNOSC = FRCDIV    //Oscillator Selection bits->Fast RC oscillator (FRC) with divide-by-N
+#pragma config FNOSC = PLL    //Oscillator Selection bits->Primary or FRC oscillator with PLL
 #pragma config PLLSRC = FRC    //System PLL Input Clock Selection bit->FRC oscillator is selected as PLL reference input on device reset
 #pragma config SOSCEN = OFF    //Secondary Oscillator Enable bit->Secondary oscillator is disabled
 #pragma config IESO = ON    //Two Speed Startup Enable bit->Two speed startup is enabled
@@ -84,17 +84,17 @@
 #include "clock.h"
 #include "system.h"
 #include "memory/flash.h"
-#include "interrupt_manager.h"
-#include "exceptions.h"
 #include "uart1.h"
 #include "uart2.h"
 #include "coretimer.h"
+#include "interrupt_manager.h"
+#include "exceptions.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    INTERRUPT_Initialize();
     CLOCK_Initialize();
+    INTERRUPT_Initialize();
     CORETIMER_Initialize();
     UART2_Initialize();
     UART1_Initialize();
