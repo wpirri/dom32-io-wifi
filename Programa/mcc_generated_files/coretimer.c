@@ -66,7 +66,7 @@ void CORETIMER_Initialize()
    // Set the count value
    _CP0_SET_COUNT(0x0); 
    // Set the compare value
-   _CP0_SET_COMPARE(0x61A80); 
+   _CP0_SET_COMPARE(0x124F80); 
     // Enable the interrupt
    IEC0bits.CTIE = 1;
 
@@ -89,10 +89,10 @@ uint32_t CORETIMER_CountGet()
 
 void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIMER_ISR(void)
 {
-   uint32_t static compare = 0x61A80;
+   uint32_t static compare = 0x124F80;
 
    // Update the compare value
-   compare = compare + 0x61A80;
+   compare = compare + 0x124F80;
 
    _CP0_SET_COMPARE(compare);
 

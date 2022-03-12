@@ -212,8 +212,6 @@ void WiFiTask( void )
             wifi_stm = MAIN;
             break;            
         case MAIN:
-            Led1(0);
-            Led2(0);
             wifi_count_command_seq = 0;
             wifi_count_keep_alive = KEEP_ALIVE_TIMER;
             wifi_stm++;

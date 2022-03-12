@@ -68,7 +68,7 @@
 #pragma config FWDTEN = ON    //Watchdog Timer Enable bit->WDT is enabled
 
 // FOSCSEL
-#pragma config FNOSC = FRCDIV    //Oscillator Selection bits->Fast RC oscillator (FRC) with divide-by-N
+#pragma config FNOSC = PLL    //Oscillator Selection bits->Primary or FRC oscillator with PLL
 #pragma config PLLSRC = FRC    //System PLL Input Clock Selection bit->FRC oscillator is selected as PLL reference input on device reset
 #pragma config SOSCEN = OFF    //Secondary Oscillator Enable bit->Secondary oscillator is disabled
 #pragma config IESO = ON    //Two Speed Startup Enable bit->Two speed startup is enabled
@@ -83,12 +83,12 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "memory/flash.h"
+#include "coretimer.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
+#include "memory/flash.h"
 #include "uart1.h"
 #include "uart2.h"
-#include "coretimer.h"
 
 void SYSTEM_Initialize(void)
 {

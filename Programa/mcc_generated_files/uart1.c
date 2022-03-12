@@ -114,8 +114,8 @@ void UART1_Initialize(void)
     U1STA = 0x00;
     // U1TXREG 0; 
     U1TXREG = 0x00;
-    // BaudRate = 115200; Frequency = 8000000 Hz; BRG 16; 
-    U1BRG = 0x10;
+    // BaudRate = 115200; Frequency = 24000000 Hz; BRG 51; 
+    U1BRG = 0x33;
     
     txHead = txQueue;
     txTail = txQueue;
@@ -333,6 +333,7 @@ bool UART1_IsTxDone(void)
     return false;
 }
 
+
 /*******************************************************************************
 
   !!! Deprecated API !!!
@@ -426,26 +427,29 @@ UART1_TRANSFER_STATUS __attribute__((deprecated)) UART1_TransferStatusGet (void 
     uint8_t rx_count = UART1_RxDataAvailable();
     uint8_t tx_count = UART1_TxDataAvailable();
     
-    if(rx_count == 0)
+    switch(rx_count)
     {
+        case 0:
         status |= UART1_TRANSFER_STATUS_RX_EMPTY;
-    }
-    else if(rx_count == UART1_CONFIG_RX_BYTEQ_LENGTH)
-    {
+            break;
+        case UART1_CONFIG_RX_BYTEQ_LENGTH:
         status |= UART1_TRANSFER_STATUS_RX_FULL;
-    }
-    else
-    {
+            break;
+        default:
         status |= UART1_TRANSFER_STATUS_RX_DATA_PRESENT;
+            break;
     }
     
-    if(tx_count == 0)
+    switch(tx_count)
     {
+        case 0:
         status |= UART1_TRANSFER_STATUS_TX_FULL;
-    }
-    else if(tx_count == UART1_CONFIG_RX_BYTEQ_LENGTH)
-    {
+            break;
+        case UART1_CONFIG_RX_BYTEQ_LENGTH:
         status |= UART1_TRANSFER_STATUS_TX_EMPTY;
+            break;
+        default:
+            break;
     }
 
     return status;    
