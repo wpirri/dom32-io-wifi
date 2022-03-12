@@ -52,12 +52,12 @@
 #include <stdbool.h>
 
 #include "memory/flash.h"
-#include "uart1.h"
-#include "uart2.h"
-#include "watchdog.h"
-#include "coretimer.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
+#include "uart1.h"
+#include "uart2.h"
+#include "coretimer.h"
+#include "watchdog.h"
 
 #warning "This file will be removed in future MCC releases. Use system.h instead."
 

@@ -114,8 +114,8 @@ void UART1_Initialize(void)
     U1STA = 0x00;
     // U1TXREG 0; 
     U1TXREG = 0x00;
-    // BaudRate = 115200; Frequency = 24000000 Hz; BRG 51; 
-    U1BRG = 0x33;
+    // BaudRate = 115200; Frequency = 8000000 Hz; BRG 16; 
+    U1BRG = 0x10;
     
     txHead = txQueue;
     txTail = txQueue;
