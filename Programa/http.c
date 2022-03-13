@@ -82,7 +82,7 @@ int HttpGetRequest(const char *buffer, char *request)
 
 int HTTPGetFormData(const char *buffer, const char *label, char *value)
 {
-    char *p;
+    const char *p;
     int len = 0;
     
     p = buffer;
