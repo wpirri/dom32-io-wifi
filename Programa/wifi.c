@@ -145,9 +145,20 @@ void WiFiTask( void )
     switch(wifi_stm)
     {
         case RESET:
-            printf("INFO: WiFi RESET\r\n");
             WIFI_RESET_SetLow();
+            printf("INFO: WiFi RESET\r\n");
             wifi_count_stm_no_process = 30;
+            
+            wifi_count_rx_timer = 0;
+            wifi_count_command_seq = 0;
+            wifi_flag_rx_parse_on_lf = true;
+            wifi_count_ap_mode_timer = 0;
+            wifi_count_msg_head = 0;
+            wifi_count_keep_alive = 0;
+            wifi_flag_keep_alive = false;
+            
+            QueueClean(wifi_queue_rx);
+            QueueClean(wifi_queue_tx);
             wifi_stm++;
             break;
         case START:
@@ -699,7 +710,7 @@ void WiFiDataSendSeq( wifi_task_stm stm )
                         wifi_data_send_conn_id,
                         strlen(p));
                 WifiSendString(str, true);
-                WiFiWaitFor(">", stm, stm, 10);
+                WiFiWaitFor(">", stm, stm, 30);
                 wifi_count_command_seq++;
             }
             else

@@ -389,15 +389,12 @@ bool QueueClean(unsigned int id)
 {
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
     {
-        g_queue_list_buffer[id].total_buffer_len = 0;
         g_queue_list_buffer[id].last_element = g_queue_list_buffer[id].buffer;
         g_queue_list_buffer[id].last_byte = g_queue_list_buffer[id].buffer;
         g_queue_list_buffer[id].last_element_bytes = 0;
         g_queue_list_buffer[id].first_element = g_queue_list_buffer[id].buffer;
         g_queue_list_buffer[id].element_count = 0;
-        g_queue_list_buffer[id].max_element_count = 0;
         g_queue_list_buffer[id].buffer_used = 0;
-        g_queue_list_buffer[id].max_buffer_used = 0;
         return true;
     }
     return false;
