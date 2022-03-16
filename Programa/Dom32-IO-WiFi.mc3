@@ -59,9 +59,9 @@
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.boardsupportlibrary.BoardSuppportLibrary" version="1.12.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu16.Mcu16PeripheralLibrary" version="1.170.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.foundationservices.library.FoundationServicesLibrary" version="0.2.2"/>
+      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.boardsupportlibrary.BoardSuppportLibrary" version="1.12.0"/>
    </usedLibraries>
    <tokenMap class="java.util.TreeMap">
       <entry>
@@ -6790,7 +6790,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="UART2" name="SWRXBufferSize"/>
-         <value>15</value>
+         <value>255</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="UART2" name="SWTXBufferSize"/>
@@ -7351,12 +7351,12 @@
    </tokenMap>
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
-         <file>mcc_generated_files\mcc.h</file>
-         <hash>9265f366c852e8eb47766dfe6492bd972efdd77917f04abf39909ecb3e04e292</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\interrupt_manager.h</file>
          <hash>e0d2d4a76b2007b55a236abba85d59361067293043fb0e3974f7a79979085934</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\mcc.h</file>
+         <hash>ea9bcb6d4653dc12b2ef9d1f9392703babb13ad44390bc169c7e21f9dc662216</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\exceptions.h</file>
@@ -7388,27 +7388,27 @@
       </entry>
       <entry>
          <file>mcc_generated_files\uart2.c</file>
-         <hash>3b820d909ca421f75f9ef863aa38059a942ff1f92660787f69c12ab9641bf1ac</hash>
+         <hash>bacd94ef4cddb900bcbcbadecb8b66c1205fca0c7ccbedad9c8f0cce51293727</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\pin_manager.h</file>
          <hash>c9fc3c2dfb130bab57b10cefa88922925fe277ae46b1401d003d14dc24bb3a65</hash>
       </entry>
       <entry>
+         <file>mcc_generated_files\pin_manager.c</file>
+         <hash>e0c1b5f54ff534e133ed687d9d8900c0caba85ceaca5205226ee55633857f450</hash>
+      </entry>
+      <entry>
          <file>mcc_generated_files\system.h</file>
          <hash>d13706190b3349c5ab767128074a93f3b682c1ecebff03d4cb88339a7cf8db65</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\pin_manager.c</file>
-         <hash>f7a6e2b86c5e98631a93d13d088294d2c39e14ca353ab52ff8ba36411534d330</hash>
+         <file>mcc_generated_files\coretimer.c</file>
+         <hash>8f3b1dfb4a0dc0158524c09caf94a772b92b3ea3556b3d1efeb5f5d1d7d71ed7</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\system.c</file>
-         <hash>8612e86fa65ea42ac010c7836358c849182beac8a7857a5423c7401c5818ce15</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\coretimer.c</file>
-         <hash>8f3b1dfb4a0dc0158524c09caf94a772b92b3ea3556b3d1efeb5f5d1d7d71ed7</hash>
+         <hash>9ee118e26daa42a9fc2db31c3f9534e3a2129ae29b175b5b3e23b091f6a0d702</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\clock.h</file>
@@ -7423,12 +7423,12 @@
          <hash>b06f10a1dbd7e1b3cc06f62bca4a7eb54b2f9cf85bef0deecf2634461c04dfa1</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\mcc.c</file>
-         <hash>0b250b38554e25a373e30e0c2f640c0fcde8209fcd784f44fbf605f56c99a71e</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\interrupt_manager.c</file>
          <hash>a1d3acc4c3d2d00401b056426c7636ae1c2146236f8bc31e32b733cd02084c7b</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\mcc.c</file>
+         <hash>0b250b38554e25a373e30e0c2f640c0fcde8209fcd784f44fbf605f56c99a71e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\memory\flash.c</file>

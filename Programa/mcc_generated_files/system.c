@@ -84,19 +84,19 @@
 #include "clock.h"
 #include "system.h"
 #include "memory/flash.h"
+#include "coretimer.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
 #include "uart2.h"
-#include "coretimer.h"
 #include "uart1.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    CLOCK_Initialize();
     INTERRUPT_Initialize();
-    UART2_Initialize();
+    CLOCK_Initialize();
     CORETIMER_Initialize();
+    UART2_Initialize();
     UART1_Initialize();
     INTERRUPT_GlobalEnable();
 }
