@@ -24,13 +24,29 @@
 
 #include "mcc_generated_files/pin_manager.h"
 
+#define LED1H LedDummy()
+#define LED1L LedDummy()
+#define LED2H LedDummy()
+#define LED2L LedDummy()
+#define LED3H LedDummy()
+#define LED3L LedDummy()
+
+#define LEDTXH LED1_SetHigh()
+#define LEDTXL LED1_SetLow()
+#define LEDRXH LED2_SetHigh()
+#define LEDRXL LED2_SetLow()
+
 int led_count_led1;
 int led_count_led2;
 int led_count_led3;
+int led_count_tx;
+int led_count_rx;
 
 int led_status_led1;
 int led_status_led2;
 int led_status_led3;
+
+void LedDummy( void ){}
 
 void LedInit( void )
 {
@@ -40,6 +56,8 @@ void LedInit( void )
     led_status_led1 = 0;
     led_status_led2 = 0;
     led_status_led3 = 0;
+    led_count_tx = 0;
+    led_count_rx = 0;
 }
 
 void LedTask( void )
@@ -66,6 +84,32 @@ void LedTimer( void )
         LED3_SetHigh();
     else
         LED3_SetLow();
+    
+    if(led_count_tx)
+    {
+        led_count_tx--;
+        if(led_count_tx)
+        {
+            LEDTXH;
+        }
+        else
+        {
+            LEDTXL;
+        }
+    }
+
+    if(led_count_rx)
+    {
+        led_count_rx--;
+        if(led_count_rx)
+        {
+            LEDRXH;
+        }
+        else
+        {
+            LEDRXL;
+        }
+    }
 }
 
 void Led1(int status)
@@ -83,3 +127,11 @@ void Led3(int status)
     led_status_led3 = status;
 }
 
+void LedTx(void)
+{
+    led_count_tx = 3;}
+
+void LedRx(void)
+{
+    led_count_rx = 3;
+}

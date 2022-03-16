@@ -191,8 +191,6 @@ void WiFiTask( void )
             break;
         case AP_MODE_OK:
             printf("INFO: AP Mode\r\n");
-            Led1(5);
-            Led2(0);
             wifi_count_command_seq = 0;
             wifi_count_ap_mode_timer = 600;
             wifi_stm = MAIN;
@@ -220,6 +218,7 @@ void WiFiTask( void )
             wifi_stm = MAIN;
             break;            
         case MAIN:
+            printf("INFO: Main Loop\r\n");
             wifi_count_command_seq = 0;
             wifi_count_keep_alive = KEEP_ALIVE_TIMER;
             wifi_stm++;
@@ -306,6 +305,8 @@ void WiFiNewChar(char ch)
 {
     wifi_count_rx_timer = 5; /* 500 ms */
 
+    LedRx();
+    
     if( wifi_flag_rx_parse_on_lf && (ch == 0x0a || ch == 0x0d) )
     {
         wifi_count_rx_timer = 0;
@@ -343,6 +344,7 @@ void WiFiNewChar(char ch)
 void WifiSendString(const char* msg, bool crlf)
 {
     printf("%.80s --> WiFi\r\n", msg);
+    LedTx();
     while(*msg)
     {
         UART1_Write(*msg);
@@ -417,7 +419,6 @@ void WiFiCheckUnsol(const char* msg)
         /* Cliente conectado al AP propio */
         /* cancelo el timer de configuracion */
         wifi_count_ap_mode_timer = 0;   
-        Led2(2);
 
     }
     else if( !memcmp(msg, "+STA_DISCONNECTED", 8))
@@ -425,7 +426,6 @@ void WiFiCheckUnsol(const char* msg)
         /* Cliente desconectado al AP propio */
         /* reactivo el timer de configuracion (cortito) */
         wifi_count_ap_mode_timer = 50;   
-        Led2(0);
     }
     else if( !memcmp(msg, "+CIFSR:", 7))
     {

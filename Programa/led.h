@@ -26,4 +26,7 @@ void Led1(int status);
 void Led2(int status);
 void Led3(int status);
 
+void LedTx(void);
+void LedRx(void);
+
 #endif /* _LED_H_ */

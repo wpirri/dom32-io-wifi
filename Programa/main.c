@@ -105,9 +105,6 @@ int main(void)
     HTTPInit();
     printf("Init complete\r\n");
     
-    Led1(10);
-    Led2(10);
-    
     while (1)
     {
         // Add your application code

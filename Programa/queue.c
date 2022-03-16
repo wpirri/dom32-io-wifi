@@ -57,7 +57,6 @@ char* QueueNextByte(char* buffer_root, unsigned int buffer_len, char* current_by
     }
 }
 
-
 void QueueInit( void )
 {
     unsigned int i;
@@ -111,56 +110,18 @@ void QueueClose(unsigned int id)
 
 bool QueueAddBuffer(unsigned int id, char* data, unsigned int data_len)
 {
-    unsigned int i;
-    union
-    {
-        char s[sizeof(unsigned int)];
-        unsigned int i;
-    } union_int_string;
-    
     /* Adem�s de lo de siempre, que no haya un elemento empesado a cargar */
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer && (g_queue_list_buffer[id].last_byte == g_queue_list_buffer[id].last_element) )
     {
         if(g_queue_list_buffer[id].total_buffer_len > (g_queue_list_buffer[id].buffer_used + sizeof(unsigned int) + data_len + 1))
         {
-            union_int_string.i = data_len + 1;
-            for(i = 0; i < sizeof(unsigned int); i++)
-            {
-                g_queue_list_buffer[id].buffer_used++;
-                *(g_queue_list_buffer[id].last_element) = union_int_string.s[i];
-                g_queue_list_buffer[id].last_element = QueueNextByte(
-                                g_queue_list_buffer[id].buffer,
-                                g_queue_list_buffer[id].total_buffer_len,
-                                g_queue_list_buffer[id].last_element);
-            }
             while(data_len)
             {
-                g_queue_list_buffer[id].buffer_used++;
-                *(g_queue_list_buffer[id].last_element) = *data;
-                g_queue_list_buffer[id].last_element = QueueNextByte(
-                                g_queue_list_buffer[id].buffer,
-                                g_queue_list_buffer[id].total_buffer_len,
-                                g_queue_list_buffer[id].last_element);
+                QueueAddByte(id, *data);
                 data_len--;
                 data++;
             }
-            /* Un byte mas al final con un nul */
-            *(g_queue_list_buffer[id].last_element) = 0;
-            g_queue_list_buffer[id].buffer_used++;
-            g_queue_list_buffer[id].last_element = QueueNextByte(
-                            g_queue_list_buffer[id].buffer,
-                            g_queue_list_buffer[id].total_buffer_len,
-                            g_queue_list_buffer[id].last_element);
-            
-            g_queue_list_buffer[id].last_element_bytes = 0;
-            g_queue_list_buffer[id].last_byte = g_queue_list_buffer[id].last_element;
-            
-            g_queue_list_buffer[id].element_count++;
-            
-            if(g_queue_list_buffer[id].buffer_used > g_queue_list_buffer[id].max_buffer_used)
-            {
-                g_queue_list_buffer[id].max_buffer_used = g_queue_list_buffer[id].buffer_used;
-            }
+            QueueAddByteEnqueue(id);
             return true;
         }
     }
@@ -257,7 +218,7 @@ void QueueAddByteCancell(unsigned int id)
 {
     if(id < INVALID_QUEUE && g_queue_list_buffer[id].buffer)
     {
-        g_queue_list_buffer[id].buffer_used -= g_queue_list_buffer[id].element_count;
+        g_queue_list_buffer[id].buffer_used -= g_queue_list_buffer[id].last_element_bytes;
         g_queue_list_buffer[id].buffer_used -= sizeof(unsigned int);
         
         g_queue_list_buffer[id].last_byte = g_queue_list_buffer[id].last_element;
@@ -345,6 +306,7 @@ unsigned int QueueGet(unsigned int id, char* data, unsigned int max_data_len)
                 g_queue_list_buffer[id].buffer_used--;
             }
             g_queue_list_buffer[id].element_count--;
+
             return union_int_string.i;
         }
     }
@@ -380,6 +342,7 @@ bool QueueDel(unsigned int id)
             }
             g_queue_list_buffer[id].element_count--;
         }
+
         return true;
     }
     return false;

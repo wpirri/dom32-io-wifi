@@ -113,37 +113,37 @@ int HTTPGetFormData(const char *buffer, const char *label, char *value)
 void HttpReturnWiFiFormConfig(unsigned int socket)
 {
     sprintf(http_buffer,
-            "R,%u:"
-            "%s"
-            "<html>\n"
-            "<head>\n"
-            "<title>Dom32IO</title>\n"
-            "</head>\n"
-            "<style>\n"
-            "body{background-color:grey;font-size:24pt;}\n"
-            "#it{height:75;font-size:24pt}\n"
-            "</style>\n"
-            "<body>\n"
-            "<form method=\"post\">\n"
-            "<h1>WiFi</h1>"
-            "<hr />"
-            "<h2>AP1:</h2>\n"
-            "&nbsp;<input id=\"it\" type=\"text\" name=\"ap1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap1p\" value=\"%s\"><br>\n"
-            "<h2>AP2:</h2>\n"
-            "&nbsp;<input id=\"it\" type=\"text\" name=\"ap2\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap2p\" value=\"%s\"><br>\n"
-            "<h2>Central:</h2>\n"
-            "&nbsp;<input id=\"it\" type=\"text\" name=\"ce1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ce2\" value=\"%s\"><br>\n"
-            "<br>\n"
-            "<br>\n"
-            "&nbsp;&nbsp;<input  id=\"it\" type=\"submit\" value=\"Guardar\">"
-            "</form>\n"
-            "</body>\n"
-            "</html>\n",
-            socket,
-            http_200,
-            g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
-            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
-            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
+              "R,%u:Ok",
+//            "%s"
+//            "<html>\n"
+//            "<head>\n"
+//            "<title>Dom32IO</title>\n"
+//            "</head>\n"
+//            "<style>\n"
+//            "body{background-color:grey;font-size:24pt;}\n"
+//            "#it{height:75;font-size:24pt}\n"
+//            "</style>\n"
+//            "<body>\n"
+//            "<form method=\"post\">\n"
+//            "<h1>WiFi</h1>"
+//            "<hr />"
+//            "<h2>AP1:</h2>\n"
+//            "&nbsp;<input id=\"it\" type=\"text\" name=\"ap1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap1p\" value=\"%s\"><br>\n"
+//            "<h2>AP2:</h2>\n"
+//            "&nbsp;<input id=\"it\" type=\"text\" name=\"ap2\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap2p\" value=\"%s\"><br>\n"
+//            "<h2>Central:</h2>\n"
+//            "&nbsp;<input id=\"it\" type=\"text\" name=\"ce1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ce2\" value=\"%s\"><br>\n"
+//            "<br>\n"
+//            "<br>\n"
+//            "&nbsp;&nbsp;<input  id=\"it\" type=\"submit\" value=\"Guardar\">"
+//            "</form>\n"
+//            "</body>\n"
+//            "</html>\n",
+              socket);
+//            http_200,
+//            g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
+//            g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
+//            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
     
     if( !QueueAddBuffer(wifi_queue_tx, http_buffer, strlen(http_buffer)))
     {
