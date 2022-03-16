@@ -8,20 +8,21 @@
     uart2.c
 
   @Summary
-    This is the generated source file for the UART2 driver using PIC24 / dsPIC33 / PIC32MM MCUs
+    This is the generated source file for the UART2 driver using Foundation Services Library
 
   @Description
     This source file provides APIs for driver for UART2. 
+
     Generation Information : 
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.170.0
+        Product Revision  :  Foundation Services Library - pic24-dspic-pic32mm : v1.26
         Device            :  PIC32MM0256GPM028
     The generated drivers are tested against the following:
-        Compiler          :  XC32 v2.50
-        MPLAB             :  MPLAB X v5.45
+        Compiler          :  XC32 1.42
+        MPLAB 	          :  MPLAB X 3.45
 */
 
 /*
-    (c) 2020 Microchip Technology Inc. and its subsidiaries. You may use this
+    (c) 2016 Microchip Technology Inc. and its subsidiaries. You may use this
     software and any derivatives exclusively with Microchip products.
 
     THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
@@ -47,7 +48,6 @@
 */
 #include <stdbool.h>
 #include <stdint.h>
-#include <stddef.h>
 #include "xc.h"
 #include "uart2.h"
 
@@ -62,8 +62,8 @@
 */
 
 static uint8_t * volatile rxTail;
-static uint8_t *rxHead;
-static uint8_t *txTail;
+static uint8_t * rxHead;
+static uint8_t * txTail;
 static uint8_t * volatile txHead;
 static bool volatile rxOverflowed;
 
@@ -74,14 +74,8 @@ static bool volatile rxOverflowed;
 
 */
 
-/* We add one extra byte than requested so that we don't have to have a separate
- * bit to determine the difference between buffer full and buffer empty, but
- * still be able to hold the amount of data requested by the user.  Empty is
- * when head == tail.  So full will result in head/tail being off by one due to
- * the extra byte.
- */
-#define UART2_CONFIG_TX_BYTEQ_LENGTH (64+1)
-#define UART2_CONFIG_RX_BYTEQ_LENGTH (64+1)
+#define UART2_CONFIG_TX_BYTEQ_LENGTH (255+1)
+#define UART2_CONFIG_RX_BYTEQ_LENGTH (15+1)
 
 /** UART Driver Queue
 
@@ -90,8 +84,8 @@ static bool volatile rxOverflowed;
 
 */
 
-static uint8_t txQueue[UART2_CONFIG_TX_BYTEQ_LENGTH];
-static uint8_t rxQueue[UART2_CONFIG_RX_BYTEQ_LENGTH];
+static uint8_t txQueue[UART2_CONFIG_TX_BYTEQ_LENGTH] ;
+static uint8_t rxQueue[UART2_CONFIG_RX_BYTEQ_LENGTH] ;
 
 void (*UART2_TxDefaultInterruptHandler)(void);
 void (*UART2_RxDefaultInterruptHandler)(void);
@@ -100,116 +94,87 @@ void (*UART2_RxDefaultInterruptHandler)(void);
   Section: Driver Interface
 */
 
-void UART2_Initialize(void)
+
+void UART2_Initialize (void)
 {
-    IEC1bits.U2TXIE = 0;
-    IEC1bits.U2RXIE = 0;
-
-    // STSEL 1; PDSEL 8N; RTSMD disabled; OVFDIS disabled; ACTIVE disabled; RXINV disabled; WAKE disabled; BRGH enabled; IREN disabled; ON enabled; SLPEN disabled; SIDL disabled; ABAUD disabled; LPBACK disabled; UEN TX_RX; CLKSEL PBCLK; 
-    // Data Bits = 8; Parity = None; Stop Bits = 1;
-    U2MODE = (0x8008 & ~(1<<15));  // disabling UART ON bit
-    // UTXISEL TX_ONE_CHAR; UTXINV disabled; ADDR 0; MASK 0; URXEN disabled; OERR disabled; URXISEL RX_ONE_CHAR; UTXBRK disabled; UTXEN disabled; ADDEN disabled; 
-    U2STA = 0x00;
-    // U2TXREG 0; 
-    U2TXREG = 0x00;
-    // BaudRate = 115200; Frequency = 24000000 Hz; BRG 51; 
-    U2BRG = 0x33;
-    
-    txHead = txQueue;
-    txTail = txQueue;
-    rxHead = rxQueue;
-    rxTail = rxQueue;
+   IEC1bits.U2TXIE = 0;
+   IEC1bits.U2RXIE = 0;
    
-    rxOverflowed = false;
+   // STSEL 1; PDSEL 8N; RTSMD disabled; OVFDIS disabled; ACTIVE disabled; RXINV disabled; WAKE disabled; BRGH enabled; IREN disabled; ON enabled; SLPEN disabled; SIDL disabled; ABAUD disabled; LPBACK disabled; UEN TX_RX; CLKSEL PBCLK; 
+   U2MODE = (0x8008 & ~(1<<15));  // disabling UART
+   // UTXISEL TX_ONE_CHAR; UTXINV disabled; ADDR 0; MASK 0; URXEN disabled; OERR disabled; URXISEL RX_ONE_CHAR; UTXBRK disabled; UTXEN disabled; ADDEN disabled; 
+   U2STA = 0x0;
+   // BaudRate = 115200; Frequency = 24000000 Hz; BRG 51; 
+   U2BRG = 0x33;
+   
+   txHead = txQueue;
+   txTail = txQueue;
+   rxHead = rxQueue;
+   rxTail = rxQueue;
+   
+   rxOverflowed = 0;
 
-    UART2_SetTxInterruptHandler(&UART2_Transmit_CallBack);
+   UART2_SetTxInterruptHandler(UART2_Transmit_ISR);
 
-    UART2_SetRxInterruptHandler(&UART2_Receive_CallBack);
-
-    IEC1bits.U2RXIE = 1;
-    
+   UART2_SetRxInterruptHandler(UART2_Receive_ISR);
+   IEC1bits.U2RXIE = 1;
+   
     //Make sure to set LAT bit corresponding to TxPin as high before UART initialization
-    U2STASET = _U2STA_UTXEN_MASK;
-    U2MODESET = _U2MODE_ON_MASK;   // enabling UART ON bit
-    U2STASET = _U2STA_URXEN_MASK;
+   U2STASET = _U2STA_UTXEN_MASK;
+   U2MODESET = _U2MODE_ON_MASK;  // enabling UART ON bit
+   U2STASET = _U2STA_URXEN_MASK; 
 }
 
 /**
     Maintains the driver's transmitter state machine and implements its ISR
 */
-
-void UART2_SetTxInterruptHandler(void (* interruptHandler)(void))
-{
-    if(interruptHandler == NULL)
-    {
-        UART2_TxDefaultInterruptHandler = &UART2_Transmit_CallBack;
-    }
-    else
-    {
-        UART2_TxDefaultInterruptHandler = interruptHandler;
-    }
-
+void UART2_SetTxInterruptHandler(void* handler){
+    UART2_TxDefaultInterruptHandler = handler;
 }
 
 void __attribute__ ((vector(_UART2_TX_VECTOR), interrupt(IPL1SOFT))) _UART2_TX ( void )
 {
-    if(UART2_TxDefaultInterruptHandler)
-    {
-        UART2_TxDefaultInterruptHandler();
-    }
-    
+    (*UART2_TxDefaultInterruptHandler)();
+}
+
+void UART2_Transmit_ISR(void)
+{ 
     if(txHead == txTail)
     {
         IEC1bits.U2TXIE = 0;
+        return;
     }
-    else
+
+    IFS1CLR= 1 << _IFS1_U2TXIF_POSITION;
+
+    while(!(U2STAbits.UTXBF == 1))
     {
-        IFS1CLR= 1 << _IFS1_U2TXIF_POSITION;
+        U2TXREG = *txHead++;
 
-        while(!(U2STAbits.UTXBF == 1))
+        if(txHead == (txQueue + UART2_CONFIG_TX_BYTEQ_LENGTH))
         {
-            U2TXREG = *txHead++;
+            txHead = txQueue;
+        }
 
-            if(txHead == (txQueue + UART2_CONFIG_TX_BYTEQ_LENGTH))
-            {
-                txHead = txQueue;
-            }
-
-            // Are we empty?
-            if(txHead == txTail)
-            {
-                break;
-            }
+        // Are we empty?
+        if(txHead == txTail)
+        {
+            break;
         }
     }
 }
 
-void __attribute__ ((weak)) UART2_Transmit_CallBack ( void )
-{ 
-
-}
-
-void UART2_SetRxInterruptHandler(void (* interruptHandler)(void))
-{
-    if(interruptHandler == NULL)
-    {
-        UART2_RxDefaultInterruptHandler = &UART2_Receive_CallBack;
-    }
-    else
-    {
-        UART2_RxDefaultInterruptHandler = interruptHandler;
-    }
+void UART2_SetRxInterruptHandler(void* handler){
+    UART2_RxDefaultInterruptHandler = handler;
 }
 
 void __attribute__ ((vector(_UART2_RX_VECTOR), interrupt(IPL1SOFT))) _UART2_RX( void )
 {
-    if(UART2_RxDefaultInterruptHandler)
-    {
-        UART2_RxDefaultInterruptHandler();
-    }
-    
-    IFS1CLR= 1 << _IFS1_U2RXIF_POSITION;
-	
+    (*UART2_RxDefaultInterruptHandler)();
+}
+
+void UART2_Receive_ISR(void)
+{
     while((U2STAbits.URXDA == 1))
     {
         *rxTail = U2RXREG;
@@ -231,22 +196,20 @@ void __attribute__ ((vector(_UART2_RX_VECTOR), interrupt(IPL1SOFT))) _UART2_RX( 
         {
             rxOverflowed = true;
         }
+
     }
+
+      IFS1CLR= 1 << _IFS1_U2RXIF_POSITION;
 }
 
-void __attribute__ ((weak)) UART2_Receive_CallBack(void)
-{
-
-}
-
-void __attribute__ ((vector(_UART2_ERR_VECTOR), interrupt(IPL1SOFT))) _UART2_ERR( void )
+void __attribute__ ((vector(_UART2_ERR_VECTOR), interrupt(IPL1SOFT))) _UART2_ERR ( void )
 {
     if ((U2STAbits.OERR == 1))
     {
         U2STACLR = _U2STA_OERR_MASK; 
     }
-    
-    IFS1CLR= 1 << _IFS1_U2EIF_POSITION;
+
+     IFS1CLR= 1 << _IFS1_U2EIF_POSITION;
 }
 
 /**
@@ -321,9 +284,7 @@ bool UART2_IsTxDone(void)
     
     return false;
 }
-
-void _mon_putc(char c) 
-{
+void _mon_putc(char c) {
     while(UART2_IsTxReady() == false)
     {
     }
@@ -331,13 +292,8 @@ void _mon_putc(char c)
     UART2_Write(c);
 }
 
-/*******************************************************************************
-
-  !!! Deprecated API !!!
-  !!! These functions will not be supported in future releases !!!
-
-*******************************************************************************/
-
+#ifdef __DEPRECATED__
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 static uint8_t UART2_RxDataAvailable(void)
 {
     uint16_t size;
@@ -360,6 +316,13 @@ static uint8_t UART2_RxDataAvailable(void)
     return size;
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
+uint8_t __attribute__((deprecated)) UART2_is_rx_ready(void)
+{
+    return UART2_RxDataAvailable();
+}
+
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 static uint8_t UART2_TxDataAvailable(void)
 {
     uint16_t size;
@@ -382,6 +345,19 @@ static uint8_t UART2_TxDataAvailable(void)
     return size;
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
+uint8_t __attribute__((deprecated)) UART2_is_tx_ready(void)
+{
+    return UART2_TxDataAvailable();
+}
+
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
+bool __attribute__((deprecated)) UART2_is_tx_done(void)
+{
+    return UART2_IsTxDone();
+}
+
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 unsigned int __attribute__((deprecated)) UART2_ReadBuffer( uint8_t *buffer ,  unsigned int numbytes)
 {
     unsigned int rx_count = UART2_RxDataAvailable();
@@ -400,6 +376,7 @@ unsigned int __attribute__((deprecated)) UART2_ReadBuffer( uint8_t *buffer ,  un
     return rx_count;    
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 unsigned int __attribute__((deprecated)) UART2_WriteBuffer( uint8_t *buffer , unsigned int numbytes )
 {
     unsigned int tx_count = UART2_TxDataAvailable();
@@ -418,6 +395,7 @@ unsigned int __attribute__((deprecated)) UART2_WriteBuffer( uint8_t *buffer , un
     return tx_count;  
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 UART2_TRANSFER_STATUS __attribute__((deprecated)) UART2_TransferStatusGet (void )
 {
     UART2_TRANSFER_STATUS status = 0;
@@ -452,6 +430,7 @@ UART2_TRANSFER_STATUS __attribute__((deprecated)) UART2_TransferStatusGet (void 
     return status;    
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 uint8_t __attribute__((deprecated)) UART2_Peek(uint16_t offset)
 {
     uint8_t *peek = rxHead + offset;
@@ -464,64 +443,22 @@ uint8_t __attribute__((deprecated)) UART2_Peek(uint16_t offset)
     return *peek;
 }
 
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
 bool __attribute__((deprecated)) UART2_ReceiveBufferIsEmpty (void)
 {
     return (UART2_RxDataAvailable() == 0);
 }
 
-bool __attribute__((deprecated)) UART2_TransmitBufferIsFull(void)
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
+bool __attribute__((deprecated)) UART2_TransmitBufferIsFull (void)
 {
     return (UART2_TxDataAvailable() == 0);
 }
 
-uint32_t __attribute__((deprecated)) UART2_StatusGet (void)
+/* !!! Deprecated API - This function may not be supported in a future release !!! */
+UART2_STATUS __attribute__((deprecated)) UART2_StatusGet (void )
 {
     return U2STA;
 }
 
-unsigned int __attribute__((deprecated)) UART2_TransmitBufferSizeGet(void)
-{
-    if(UART2_TxDataAvailable() != 0)
-    { 
-        if(txHead > txTail)
-        {
-            return((txHead - txTail) - 1);
-        }
-        else
-        {
-            return((UART2_CONFIG_TX_BYTEQ_LENGTH - (txTail - txHead)) - 1);
-        }
-    }
-    return 0;
-}
-
-unsigned int __attribute__((deprecated)) UART2_ReceiveBufferSizeGet(void)
-{
-    if(UART2_RxDataAvailable() != 0)
-    {
-        if(rxHead > rxTail)
-        {
-            return((rxHead - rxTail) - 1);
-        }
-        else
-        {
-            return((UART2_CONFIG_RX_BYTEQ_LENGTH - (rxTail - rxHead)) - 1);
-        } 
-    }
-    return 0;
-}
-
-void __attribute__((deprecated)) UART2_Enable(void)
-{
-    U2STASET = _U2STA_UTXEN_MASK;
-    U2STASET = _U2STA_URXEN_MASK;
-    U2MODESET = _U2MODE_ON_MASK;
-}
-
-void __attribute__((deprecated)) UART2_Disable(void)
-{
-    U2STACLR = _U2STA_UTXEN_MASK;
-    U2STACLR = _U2STA_URXEN_MASK;
-    U2MODECLR = _U2MODE_ON_MASK;
-}
-
+#endif /* __DEPRECATED__ */

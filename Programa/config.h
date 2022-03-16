@@ -73,6 +73,5 @@ void ConfigInit( void );
 void ConfigLoad( void );
 void ConfigSave(void);
 void ConfigTimer(void);
-void ConfigTask(void);
 
 #endif /* _CONFIG_H_ */

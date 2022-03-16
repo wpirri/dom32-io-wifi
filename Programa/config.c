@@ -23,13 +23,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #include "mcc_generated_files/memory/flash.h"
+#include "control.h"
 
 #define CONFIG_FLASK_OK 0xA5A55A5A
 
-bool config_flag_save;
 /* Have compiler allocate a page of flash from the NVM.  Aligned to a page. */
 static const uint32_t __attribute((space(prog),aligned(FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS))) flash_reserved_space[FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS/4];
 
@@ -50,7 +49,6 @@ void ConfigLoadDefault( void)
 
 void ConfigInit( void )
 {
-    config_flag_save = false;
     memset(&g_wifi_info, 0, sizeof(wifi_info));
 }
 
@@ -78,11 +76,36 @@ void ConfigSave(void)
     g_wifi_info.status.flash_error = false;
     g_wifi_info.status.save_config = 0;
     
+    g_wifi_info.f.config.an_config = (
+            ((g_control_io.ana1)?0x01:0) |
+            ((g_control_io.ana2)?0x02:0) |
+            ((g_control_io.ana3)?0x04:0) |
+            ((g_control_io.ana4)?0x08:0) );
 
-    
-    
-    
-    
+    g_wifi_info.f.config.io_config = (
+            ((g_control_io.dir1)?0x01:0) |
+            ((g_control_io.dir2)?0x02:0) |
+            ((g_control_io.dir3)?0x04:0) |
+            ((g_control_io.dir4)?0x08:0) );
+
+    g_wifi_info.f.config.exp_an_config = (
+            ((g_control_exp.ana1)?0x01:0) |
+            ((g_control_exp.ana3)?0x02:0) |
+            ((g_control_exp.ana4)?0x04:0) |
+            ((g_control_exp.ana5)?0x08:0) |
+            ((g_control_exp.ana7)?0x10:0) |
+            ((g_control_exp.ana8)?0x20:0) |
+            ((g_control_exp.ana9)?0x40:0) );
+
+    g_wifi_info.f.config.exp_io_config = (
+            ((g_control_exp.dir1)?0x01:0) |
+            ((g_control_exp.dir3)?0x02:0) |
+            ((g_control_exp.dir4)?0x04:0) |
+            ((g_control_exp.dir5)?0x08:0) |
+            ((g_control_exp.dir7)?0x10:0) |
+            ((g_control_exp.dir8)?0x20:0) |
+            ((g_control_exp.dir9)?0x40:0) );
+
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
     FLASH_ErasePage(f);
@@ -107,16 +130,9 @@ void ConfigTimer(void)
         g_wifi_info.status.save_config--;
         if(g_wifi_info.status.save_config == 0)
         {
-            config_flag_save = true;
+            ConfigSave();
+            CTRLInit();
         }
     }
-}
-
-void ConfigTask(void)
-{
-    if(config_flag_save)
-    {
-        config_flag_save = false;
-        ConfigSave();
-    }
+    
 }

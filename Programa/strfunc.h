@@ -18,7 +18,7 @@
 #ifndef _STRFUNC_H_
 #define _STRFUNC_H_
 
-int str_section(const char *in, unsigned int count, char *out);
+int str_section(char *in, char sep, unsigned int count, char *out);
 
 
 #endif /* _STRFUNC_H_ */

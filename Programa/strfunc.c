@@ -24,20 +24,22 @@
     Si count e 0 devuelve lo que hay antes del separador
     El dato devuelto se termina al encntrar un separador o cualquier caracter que no se número o letra
 */
-int str_section(const char *in, unsigned int count, char *out)
+int str_section(char *in, char sep, unsigned int count, char *out)
 {
-    const char *p;
+    char *p;
     int len = 0;
     
     p = in;
     while(count && *p)
     {
-        if(*p == ',' || *p == ':') count--;
+        if(*p == sep) count--;
         p++;
     }
     if(*p == 0 || count) return 0;
     /* p apunta al inicio del campo, copio hasta el final */
-    while(*p && *p != ',' && *p != ':' )
+    while(*p && ( (*p >= '0' && *p <= '9') || 
+                  (*p >= 'a' && *p <= 'z') || 
+                  (*p >= 'A' && *p <= 'Z')  ) && *p != sep )
     {
         *out = *p;
         p++;

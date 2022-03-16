@@ -1,5 +1,5 @@
 /***************************************************************************
-    Copyright (C) 2022   Walter Pirri
+    Copyright (C) 2020   Walter Pirri
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -15,123 +15,883 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
+#define _IN_WIFI_C_
 #include "wifi.h"
+#undef _IN_WIFI_C_
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdarg.h>
 
 #include "mcc_generated_files/uart1.h"
 #include "mcc_generated_files/pin_manager.h"
-
-#include "config.h"
-#include "led.h"
-#include "queue.h"
-#include "http.h"
 #include "strfunc.h"
+#include "http.h"
+#include "config.h"
+
+#define WIFI_READ_LINE_BUFFER_LEN 1024
+#define TIMER_AP_VALUE 600
 
 typedef enum
 {
-    RESET = 0,
+    INVALID = 0,
+    RESET,
     START,
-    WAIT_READY,
+    CLEAN,
     INIT,
-    INIT_STEP,
-    INIT_OK,
-
-    AP_MODE,
-    AP_MODE_STEP,
-    AP_MODE_OK,
-            
-    ST_MODE,
-    ST_MODE_STEP,
-    ST_MODE_OK,
-
-    DATA_SEND,
-    DATA_SEND_STEP,
-    DATA_SEND_OK,
-            
-    MAIN,
-    MAIN_LOOP,
-            
-    FATALERROR,
+    UPGRADE,
+    APMODE,
+    STMODE,
+    HTTP,
+    LISTAP,
+    LOOP,
     ERROR
-} wifi_task_stm;
+} task_stm;
 
-#define WIFI_RX_BUFFER_LEN 4096
-#define WIFI_TX_BUFFER_LEN 4096
+task_stm g_wifi_task_stm;
+unsigned int g_wifi_timer_ap;
+unsigned int g_wifi_task_stm_step;
+unsigned int g_wifi_task_stm_delay;
+unsigned int g_wifi_task_stm_timeout;
+int g_wifi_http_id;
 
-#define WIFI_MAX_CONN 4
+unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
+unsigned int g_wifi_read_line_buffer_index;
+unsigned char g_wifi_read_line_buffer_timer;
+bool g_wifi_read_line_wait_crlf;
 
-#define KEEP_ALIVE_TIMER 300
+char g_wifi_cmd[64];
 
-unsigned int wifi_queue_rx;
-char wifi_buffer_rx[WIFI_RX_BUFFER_LEN];
-unsigned int wifi_queue_tx;
-char wifi_buffer_tx[WIFI_TX_BUFFER_LEN];
+unsigned char g_loop_count;
 
-wifi_task_stm wifi_stm;
-int wifi_count_stm_no_process;
-volatile int wifi_count_rx_timer;
-volatile bool wifi_flag_rx_parse_on_lf;
-int wifi_count_command_seq;
-char wifi_hw_mac[13];
-int wifi_count_ap_mode_timer;
-char wifi_buffer_msg_head[8];
-int wifi_count_msg_head;
-
-int wifi_count_keep_alive;
-bool wifi_flag_keep_alive;
-
-typedef struct _wifi_wait_for_st
+void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
-    char wait[16];
-    wifi_task_stm on_ok;
-    wifi_task_stm on_error;
-    int time_out;
-} wifi_wait_for_st;
+    g_wifi_task_stm = st;
+    g_wifi_task_stm_delay = delay;
+    g_wifi_task_stm_timeout = to;
+    g_wifi_task_stm_step = 0;
+}
 
-wifi_wait_for_st wwfst;
+void WifiWrite( const char *buffer )
+{
+	//printf("WifiWrite: %s\n", buffer);
+    /* Reseteo el buffer de lectura */
+    g_wifi_read_line_buffer_index = 0;
+    if(buffer)
+    {
+        while(*buffer)
+        {
+            UART1_Write((uint8_t)*buffer);
+            buffer++;
+        }
+    }
+}
 
-char wifi_data_send_ip_addr[16];
-int wifi_data_send_ip_port;
-int wifi_data_send_conn_id;
-char wifi_data_send_buffer[WIFI_TX_BUFFER_LEN];
+void WifiWriteLine( const char *line )
+{
+	//printf("WifiWriteLine: %s\n", line);
+    /* Reseteo el buffer de lectura */
+    g_wifi_read_line_buffer_index = 0;
+    if(line)
+    {
+        while(*line)
+        {
+            UART1_Write((uint8_t)*line);
+            line++;
+        }
+    }
+    UART1_Write('\r');
+    UART1_Write('\n');
+}
 
+/*
+    Return: = 0 - No se recibi� lo que se esperaba y ninguna acci�n no solicitada
+            > 0 - Se recibi� algo no solicitado rc = nuevo estado
+            < 0 - Se recibio lo que se esperaba
+*/
+int WifiWaitLine(const char *line)
+{
+    int rc = 0;
+    unsigned char c = 0;
 
-void WifiSendString(const char* msg, bool crlf);
-void WiFiCheckUnsol(const char* msg);
-void WiFiWaitFor(const char* wait, wifi_task_stm on_ok, wifi_task_stm on_error, int time_out);
-void ProcessReceiveQueue( void );
-void WiFiInitSeq( wifi_task_stm stm );
-void WiFiAPModeSeq( wifi_task_stm stm );
-void WiFiSTModeSeq( wifi_task_stm stm );
-void WiFiDataSendSeq( wifi_task_stm stm );
+    while(UART1_IsRxReady())
+    {
+        c = UART1_Read();
+        /* Si estoy esperando fin de linea ... */
+        if(g_wifi_read_line_wait_crlf)
+        {
+            /* salgo del loop cuando lo recibo */
+            if(c == 0x0A || c == 0x0D) break;
+            /* elimino todo lo recibido si recibo ascii extendido */
+            if(c > 127)
+            {
+                g_wifi_read_line_buffer_timer = 0;
+                g_wifi_read_line_buffer_index = 0;
+                return 0;
+            }
+        }
+        /*voy agregando los datos al buffer */
+        if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
+        {
+            g_wifi_read_line_buffer_timer = 3;
+            /* Se agrega el caracter a la l�nea */
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
+            g_wifi_read_line_buffer_index++;
+            g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
+            /* Detecto la llegada de datos por TCP y dejo de esperar el fin de linea */
+            if(g_wifi_read_line_buffer_index == 4)
+            {
+                /*+IPD*/
+                if(g_wifi_read_line_buffer[0] == '+' &&
+                   g_wifi_read_line_buffer[1] == 'I' &&
+                   g_wifi_read_line_buffer[2] == 'P' &&
+                   g_wifi_read_line_buffer[3] == 'D'  )
+                {
+                    g_wifi_read_line_wait_crlf = false;
+                }
+            }
+        }
+    }   
+    
+    /* Detecto el final de linea o time-out recibiendo datos */
+    if( (g_wifi_read_line_wait_crlf && (c == 0x0A || c == 0x0D)) || (g_wifi_read_line_buffer_timer == 0) )
+    {
+        g_wifi_read_line_wait_crlf = true;
+        g_wifi_read_line_buffer_timer = 0;
+
+        if(g_wifi_read_line_buffer_index)
+        {
+            if(line)
+            {
+                //printf("WifiWaitLine: esperando:%s\n", line);
+                if( !memcmp(line, g_wifi_read_line_buffer, strlen(line)))
+                {
+                    //printf("               recibido:%s\n", line);
+                    rc = (-1);  /* Se recibi� lo que se esperaba */
+                }
+                else
+                {
+                    //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                    rc = WifiCheckUnsol();
+                }
+            }
+            else
+            {
+                //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                rc = WifiCheckUnsol();
+            }
+            g_wifi_read_line_buffer_index = 0;
+        }
+    }
+    return rc;
+}
+
+int WifiWaitPrompt(const char prompt)
+{
+    while(UART1_IsRxReady())
+    {
+        if(UART1_Read() == prompt) return 1;
+    }
+    return 0;
+}
+
+int WifiCheckUnsol( void )
+{
+    char str[16];
+    int id;
+    int len;
+    char *p;
+    
+    if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
+    {
+        /*
+        +IPD,0,442:<datos>
+        */
+        id = 0;
+        len = 0;
+        
+        if(str_section(g_wifi_read_line_buffer, ',', 1, str))
+        {
+            id = atoi(str);
+        }
+        if(str_section(g_wifi_read_line_buffer, ',', 2, str))
+        {
+            len = atoi(str);
+        }
+        /* dejo en el buffer solo el HTTP */
+        p = strchr(g_wifi_read_line_buffer, ':');
+        if(p)
+        {
+            p++;
+            *(p+len) = 0;
+            HTTPAdd(id, p);
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
+    {
+        g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
+    {
+        if(g_wifi_info.status.wifi_conectado)
+        {
+            g_wifi_info.status.wifi_conectado = 0;
+            g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+            return STMODE;
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
+    {
+        /* Cliente conectado al AP */
+        g_wifi_timer_ap = 0; // para que no salga de modo AP
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
+    {
+        /* Cliente desconectado al AP */
+        g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:", 7))
+    {
+        /* AT+CIFSR
+         * +CIFSR:STAIP,"0.0.0.0"
+         * +CIFSR:STAMAC,"80:7d:3a:62:03:60"
+         */
+        if( !memcmp(&g_wifi_read_line_buffer[7], "STAMAC", 6))
+        {
+            g_wifi_info.status.hw_mac[0]  = g_wifi_read_line_buffer[15];
+            g_wifi_info.status.hw_mac[1]  = g_wifi_read_line_buffer[16];
+            g_wifi_info.status.hw_mac[2]  = g_wifi_read_line_buffer[18];
+            g_wifi_info.status.hw_mac[3]  = g_wifi_read_line_buffer[19];
+            g_wifi_info.status.hw_mac[4]  = g_wifi_read_line_buffer[21];
+            g_wifi_info.status.hw_mac[5]  = g_wifi_read_line_buffer[22];
+            g_wifi_info.status.hw_mac[6]  = g_wifi_read_line_buffer[24];
+            g_wifi_info.status.hw_mac[7]  = g_wifi_read_line_buffer[25];
+            g_wifi_info.status.hw_mac[8]  = g_wifi_read_line_buffer[27];
+            g_wifi_info.status.hw_mac[9]  = g_wifi_read_line_buffer[28];
+            g_wifi_info.status.hw_mac[10] = g_wifi_read_line_buffer[30];
+            g_wifi_info.status.hw_mac[11] = g_wifi_read_line_buffer[31];
+            g_wifi_info.status.hw_mac[12] = 0;
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
+    {
+        /*
+         * AT version:1.6.2.0(Apr 13 2018 11:10:59)
+         * AT version:1.7.4.0(May 11 2020 19:13:04)
+         */
+        
+    }
+    return 0;
+}
+
+int WifiTaskInit( void )
+{
+    int rc = 0;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            //printf("--> Init.\n");
+            /* Restore a fabrica y espero a que el modulo se reinicie */
+            WifiWriteLine("AT+RESTORE");
+            g_wifi_task_stm_step = 1;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 100;
+            break;
+        case 1:
+            if(WifiWaitLine("ready") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 2;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 2:
+            /* ECHO OFF */
+            WifiWriteLine("AT");
+            //WifiWriteLine("ATE0");
+            g_wifi_task_stm_step = 3;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 3:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 4;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 4:
+            /* Version */
+            WifiWriteLine("AT+GMR");
+            g_wifi_task_stm_step = 5;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 5:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 6;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        default:
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
+
+int WifiTaskAPMode( void )
+{
+    int rc = 0;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            //printf("--> Modo AP.\n");
+            /* Bajo los servers */
+            WifiWriteLine("AT+CIPSERVER=0");
+            g_wifi_task_stm_step = 1;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 10;
+            g_wifi_info.status.wifi_mode = 0;
+            break;
+        case 1:
+            /* No controlo error */
+            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 2;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 2:
+            /* Modo AP+Sta */
+            WifiWriteLine("AT+CWMODE=3");
+            g_wifi_task_stm_step = 3;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 3:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 4;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.wifi_mode = 3;
+                g_wifi_info.status.wifi_ok = true;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 4:
+            /* MAC e IP */
+            WifiWriteLine("AT+CIFSR");
+            g_wifi_task_stm_step = 5;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 5:
+            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 6;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 6:
+            /* Nombre del AP */
+            sprintf(g_wifi_cmd, "AT+CWSAP=\"Dom32io-%s\",\"\",1,0,4,0",
+                    &g_wifi_info.status.hw_mac[6]);
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step = 7;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 7:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 8;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = (-1);
+            }
+            break;
+        case 8:
+            /* Multiconexion */
+            WifiWriteLine("AT+CIPMUX=1");
+            g_wifi_task_stm_step = 9;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 9:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 10;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = (-1);
+            }
+            break;
+        case 10:
+            /* Instancias del server */
+            sprintf(g_wifi_cmd, "AT+CIPSERVERMAXCONN=%d", WIFI_CIP_MAX_CONS);
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step = 11;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 11:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 12;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 12:
+            /* Listen */
+            WifiWriteLine("AT+CIPSERVER=1,80");
+            g_wifi_task_stm_step = 13;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 13:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 14;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                rc = (-1);
+            }
+            break;
+        default:
+            g_wifi_timer_ap = TIMER_AP_VALUE;
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
+
+int WifiTaskSTMode( void )
+{
+    int rc = 0;
+    char *ap, *pass;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            //printf("--> Modo STA.\n");
+            /* Bajo los servers */
+            WifiWriteLine("AT+CIPSERVER=0");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 100;
+            g_wifi_info.status.wifi_mode = 0;
+            break;
+        case 1:
+            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 2:
+            /* Modo Sta */
+            WifiWriteLine("AT+CWMODE=1");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 100;
+            break;
+        case 3:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 4:
+            /* Multiconexion */
+            WifiWriteLine("AT+CIPMUX=1");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 5:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 6:
+            /* Instancias del server */
+            sprintf(g_wifi_cmd, "AT+CIPSERVERMAXCONN=%d", WIFI_CIP_MAX_CONS);
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 7:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 8:
+            /* Listen */
+            WifiWriteLine("AT+CIPSERVER=1,80");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 9:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 10:
+            /* Reconnect */
+            WifiWriteLine("AT+CWAUTOCONN=1");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 11:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.wifi_mode = 1;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        case 12:
+            /* Si el actual no existe cambio al que exista */
+            if(g_wifi_info.status.wifi_ap_select == 1 &&
+               g_wifi_info.f.config.wifi_ap1[0] == 0 &&
+               g_wifi_info.f.config.wifi_ap2[0] != 0)
+            {
+                g_wifi_info.status.wifi_ap_select = 2;
+            }
+            
+            if(g_wifi_info.status.wifi_ap_select == 2 &&
+               g_wifi_info.f.config.wifi_ap2[0] == 0 &&
+               g_wifi_info.f.config.wifi_ap1[0] != 0)
+            {
+                g_wifi_info.status.wifi_ap_select = 1;
+            }
+            
+            ap = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2);
+            pass = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1_pass:g_wifi_info.f.config.wifi_ap2_pass);
+            if(*ap)
+            {
+                /* Connect to AP */
+                if(*pass)
+                {
+                    /* Con clave */
+                    sprintf(g_wifi_cmd, "AT+CWJAP=\"%s\",\"%s\"", ap, pass);
+                }
+                else
+                {
+                    /* Sin clave */
+                    sprintf(g_wifi_cmd, "AT+CWJAP=\"%s\"", ap);
+                }
+                WifiWriteLine(g_wifi_cmd);
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 300;
+                g_wifi_info.status.wifi_conectado = 0;
+            }
+            else
+            {
+                /* No hay AP definido */
+                rc = LOOP;
+            }
+            break;
+        case 13:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+                //rc = (-1);
+                rc = STMODE;
+            }
+            break;
+        default:
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
+
+int WifiTaskUpgrade( void )
+{
+    int rc = 0;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            //printf("--> Upgrade.\n");
+            /* Bajo los servers */
+            WifiWriteLine("AT+CIPUPDATE");
+            g_wifi_task_stm_step = 1;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 900;
+            break;
+        case 1:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 2;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando OK\n");
+                rc = (-1);
+            }
+            break;
+        default:
+            rc = RESET;
+            break;
+    }
+    return rc;
+}
+
+int WifiTaskHttp( void )
+{
+    int rc = 0;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            g_wifi_http_id = HTTPPending();
+            if(g_wifi_http_id >= 0) g_wifi_task_stm_step = 1;
+            else rc = LOOP;
+            break;
+        case 1:
+            /* Si es una respuesta salteo la conexion */
+            if(HTTPGetType(g_wifi_http_id) == 'R')
+            {
+                g_wifi_task_stm_step = 3;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+                break;
+            }
+            sprintf(g_wifi_cmd, "AT+CIPSTART=%d,\"TCP\",\"%s\",%d",
+                    g_wifi_http_id,
+                    g_wifi_info.f.config.wifi_host1,
+                    (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80);
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step = 2;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 10;
+            break;
+        case 2:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 3;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 7;   /* CLOSE */
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 3:
+            sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step = 4;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 10;
+            break;
+        case 4:
+            if(WifiWaitPrompt('>'))
+            {
+                g_wifi_task_stm_step = 5;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 7;   /* CLOSE */
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 5:
+            WifiWrite(HTTPGet(g_wifi_http_id, NULL));
+            g_wifi_task_stm_step = 6;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 6:
+            if(WifiWaitLine("SEND OK") || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step = 7;
+                g_wifi_task_stm_delay = 5;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 7:
+            sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
+            WifiWriteLine(g_wifi_cmd);
+            g_wifi_task_stm_step = 8;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 8:
+            if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
+            {
+                rc = LOOP;
+            }
+            break;
+        default:
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
+
+int WifiTaskLoop( void )
+{
+    int rc = 0;
+
+    /* Espero no solicitados */
+    if((rc = WifiWaitLine(NULL)) > 0)
+    {
+        return rc;
+    }
+    else if(g_wifi_info.status.wifi_start_ap)
+    {
+        g_wifi_info.status.wifi_start_ap = false;
+        return APMODE;
+    }
+    else if(HTTPPending() >= 0)
+    {
+        return HTTP;
+    }
+    
+    return 0;
+}
+
+int WifiTaskListAP( void )
+{
+    int rc = 0;
+
+    switch(g_wifi_task_stm_step)
+    {
+        case 0:
+            //printf("--> List AP.\n");
+            WifiWriteLine("AT+CWLAP");
+            g_wifi_task_stm_step = 1;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 50;
+            break;
+        case 1:
+            if(WifiWaitLine("OK"))
+            {
+                g_wifi_task_stm_step = 2;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                //printf("TIMEOUT esperando Ok\n");
+                rc = (-1);
+            }
+            break;
+        default:
+            g_wifi_task_stm_step = 0;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 0;
+            rc = LOOP;
+            break;
+    }
+    return rc;
+}
 
 /* *****************************************************************************
  * 
  * ************************************************************************** */
 void WiFiInit( void )
 {
-    wifi_stm = RESET;
-    wifi_count_stm_no_process = 0;
-    wifi_count_rx_timer = 0;
-    wifi_count_command_seq = 0;
-    wifi_flag_rx_parse_on_lf = true;
-    wifi_count_ap_mode_timer = 0;
-    wifi_count_msg_head = 0;
-    wifi_count_keep_alive = 0;
-    wifi_flag_keep_alive = false;
-    
-    wifi_queue_rx = QueueOpen(wifi_buffer_rx, WIFI_RX_BUFFER_LEN);
-    if(wifi_queue_rx == INVALID_QUEUE) printf("ERROR: Al crear cola de recepcion\r\n");
-
-    wifi_queue_tx = QueueOpen(wifi_buffer_tx, WIFI_TX_BUFFER_LEN);
-    if(wifi_queue_tx == INVALID_QUEUE) printf("ERROR: Al crear cola de transmision\r\n");
-
-    WiFiWaitFor(0, 0, 0, 0);
+    g_wifi_task_stm = RESET;
+    g_wifi_task_stm_delay = 0;
 }
 
 /* *****************************************************************************
@@ -139,111 +899,84 @@ void WiFiInit( void )
  * ************************************************************************** */
 void WiFiTask( void )
 {
-    ProcessReceiveQueue();
+    int rc;
     
-    if(wifi_count_stm_no_process) return;
-    switch(wifi_stm)
+    if(g_wifi_task_stm_delay) return;
+    
+    switch(g_wifi_task_stm)
     {
+        case INVALID:
         case RESET:
+			//printf("RESET\n");
             WIFI_RESET_SetLow();
-            printf("INFO: WiFi RESET\r\n");
-            wifi_count_stm_no_process = 30;
+            g_wifi_task_stm_timeout = 0;
+            g_wifi_task_stm_step = 0;
+            g_wifi_read_line_buffer_index = 0;
+            g_wifi_read_line_buffer_timer = 0;
+            g_wifi_read_line_wait_crlf = true;
+
+            g_wifi_info.status.wifi_need_firmware_update = false;
+            g_loop_count = 0;
+            g_wifi_info.status.wifi_conectado = 0;
+            g_wifi_info.status.wifi_ap_select = 1;
+            g_wifi_info.status.wifi_start_ap = true;
+            g_wifi_timer_ap = 0;
+            g_wifi_info.status.wifi_mode = 0;
             
-            wifi_count_rx_timer = 0;
-            wifi_count_command_seq = 0;
-            wifi_flag_rx_parse_on_lf = true;
-            wifi_count_ap_mode_timer = 0;
-            wifi_count_msg_head = 0;
-            wifi_count_keep_alive = 0;
-            wifi_flag_keep_alive = false;
-            
-            QueueClean(wifi_queue_rx);
-            QueueClean(wifi_queue_tx);
-            wifi_stm++;
+            WifiTaskSTMSet(START, 50, 0);
             break;
         case START:
+			//printf("START\n");
             WIFI_RESET_SetHigh();
-            printf("INFO: WiFi Release\r\n");
-            WiFiWaitFor("ready", INIT, FATALERROR, 10);
-            wifi_stm++;
+            WifiTaskSTMSet(CLEAN, 5, 50);
             break;
-        case WAIT_READY:
-            wifi_count_command_seq = 0;
+        case CLEAN:
+            /* Me quedo recibiendo un rato la basura de la POST del ESP-02 */
+            /* No es basura, pero se ve como basura porque esta a otra velocidad */
+            WifiWaitLine(NULL);
+            if(g_wifi_task_stm_timeout == 0)
+            {
+                WifiTaskSTMSet(INIT, 0, 0);
+            }
             break;
         case INIT:
-            WiFiInitSeq(INIT_STEP);
+            rc = WifiTaskInit();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case  INIT_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
+        case UPGRADE:
+            rc = WifiTaskUpgrade();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case  INIT_OK:
-            printf("INFO: Init OK\r\n");
-            wifi_count_command_seq = 0;
-            wifi_stm++;
+        case APMODE:
+            rc = WifiTaskAPMode();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case AP_MODE:
-            WiFiAPModeSeq(AP_MODE_STEP);
+        case STMODE:
+            rc = WifiTaskSTMode();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case AP_MODE_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
+        case LISTAP:
+            rc = WifiTaskListAP();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case AP_MODE_OK:
-            printf("INFO: AP Mode\r\n");
-            wifi_count_command_seq = 0;
-            wifi_count_ap_mode_timer = 600;
-            wifi_stm = MAIN;
+        case HTTP:
+            rc = WifiTaskHttp();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case ST_MODE:
-            WiFiSTModeSeq(ST_MODE_STEP);
+        case LOOP:
+            rc = WifiTaskLoop();
+            if(rc > 0)      WifiTaskSTMSet(rc, 0, 0);
+            else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
-        case ST_MODE_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
-            break;
-        case ST_MODE_OK:
-            printf("INFO: ST Mode\r\n");
-            wifi_stm = MAIN;
-            break;
-        case DATA_SEND:
-            WiFiDataSendSeq(DATA_SEND_STEP);
-            break;            
-        case DATA_SEND_STEP:
-            wifi_count_command_seq++;
-            wifi_stm--;
-            break;            
-        case DATA_SEND_OK:
-            printf("INFO: Datos Emitidos\r\n");
-            wifi_stm = MAIN;
-            break;            
-        case MAIN:
-            printf("INFO: Main Loop\r\n");
-            wifi_count_command_seq = 0;
-            wifi_count_keep_alive = KEEP_ALIVE_TIMER;
-            wifi_stm++;
-            break;
-        case MAIN_LOOP:
-            if(QueueElements(wifi_queue_tx))
-            {
-                wifi_count_keep_alive = KEEP_ALIVE_TIMER;
-                wifi_count_command_seq = 0;
-                printf("INFO: Modo Data Send\r\n");
-                wifi_stm = DATA_SEND;
-            }
-            else if(wifi_flag_keep_alive)
-            {
-                wifi_flag_keep_alive = false;
-                wifi_count_keep_alive = KEEP_ALIVE_TIMER;
-                WifiSendString("AT", true);
-            }
-            break;
-        case FATALERROR:
-            //WifiSendString("AT+RESTORE", true);
-        case ERROR:
-        default:
-            printf("ERROR: Se resetea el modem WiFi\r\n");
-            wifi_stm = RESET;
+        default:    /* ERROR */
+			//printf("***** SOFTWARE ERROR ***** RESET *****\n");
+            WifiTaskSTMSet(RESET, 0, 0);
             break;
     }
 }
@@ -253,489 +986,20 @@ void WiFiTask( void )
  * ************************************************************************** */
 void WiFiTimer( void )
 {
-    if(wifi_count_rx_timer)
+    if(g_wifi_task_stm_delay) g_wifi_task_stm_delay--;
+    if(g_wifi_task_stm_timeout) g_wifi_task_stm_timeout--;
+    if(g_wifi_timer_ap)
     {
-        wifi_count_rx_timer--;
-        if(wifi_count_rx_timer==0)
+        g_wifi_timer_ap--;
+        if(g_wifi_timer_ap == 0)
         {
-            QueueAddByteEnqueue(wifi_queue_rx);
-            wifi_flag_rx_parse_on_lf = true;
-        }
-    }
-
-    if(wifi_count_stm_no_process) wifi_count_stm_no_process--;
-
-    /* Control de time-out en WaitFor */
-    if(wwfst.time_out)
-    {
-        wwfst.time_out--;
-        if(wwfst.time_out == 0)
-        {
-            /* time-out de wait-for */
-            wifi_stm = wwfst.on_error;
-            WiFiWaitFor(0, 0, 0, 0);
+            /* Vuelvo al modo normal */
+            g_wifi_task_stm = STMODE;
         }
     }
     
-    if(wifi_count_ap_mode_timer)
-    {
-        wifi_count_ap_mode_timer--;
-        if(wifi_count_ap_mode_timer == 0)
-        {
-            /* Salgo del modo AP */
-            wifi_stm = ST_MODE;
-        }
-    }
+    if(g_wifi_read_line_buffer_timer) g_wifi_read_line_buffer_timer--;
     
-    if(wifi_count_keep_alive)
-    {
-        wifi_count_keep_alive--;
-        if(wifi_count_keep_alive == 0)
-        {
-            wifi_flag_keep_alive = true;
-        }
-    }
-    
-}
-
-/* *****************************************************************************
- *    Se llama con cada char que entra por el serial
- * ************************************************************************** */
-void WiFiNewChar(char ch)
-{
-    wifi_count_rx_timer = 5; /* 500 ms */
-
-    LedRx();
-    
-    if( wifi_flag_rx_parse_on_lf && (ch == 0x0a || ch == 0x0d) )
-    {
-        wifi_count_rx_timer = 0;
-        if(wifi_count_msg_head)
-        {
-            wifi_count_msg_head = 0;
-            QueueAddByteEnqueue(wifi_queue_rx);
-        }
-    }
-    else
-    {
-        QueueAddByte(wifi_queue_rx, ch);
-        
-        /* Detecto mensajes que no terminan en LF */
-        if(wifi_count_msg_head < 4)
-        {
-            wifi_buffer_msg_head[wifi_count_msg_head] = ch;
-            wifi_count_msg_head++;
-            if(wifi_count_msg_head == 4)
-            {
-                if(wifi_buffer_msg_head[0] == '+' &&
-                   wifi_buffer_msg_head[1] == 'I' &&
-                   wifi_buffer_msg_head[2] == 'P' &&
-                   wifi_buffer_msg_head[3] == 'D'  )
-                {
-                    wifi_flag_rx_parse_on_lf = false;
-                }
-            }
-        }
-    }
 }
 
 /* ************************************************************************* */
-
-void WifiSendString(const char* msg, bool crlf)
-{
-    printf("%.80s --> WiFi\r\n", msg);
-    LedTx();
-    while(*msg)
-    {
-        UART1_Write(*msg);
-        msg++;
-    }
-    if(crlf)
-    {
-        UART1_Write('\r');
-        UART1_Write('\n');
-    }
-}
-
-void WiFiCheckUnsol(const char* msg)
-{
-    char socket[8];
-    char msglen[8];
-    char method;
-    char *http_head;
-    char url[256];
-    char *p, *q;
-    int body_len;
-
-    /* Se reciben datos por un socket */
-    if( !memcmp(msg, "+IPD,", 5))
-    {
-        /*
-        +IPD,0,442:<datos>
-         * 1.- Id del socket
-         * 2.- message len
-        */
-        str_section(msg, 1, socket);
-        str_section(msg, 2, msglen);
-        p = strchr(msg, ':');
-        if(p)
-        {
-            p++;
-            /* GET / HTTP/1.1 */
-            http_head = p;
-            /* Metodo P o G */
-            method = *http_head;
-            /* /sarasa/sasa/sarasasasa */
-            while(*p && *p != ' ') p++;
-            p++;
-            q = &url[0];
-            while(*p && *p != ' ')
-            {
-                *q = *p;
-                p++;
-                q++;
-            }
-            *q = 0;
-            p++;
-            q = strstr(p, "\r\n\r\n");
-            if(q)
-            {
-                q += 4;
-                body_len = atoi(msglen)-(q-http_head);
-                HTTPMessage(atoi(socket), method, url, q, body_len);
-            }
-        }
-    }
-    else if( !memcmp(msg, "WIFI CONNECTED", 14))
-    {
-
-    }
-    else if( !memcmp(msg, "WIFI DISCONNECTED", 17))
-    {
-
-    }
-    else if( !memcmp(msg, "+STA_CONNECTED", 8))
-    {
-        /* Cliente conectado al AP propio */
-        /* cancelo el timer de configuracion */
-        wifi_count_ap_mode_timer = 0;   
-
-    }
-    else if( !memcmp(msg, "+STA_DISCONNECTED", 8))
-    {
-        /* Cliente desconectado al AP propio */
-        /* reactivo el timer de configuracion (cortito) */
-        wifi_count_ap_mode_timer = 50;   
-    }
-    else if( !memcmp(msg, "+CIFSR:", 7))
-    {
-        /* AT+CIFSR
-         * +CIFSR:STAIP,"0.0.0.0"
-         * +CIFSR:STAMAC,"80:7d:3a:62:03:60"
-         */
-        if( !memcmp(&msg[7], "STAMAC", 6))
-        {
-            wifi_hw_mac[0]  = msg[15];
-            wifi_hw_mac[1]  = msg[16];
-            wifi_hw_mac[2]  = msg[18];
-            wifi_hw_mac[3]  = msg[19];
-            wifi_hw_mac[4]  = msg[21];
-            wifi_hw_mac[5]  = msg[22];
-            wifi_hw_mac[6]  = msg[24];
-            wifi_hw_mac[7]  = msg[25];
-            wifi_hw_mac[8]  = msg[27];
-            wifi_hw_mac[9]  = msg[28];
-            wifi_hw_mac[10] = msg[30];
-            wifi_hw_mac[11] = msg[31];
-            wifi_hw_mac[12] = 0;
-        }
-    }
-        
-        
-        
-        
-        
-}
-
-void WiFiWaitFor(const char* wait, wifi_task_stm on_ok, wifi_task_stm on_error, int time_out)
-{
-    if(wait)
-    {
-        strncpy(wwfst.wait, wait, sizeof(wwfst.wait)-1);
-        wwfst.wait[sizeof(wwfst.wait)-1] = 0;
-        wwfst.on_ok = on_ok;
-        wwfst.on_error = on_error;
-        wwfst.time_out = time_out * 10;
-    }
-    else
-    {
-        wwfst.wait[0] = 0;
-        wwfst.on_ok = 0;
-        wwfst.on_error = 0;
-        wwfst.time_out = 0;
-    }
-}
-
-void ProcessReceiveQueue( void )
-{
-    char msg[WIFI_RX_BUFFER_LEN];
-    
-    if(QueueGet(wifi_queue_rx, msg, WIFI_RX_BUFFER_LEN))
-    {
-        printf("WiFi --> %.80s\r\n", msg);
-
-        /* Control de ocurrencia en WaitFor */
-        if(wwfst.wait[0])
-        {
-            if(strstr(msg, wwfst.wait))
-            {
-                wifi_stm = wwfst.on_ok;
-                WiFiWaitFor(0, 0, 0, 0);
-                return;
-            }
-        }
-        WiFiCheckUnsol(msg);
-    }
-}
-
-void WiFiInitSeq( wifi_task_stm stm )
-{
-    switch(wifi_count_command_seq)
-    {
-        case 0:
-            WifiSendString("ATE0", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 1: break;
-        case 2:
-            WifiSendString("AT+GMR", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 3: break;
-        case 4:
-            wifi_stm = stm +1;
-            break;
-    }
-}
-
-void WiFiAPModeSeq( wifi_task_stm stm )
-{
-    char str[64];
-
-    switch(wifi_count_command_seq)
-    {
-        case 0:
-            WifiSendString("AT+CIPSERVER=0", true);
-            WiFiWaitFor("OK", stm, stm, 1);
-            wifi_count_command_seq++;
-            break;
-        case 1: break;
-        case 2:
-            WifiSendString("AT+CWMODE=3", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 3: break;
-        case 4:
-            WifiSendString("AT+CIFSR", true);
-            WiFiWaitFor("OK", stm, ERROR, 3);
-            wifi_count_command_seq++;
-            break;
-        case 5: break;
-        case 6:
-            sprintf(str, "AT+CWSAP=\"Dom32io-%s\",\"\",1,0,4,0", &wifi_hw_mac[6]);
-            WifiSendString(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 3);
-            wifi_count_command_seq++;
-            break;
-        case 7: break;
-        case 8:
-            WifiSendString("AT+CIPMUX=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 9: break;
-        case 10:
-            sprintf(str, "AT+CIPSERVERMAXCONN=%d", WIFI_MAX_CONN);
-            WifiSendString(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 11: break;
-        case 12:
-            WifiSendString("AT+CIPSERVER=1,80", true);
-            WiFiWaitFor("OK", stm, ERROR, 3);
-            wifi_count_command_seq++;
-            break;
-        case 13: break;
-        case 14:
-            wifi_stm = stm+1;
-            break;
-    }
-}
-
-void WiFiSTModeSeq( wifi_task_stm stm )
-{
-    char str[64];
-    char *ap, *pass;
-
-    switch(wifi_count_command_seq)
-    {
-        case 0:
-            WifiSendString("AT+CIPSERVER=0", true);
-            WiFiWaitFor("OK", stm, stm, 1);
-            wifi_count_command_seq++;
-            break;
-        case 1: break;
-        case 2:
-            WifiSendString("AT+CWMODE=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 3: break;
-        case 4:
-            WifiSendString("AT+CIPMUX=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 5: break;
-        case 6:
-            sprintf(str, "AT+CIPSERVERMAXCONN=%d", WIFI_MAX_CONN);
-            WifiSendString(str, true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 7: break;
-        case 8:
-            WifiSendString("AT+CIPSERVER=1,80", true);
-            WiFiWaitFor("OK", stm, ERROR, 3);
-            wifi_count_command_seq++;
-            break;
-        case 9: break;
-        case 10:
-            WifiSendString("AT+CWAUTOCONN=1", true);
-            WiFiWaitFor("OK", stm, ERROR, 1);
-            wifi_count_command_seq++;
-            break;
-        case 11: break;
-        case 12:
-            ap = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2);
-            pass = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1_pass:g_wifi_info.f.config.wifi_ap2_pass);
-            if(*ap)
-            {
-                /* Connect to AP */
-                if(*pass)
-                {
-                    /* Con clave */
-                    sprintf(str, "AT+CWJAP=\"%s\",\"%s\"", ap, pass);
-                }
-                else
-                {
-                    /* Sin clave */
-                    sprintf(str, "AT+CWJAP=\"%s\"", ap);
-                }
-                WifiSendString(str, true);
-                WiFiWaitFor("OK", stm, ERROR, 5);
-            }
-            else
-            {
-                printf("WiFi no configurado.\r\n");
-                wifi_stm = MAIN;
-            }
-            wifi_count_command_seq++;
-            break;
-        case 13: break;
-        case 14:
-            wifi_stm = MAIN;
-            break;
-    }
-}
-
-void WiFiDataSendSeq( wifi_task_stm stm )
-{
-
-    char *p;
-    char str[64];
-    
-    switch(wifi_count_command_seq)
-    {
-        case 0:
-            if(QueueGet(wifi_queue_tx, wifi_data_send_buffer, WIFI_TX_BUFFER_LEN))
-            {
-                if(wifi_data_send_buffer[0] == 'Q')
-                {
-                    /* Si es un requerimiento nuevo obtengo IP y port para hacer una conexion nnueva */
-                    str_section(wifi_data_send_buffer, 1, wifi_data_send_ip_addr);
-                    str_section(wifi_data_send_buffer, 2, str);
-                    wifi_data_send_ip_port = atoi(str);
-                    wifi_data_send_conn_id++;
-                    sprintf(str, "AT+CIPSTART=%u,\"TCP\",\"%s\",%u", 
-                            wifi_data_send_conn_id,
-                            wifi_data_send_ip_addr,
-                            wifi_data_send_ip_port);
-                    WifiSendString(str, true);
-                    WiFiWaitFor("OK", stm, stm, 10);
-                    wifi_count_command_seq++;
-                }
-                else if(wifi_data_send_buffer[0] == 'R')
-                {
-                    /* Obtengo el id de la conexion */
-                    str_section(wifi_data_send_buffer, 1, str);
-                    wifi_data_send_conn_id = atoi(str);
-                    wifi_stm = stm;
-                    wifi_count_command_seq++;
-                 }
-                else
-                {
-                    /* Un mensaje que no corresponde */
-                    printf("Un mensaje que no corresponde, Ni Q ni R.\r\n");
-                    wifi_stm = MAIN;
-                }
-            }
-            else
-            {
-                printf("No hay mensajes en la cola.\r\n");
-                wifi_stm = MAIN;
-            }
-            break;
-        case 1: break;
-        case 2:
-            p = strchr(wifi_data_send_buffer, ':');
-            if(p)
-            {
-                p++;
-                sprintf(str, "AT+CIPSEND=%u,%u",
-                        wifi_data_send_conn_id,
-                        strlen(p));
-                WifiSendString(str, true);
-                WiFiWaitFor(">", stm, stm, 30);
-                wifi_count_command_seq++;
-            }
-            else
-            {
-                /* Un mensaje que no corresponde */
-                printf("Un mensaje que no corresponde. Error de parseo.\r\n");
-                wifi_stm = MAIN;
-            }
-            break;
-        case 3: break;
-        case 4:
-            WifiSendString(p, false);
-            WiFiWaitFor("SEND OK", stm, stm, 30);
-            wifi_count_command_seq++;
-            break;
-        case 5: break;
-        case 6:
-            sprintf(str, "AT+CIPCLOSE=%u", wifi_data_send_conn_id);
-            WifiSendString(str, true);
-            WiFiWaitFor("OK", stm, stm, 3);
-            wifi_count_command_seq++;
-            break;
-        case 7: break;
-        case 8:
-            wifi_stm = MAIN;
-            break;
-    }
-}
