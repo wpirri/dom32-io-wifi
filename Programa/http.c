@@ -68,9 +68,9 @@ typedef struct
     char timeout;
     char rqst[16];
 #ifdef INCLUDE_IO_FORMS    
-    char data[1250];
+    char data[2048];
 #else
-    char data[512];
+    char data[1024];
 #endif
 } http_data;
 
@@ -556,6 +556,7 @@ void HTTPTask( void )
     
     if(htdat[id].type == 'G')
     {
+        printf("GET HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpReturnWiFiFormConfig(htdat[id].data);
@@ -623,9 +624,11 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
+        printf("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'P')
     {
+        printf("PUT HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
@@ -687,9 +690,11 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
+        printf("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'H')
     {
+        printf("HTTP RESPONSE: %u bytes\r\n", strlen(htdat[id].data));
         /* Se trata de una respuesta HTTP/1... */
         CTRLConfIO(htdat[id].data);
         CTRLSetIO(htdat[id].data);
