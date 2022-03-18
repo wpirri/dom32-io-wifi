@@ -44,53 +44,40 @@ typedef struct
     bool stat4;
     bool change4;
     unsigned int pulse4;
-}IO;
-
-typedef struct
-{
-    bool dir1;      /* true = input, false = output */
-    bool ana1;
-    bool stat1;
-    bool change1;
-    unsigned int pulse1;
-    bool dir3;
-    bool ana3;
-    bool stat3;
-    bool change3;
-    unsigned int pulse3;
-    bool dir4;
-    bool ana4;
-    bool stat4;
-    bool change4;
-    unsigned int pulse4;
     bool dir5;
     bool ana5;
     bool stat5;
     bool change5;
     unsigned int pulse5;
-    bool dir7;
-    bool ana7;
-    bool stat7;
-    bool change7;
-    unsigned int pulse7;
-    bool dir8;
-    bool ana8;
-    bool stat8;
-    bool change8;
-    unsigned int pulse8;
-    bool dir9;
-    bool ana9;
-    bool stat9;
-    bool change9;
-    unsigned int pulse9;
- }EXP;
+    bool dir6;
+    bool ana6;
+    bool stat6;
+    bool change6;
+    unsigned int pulse6;
+}IO;
+
+typedef struct
+{
+    bool stat1;
+    bool change1;
+    unsigned int pulse1;
+    bool stat2;
+    bool change2;
+    unsigned int pulse2;
+    bool stat3;
+    bool change3;
+    unsigned int pulse3;
+    bool stat4;
+    bool change4;
+    unsigned int pulse4;
+ }OUT;
 
 #ifdef _IN_CONTROL_C_
     IO g_control_io;
-    EXP g_control_exp;
+    OUT g_control_out;
 #else
     extern IO g_control_io;
-    extern EXP g_control_exp;
+    extern OUT g_control_out;
 #endif
 
 void CTRLInit( void );

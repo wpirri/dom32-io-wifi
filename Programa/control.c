@@ -34,16 +34,13 @@ unsigned int g_control_count_in1;
 unsigned int g_control_count_in2;
 unsigned int g_control_count_in3;
 unsigned int g_control_count_in4;
+unsigned int g_control_count_in5;
+unsigned int g_control_count_in6;
 
-unsigned int g_control_count_ex1;
-unsigned int g_control_count_ex2;
-unsigned int g_control_count_ex3;
-unsigned int g_control_count_ex4;
-unsigned int g_control_count_ex5;
-unsigned int g_control_count_ex6;
-unsigned int g_control_count_ex7;
-unsigned int g_control_count_ex8;
-unsigned int g_control_count_ex9;
+unsigned int g_control_count_out1;
+unsigned int g_control_count_out2;
+unsigned int g_control_count_out3;
+unsigned int g_control_count_out4;
 
 void CTRLNotificarStatus( int time )
 {
@@ -60,74 +57,44 @@ void CTRLInit( void )
     g_control_io.ana1 = (g_wifi_info.f.config.an_config & 0x01)?1:0;
     g_control_io.dir1 = (g_wifi_info.f.config.io_config & 0x01)?1:0;
     g_control_io.stat1 = false;
-    if(g_control_io.dir1)   {TRISBSET = (1 << 4); CNPUBSET = (1 << 4);}
-    else                    {TRISBCLR = (1 << 4);}
+    if(g_control_io.dir1)   {TRISBSET = (1 << 2); CNPUBSET = (1 << 2);}
+    else                    {TRISBCLR = (1 << 2);}
     g_control_io.ana2 = (g_wifi_info.f.config.an_config & 0x02)?1:0;
     g_control_io.dir2 = (g_wifi_info.f.config.io_config & 0x02)?1:0;
     g_control_io.stat2 = false;
-    if(g_control_io.dir2)   {TRISBSET = (1 << 5); CNPUBSET = (1 << 5);}
-    else                    {TRISBCLR = (1 << 5);}
+    if(g_control_io.dir2)   {TRISBSET = (1 << 3); CNPUBSET = (1 << 3);}
+    else                    {TRISBCLR = (1 << 3);}
     g_control_io.ana3 = (g_wifi_info.f.config.an_config & 0x04)?1:0;
     g_control_io.dir3 = (g_wifi_info.f.config.io_config & 0x04)?1:0;
     g_control_io.stat3 = false;
-    if(g_control_io.dir3)   {TRISBSET = (1 << 6); CNPUBSET = (1 << 6);}
-    else                    {TRISBCLR = (1 << 6);}
+    if(g_control_io.dir3)   {TRISBSET = (1 << 4); CNPUBSET = (1 << 4);}
+    else                    {TRISBCLR = (1 << 4);}
     g_control_io.ana4 = (g_wifi_info.f.config.an_config & 0x08)?1:0;
     g_control_io.dir4 = (g_wifi_info.f.config.io_config & 0x08)?1:0;
     g_control_io.stat4 = false;
-    if(g_control_io.dir4)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
+    if(g_control_io.dir4)   {TRISBSET = (1 << 5); CNPUBSET = (1 << 5);}
+    else                    {TRISBCLR = (1 << 5);}
+    g_control_io.ana5 = (g_wifi_info.f.config.an_config & 0x10)?1:0;
+    g_control_io.dir5 = (g_wifi_info.f.config.io_config & 0x10)?1:0;
+    g_control_io.stat5 = false;
+    if(g_control_io.dir5)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
     else                    {TRISBCLR = (1 << 7);}
-
-    /* Expansion */
-    g_control_exp.ana1 = (g_wifi_info.f.config.exp_an_config & 0x01)?1:0;
-    g_control_exp.dir1 = (g_wifi_info.f.config.exp_io_config & 0x01)?1:0;
-    g_control_exp.stat1 = false;
-    if(g_control_exp.dir1)  {TRISBSET = (1 << 10); CNPUBSET = (1 << 10);}
-    else                    {TRISBCLR = (1 << 10);}
-    g_control_exp.ana3 = (g_wifi_info.f.config.exp_an_config & 0x02)?1:0;
-    g_control_exp.dir3 = (g_wifi_info.f.config.exp_io_config & 0x02)?1:0;
-    g_control_exp.stat3 = false;
-    if(g_control_exp.dir3)  {TRISBSET = (1 << 9); CNPUBSET = (1 << 9);}
-    else                    {TRISBCLR = (1 << 9);}
-    g_control_exp.ana4 = (g_wifi_info.f.config.exp_an_config & 0x04)?1:0;
-    g_control_exp.dir4 = (g_wifi_info.f.config.exp_io_config & 0x04)?1:0;
-    g_control_exp.stat4 = false;
-    if(g_control_exp.dir4)  {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
+    g_control_io.ana6 = (g_wifi_info.f.config.an_config & 0x20)?1:0;
+    g_control_io.dir6 = (g_wifi_info.f.config.io_config & 0x20)?1:0;
+    g_control_io.stat6 = false;
+    if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
     else                    {TRISBCLR = (1 << 8);}
-    g_control_exp.ana5 = (g_wifi_info.f.config.exp_an_config & 0x08)?1:0;
-    g_control_exp.dir5 = (g_wifi_info.f.config.exp_io_config & 0x08)?1:0;
-    g_control_exp.stat5 = false;
-    if(g_control_exp.dir5)  {TRISASET = (1 << 3); CNPUASET = (1 << 3);}
-    else                    {TRISACLR = (1 << 3);}
-    g_control_exp.ana7 = (g_wifi_info.f.config.exp_an_config & 0x10)?1:0;
-    g_control_exp.dir7 = (g_wifi_info.f.config.exp_io_config & 0x10)?1:0;
-    g_control_exp.stat7 = false;
-    if(g_control_exp.dir7)  {TRISBSET = (1 << 11); CNPUBSET = (1 << 11);}
-    else                    {TRISBCLR = (1 << 11);}
-    g_control_exp.ana8 = (g_wifi_info.f.config.exp_an_config & 0x20)?1:0;
-    g_control_exp.dir8 = (g_wifi_info.f.config.exp_io_config & 0x20)?1:0;
-    g_control_exp.stat8 = false;
-    if(g_control_exp.dir8)  {TRISASET = (1 << 2); CNPUASET = (1 << 2);}
-    else                    {TRISACLR = (1 << 2);}
-    g_control_exp.ana9 = (g_wifi_info.f.config.exp_an_config & 0x40)?1:0;
-    g_control_exp.dir9 = (g_wifi_info.f.config.exp_io_config & 0x40)?1:0;
-    g_control_exp.stat9 = false;
-    if(g_control_exp.dir9)  {TRISBSET = (1 << 12); CNPUBSET = (1 << 12);}
-    else                    {TRISBCLR = (1 << 12);}
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
     g_control_count_in3 = 0;
     g_control_count_in4 = 0;
-    g_control_count_ex1 = 0;
-    g_control_count_ex2 = 0;
-    g_control_count_ex3 = 0;
-    g_control_count_ex4 = 0;
-    g_control_count_ex5 = 0;
-    g_control_count_ex6 = 0;
-    g_control_count_ex7 = 0;
-    g_control_count_ex8 = 0;
-    g_control_count_ex9 = 0;
+    g_control_count_in5 = 0;
+    g_control_count_in6 = 0;
+    g_control_count_out1 = 0;
+    g_control_count_out2 = 0;
+    g_control_count_out3 = 0;
+    g_control_count_out4 = 0;
 
     /* Primer notificacion */
     CTRLNotificarStatus(100);
@@ -253,90 +220,90 @@ void CTRLTask( void )
             }
             break;
         case 5:
-            if(g_control_exp.ana1)       /* Anal�gico */
+            if(g_control_io.ana5)       /* Anal�gico */
             {
                 
             }
-            else if(g_control_exp.dir1)  /* Input */
+            else if(g_control_io.dir5)  /* Input */
             {
-                if(IO5_GetValue() && g_control_count_ex1 < DELAY_INPUT) g_control_count_ex1++;
-                else if( !IO5_GetValue() && g_control_count_ex1 > 0) g_control_count_ex1--;
+                if(IO5_GetValue() && g_control_count_in5 < DELAY_INPUT) g_control_count_in5++;
+                else if( !IO5_GetValue() && g_control_count_in5 > 0) g_control_count_in5--;
                     
-                if( (g_control_count_ex1 == 0 && g_control_exp.stat1 == 1) ||
-                        (g_control_count_ex1 == DELAY_INPUT && g_control_exp.stat1 == 0) )
+                if( (g_control_count_in5 == 0 && g_control_io.stat5 == 1) ||
+                        (g_control_count_in5 == DELAY_INPUT && g_control_io.stat5 == 0) )
                 {
-                    g_control_exp.stat1 = (g_control_count_ex1)?1:0;
-                    g_control_exp.change1 = true;
+                    g_control_io.stat5 = (g_control_count_in5)?1:0;
+                    g_control_io.change5 = true;
                     CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
             {
-                if(IO5_GetValue() != g_control_exp.stat1)
+                if(IO5_GetValue() != g_control_io.stat5)
                 {
-                    IO5_SetValue(g_control_exp.stat1);
-                    g_control_exp.change1 = true;
+                    IO5_SetValue(g_control_io.stat5);
+                    g_control_io.change5 = true;
                     CTRLNotificarStatus(25);
                 }
             }
             break;
         case 6:
-            if(g_control_exp.ana3)       /* Anal�gico */
+            if(g_control_io.ana6)       /* Anal�gico */
             {
                 
             }
-            else if(g_control_exp.dir3)  /* Input */
+            else if(g_control_io.dir6)  /* Input */
             {
-                if(IO6_GetValue() && g_control_count_ex3 < DELAY_INPUT) g_control_count_ex3++;
-                else if( !IO6_GetValue() && g_control_count_ex3 > 0) g_control_count_ex3--;
+                if(IO6_GetValue() && g_control_count_in6 < DELAY_INPUT) g_control_count_in6++;
+                else if( !IO6_GetValue() && g_control_count_in6 > 0) g_control_count_in6--;
                     
-                if( (g_control_count_ex3 == 0 && g_control_exp.stat3 == 1) ||
-                        (g_control_count_ex3 == DELAY_INPUT && g_control_exp.stat3 == 0) )
+                if( (g_control_count_in6 == 0 && g_control_io.stat6 == 1) ||
+                        (g_control_count_in6 == DELAY_INPUT && g_control_io.stat6 == 0) )
                 {
-                    g_control_exp.stat3 = (g_control_count_ex3)?1:0;
-                    g_control_exp.change3 = true;
-                    CTRLNotificarStatus(25);
+                    g_control_io.stat6 = (g_control_count_in6)?1:0;
+                    g_control_io.change6 = true;
+                    CTRLNotificarStatus(5);
                 }
             }
             else                        /* Output */
             {
-                if(IO6_GetValue() != g_control_exp.stat3)
+                if(IO6_GetValue() != g_control_io.stat6)
                 {
-                    IO6_SetValue(g_control_exp.stat3);
-                    g_control_exp.change3 = true;
+                    IO6_SetValue(g_control_io.stat6);
+                    g_control_io.change6 = true;
                     CTRLNotificarStatus(25);
                 }
             }
             break;
         case 7:
-            if(OUT1_GetValue() != g_control_exp.stat4)
+            if(OUT1_GetValue() != g_control_out.stat1)
             {
-                OUT1_SetValue(g_control_exp.stat4);
-                g_control_exp.change4 = true;
+                OUT1_SetValue(g_control_out.stat1);
+                g_control_out.change1 = true;
                 CTRLNotificarStatus(25);
             }
             break;
         case 8:
-            if(OUT2_GetValue() != g_control_exp.stat5)
+            if(OUT2_GetValue() != g_control_out.stat2)
             {
-                OUT2_SetValue(g_control_exp.stat5);
-                g_control_exp.change5 = true;
+                OUT2_SetValue(g_control_out.stat2);
+                g_control_out.change2 = true;
                 CTRLNotificarStatus(25);
             }
             break;
         case 9:
-            if(OUT3_GetValue() != g_control_exp.stat7)
+            if(OUT3_GetValue() != g_control_out.stat3)
             {
-                OUT3_SetValue(g_control_exp.stat7);
-                g_control_exp.change7 = true;
+                OUT3_SetValue(g_control_out.stat3);
+                g_control_out.change3 = true;
                 CTRLNotificarStatus(25);
             }
             break;
         case 10:
-            if(OUT4_GetValue() != g_control_exp.stat8)
+            if(OUT4_GetValue() != g_control_out.stat4)
             {
-                OUT4_SetValue(g_control_exp.stat8);
-                g_control_exp.change8 = true;
+                OUT4_SetValue(g_control_out.stat4);
+                g_control_out.change4 = true;
                 CTRLNotificarStatus(25);
             }
             break;
@@ -434,111 +401,84 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(g_control_exp.dir1 == 0)
+    if(g_control_io.dir5 == 0)
     {
-        if(HTTPGetFormData(in, "EXP1", tmp))
+        if(HTTPGetFormData(in, "IO5", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
-                g_control_exp.stat1 = 1;
+                g_control_io.stat5 = 1;
             }
             else if( !strcmp(tmp, "off") )
             {
-                g_control_exp.stat1 = 0;
-            }
-        }
-    }
-    
-    if(g_control_exp.dir3 == 0)
-    {
-        if(HTTPGetFormData(in, "EXP3", tmp))
-        {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat3 = 1;
-            }
-            else if( !strcmp(tmp, "off") )
-            {
-                g_control_exp.stat3 = 0;
-            }
-        }
-    }
-    
-    if(g_control_exp.dir4 == 0)
-    {
-        if(HTTPGetFormData(in, "EXP4", tmp))
-        {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat4 = 1;
-            }
-            else if( !strcmp(tmp, "off") )
-            {
-                g_control_exp.stat4 = 0;
-            }
-        }
-    }
-    
-    if(g_control_exp.dir5 == 0)
-    {
-        if(HTTPGetFormData(in, "EXP5", tmp))
-        {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat5 = 1;
-            }
-            else if( !strcmp(tmp, "off") )
-            {
-                g_control_exp.stat5 = 0;
+                g_control_io.stat5 = 0;
             }
         }
     }
 
-    if(g_control_exp.dir7 == 0)
+    if(g_control_io.dir6 == 0)
     {
-        if(HTTPGetFormData(in, "EXP7", tmp))
+        if(HTTPGetFormData(in, "IO6", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
-                g_control_exp.stat7 = 1;
+                g_control_io.stat6 = 1;
             }
             else if( !strcmp(tmp, "off") )
             {
-                g_control_exp.stat7 = 0;
+                g_control_io.stat6 = 0;
             }
+        }
+    }
+
+    if(HTTPGetFormData(in, "OUT1", tmp))
+    {
+        if( !strcmp(tmp, "on") )
+        {
+            g_control_out.stat1 = 1;
+        }
+        else if( !strcmp(tmp, "off") )
+        {
+            g_control_out.stat1 = 0;
         }
     }
     
-    if(g_control_exp.dir8 == 0)
+    if(HTTPGetFormData(in, "OUT2", tmp))
     {
-        if(HTTPGetFormData(in, "EXP8", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat8 = 1;
-            }
-            else if( !strcmp(tmp, "off") )
-            {
-                g_control_exp.stat8 = 0;
-            }
+            g_control_out.stat2 = 1;
+        }
+        else if( !strcmp(tmp, "off") )
+        {
+            g_control_out.stat2 = 0;
         }
     }
     
-    if(g_control_exp.dir9 == 0)
+    if(HTTPGetFormData(in, "OUT3", tmp))
     {
-        if(HTTPGetFormData(in, "EXP9", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat9 = 1;
-            }
-            else if( !strcmp(tmp, "off") )
-            {
-                g_control_exp.stat9 = 0;
-            }
+            g_control_out.stat3 = 1;
+        }
+        else if( !strcmp(tmp, "off") )
+        {
+            g_control_out.stat3 = 0;
         }
     }
-        
+    
+    if(HTTPGetFormData(in, "OUT4", tmp))
+    {
+        if( !strcmp(tmp, "on") )
+        {
+            g_control_out.stat4 = 1;
+        }
+        else if( !strcmp(tmp, "off") )
+        {
+            g_control_out.stat4 = 0;
+        }
+    }
+    
 }
 
 void CTRLSwitchIO(char* in)
@@ -589,82 +529,60 @@ void CTRLSwitchIO(char* in)
         }
     }
     
-    if(g_control_exp.dir1 == 0)
+    if(g_control_io.dir5 == 0)
     {
-        if(HTTPGetFormData(in, "EXP1", tmp))
+        if(HTTPGetFormData(in, "IO5", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
-                g_control_exp.stat1 = (g_control_exp.stat1)?0:1;
+                g_control_io.stat5 = (g_control_io.stat5)?0:1;
             }
         }
     }
     
-    if(g_control_exp.dir3 == 0)
+    if(g_control_io.dir6 == 0)
     {
-        if(HTTPGetFormData(in, "EXP3", tmp))
+        if(HTTPGetFormData(in, "IO6", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
-                g_control_exp.stat3 = (g_control_exp.stat3)?0:1;
+                g_control_io.stat6 = (g_control_io.stat6)?0:1;
             }
         }
     }
     
-    if(g_control_exp.dir4 == 0)
+    if(HTTPGetFormData(in, "OUT1", tmp))
     {
-        if(HTTPGetFormData(in, "EXP4", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat4 = (g_control_exp.stat4)?0:1;
-            }
+            g_control_out.stat1 = (g_control_out.stat1)?0:1;
         }
     }
     
-    if(g_control_exp.dir5 == 0)
+    if(HTTPGetFormData(in, "OUT2", tmp))
     {
-        if(HTTPGetFormData(in, "EXP5", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat5 = (g_control_exp.stat5)?0:1;
-            }
-        }
-    }
-
-    if(g_control_exp.dir7 == 0)
-    {
-        if(HTTPGetFormData(in, "EXP7", tmp))
-        {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat7 = (g_control_exp.stat7)?0:1;
-            }
+            g_control_out.stat2 = (g_control_out.stat2)?0:1;
         }
     }
     
-    if(g_control_exp.dir8 == 0)
+    if(HTTPGetFormData(in, "OUT3", tmp))
     {
-        if(HTTPGetFormData(in, "EXP8", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat8 = (g_control_exp.stat8)?0:1;
-            }
+            g_control_out.stat3 = (g_control_out.stat3)?0:1;
         }
     }
     
-    if(g_control_exp.dir9 == 0)
+    if(HTTPGetFormData(in, "OUT4", tmp))
     {
-        if(HTTPGetFormData(in, "EXP9", tmp))
+        if( !strcmp(tmp, "on") )
         {
-            if( !strcmp(tmp, "on") )
-            {
-                g_control_exp.stat9 = (g_control_exp.stat9)?0:1;
-            }
+            g_control_out.stat4 = (g_control_out.stat1)?0:1;
         }
     }
+    
         
 }
 
@@ -750,138 +668,44 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "EXP1", tmp))
+    if(HTTPGetFormData(in, "IO5", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
-            g_control_exp.ana1 = 0;
-            g_control_exp.dir1 = 1;
+            g_control_io.ana5 = 0;
+            g_control_io.dir5 = 1;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_exp.ana1 = 0;
-            g_control_exp.dir1 = 0;
+            g_control_io.ana5 = 0;
+            g_control_io.dir5 = 0;
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_exp.ana1 = 1;
-            g_control_exp.dir1 = 1;
+            g_control_io.ana5 = 1;
+            g_control_io.dir5 = 1;
         }
     }
     
-    if(HTTPGetFormData(in, "EXP3", tmp))
+    if(HTTPGetFormData(in, "IO6", tmp))
     {
         if( !strcmp(tmp, "in") )
         {
-            g_control_exp.ana3 = 0;
-            g_control_exp.dir3 = 1;
+            g_control_io.ana6 = 0;
+            g_control_io.dir6 = 1;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_exp.ana3 = 0;
-            g_control_exp.dir3 = 0;
+            g_control_io.ana6 = 0;
+            g_control_io.dir6 = 0;
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_exp.ana3 = 1;
-            g_control_exp.dir3 = 1;
+            g_control_io.ana6 = 1;
+            g_control_io.dir6 = 1;
         }
     }
     
-    if(HTTPGetFormData(in, "EXP4", tmp))
-    {
-        if( !strcmp(tmp, "in") )
-        {
-            g_control_exp.ana4 = 0;
-            g_control_exp.dir4 = 1;
-        }
-        else if( !strcmp(tmp, "out") )
-        {
-            g_control_exp.ana4 = 0;
-            g_control_exp.dir4 = 0;
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_control_exp.ana4 = 1;
-            g_control_exp.dir4 = 1;
-        }
-    }
-    
-    if(HTTPGetFormData(in, "EXP5", tmp))
-    {
-        if( !strcmp(tmp, "in") )
-        {
-            g_control_exp.ana5 = 0;
-            g_control_exp.dir5 = 1;
-        }
-        else if( !strcmp(tmp, "out") )
-        {
-            g_control_exp.ana5 = 0;
-            g_control_exp.dir5 = 0;
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_control_exp.ana5 = 1;
-            g_control_exp.dir5 = 1;
-        }
-    }
-    
-    if(HTTPGetFormData(in, "EXP7", tmp))
-    {
-        if( !strcmp(tmp, "in") )
-        {
-            g_control_exp.ana7 = 0;
-            g_control_exp.dir7 = 1;
-        }
-        else if( !strcmp(tmp, "out") )
-        {
-            g_control_exp.ana7 = 0;
-            g_control_exp.dir7 = 0;
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_control_exp.ana7 = 1;
-            g_control_exp.dir7 = 1;
-        }
-    }
-    
-    if(HTTPGetFormData(in, "EXP8", tmp))
-    {
-        if( !strcmp(tmp, "in") )
-        {
-            g_control_exp.ana8 = 0;
-            g_control_exp.dir8 = 1;
-        }
-        else if( !strcmp(tmp, "out") )
-        {
-            g_control_exp.ana8 = 0;
-            g_control_exp.dir8 = 0;
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_control_exp.ana8 = 1;
-            g_control_exp.dir8 = 1;
-        }
-    }
-    
-    if(HTTPGetFormData(in, "EXP9", tmp))
-    {
-        if( !strcmp(tmp, "in") )
-        {
-            g_control_exp.ana9 = 0;
-            g_control_exp.dir9 = 1;
-        }
-        else if( !strcmp(tmp, "out") )
-        {
-            g_control_exp.ana9 = 0;
-            g_control_exp.dir9 = 0;
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_control_exp.ana9 = 1;
-            g_control_exp.dir9 = 1;
-        }
-    }
     g_wifi_info.f.config.io_config_default = 0;
     g_wifi_info.status.save_config = 50;
 }

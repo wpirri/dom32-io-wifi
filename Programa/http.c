@@ -166,6 +166,8 @@ void HttpReturnWiFiFormConfig(char *out)
             "&nbsp;<input id=\"it\" type=\"text\" name=\"ap2\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap2p\" value=\"%s\"><br>\n"
             "<h2>Central:</h2>\n"
             "&nbsp;<input id=\"it\" type=\"text\" name=\"ce1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ce2\" value=\"%s\"><br>\n"
+            "<h2>Path:</h2>\n"
+            "&nbsp;<input id=\"it\" type=\"text\" name=\"path\" value=\"%s\"><br>\n"
             "<br>\n"
             "<br>\n"
             "&nbsp;&nbsp;<input  id=\"it\" type=\"submit\" value=\"Guardar\">"
@@ -175,7 +177,8 @@ void HttpReturnWiFiFormConfig(char *out)
             http_200,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
-            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2);
+            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2,
+            g_wifi_info.f.config.rqst_path);
 }
 
 void HttpReturnWiFiConfig(char *out)
@@ -194,21 +197,20 @@ void HttpReturnWiFiConfig(char *out)
 void HttpReturnStatus(char *out)
 {
     sprintf(out, 
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
-            "EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
+            "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",
             (g_control_io.stat4)?"on":"off",
-            (g_control_exp.stat1)?"on":"off",
-            (g_control_exp.stat3)?"on":"off",
-            (g_control_exp.stat4)?"on":"off",
-            (g_control_exp.stat5)?"on":"off",
-            (g_control_exp.stat7)?"on":"off",
-            (g_control_exp.stat8)?"on":"off",
-            (g_control_exp.stat9)?"on":"off");
+            (g_control_io.stat5)?"on":"off",
+            (g_control_io.stat6)?"on":"off",
+            (g_control_out.stat1)?"on":"off",
+            (g_control_out.stat2)?"on":"off",
+            (g_control_out.stat3)?"on":"off",
+            (g_control_out.stat4)?"on":"off");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -224,7 +226,9 @@ void HttpReturnIOStatus(char *out)
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off");
+            (g_control_io.stat4)?"on":"off",
+            (g_control_io.stat5)?"on":"off",
+            (g_control_io.stat6)?"on":"off");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -234,16 +238,13 @@ void HttpReturnIOStatus(char *out)
 void HttpReturnExpStatus(char *out)
 {
     sprintf(out, 
-            "%sID=%s&EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            "%sID=%s&OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
             http_200,
             g_wifi_info.status.hw_mac,
-            (g_control_exp.stat1)?"on":"off",
-            (g_control_exp.stat3)?"on":"off",
-            (g_control_exp.stat4)?"on":"off",
-            (g_control_exp.stat5)?"on":"off",
-            (g_control_exp.stat7)?"on":"off",
-            (g_control_exp.stat8)?"on":"off",
-            (g_control_exp.stat9)?"on":"off");
+            (g_control_out.stat1)?"on":"off",
+            (g_control_out.stat2)?"on":"off",
+            (g_control_out.stat3)?"on":"off",
+            (g_control_out.stat4)?"on":"off");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -260,12 +261,16 @@ void HttpReturnIOStatusXML(char *out)
             "<IO2>%s</IO2>\n"
             "<IO3>%s</IO3>\n"
             "<IO4>%s</IO4>\n"
+            "<IO5>%s</IO5>\n"
+            "<IO6>%s</IO6>\n"
             "</response>",
             xml_200,
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off");
+            (g_control_io.stat4)?"on":"off",
+            (g_control_io.stat5)?"on":"off",
+            (g_control_io.stat6)?"on":"off");
 }
 
 void HttpReturnExpStatusXML(char *out)
@@ -274,22 +279,16 @@ void HttpReturnExpStatusXML(char *out)
             "%s"
             "<?xml version=\"1.0\"?>\r\n"
             "<response>\n"
-            "<EXP1>%s</EXP1>\n"
-            "<EXP3>%s</EXP3>\n"
-            "<EXP4>%s</EXP4>\n"
-            "<EXP5>%s</EXP5>\n"
-            "<EXP7>%s</EXP7>\n"
-            "<EXP8>%s</EXP8>\n"
-            "<EXP9>%s</EXP9>\n"
+            "<OUT1>%s</OUT1>\n"
+            "<OUT2>%s</OUT2>\n"
+            "<OUT3>%s</OUT3>\n"
+            "<OUT4>%s</OUT4>\n"
             "</response>",
             xml_200,
-            (g_control_exp.stat1)?"on":"off",
-            (g_control_exp.stat3)?"on":"off",
-            (g_control_exp.stat4)?"on":"off",
-            (g_control_exp.stat5)?"on":"off",
-            (g_control_exp.stat7)?"on":"off",
-            (g_control_exp.stat8)?"on":"off",
-            (g_control_exp.stat9)?"on":"off");
+            (g_control_out.stat1)?"on":"off",
+            (g_control_out.stat2)?"on":"off",
+            (g_control_out.stat3)?"on":"off",
+            (g_control_out.stat4)?"on":"off");
 }
 
 #ifdef INCLUDE_IO_FORMS
@@ -429,21 +428,15 @@ void HttpReturnExpConfigForm(char *out)
 void HttpReturnConfig(char *out)
 {
     sprintf(out, 
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
-            "EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
+            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             (g_control_io.dir1)?"in":"out",
             (g_control_io.dir2)?"in":"out",
             (g_control_io.dir3)?"in":"out",
             (g_control_io.dir4)?"in":"out",
-            (g_control_exp.dir1)?"in":"out",
-            (g_control_exp.dir3)?"in":"out",
-            (g_control_exp.dir4)?"in":"out",
-            (g_control_exp.dir5)?"in":"out",
-            (g_control_exp.dir7)?"in":"out",
-            (g_control_exp.dir8)?"in":"out",
-            (g_control_exp.dir9)?"in":"out");
+            (g_control_io.dir5)?"in":"out",
+            (g_control_io.dir6)?"in":"out");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -460,25 +453,6 @@ void HttpReturnIOConfig(char *out)
             (g_control_io.dir2)?"in":"out",
             (g_control_io.dir3)?"in":"out",
             (g_control_io.dir4)?"in":"out");
-    if(g_wifi_info.f.config.io_config_default)
-    {
-        strcat(http_rqst_data, "&GETCONF=1");
-    }
-}
-
-void HttpReturnExpConfig(char *out)
-{
-    sprintf(out, 
-            "%sID=%s&EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_control_exp.dir1)?"in":"out",
-            (g_control_exp.dir3)?"in":"out",
-            (g_control_exp.dir4)?"in":"out",
-            (g_control_exp.dir5)?"in":"out",
-            (g_control_exp.dir7)?"in":"out",
-            (g_control_exp.dir8)?"in":"out",
-            (g_control_exp.dir9)?"in":"out");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -503,30 +477,6 @@ void HttpReturnIOConfigXML(char *out)
             (g_control_io.dir4)?"in":"out");
 }
 
-void HttpReturnExpConfigXML(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<?xml version=\"1.0\"?>\r\n"
-            "<response>\n"
-            "<EXP1>%s</EXP1>\n"
-            "<EXP3>%s</EXP3>\n"
-            "<EXP4>%s</EXP4>\n"
-            "<EXP5>%s</EXP5>\n"
-            "<EXP7>%s</EXP7>\n"
-            "<EXP8>%s</EXP8>\n"
-            "<EXP9>%s</EXP9>\n"
-            "</response>",
-            xml_200,
-            (g_control_exp.dir1)?"in":"out",
-            (g_control_exp.dir3)?"in":"out",
-            (g_control_exp.dir4)?"in":"out",
-            (g_control_exp.dir5)?"in":"out",
-            (g_control_exp.dir7)?"in":"out",
-            (g_control_exp.dir8)?"in":"out",
-            (g_control_exp.dir9)?"in":"out");
-}
-
 void HttpProcessWiFiFormConfig(char* in)
 {
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
@@ -535,6 +485,7 @@ void HttpProcessWiFiFormConfig(char* in)
     HTTPGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
     HTTPGetFormData(in, "ce1", g_wifi_info.f.config.wifi_host1);
     HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
+    HTTPGetFormData(in, "path", g_wifi_info.f.config.rqst_path);
     g_wifi_info.status.save_config = 50;
 }
 
@@ -589,17 +540,9 @@ void HTTPTask( void )
         {
             HttpReturnIOConfig(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/exconfig.htm"))
-        {
-            HttpReturnExpConfig(htdat[id].data);
-        }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.xml"))
         {
             HttpReturnIOConfigXML(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/exconfig.xml"))
-        {
-            HttpReturnExpConfigXML(htdat[id].data);
         }
 #ifdef INCLUDE_IO_FORMS
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
@@ -674,15 +617,6 @@ void HTTPTask( void )
             HttpReturnIOConfigForm(htdat[id].data);
 #else
             HttpReturnIOConfig(htdat[id].data);
-#endif /* INCLUDE_IO_FORMS */
-        }
-        else if( !strcmp(htdat[id].rqst, "/exconfig.cgi"))
-        {
-            CTRLConfIO(htdat[id].data);
-#ifdef INCLUDE_IO_FORMS
-            HttpReturnExpConfigForm(htdat[id].data);
-#else
-            HttpReturnExpConfig(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
         }
         else
@@ -823,32 +757,30 @@ const char* HTTPGet(int id, char* buffer)
 int HTTPNotificarStatus(void)
 {
     sprintf(http_rqst_data, 
-            "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&"
-            "EXP1=%s&EXP3=%s&EXP4=%s&EXP5=%s&EXP7=%s&EXP8=%s&EXP9=%s&"
-            "CHG=%c%c%c%c%c%c%c%c%c%c%c",
+            "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
+            "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s"
+            "CHG=%c%c%c%c%c%c%c%c%c%c",
             g_wifi_info.status.hw_mac,
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
             (g_control_io.stat3)?"on":"off",
             (g_control_io.stat4)?"on":"off",
-            (g_control_exp.stat1)?"on":"off",
-            (g_control_exp.stat3)?"on":"off",
-            (g_control_exp.stat4)?"on":"off",
-            (g_control_exp.stat5)?"on":"off",
-            (g_control_exp.stat7)?"on":"off",
-            (g_control_exp.stat8)?"on":"off",
-            (g_control_exp.stat9)?"on":"off",
+            (g_control_io.stat5)?"on":"off",
+            (g_control_io.stat6)?"on":"off",
+            (g_control_out.stat1)?"on":"off",
+            (g_control_out.stat2)?"on":"off",
+            (g_control_out.stat3)?"on":"off",
+            (g_control_out.stat4)?"on":"off",
             (g_control_io.change1)?'1':'0',
             (g_control_io.change2)?'1':'0',
             (g_control_io.change3)?'1':'0',
             (g_control_io.change4)?'1':'0',
-            (g_control_exp.change1)?'1':'0',
-            (g_control_exp.change3)?'1':'0',
-            (g_control_exp.change4)?'1':'0',
-            (g_control_exp.change5)?'1':'0',
-            (g_control_exp.change7)?'1':'0',
-            (g_control_exp.change8)?'1':'0',
-            (g_control_exp.change9)?'1':'0');
+            (g_control_io.change5)?'1':'0',
+            (g_control_io.change6)?'1':'0',
+            (g_control_out.change1)?'1':'0',
+            (g_control_out.change2)?'1':'0',
+            (g_control_out.change3)?'1':'0',
+            (g_control_out.change4)?'1':'0');
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -876,12 +808,12 @@ int HTTPNotificarStatus(void)
     g_control_io.change2 = 0;
     g_control_io.change3 = 0;
     g_control_io.change4 = 0;
-    g_control_exp.change1 = 0;
-    g_control_exp.change3 = 0;
-    g_control_exp.change4 = 0;
-    g_control_exp.change5 = 0;
-    g_control_exp.change7 = 0;
-    g_control_exp.change8 = 0;
-    g_control_exp.change9 = 0;
+    g_control_io.change5 = 0;
+    g_control_io.change6 = 0;
+    g_control_out.change1 = 0;
+    g_control_out.change2 = 0;
+    g_control_out.change3 = 0;
+    g_control_out.change4 = 0;
 
+    return strlen(http_rqst);
 }
