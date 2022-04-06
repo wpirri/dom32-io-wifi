@@ -17,14 +17,18 @@ borneras_frente_len = 26;
 borneras_fondo_x = 2.25;
 borneras_fondo_len = 42;
 escalon_borneras_y = 11;
-boton_x = 60;
-boton_y = 6;
+boton_x = 62;
+boton_y = 8;
+boton = [5,5,0];
+led_x = 45;
+led_y = 8;
+led = [2,5,0];
 separacion_leds = 14.5;
 ventilacion = 1;
 ventilacion_frente_x = 5;
-tornillo_bornera_frente_x = 7;
-tornillo_bornera_fondo_x = 7;
-tornillo_bornera_y = 7;
+tornillo_bornera_frente_x = 5;
+tornillo_bornera_fondo_x = 5;
+tornillo_bornera_y = 6;
 tornillo_bornera_diametro = 4;
 $fn = 100;
 
@@ -134,7 +138,7 @@ module TornilloBorneraFrente()
 {
     for(i=[0:5:20])
     {
-        translate(origen + [tornillo_bornera_frente_x+i, tornillo_bornera_y, caja_z-espesor_paredes])
+        translate(origen + [tornillo_bornera_frente_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, caja_z-espesor_paredes])
             cylinder(h=espesor_superior, d=tornillo_bornera_diametro,center=false);
     }
 }
@@ -143,9 +147,21 @@ module TornilloBorneraFondo()
 {
     for(i=[0:5:35])
     {
-        translate(origen + [caja_x,caja_y,caja_z-espesor_paredes] - [tornillo_bornera_frente_x+i, tornillo_bornera_y, 0])
+        translate(origen + [caja_x,caja_y,caja_z-espesor_superior] - [tornillo_bornera_frente_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, 0])
             cylinder(h=espesor_superior, d=tornillo_bornera_diametro,center=false);
     }
+}
+
+module OrificioPulsador()
+{
+    translate(origen + [boton_x-(boton.x/2), boton_y-(boton.y/2), caja_z-espesor_paredes])
+        cube([boton.x,boton.y,espesor_superior], center=false);
+}
+
+module OrificioLed()
+{
+    translate(origen + [led_x-(led.x/2), led_y-(led.y/2), caja_z-espesor_paredes])
+        cube([led.x,led.y,espesor_superior], center=false);
 }
 
 module TapaMedia()
@@ -157,6 +173,8 @@ module TapaMedia()
         TapaSuperior();
         TornilloBorneraFrente();
         TornilloBorneraFondo();
+        OrificioPulsador();
+        OrificioLed();
     }
 }
 
