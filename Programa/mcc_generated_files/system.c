@@ -85,9 +85,9 @@
 #include "system.h"
 #include "memory/flash.h"
 #include "coretimer.h"
+#include "uart2.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
-#include "uart2.h"
 #include "uart1.h"
 
 void SYSTEM_Initialize(void)

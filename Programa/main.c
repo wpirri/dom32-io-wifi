@@ -66,12 +66,22 @@
 
 bool main_flag_core_timer;
 int main_flag_core_timer_div_count;
+char led_aux_count;
 
 
 void LedControl( void )
 {
     static char led_count = 0;
     
+    if(led_aux_count)
+    {
+        LED_Aux_SetHigh();
+        led_aux_count--;
+        if(led_aux_count == 0)
+        {
+            LED_Aux_SetLow();
+        }
+    }
     if(++led_count >= 50)
     {
         LED_Status_SetValue(0);
@@ -93,6 +103,10 @@ void LedControl( void )
             {
                 LED_Status_SetValue(0);
             }
+        }
+        else
+        {
+            LED_Status_SetValue(0);
         }
         if(g_wifi_info.status.wifi_mode)
         {
@@ -125,9 +139,9 @@ int main(void)
     ConfigInit();
     ConfigLoad();
 
+    CTRLInit();
     WiFiInit();
     HTTPInit();
-    CTRLInit();
     //DHT11Init();
     //WGND_Init();
     

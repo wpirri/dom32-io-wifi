@@ -75,7 +75,9 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 
 void WifiWrite( const char *buffer )
 {
+#ifdef DEBUG_WIFI
 	printf("WifiWrite: %.80s\r\n", buffer);
+#endif
     /* Reseteo el buffer de lectura */
     g_wifi_read_line_buffer_index = 0;
     if(buffer)
@@ -90,7 +92,9 @@ void WifiWrite( const char *buffer )
 
 void WifiWriteLine( const char *line )
 {
+#ifdef DEBUG_WIFI
 	printf("WifiWriteLine: %.80s\r\n", line);
+#endif
     /* Reseteo el buffer de lectura */
     g_wifi_read_line_buffer_index = 0;
     if(line)
@@ -114,6 +118,7 @@ int WifiWaitLine(const char *line)
 {
     int rc = 0;
     unsigned char c = 0;
+    extern char led_aux_count;
 
     while(UART1_IsRxReady())
     {
@@ -149,6 +154,7 @@ int WifiWaitLine(const char *line)
                    g_wifi_read_line_buffer[3] == 'D'  )
                 {
                     g_wifi_read_line_wait_crlf = false;
+                    led_aux_count = 10;
                 }
             }
         }
@@ -164,7 +170,9 @@ int WifiWaitLine(const char *line)
         {
             if(line)
             {
+#ifdef DEBUG_WIFI
                 printf("WifiWaitLine: esperando:%.80s / recibido: %.80s\r\n", line, g_wifi_read_line_buffer);
+#endif
                 if( !memcmp(line, g_wifi_read_line_buffer, strlen(line)))
                 {
                     //printf("               recibido:%s\n", line);
@@ -689,7 +697,9 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
+#ifdef DEBUG_WIFI
                 printf("TIMEOUT esperando OK a AT+CWJAP\r\n");
+#endif
                 g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
                 //rc = (-1);
                 rc = STMODE;
