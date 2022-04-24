@@ -756,7 +756,32 @@ const char* HTTPGet(int id, char* buffer)
  * ************************************************************************** */
 int HTTPNotificarStatus(void)
 {
-    sprintf(http_rqst_data, 
+    printf("HTTPNotificarStatus: ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s\r\n",
+            g_wifi_info.status.hw_mac,
+            (g_control_io.stat1)?"on":"off",
+            (g_control_io.stat2)?"on":"off",
+            (g_control_io.stat3)?"on":"off",
+            (g_control_io.stat4)?"on":"off",
+            (g_control_io.stat5)?"on":"off",
+            (g_control_io.stat6)?"on":"off");
+    printf("HTTPNotificarStatus: OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s\r\n",
+            (g_control_out.stat1)?"on":"off",
+            (g_control_out.stat2)?"on":"off",
+            (g_control_out.stat3)?"on":"off",
+            (g_control_out.stat4)?"on":"off");
+    printf("HTTPNotificarStatus: CHG=%c%c%c%c%c%c%c%c%c%c\r\n",
+            (g_control_io.change1)?'1':'0',
+            (g_control_io.change2)?'1':'0',
+            (g_control_io.change3)?'1':'0',
+            (g_control_io.change4)?'1':'0',
+            (g_control_io.change5)?'1':'0',
+            (g_control_io.change6)?'1':'0',
+            (g_control_out.change1)?'1':'0',
+            (g_control_out.change2)?'1':'0',
+            (g_control_out.change3)?'1':'0',
+            (g_control_out.change4)?'1':'0');
+
+            sprintf(http_rqst_data, 
             "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
             "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s&"
             "CHG=%c%c%c%c%c%c%c%c%c%c",

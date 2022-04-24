@@ -27,7 +27,7 @@
 #include "mcc_generated_files/memory/flash.h"
 #include "control.h"
 
-#define CONFIG_FLASK_OK 0xA5A55A5A
+#define CONFIG_FLASK_OK 0x5A5A5A5A
 
 /* Have compiler allocate a page of flash from the NVM.  Aligned to a page. */
 static const uint32_t __attribute((space(prog),aligned(FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS))) flash_reserved_space[FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS/4];
@@ -80,17 +80,17 @@ void ConfigSave(void)
             ((g_control_io.ana1)?0x01:0) |
             ((g_control_io.ana2)?0x02:0) |
             ((g_control_io.ana3)?0x04:0) |
-            ((g_control_io.ana4)?0x04:0) |
-            ((g_control_io.ana5)?0x04:0) |
-            ((g_control_io.ana6)?0x08:0) );
+            ((g_control_io.ana4)?0x08:0) |
+            ((g_control_io.ana5)?0x10:0) |
+            ((g_control_io.ana6)?0x20:0) );
 
     g_wifi_info.f.config.io_config = (
             ((g_control_io.dir1)?0x01:0) |
             ((g_control_io.dir2)?0x02:0) |
             ((g_control_io.dir3)?0x04:0) |
-            ((g_control_io.dir4)?0x04:0) |
-            ((g_control_io.dir5)?0x04:0) |
-            ((g_control_io.dir6)?0x08:0) );
+            ((g_control_io.dir4)?0x08:0) |
+            ((g_control_io.dir5)?0x10:0) |
+            ((g_control_io.dir6)?0x20:0) );
 
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
@@ -107,6 +107,8 @@ void ConfigSave(void)
     }
     
     FLASH_Lock();
+    
+    printf("Configuracion guardada\r\n");
 }
 
 void ConfigTimer(void)

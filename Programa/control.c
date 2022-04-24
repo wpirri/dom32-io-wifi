@@ -53,37 +53,45 @@ void CTRLNotificarStatus( int time )
 void CTRLInit( void )
 {
     g_control_notificar = 0;
-    /* Extradas */
+    /* Entrada 1 - RB5 */
     g_control_io.ana1 = (g_wifi_info.f.config.an_config & 0x01)?1:0;
     g_control_io.dir1 = (g_wifi_info.f.config.io_config & 0x01)?1:0;
     g_control_io.stat1 = false;
-    if(g_control_io.dir1)   {TRISBSET = (1 << 2); CNPUBSET = (1 << 2);}
-    else                    {TRISBCLR = (1 << 2);}
+    if(g_control_io.dir1)   {TRISBSET = (1 << 5); CNPUBSET = (1 << 5);}
+    else                    {TRISBCLR = (1 << 5); CNPUBCLR = (1 << 5);}
+    /* Entrada 2 - RB4 */
     g_control_io.ana2 = (g_wifi_info.f.config.an_config & 0x02)?1:0;
     g_control_io.dir2 = (g_wifi_info.f.config.io_config & 0x02)?1:0;
     g_control_io.stat2 = false;
-    if(g_control_io.dir2)   {TRISBSET = (1 << 3); CNPUBSET = (1 << 3);}
-    else                    {TRISBCLR = (1 << 3);}
+    if(g_control_io.dir2)   {TRISBSET = (1 << 4); CNPUBSET = (1 << 4);}
+    else                    {TRISBCLR = (1 << 4); CNPUBCLR = (1 << 4);}
+    /* Entrada 3 - RB3 */
     g_control_io.ana3 = (g_wifi_info.f.config.an_config & 0x04)?1:0;
     g_control_io.dir3 = (g_wifi_info.f.config.io_config & 0x04)?1:0;
     g_control_io.stat3 = false;
-    if(g_control_io.dir3)   {TRISBSET = (1 << 4); CNPUBSET = (1 << 4);}
-    else                    {TRISBCLR = (1 << 4);}
+    if(g_control_io.dir3)   {TRISBSET = (1 << 3); CNPUBSET = (1 << 3);}
+    else                    {TRISBCLR = (1 << 3); CNPUBCLR = (1 << 3);}
+    /* Entrada 4 - RB2 */
     g_control_io.ana4 = (g_wifi_info.f.config.an_config & 0x08)?1:0;
     g_control_io.dir4 = (g_wifi_info.f.config.io_config & 0x08)?1:0;
     g_control_io.stat4 = false;
-    if(g_control_io.dir4)   {TRISBSET = (1 << 5); CNPUBSET = (1 << 5);}
-    else                    {TRISBCLR = (1 << 5);}
+    if(g_control_io.dir4)   {TRISBSET = (1 << 2); CNPUBSET = (1 << 2);}
+    else                    {TRISBCLR = (1 << 2); CNPUBCLR = (1 << 2);}
+    /* Entrada 5 - RB7 */
     g_control_io.ana5 = (g_wifi_info.f.config.an_config & 0x10)?1:0;
     g_control_io.dir5 = (g_wifi_info.f.config.io_config & 0x10)?1:0;
     g_control_io.stat5 = false;
     if(g_control_io.dir5)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
-    else                    {TRISBCLR = (1 << 7);}
+    else                    {TRISBCLR = (1 << 7); CNPUBCLR = (1 << 7);}
+    /* Entrada 6 - RB8 */
     g_control_io.ana6 = (g_wifi_info.f.config.an_config & 0x20)?1:0;
     g_control_io.dir6 = (g_wifi_info.f.config.io_config & 0x20)?1:0;
     g_control_io.stat6 = false;
     if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
-    else                    {TRISBCLR = (1 << 8);}
+    else                    {TRISBCLR = (1 << 8); CNPUBCLR = (1 << 8);}
+
+    printf("TRISB: 0x%04X\r\n", TRISB);
+    printf("CNPUB: 0x%04X\r\n", CNPUB);
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
