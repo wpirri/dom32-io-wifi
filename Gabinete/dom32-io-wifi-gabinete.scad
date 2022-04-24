@@ -39,6 +39,13 @@ interior_x = placa_x + (2*separacion_xyz);
 interior_y = placa_y + (2*separacion_xyz);
 interior_z = caja_z - espesor_base - separador_z;
 
+// -- Logo --
+module Logo()
+{
+    translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base+(espesor_superior/4*3)] + [10,30,0])
+        linear_extrude(espesor_superior/4)
+            text("Dom32 IO WiFi", size = 6, font = "Liberation Sans:style=Bold Italic");
+}
 
 // -- Base --
 module Ventilacion()
@@ -108,8 +115,13 @@ module Base()
 
 module TapaSuperior()
 {
+    difference()
+    {
         translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base])
             cube([caja_x-(2*espesor_paredes),caja_y-(2*escalon_borneras_y)-(2*espesor_paredes),espesor_superior] , center=false);
+        
+        Logo();
+    }
 }
 
 // -- Tapa media --
