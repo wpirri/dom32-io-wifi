@@ -158,8 +158,9 @@ void HttpReturnWiFiFormConfig(char *out)
             "</style>\n"
             "<body>\n"
             "<form method=\"post\">\n"
-            "<h1>WiFi</h1>"
-            "<hr />"
+            "<h1>WiFi</h1>\n"
+            "<p>MAC: %s</p>\n"
+            "<hr />\n"
             "<h2>AP1:</h2>\n"
             "&nbsp;<input id=\"it\" type=\"text\" name=\"ap1\" value=\"%s\">&nbsp;<input  id=\"it\" type=\"text\" name=\"ap1p\" value=\"%s\"><br>\n"
             "<h2>AP2:</h2>\n"
@@ -175,6 +176,7 @@ void HttpReturnWiFiFormConfig(char *out)
             "</body>\n"
             "</html>\n",
             http_200,
+            g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
             g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2,
@@ -769,7 +771,7 @@ int HTTPNotificarStatus(void)
             (g_control_out.stat2)?"on":"off",
             (g_control_out.stat3)?"on":"off",
             (g_control_out.stat4)?"on":"off");
-    printf("HTTPNotificarStatus: CHG=%c%c%c%c%c%c%c%c%c%c\r\n",
+    printf("HTTPNotificarStatus: CHG=%c%c%c%c%c%c00%c%c%c%c0000\r\n",
             (g_control_io.change1)?'1':'0',
             (g_control_io.change2)?'1':'0',
             (g_control_io.change3)?'1':'0',
@@ -784,7 +786,7 @@ int HTTPNotificarStatus(void)
             sprintf(http_rqst_data, 
             "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
             "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s&"
-            "CHG=%c%c%c%c%c%c%c%c%c%c",
+            "CHG=%c%c%c%c%c%c00%c%c%c%c0000",
             g_wifi_info.status.hw_mac,
             (g_control_io.stat1)?"on":"off",
             (g_control_io.stat2)?"on":"off",
