@@ -37,11 +37,6 @@ unsigned int g_control_count_in4;
 unsigned int g_control_count_in5;
 unsigned int g_control_count_in6;
 
-unsigned int g_control_count_out1;
-unsigned int g_control_count_out2;
-unsigned int g_control_count_out3;
-unsigned int g_control_count_out4;
-
 void CTRLNotificarStatus( int time )
 {
     if(time < g_control_notificar || g_control_notificar == 0)
@@ -99,12 +94,8 @@ void CTRLInit( void )
     g_control_count_in4 = 0;
     g_control_count_in5 = 0;
     g_control_count_in6 = 0;
-    g_control_count_out1 = 0;
-    g_control_count_out2 = 0;
-    g_control_count_out3 = 0;
-    g_control_count_out4 = 0;
 
-    /* Primer notificacion */
+/* Primer notificacion */
     CTRLNotificarStatus(100);
 }
 
@@ -139,7 +130,7 @@ void CTRLTask( void )
                 {
                     IO1_SetValue(g_control_io.stat1);
                     g_control_io.change1 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -167,7 +158,7 @@ void CTRLTask( void )
                 {
                     IO2_SetValue(g_control_io.stat2);
                     g_control_io.change2 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -195,7 +186,7 @@ void CTRLTask( void )
                 {
                     IO3_SetValue(g_control_io.stat3);
                     g_control_io.change3 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -223,7 +214,7 @@ void CTRLTask( void )
                 {
                     IO4_SetValue(g_control_io.stat4);
                     g_control_io.change4 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -251,7 +242,7 @@ void CTRLTask( void )
                 {
                     IO5_SetValue(g_control_io.stat5);
                     g_control_io.change5 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -279,7 +270,7 @@ void CTRLTask( void )
                 {
                     IO6_SetValue(g_control_io.stat6);
                     g_control_io.change6 = true;
-                    CTRLNotificarStatus(25);
+                    //CTRLNotificarStatus(25);
                 }
             }
             break;
@@ -288,7 +279,7 @@ void CTRLTask( void )
             {
                 OUT1_SetValue(g_control_out.stat1);
                 g_control_out.change1 = true;
-                CTRLNotificarStatus(25);
+                //CTRLNotificarStatus(25);
             }
             break;
         case 8:
@@ -296,7 +287,7 @@ void CTRLTask( void )
             {
                 OUT2_SetValue(g_control_out.stat2);
                 g_control_out.change2 = true;
-                CTRLNotificarStatus(25);
+                //CTRLNotificarStatus(25);
             }
             break;
         case 9:
@@ -304,7 +295,7 @@ void CTRLTask( void )
             {
                 OUT3_SetValue(g_control_out.stat3);
                 g_control_out.change3 = true;
-                CTRLNotificarStatus(25);
+                //CTRLNotificarStatus(25);
             }
             break;
         case 10:
@@ -312,7 +303,7 @@ void CTRLTask( void )
             {
                 OUT4_SetValue(g_control_out.stat4);
                 g_control_out.change4 = true;
-                CTRLNotificarStatus(25);
+                //CTRLNotificarStatus(25);
             }
             break;
         default:
@@ -322,9 +313,12 @@ void CTRLTask( void )
     
 }
 
+/* Se llama 10 veces por segundo - 100ms */
 void CTRLTimer( void )
 {
-    if(g_control_notificar && g_wifi_info.status.wifi_conectado)
+    if( g_control_notificar > 0 &&
+        g_wifi_info.status.wifi_mode == 1 &&
+        g_wifi_info.status.wifi_conectado != 0 )
     {
         g_control_notificar--;
         if(g_control_notificar == 0)
@@ -332,7 +326,7 @@ void CTRLTimer( void )
             if(HTTPNotificarStatus() == 0 )
             {
                 /* programo un reintento */
-                CTRLNotificarStatus(10);
+                CTRLNotificarStatus(30);
             }
         }
     }
@@ -341,17 +335,115 @@ void CTRLTimer( void )
         /* notifico cada minuto */
         CTRLNotificarStatus(600);
     }
+    
+    /* Control de pulso */
+    if(g_control_io.pulse1)
+    {
+        g_control_io.pulse1--;
+        if(g_control_io.pulse1 == 0)
+        {
+            g_control_io.stat1 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_io.pulse2)
+    {
+        g_control_io.pulse2--;
+        if(g_control_io.pulse2 == 0)
+        {
+            g_control_io.stat2 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_io.pulse3)
+    {
+        g_control_io.pulse3--;
+        if(g_control_io.pulse3 == 0)
+        {
+            g_control_io.stat3 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_io.pulse4)
+    {
+        g_control_io.pulse4--;
+        if(g_control_io.pulse4 == 0)
+        {
+            g_control_io.stat4 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_io.pulse5)
+    {
+        g_control_io.pulse5--;
+        if(g_control_io.pulse5 == 0)
+        {
+            g_control_io.stat5 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_io.pulse6)
+    {
+        g_control_io.pulse6--;
+        if(g_control_io.pulse6 == 0)
+        {
+            g_control_io.stat6 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_out.pulse1)
+    {
+        g_control_out.pulse1--;
+        if(g_control_out.pulse1 == 0)
+        {
+            g_control_out.stat1 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_out.pulse2)
+    {
+        g_control_out.pulse2--;
+        if(g_control_out.pulse2 == 0)
+        {
+            g_control_out.stat2 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_out.pulse3)
+    {
+        g_control_out.pulse3--;
+        if(g_control_out.pulse3 == 0)
+        {
+            g_control_out.stat3 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    if(g_control_out.pulse4)
+    {
+        g_control_out.pulse4--;
+        if(g_control_out.pulse4 == 0)
+        {
+            g_control_out.stat4 = 0;
+            CTRLNotificarStatus(10);
+        }
+    }
+    
+    
 }
 
 void CTRLSetIO(char* in)
 {
     char tmp[10];
     
-//    CTRLNotificarStatus(5);
-
+    printf("CTRLSetIO: %s\r\n", in);
     if(g_control_io.dir1 == 0)
     {
-        if(HTTPGetFormData(in, "IO1", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO1", tmp))
+        {
+            g_control_io.stat1 = 1;
+            g_control_io.pulse1 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO1", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -366,7 +458,12 @@ void CTRLSetIO(char* in)
 
     if(g_control_io.dir2 == 0)
     {
-        if(HTTPGetFormData(in, "IO2", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO2", tmp))
+        {
+            g_control_io.stat2 = 1;
+            g_control_io.pulse2 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO2", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -381,7 +478,12 @@ void CTRLSetIO(char* in)
 
     if(g_control_io.dir3 == 0)
     {
-        if(HTTPGetFormData(in, "IO3", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO3", tmp))
+        {
+            g_control_io.stat3 = 1;
+            g_control_io.pulse3 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO3", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -396,7 +498,12 @@ void CTRLSetIO(char* in)
     
     if(g_control_io.dir4 == 0)
     {
-        if(HTTPGetFormData(in, "IO4", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO4", tmp))
+        {
+            g_control_io.stat4 = 1;
+            g_control_io.pulse4 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO4", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -411,7 +518,12 @@ void CTRLSetIO(char* in)
     
     if(g_control_io.dir5 == 0)
     {
-        if(HTTPGetFormData(in, "IO5", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO5", tmp))
+        {
+            g_control_io.stat5 = 1;
+            g_control_io.pulse5 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO5", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -426,7 +538,12 @@ void CTRLSetIO(char* in)
 
     if(g_control_io.dir6 == 0)
     {
-        if(HTTPGetFormData(in, "IO6", tmp))
+        if(HTTPGetFormData(in, "PULSE-IO6", tmp))
+        {
+            g_control_io.stat6 = 1;
+            g_control_io.pulse6 = atoi(tmp)*10;
+        }
+        else if(HTTPGetFormData(in, "IO6", tmp))
         {
             if( !strcmp(tmp, "on") )
             {
@@ -439,7 +556,12 @@ void CTRLSetIO(char* in)
         }
     }
 
-    if(HTTPGetFormData(in, "OUT1", tmp))
+    if(HTTPGetFormData(in, "PULSE-OUT1", tmp))
+    {
+        g_control_out.stat1 = 1;
+        g_control_out.pulse1 = atoi(tmp)*10;
+    }
+    else if(HTTPGetFormData(in, "OUT1", tmp))
     {
         if( !strcmp(tmp, "on") )
         {
@@ -451,7 +573,12 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "OUT2", tmp))
+    if(HTTPGetFormData(in, "PULSE-OUT2", tmp))
+    {
+        g_control_out.stat2 = 1;
+        g_control_out.pulse2 = atoi(tmp)*10;
+    }
+    else if(HTTPGetFormData(in, "OUT2", tmp))
     {
         if( !strcmp(tmp, "on") )
         {
@@ -463,7 +590,12 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "OUT3", tmp))
+    if(HTTPGetFormData(in, "PULSE-OUT3", tmp))
+    {
+        g_control_out.stat3 = 1;
+        g_control_out.pulse3 = atoi(tmp)*10;
+    }
+    else if(HTTPGetFormData(in, "OUT3", tmp))
     {
         if( !strcmp(tmp, "on") )
         {
@@ -475,7 +607,12 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "OUT4", tmp))
+    if(HTTPGetFormData(in, "PULSE-OUT4", tmp))
+    {
+        g_control_out.stat4 = 1;
+        g_control_out.pulse4 = atoi(tmp)*10;
+    }
+    else if(HTTPGetFormData(in, "OUT4", tmp))
     {
         if( !strcmp(tmp, "on") )
         {
@@ -493,6 +630,7 @@ void CTRLSwitchIO(char* in)
 {
     char tmp[10];
     
+    printf("CTRLSwitchIO: %s\r\n", in);
     if(g_control_io.dir1 == 0)
     {
         if(HTTPGetFormData(in, "IO1", tmp))
@@ -598,8 +736,7 @@ void CTRLConfIO(char* in)
 {
     char tmp[10];
     
-//    CTRLNotificarStatus(5);
-    
+    printf("CTRLConfIO: %s\r\n", in);
     if(HTTPGetFormData(in, "IO1", tmp))
     {
         if( !strcmp(tmp, "in") )
