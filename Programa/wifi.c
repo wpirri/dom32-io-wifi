@@ -118,7 +118,6 @@ int WifiWaitLine(const char *line)
 {
     int rc = 0;
     unsigned char c = 0;
-    extern char led_aux_count;
 
     while(UART1_IsRxReady())
     {
@@ -154,7 +153,6 @@ int WifiWaitLine(const char *line)
                    g_wifi_read_line_buffer[3] == 'D'  )
                 {
                     g_wifi_read_line_wait_crlf = false;
-                    led_aux_count = 10;
                 }
             }
         }
