@@ -74,11 +74,14 @@ typedef struct
 #endif
 } http_data;
 
-http_data htdat[WIFI_CIP_MAX_CONS];
+http_data htdat[WIFI_CIP_MAX_CONS+1];
 
 int HttpGetRequest(const char *buffer, char *request)
 {
 	int rc = 0;
+    
+    LogMessage("HttpGetRequest\r\n");
+    
 	while(*buffer && *buffer != '/') buffer++;
 	if( !(*buffer)) return 0;
 	while(*buffer && *buffer != ' ')
@@ -509,7 +512,7 @@ void HTTPTask( void )
     
     if(htdat[id].type == 'G')
     {
-        printf("GET HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("GET HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpReturnWiFiFormConfig(htdat[id].data);
@@ -569,11 +572,11 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
-        printf("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'P')
     {
-        printf("PUT HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("PUT HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
@@ -626,18 +629,19 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
-        printf("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'H')
     {
-        printf("HTTP RESPONSE: %u bytes\r\n", strlen(htdat[id].data));
+        LogMessage("HTTP RESPONSE: %u bytes\r\n", strlen(htdat[id].data));
         /* Se trata de una respuesta HTTP/1... */
         CTRLConfIO(htdat[id].data);
         CTRLSetIO(htdat[id].data);
+        htdat[id].type = 0;
     }
     
     id++;
-    if(id > WIFI_CIP_MAX_CONS) id = 0;
+    if(id > (WIFI_CIP_MAX_CONS+1)) id = 0;
 }
 
 /* *****************************************************************************
@@ -647,14 +651,15 @@ void HTTPTimer( void )
 {
     int i;
     
-    for(i = 0; i < WIFI_CIP_MAX_CONS; i++)
+    for(i = 0; i < (WIFI_CIP_MAX_CONS+1); i++)
     {
-        if(htdat[i].timeout)
+        if(htdat[i].timeout && htdat[i].type)
         {
             htdat[i].timeout--;
             if(htdat[i].timeout == 0)
             {
                 htdat[i].type = 0;
+                LogMessage("HTTPTimer time-out htdat[%i]\r\n", i);
             }
         }
     }
@@ -668,18 +673,40 @@ void HTTPTimer( void )
 int HTTPAdd(int id, const char* buffer)
 {
     char *p;
+    
+    LogMessage("HTTPAdd(%i)\r\n", id);
+    
     if(id >= 0 && id < WIFI_CIP_MAX_CONS)
     {
+        LogMessage("  mensaje entrante.\r\n");
         /* Mensaje entrante */
-        if(htdat[id].type == 0 && (*buffer == 'G' || *buffer == 'P'))
+        if(htdat[id].type == 0)
         {
-            htdat[id].type = *buffer;
-            htdat[id].timeout = 50;
-
-            HttpGetRequest(buffer, htdat[id].rqst);
-
-            if(htdat[id].type == 'P')
+            if(*buffer == 'G' || *buffer == 'P')
             {
+                LogMessage("    requerimiento.\r\n");
+                htdat[id].type = *buffer;
+                htdat[id].timeout = 50;
+
+                HttpGetRequest(buffer, htdat[id].rqst);
+
+                if(htdat[id].type == 'P')
+                {
+                    p = strstr(buffer, "\r\n\r\n");
+                    if(p)
+                    {
+                        p += 4;
+                        strncpy(htdat[id].data, p, sizeof(htdat[id].data));
+                        htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                    }
+                }
+                return 1;
+            }
+            else if(*buffer == 'H')
+            {
+                LogMessage("    respuesta.\r\n");
+                htdat[id].type = *buffer;
+                htdat[id].timeout = 50;
                 p = strstr(buffer, "\r\n\r\n");
                 if(p)
                 {
@@ -687,14 +714,19 @@ int HTTPAdd(int id, const char* buffer)
                     strncpy(htdat[id].data, p, sizeof(htdat[id].data));
                     htdat[id].data[sizeof(htdat[id].data)-1] = 0;
                 }
+                return 1;
             }
-            return 1;
+        }
+        else
+        {
+            LogMessage("HTTPAdd Error. Conexion %i ocupada.\r\n", id);
         }
     }
     else if(id < 0)
     {
+        LogMessage("  mensaje saliente.\r\n");
         /* Mensaje Saliente */
-        for(id = 0; id < WIFI_CIP_MAX_CONS; id++)
+        for(id = 0; id < (WIFI_CIP_MAX_CONS+1); id++)
         {
             /* Busco un slot libre */
             if(htdat[id].type == 0)
@@ -716,11 +748,11 @@ int HTTPAdd(int id, const char* buffer)
 int HTTPPending(void)
 {
     int i;
-    for(i = 0; i < WIFI_CIP_MAX_CONS; i++)
+    for(i = 0; i < (WIFI_CIP_MAX_CONS+1); i++)
     {
         if(htdat[i].type == 'R' || htdat[i].type == 'S') break;
     }
-    return ((i < WIFI_CIP_MAX_CONS)?i:(-1));
+    return ((i < (WIFI_CIP_MAX_CONS+1))?i:(-1));
 }
 
 /* *****************************************************************************
@@ -728,7 +760,7 @@ int HTTPPending(void)
  * ************************************************************************** */
 char HTTPGetType(int id)
 {
-    if(id >= 0 && id < WIFI_CIP_MAX_CONS)
+    if(id >= 0 && id < (WIFI_CIP_MAX_CONS+1))
     {
         return htdat[id].type;
     }
@@ -740,7 +772,7 @@ char HTTPGetType(int id)
  * ************************************************************************** */
 const char* HTTPGet(int id, char* buffer)
 {
-    if(id >= 0 && id < WIFI_CIP_MAX_CONS)
+    if(id >= 0 && id < (WIFI_CIP_MAX_CONS+1))
     {
         htdat[id].type = 0;
         if(buffer)
@@ -758,56 +790,33 @@ const char* HTTPGet(int id, char* buffer)
  * ************************************************************************** */
 int HTTPNotificarStatus(void)
 {
-    printf("HTTPNotificarStatus: ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s\r\n",
-            g_wifi_info.status.hw_mac,
-            (g_control_io.stat1)?"on":"off",
-            (g_control_io.stat2)?"on":"off",
-            (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off",
-            (g_control_io.stat5)?"on":"off",
-            (g_control_io.stat6)?"on":"off");
-    printf("HTTPNotificarStatus: OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s\r\n",
-            (g_control_out.stat1)?"on":"off",
-            (g_control_out.stat2)?"on":"off",
-            (g_control_out.stat3)?"on":"off",
-            (g_control_out.stat4)?"on":"off");
-    printf("HTTPNotificarStatus: CHG=%c%c%c%c%c%c00%c%c%c%c0000\r\n",
-            (g_control_io.change1)?'1':'0',
-            (g_control_io.change2)?'1':'0',
-            (g_control_io.change3)?'1':'0',
-            (g_control_io.change4)?'1':'0',
-            (g_control_io.change5)?'1':'0',
-            (g_control_io.change6)?'1':'0',
-            (g_control_out.change1)?'1':'0',
-            (g_control_out.change2)?'1':'0',
-            (g_control_out.change3)?'1':'0',
-            (g_control_out.change4)?'1':'0');
+    LogMessage("HTTPNotificarStatus\r\n");
 
-            sprintf(http_rqst_data, 
-            "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
-            "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s&"
-            "CHG=%c%c%c%c%c%c00%c%c%c%c0000",
-            g_wifi_info.status.hw_mac,
-            (g_control_io.stat1)?"on":"off",
-            (g_control_io.stat2)?"on":"off",
-            (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off",
-            (g_control_io.stat5)?"on":"off",
-            (g_control_io.stat6)?"on":"off",
-            (g_control_out.stat1)?"on":"off",
-            (g_control_out.stat2)?"on":"off",
-            (g_control_out.stat3)?"on":"off",
-            (g_control_out.stat4)?"on":"off",
-            (g_control_io.change1)?'1':'0',
-            (g_control_io.change2)?'1':'0',
-            (g_control_io.change3)?'1':'0',
-            (g_control_io.change4)?'1':'0',
-            (g_control_io.change5)?'1':'0',
-            (g_control_io.change6)?'1':'0',
-            (g_control_out.change1)?'1':'0',
-            (g_control_out.change2)?'1':'0',
-            (g_control_out.change3)?'1':'0',
-            (g_control_out.change4)?'1':'0');
+    sprintf(http_rqst_data, 
+    "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
+    "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s&"
+    "CHG=%c%c%c%c%c%c00%c%c%c%c0000",
+    g_wifi_info.status.hw_mac,
+    (g_control_io.stat1)?"on":"off",
+    (g_control_io.stat2)?"on":"off",
+    (g_control_io.stat3)?"on":"off",
+    (g_control_io.stat4)?"on":"off",
+    (g_control_io.stat5)?"on":"off",
+    (g_control_io.stat6)?"on":"off",
+    (g_control_out.stat1)?"on":"off",
+    (g_control_out.stat2)?"on":"off",
+    (g_control_out.stat3)?"on":"off",
+    (g_control_out.stat4)?"on":"off",
+    (g_control_io.change1)?'1':'0',
+    (g_control_io.change2)?'1':'0',
+    (g_control_io.change3)?'1':'0',
+    (g_control_io.change4)?'1':'0',
+    (g_control_io.change5)?'1':'0',
+    (g_control_io.change6)?'1':'0',
+    (g_control_out.change1)?'1':'0',
+    (g_control_out.change2)?'1':'0',
+    (g_control_out.change3)?'1':'0',
+    (g_control_out.change4)?'1':'0');
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");

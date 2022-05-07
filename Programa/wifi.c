@@ -76,10 +76,10 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 void WifiWrite( const char *buffer )
 {
 #ifdef DEBUG_WIFI
-	printf("WifiWrite: %.80s\r\n", buffer);
+	LogMessage("WifiWrite: %.80s\r\n", buffer);
 #endif
     /* Reseteo el buffer de lectura */
-    g_wifi_read_line_buffer_index = 0;
+    //g_wifi_read_line_buffer_index = 0;
     if(buffer)
     {
         while(*buffer)
@@ -93,10 +93,10 @@ void WifiWrite( const char *buffer )
 void WifiWriteLine( const char *line )
 {
 #ifdef DEBUG_WIFI
-	printf("WifiWriteLine: %.80s\r\n", line);
+	LogMessage("WifiWriteLine: %.80s\r\n", line);
 #endif
     /* Reseteo el buffer de lectura */
-    g_wifi_read_line_buffer_index = 0;
+    //g_wifi_read_line_buffer_index = 0;
     if(line)
     {
         while(*line)
@@ -169,22 +169,22 @@ int WifiWaitLine(const char *line)
             if(line)
             {
 #ifdef DEBUG_WIFI
-                printf("WifiWaitLine: esperando:%.80s / recibido: %.80s\r\n", line, g_wifi_read_line_buffer);
+                LogMessage("WifiWaitLine: esperando:%.80s / recibido: %.80s\r\n", line, g_wifi_read_line_buffer);
 #endif
                 if( !memcmp(line, g_wifi_read_line_buffer, strlen(line)))
                 {
-                    //printf("               recibido:%s\n", line);
+                    //LogMessage("               recibido:%s\n", line);
                     rc = (-1);  /* Se recibi� lo que se esperaba */
                 }
                 else
                 {
-                    //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                    //LogMessage("               recibido:%s\n", g_wifi_read_line_buffer);
                     rc = WifiCheckUnsol();
                 }
             }
             else
             {
-                //printf("               recibido:%s\n", g_wifi_read_line_buffer);
+                //LogMessage("               recibido:%s\n", g_wifi_read_line_buffer);
                 rc = WifiCheckUnsol();
             }
             g_wifi_read_line_buffer_index = 0;
@@ -236,12 +236,12 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
     {
-        printf("Conectado a un AP.\r\n");
+        LogMessage("Conectado a un AP.\r\n");
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
-        printf("Deconectado del AP.\r\n");
+        LogMessage("Deconectado del AP.\r\n");
         if(g_wifi_info.status.wifi_conectado)
         {
             g_wifi_info.status.wifi_conectado = 0;
@@ -251,13 +251,13 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
-        printf("Cliente conectado.\r\n");
+        LogMessage("Cliente conectado.\r\n");
         /* Cliente conectado al AP */
         g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
     {
-        printf("Cliente desconectado.\r\n");
+        LogMessage("Cliente desconectado.\r\n");
         /* Cliente desconectado al AP */
         g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
     }
@@ -302,7 +302,7 @@ int WifiTaskInit( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //printf("--> Init.\n");
+            //LogMessage("--> Init.\n");
             /* Restore a fabrica y espero a que el modulo se reinicie */
             WifiWriteLine("AT+RESTORE");
             g_wifi_task_stm_step = 1;
@@ -334,7 +334,7 @@ int WifiTaskInit( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -354,7 +354,7 @@ int WifiTaskInit( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -372,7 +372,7 @@ int WifiTaskAPMode( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //printf("--> Modo AP.\n");
+            //LogMessage("--> Modo AP.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPSERVER=0");
             g_wifi_task_stm_step = 1;
@@ -407,7 +407,7 @@ int WifiTaskAPMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -483,7 +483,7 @@ int WifiTaskAPMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -497,7 +497,7 @@ int WifiTaskAPMode( void )
         case 13:
             if(WifiWaitLine("OK"))
             {
-                printf("Modo configuracion.\r\n");
+                LogMessage("Modo configuracion.\r\n");
                 g_wifi_task_stm_step = 14;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -523,7 +523,7 @@ int WifiTaskSTMode( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //printf("--> Modo STA.\n");
+            //LogMessage("--> Modo STA.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPSERVER=0");
             g_wifi_task_stm_step++;
@@ -555,7 +555,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -575,7 +575,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -596,7 +596,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -616,7 +616,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -637,7 +637,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -681,14 +681,14 @@ int WifiTaskSTMode( void )
             else
             {
                 /* No hay AP definido */
-                printf("ERROR: No hay AP definido.\r\n");
+                LogMessage("ERROR: No hay AP definido.\r\n");
                 rc = LOOP;
             }
             break;
         case 13:
             if(WifiWaitLine("OK"))
             {
-                printf("Modo normal.\r\n");
+                LogMessage("Modo normal.\r\n");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -696,7 +696,7 @@ int WifiTaskSTMode( void )
             else if(g_wifi_task_stm_timeout == 0)
             {
 #ifdef DEBUG_WIFI
-                printf("TIMEOUT esperando OK a AT+CWJAP\r\n");
+                LogMessage("TIMEOUT esperando OK a AT+CWJAP\r\n");
 #endif
                 g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
                 //rc = (-1);
@@ -717,7 +717,7 @@ int WifiTaskUpgrade( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //printf("--> Upgrade.\n");
+            //LogMessage("--> Upgrade.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPUPDATE");
             g_wifi_task_stm_step = 1;
@@ -733,7 +733,7 @@ int WifiTaskUpgrade( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando OK\n");
+                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -759,11 +759,13 @@ int WifiTaskHttp( void )
             /* Si es una respuesta salteo la conexion */
             if(HTTPGetType(g_wifi_http_id) == 'R')
             {
+                LogMessage("WifiTaskHttp -> Respondiendo...\r\n");
                 g_wifi_task_stm_step = 3;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 break;
             }
+            LogMessage("WifiTaskHttp -> Conectando...\r\n");
             sprintf(g_wifi_cmd, "AT+CIPSTART=%d,\"TCP\",\"%s\",%d",
                     g_wifi_http_id,
                     g_wifi_info.f.config.wifi_host1,
@@ -788,6 +790,7 @@ int WifiTaskHttp( void )
             }
             break;
         case 3:
+            LogMessage("WifiTaskHttp -> Enviando...\r\n");
             sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step = 4;
@@ -803,6 +806,7 @@ int WifiTaskHttp( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
+                LogMessage("WifiTaskHttp -> Envio time-out\r\n");
                 g_wifi_task_stm_step = 7;   /* CLOSE */
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -817,12 +821,14 @@ int WifiTaskHttp( void )
         case 6:
             if(WifiWaitLine("SEND OK") || g_wifi_task_stm_timeout == 0)
             {
+                LogMessage("WifiTaskHttp -> Envio Ok\r\n");
                 g_wifi_task_stm_step = 7;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
             }
             break;
         case 7:
+            LogMessage("WifiTaskHttp -> Cerrando...\r\n");
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step = 8;
@@ -832,6 +838,7 @@ int WifiTaskHttp( void )
         case 8:
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
             {
+                LogMessage("WifiTaskHttp -> Fin\r\n");
                 rc = LOOP;
             }
             break;
@@ -858,6 +865,7 @@ int WifiTaskLoop( void )
     }
     else if(HTTPPending() >= 0)
     {
+        LogMessage("HTTP Pendiente\r\n");
         return HTTP;
     }
     
@@ -871,7 +879,7 @@ int WifiTaskListAP( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //printf("--> List AP.\n");
+            //LogMessage("--> List AP.\n");
             WifiWriteLine("AT+CWLAP");
             g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
@@ -886,7 +894,7 @@ int WifiTaskListAP( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //printf("TIMEOUT esperando Ok\n");
+                //LogMessage("TIMEOUT esperando Ok\n");
                 rc = (-1);
             }
             break;
@@ -922,7 +930,7 @@ void WiFiTask( void )
     {
         case INVALID:
         case RESET:
-			//printf("RESET\n");
+			//LogMessage("RESET\n");
             WIFI_RESET_SetLow();
             g_wifi_task_stm_timeout = 0;
             g_wifi_task_stm_step = 0;
@@ -941,7 +949,7 @@ void WiFiTask( void )
             WifiTaskSTMSet(START, 50, 0);
             break;
         case START:
-			//printf("START\n");
+			//LogMessage("START\n");
             WIFI_RESET_SetHigh();
             WifiTaskSTMSet(CLEAN, 5, 50);
             break;
@@ -990,7 +998,7 @@ void WiFiTask( void )
             else if(rc < 0) WifiTaskSTMSet(RESET, 0, 0);
             break;
         default:    /* ERROR */
-			printf("***** SOFTWARE ERROR ***** RESET *****\r\n");
+			LogMessage("***** SOFTWARE ERROR ***** RESET *****\r\n");
             WifiTaskSTMSet(RESET, 0, 0);
             break;
     }

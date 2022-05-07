@@ -108,7 +108,7 @@ void ConfigSave(void)
     
     FLASH_Lock();
     
-    printf("Configuracion guardada\r\n");
+    LogMessage("Configuracion guardada\r\n");
 }
 
 void ConfigTimer(void)

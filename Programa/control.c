@@ -85,8 +85,8 @@ void CTRLInit( void )
     if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
     else                    {TRISBCLR = (1 << 8); CNPUBCLR = (1 << 8);}
 
-    printf("TRISB: 0x%04X\r\n", TRISB);
-    printf("CNPUB: 0x%04X\r\n", CNPUB);
+    LogMessage("TRISB: 0x%04X\r\n", TRISB);
+    LogMessage("CNPUB: 0x%04X\r\n", CNPUB);
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -435,7 +435,7 @@ void CTRLSetIO(char* in)
 {
     char tmp[10];
     
-    printf("CTRLSetIO: %s\r\n", in);
+    LogMessage("CTRLSetIO: %s\r\n", in);
     if(g_control_io.dir1 == 0)
     {
         if(HTTPGetFormData(in, "PULSE-IO1", tmp))
@@ -630,7 +630,7 @@ void CTRLSwitchIO(char* in)
 {
     char tmp[10];
     
-    printf("CTRLSwitchIO: %s\r\n", in);
+    LogMessage("CTRLSwitchIO: %s\r\n", in);
     if(g_control_io.dir1 == 0)
     {
         if(HTTPGetFormData(in, "IO1", tmp))
@@ -735,10 +735,12 @@ void CTRLSwitchIO(char* in)
 void CTRLConfIO(char* in)
 {
     char tmp[10];
+    bool change = false;
     
-    printf("CTRLConfIO: %s\r\n", in);
+    LogMessage("CTRLConfIO: %s\r\n", in);
     if(HTTPGetFormData(in, "IO1", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana1 = 0;
@@ -758,6 +760,7 @@ void CTRLConfIO(char* in)
     
     if(HTTPGetFormData(in, "IO2", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana2 = 0;
@@ -777,6 +780,7 @@ void CTRLConfIO(char* in)
     
     if(HTTPGetFormData(in, "IO3", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana3 = 0;
@@ -796,6 +800,7 @@ void CTRLConfIO(char* in)
     
     if(HTTPGetFormData(in, "IO4", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana4 = 0;
@@ -815,6 +820,7 @@ void CTRLConfIO(char* in)
     
     if(HTTPGetFormData(in, "IO5", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana5 = 0;
@@ -834,6 +840,7 @@ void CTRLConfIO(char* in)
     
     if(HTTPGetFormData(in, "IO6", tmp))
     {
+        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_control_io.ana6 = 0;
@@ -850,7 +857,10 @@ void CTRLConfIO(char* in)
             g_control_io.dir6 = 1;
         }
     }
-    
-    g_wifi_info.f.config.io_config_default = 0;
-    g_wifi_info.status.save_config = 50;
+
+    if(change)
+    {
+        g_wifi_info.f.config.io_config_default = 0;
+        g_wifi_info.status.save_config = 50;
+    }
 }

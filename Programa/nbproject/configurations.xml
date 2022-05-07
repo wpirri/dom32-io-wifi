@@ -23,7 +23,6 @@
       </logicalFolder>
       <itemPath>config.h</itemPath>
       <itemPath>control.h</itemPath>
-      <itemPath>dht11.h</itemPath>
       <itemPath>http.h</itemPath>
       <itemPath>strfunc.h</itemPath>
       <itemPath>wifi.h</itemPath>
@@ -54,7 +53,6 @@
       <itemPath>main.c</itemPath>
       <itemPath>config.c</itemPath>
       <itemPath>control.c</itemPath>
-      <itemPath>dht11.c</itemPath>
       <itemPath>http.c</itemPath>
       <itemPath>strfunc.c</itemPath>
       <itemPath>wifi.c</itemPath>
@@ -66,6 +64,9 @@
       <itemPath>Dom32-IO-WiFi.mc3</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">

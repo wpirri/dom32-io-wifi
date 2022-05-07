@@ -21,6 +21,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define LogMessage printf
 //#define DEBUG_WIFI
 
 struct _config_ /* 2176 bits, 272 bytes */

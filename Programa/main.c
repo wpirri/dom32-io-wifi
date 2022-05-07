@@ -145,7 +145,7 @@ int main(void)
     //DHT11Init();
     //WGND_Init();
     
-    printf("Init Ok.\r\n");
+    LogMessage("Init Ok.\r\n");
     
     while(1)
     {
