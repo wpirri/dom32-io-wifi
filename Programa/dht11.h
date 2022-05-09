@@ -1,5 +1,5 @@
 /***************************************************************************
-    Copyright (C) 2022   Walter Pirri
+    Copyright (C) 2018   Walter Pirri
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -15,15 +15,21 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
-#ifndef _LED_H_
-#define _LED_H_
+#ifndef _DHT11_H_
+#define	_DHT11_H_
 
-void LedInit( void );
-void LedTask( void );
-void LedTimer( void );
+#define DHT11_DATA_TRIS
+#define DHT11_DATA_IO  
+#define DHT11_DATA_IN  
 
-void Led1(int status);
-void Led2(int status);
-void Led3(int status);
+#define DHT11_REFRESH_DELAY 600
 
-#endif /* _LED_H_ */
+void DHT11Init( void );
+void DHT11Task( void );
+void DHT11Timer( void );
+
+int DHT11Temperatura( void );
+int DHT11Humedad( void );
+
+#endif	/* _DHT11_H_ */
+

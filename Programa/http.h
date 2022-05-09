@@ -1,5 +1,5 @@
 /***************************************************************************
-    Copyright (C) 2022   Walter Pirri
+    Copyright (C) 2020   Walter Pirri
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -15,15 +15,22 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
-
-#ifndef _HTTP_H
-#define	_HTTP_H
+#ifndef _HTTP_H_
+#define _HTTP_H_
 
 void HTTPInit( void );
+
 void HTTPTask( void );
+
 void HTTPTimer( void );
 
-void HTTPMessage(unsigned int socket, char method, const char* url, const char* body, unsigned int body_len);
+int HTTPAdd(int id, const char* buffer);
+int HTTPPending(void);
+char HTTPGetType(int id);
+const char*  HTTPGet(int id, char* buffer);
 
-#endif	/* _HTTP_H */
+int HTTPNotificarStatus(void);
 
+int HTTPGetFormData(char *buffer, const char *label, char *value);
+
+#endif /* _HTTP_H_ */

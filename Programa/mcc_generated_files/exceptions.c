@@ -48,8 +48,6 @@
 #include <xc.h>
 #include "exceptions.h"
 
-#include <stdio.h>
-
 /**
   Exception Reason Data
 
@@ -123,8 +121,6 @@ void _general_exception_handler ( void )
       /* If we are in debug mode, cause a software breakpoint in the debugger */
     #endif
 
-    printf("EXCEPTION: 0x%X addr: 0x%X [%s]\r\n", _excep_code, _excep_addr, _cause_str);
-      
     while (1)
     {
       /* TODO:  Insert exception handling code. */

@@ -73,11 +73,11 @@
   @Example
     <code>
     // Set RA0 high (1)
-    LED1_SetHigh();
+    LED_Status_SetHigh();
     </code>
 
 */
-#define LED1_SetHigh()          ( LATASET = (1 << 0) )
+#define LED_Status_SetHigh()          ( LATASET = (1 << 0) )
 /**
   @Summary
     Sets the GPIO pin, RA0, low using LATA0.
@@ -97,11 +97,11 @@
   @Example
     <code>
     // Set RA0 low (0)
-    LED1_SetLow();
+    LED_Status_SetLow();
     </code>
 
 */
-#define LED1_SetLow()           ( LATACLR = (1 << 0) )
+#define LED_Status_SetLow()           ( LATACLR = (1 << 0) )
 
 /**
   @Summary
@@ -122,19 +122,19 @@
   @Example
     <code>
     // Set RA0 to low.
-    LED1_SetValue(false);
+    LED_Status_SetValue(false);
     </code>
 
 */
-inline static void LED1_SetValue(bool value)
+inline static void LED_Status_SetValue(bool value)
 {
   if(value)
   {
-    LED1_SetHigh();
+    LED_Status_SetHigh();
   }
   else
   {
-    LED1_SetLow();
+    LED_Status_SetLow();
   }
 }
 
@@ -157,11 +157,11 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Toggle RA0
-    LED1_Toggle();
+    LED_Status_Toggle();
     </code>
 
 */
-#define LED1_Toggle()           ( LATAINV = (1 << 0) )
+#define LED_Status_Toggle()           ( LATAINV = (1 << 0) )
 /**
   @Summary
     Reads the value of the GPIO pin, RA0.
@@ -183,11 +183,11 @@ inline static void LED1_SetValue(bool value)
     uint16_t portValue;
 
     // Read RA0
-    postValue = LED1_GetValue();
+    postValue = LED_Status_GetValue();
     </code>
 
 */
-#define LED1_GetValue()         PORTAbits.RA0
+#define LED_Status_GetValue()         PORTAbits.RA0
 /**
   @Summary
     Configures the GPIO pin, RA0, as an input.
@@ -207,11 +207,11 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Sets the RA0 as an input
-    LED1_SetDigitalInput();
+    LED_Status_SetDigitalInput();
     </code>
 
 */
-#define LED1_SetDigitalInput()   ( TRISASET = (1 << 0) )
+#define LED_Status_SetDigitalInput()   ( TRISASET = (1 << 0) )
 /**
   @Summary
     Configures the GPIO pin, RA0, as an output.
@@ -231,11 +231,11 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Sets the RA0 as an output
-    LED1_SetDigitalOutput();
+    LED_Status_SetDigitalOutput();
     </code>
 
 */
-#define LED1_SetDigitalOutput()   ( TRISACLR = (1 << 0) )
+#define LED_Status_SetDigitalOutput()   ( TRISACLR = (1 << 0) )
 /**
   @Summary
     Sets the GPIO pin, RA1, high using LATA1.
@@ -255,11 +255,11 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Set RA1 high (1)
-    LED2_SetHigh();
+    LED_Modo_SetHigh();
     </code>
 
 */
-#define LED2_SetHigh()          ( LATASET = (1 << 1) )
+#define LED_Modo_SetHigh()          ( LATASET = (1 << 1) )
 /**
   @Summary
     Sets the GPIO pin, RA1, low using LATA1.
@@ -279,11 +279,11 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Set RA1 low (0)
-    LED2_SetLow();
+    LED_Modo_SetLow();
     </code>
 
 */
-#define LED2_SetLow()           ( LATACLR = (1 << 1) )
+#define LED_Modo_SetLow()           ( LATACLR = (1 << 1) )
 
 /**
   @Summary
@@ -304,19 +304,19 @@ inline static void LED1_SetValue(bool value)
   @Example
     <code>
     // Set RA1 to low.
-    LED2_SetValue(false);
+    LED_Modo_SetValue(false);
     </code>
 
 */
-inline static void LED2_SetValue(bool value)
+inline static void LED_Modo_SetValue(bool value)
 {
   if(value)
   {
-    LED2_SetHigh();
+    LED_Modo_SetHigh();
   }
   else
   {
-    LED2_SetLow();
+    LED_Modo_SetLow();
   }
 }
 
@@ -339,11 +339,11 @@ inline static void LED2_SetValue(bool value)
   @Example
     <code>
     // Toggle RA1
-    LED2_Toggle();
+    LED_Modo_Toggle();
     </code>
 
 */
-#define LED2_Toggle()           ( LATAINV = (1 << 1) )
+#define LED_Modo_Toggle()           ( LATAINV = (1 << 1) )
 /**
   @Summary
     Reads the value of the GPIO pin, RA1.
@@ -365,11 +365,11 @@ inline static void LED2_SetValue(bool value)
     uint16_t portValue;
 
     // Read RA1
-    postValue = LED2_GetValue();
+    postValue = LED_Modo_GetValue();
     </code>
 
 */
-#define LED2_GetValue()         PORTAbits.RA1
+#define LED_Modo_GetValue()         PORTAbits.RA1
 /**
   @Summary
     Configures the GPIO pin, RA1, as an input.
@@ -389,11 +389,11 @@ inline static void LED2_SetValue(bool value)
   @Example
     <code>
     // Sets the RA1 as an input
-    LED2_SetDigitalInput();
+    LED_Modo_SetDigitalInput();
     </code>
 
 */
-#define LED2_SetDigitalInput()   ( TRISASET = (1 << 1) )
+#define LED_Modo_SetDigitalInput()   ( TRISASET = (1 << 1) )
 /**
   @Summary
     Configures the GPIO pin, RA1, as an output.
@@ -413,193 +413,11 @@ inline static void LED2_SetValue(bool value)
   @Example
     <code>
     // Sets the RA1 as an output
-    LED2_SetDigitalOutput();
+    LED_Modo_SetDigitalOutput();
     </code>
 
 */
-#define LED2_SetDigitalOutput()   ( TRISACLR = (1 << 1) )
-/**
-  @Summary
-    Sets the GPIO pin, RA3, high using LATA3.
-
-  @Description
-    Sets the GPIO pin, RA3, high using LATA3.
-
-  @Preconditions
-    The RA3 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RA3 high (1)
-    U2TX_SetHigh();
-    </code>
-
-*/
-#define U2TX_SetHigh()          ( LATASET = (1 << 3) )
-/**
-  @Summary
-    Sets the GPIO pin, RA3, low using LATA3.
-
-  @Description
-    Sets the GPIO pin, RA3, low using LATA3.
-
-  @Preconditions
-    The RA3 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RA3 low (0)
-    U2TX_SetLow();
-    </code>
-
-*/
-#define U2TX_SetLow()           ( LATACLR = (1 << 3) )
-
-/**
-  @Summary
-    Sets a value to the GPIO pin.
-
-  @Description
-    Sets or Resets the GPIO pin, RA3, low or high using LATA3.
-
-  @Preconditions
-    The RA3 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    bool value; : value to be set to the GPIO pin.
-
-  @Example
-    <code>
-    // Set RA3 to low.
-    U2TX_SetValue(false);
-    </code>
-
-*/
-inline static void U2TX_SetValue(bool value)
-{
-  if(value)
-  {
-    U2TX_SetHigh();
-  }
-  else
-  {
-    U2TX_SetLow();
-  }
-}
-
-/**
-  @Summary
-    Toggles the GPIO pin, RA3, using LATA3.
-
-  @Description
-    Toggles the GPIO pin, RA3, using LATA3.
-
-  @Preconditions
-    The RA3 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Toggle RA3
-    U2TX_Toggle();
-    </code>
-
-*/
-#define U2TX_Toggle()           ( LATAINV = (1 << 3) )
-/**
-  @Summary
-    Reads the value of the GPIO pin, RA3.
-
-  @Description
-    Reads the value of the GPIO pin, RA3.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    uint16_t portValue;
-
-    // Read RA3
-    postValue = U2TX_GetValue();
-    </code>
-
-*/
-#define U2TX_GetValue()         PORTAbits.RA3
-/**
-  @Summary
-    Configures the GPIO pin, RA3, as an input.
-
-  @Description
-    Configures the GPIO pin, RA3, as an input.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RA3 as an input
-    U2TX_SetDigitalInput();
-    </code>
-
-*/
-#define U2TX_SetDigitalInput()   ( TRISASET = (1 << 3) )
-/**
-  @Summary
-    Configures the GPIO pin, RA3, as an output.
-
-  @Description
-    Configures the GPIO pin, RA3, as an output.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RA3 as an output
-    U2TX_SetDigitalOutput();
-    </code>
-
-*/
-#define U2TX_SetDigitalOutput()   ( TRISACLR = (1 << 3) )
+#define LED_Modo_SetDigitalOutput()   ( TRISACLR = (1 << 1) )
 /**
   @Summary
     Sets the GPIO pin, RA4, high using LATA4.
@@ -619,11 +437,11 @@ inline static void U2TX_SetValue(bool value)
   @Example
     <code>
     // Set RA4 high (1)
-    LED3_SetHigh();
+    LED_Aux_SetHigh();
     </code>
 
 */
-#define LED3_SetHigh()          ( LATASET = (1 << 4) )
+#define LED_Aux_SetHigh()          ( LATASET = (1 << 4) )
 /**
   @Summary
     Sets the GPIO pin, RA4, low using LATA4.
@@ -643,11 +461,11 @@ inline static void U2TX_SetValue(bool value)
   @Example
     <code>
     // Set RA4 low (0)
-    LED3_SetLow();
+    LED_Aux_SetLow();
     </code>
 
 */
-#define LED3_SetLow()           ( LATACLR = (1 << 4) )
+#define LED_Aux_SetLow()           ( LATACLR = (1 << 4) )
 
 /**
   @Summary
@@ -668,19 +486,19 @@ inline static void U2TX_SetValue(bool value)
   @Example
     <code>
     // Set RA4 to low.
-    LED3_SetValue(false);
+    LED_Aux_SetValue(false);
     </code>
 
 */
-inline static void LED3_SetValue(bool value)
+inline static void LED_Aux_SetValue(bool value)
 {
   if(value)
   {
-    LED3_SetHigh();
+    LED_Aux_SetHigh();
   }
   else
   {
-    LED3_SetLow();
+    LED_Aux_SetLow();
   }
 }
 
@@ -703,11 +521,11 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Toggle RA4
-    LED3_Toggle();
+    LED_Aux_Toggle();
     </code>
 
 */
-#define LED3_Toggle()           ( LATAINV = (1 << 4) )
+#define LED_Aux_Toggle()           ( LATAINV = (1 << 4) )
 /**
   @Summary
     Reads the value of the GPIO pin, RA4.
@@ -729,11 +547,11 @@ inline static void LED3_SetValue(bool value)
     uint16_t portValue;
 
     // Read RA4
-    postValue = LED3_GetValue();
+    postValue = LED_Aux_GetValue();
     </code>
 
 */
-#define LED3_GetValue()         PORTAbits.RA4
+#define LED_Aux_GetValue()         PORTAbits.RA4
 /**
   @Summary
     Configures the GPIO pin, RA4, as an input.
@@ -753,11 +571,11 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Sets the RA4 as an input
-    LED3_SetDigitalInput();
+    LED_Aux_SetDigitalInput();
     </code>
 
 */
-#define LED3_SetDigitalInput()   ( TRISASET = (1 << 4) )
+#define LED_Aux_SetDigitalInput()   ( TRISASET = (1 << 4) )
 /**
   @Summary
     Configures the GPIO pin, RA4, as an output.
@@ -777,11 +595,11 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Sets the RA4 as an output
-    LED3_SetDigitalOutput();
+    LED_Aux_SetDigitalOutput();
     </code>
 
 */
-#define LED3_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
+#define LED_Aux_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
 /**
   @Summary
     Sets the GPIO pin, RB10, high using LATB10.
@@ -801,11 +619,11 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Set RB10 high (1)
-    O2_SetHigh();
+    OUT3_SetHigh();
     </code>
 
 */
-#define O2_SetHigh()          ( LATBSET = (1 << 10) )
+#define OUT3_SetHigh()          ( LATBSET = (1 << 10) )
 /**
   @Summary
     Sets the GPIO pin, RB10, low using LATB10.
@@ -825,11 +643,11 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Set RB10 low (0)
-    O2_SetLow();
+    OUT3_SetLow();
     </code>
 
 */
-#define O2_SetLow()           ( LATBCLR = (1 << 10) )
+#define OUT3_SetLow()           ( LATBCLR = (1 << 10) )
 
 /**
   @Summary
@@ -850,19 +668,19 @@ inline static void LED3_SetValue(bool value)
   @Example
     <code>
     // Set RB10 to low.
-    O2_SetValue(false);
+    OUT3_SetValue(false);
     </code>
 
 */
-inline static void O2_SetValue(bool value)
+inline static void OUT3_SetValue(bool value)
 {
   if(value)
   {
-    O2_SetHigh();
+    OUT3_SetHigh();
   }
   else
   {
-    O2_SetLow();
+    OUT3_SetLow();
   }
 }
 
@@ -885,11 +703,11 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Toggle RB10
-    O2_Toggle();
+    OUT3_Toggle();
     </code>
 
 */
-#define O2_Toggle()           ( LATBINV = (1 << 10) )
+#define OUT3_Toggle()           ( LATBINV = (1 << 10) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB10.
@@ -911,11 +729,11 @@ inline static void O2_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB10
-    postValue = O2_GetValue();
+    postValue = OUT3_GetValue();
     </code>
 
 */
-#define O2_GetValue()         PORTBbits.RB10
+#define OUT3_GetValue()         PORTBbits.RB10
 /**
   @Summary
     Configures the GPIO pin, RB10, as an input.
@@ -935,11 +753,11 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Sets the RB10 as an input
-    O2_SetDigitalInput();
+    OUT3_SetDigitalInput();
     </code>
 
 */
-#define O2_SetDigitalInput()   ( TRISBSET = (1 << 10) )
+#define OUT3_SetDigitalInput()   ( TRISBSET = (1 << 10) )
 /**
   @Summary
     Configures the GPIO pin, RB10, as an output.
@@ -959,11 +777,11 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Sets the RB10 as an output
-    O2_SetDigitalOutput();
+    OUT3_SetDigitalOutput();
     </code>
 
 */
-#define O2_SetDigitalOutput()   ( TRISBCLR = (1 << 10) )
+#define OUT3_SetDigitalOutput()   ( TRISBCLR = (1 << 10) )
 /**
   @Summary
     Sets the GPIO pin, RB11, high using LATB11.
@@ -983,11 +801,11 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Set RB11 high (1)
-    O1_SetHigh();
+    OUT4_SetHigh();
     </code>
 
 */
-#define O1_SetHigh()          ( LATBSET = (1 << 11) )
+#define OUT4_SetHigh()          ( LATBSET = (1 << 11) )
 /**
   @Summary
     Sets the GPIO pin, RB11, low using LATB11.
@@ -1007,11 +825,11 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Set RB11 low (0)
-    O1_SetLow();
+    OUT4_SetLow();
     </code>
 
 */
-#define O1_SetLow()           ( LATBCLR = (1 << 11) )
+#define OUT4_SetLow()           ( LATBCLR = (1 << 11) )
 
 /**
   @Summary
@@ -1032,19 +850,19 @@ inline static void O2_SetValue(bool value)
   @Example
     <code>
     // Set RB11 to low.
-    O1_SetValue(false);
+    OUT4_SetValue(false);
     </code>
 
 */
-inline static void O1_SetValue(bool value)
+inline static void OUT4_SetValue(bool value)
 {
   if(value)
   {
-    O1_SetHigh();
+    OUT4_SetHigh();
   }
   else
   {
-    O1_SetLow();
+    OUT4_SetLow();
   }
 }
 
@@ -1067,11 +885,11 @@ inline static void O1_SetValue(bool value)
   @Example
     <code>
     // Toggle RB11
-    O1_Toggle();
+    OUT4_Toggle();
     </code>
 
 */
-#define O1_Toggle()           ( LATBINV = (1 << 11) )
+#define OUT4_Toggle()           ( LATBINV = (1 << 11) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB11.
@@ -1093,11 +911,11 @@ inline static void O1_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB11
-    postValue = O1_GetValue();
+    postValue = OUT4_GetValue();
     </code>
 
 */
-#define O1_GetValue()         PORTBbits.RB11
+#define OUT4_GetValue()         PORTBbits.RB11
 /**
   @Summary
     Configures the GPIO pin, RB11, as an input.
@@ -1117,11 +935,11 @@ inline static void O1_SetValue(bool value)
   @Example
     <code>
     // Sets the RB11 as an input
-    O1_SetDigitalInput();
+    OUT4_SetDigitalInput();
     </code>
 
 */
-#define O1_SetDigitalInput()   ( TRISBSET = (1 << 11) )
+#define OUT4_SetDigitalInput()   ( TRISBSET = (1 << 11) )
 /**
   @Summary
     Configures the GPIO pin, RB11, as an output.
@@ -1141,11 +959,11 @@ inline static void O1_SetValue(bool value)
   @Example
     <code>
     // Sets the RB11 as an output
-    O1_SetDigitalOutput();
+    OUT4_SetDigitalOutput();
     </code>
 
 */
-#define O1_SetDigitalOutput()   ( TRISBCLR = (1 << 11) )
+#define OUT4_SetDigitalOutput()   ( TRISBCLR = (1 << 11) )
 /**
   @Summary
     Sets the GPIO pin, RB13, high using LATB13.
@@ -1347,11 +1165,11 @@ inline static void WIFI_RESET_SetValue(bool value)
   @Example
     <code>
     // Set RB2 high (1)
-    I1_SetHigh();
+    IO4_SetHigh();
     </code>
 
 */
-#define I1_SetHigh()          ( LATBSET = (1 << 2) )
+#define IO4_SetHigh()          ( LATBSET = (1 << 2) )
 /**
   @Summary
     Sets the GPIO pin, RB2, low using LATB2.
@@ -1371,11 +1189,11 @@ inline static void WIFI_RESET_SetValue(bool value)
   @Example
     <code>
     // Set RB2 low (0)
-    I1_SetLow();
+    IO4_SetLow();
     </code>
 
 */
-#define I1_SetLow()           ( LATBCLR = (1 << 2) )
+#define IO4_SetLow()           ( LATBCLR = (1 << 2) )
 
 /**
   @Summary
@@ -1396,19 +1214,19 @@ inline static void WIFI_RESET_SetValue(bool value)
   @Example
     <code>
     // Set RB2 to low.
-    I1_SetValue(false);
+    IO4_SetValue(false);
     </code>
 
 */
-inline static void I1_SetValue(bool value)
+inline static void IO4_SetValue(bool value)
 {
   if(value)
   {
-    I1_SetHigh();
+    IO4_SetHigh();
   }
   else
   {
-    I1_SetLow();
+    IO4_SetLow();
   }
 }
 
@@ -1431,11 +1249,11 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Toggle RB2
-    I1_Toggle();
+    IO4_Toggle();
     </code>
 
 */
-#define I1_Toggle()           ( LATBINV = (1 << 2) )
+#define IO4_Toggle()           ( LATBINV = (1 << 2) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB2.
@@ -1457,11 +1275,11 @@ inline static void I1_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB2
-    postValue = I1_GetValue();
+    postValue = IO4_GetValue();
     </code>
 
 */
-#define I1_GetValue()         PORTBbits.RB2
+#define IO4_GetValue()         PORTBbits.RB2
 /**
   @Summary
     Configures the GPIO pin, RB2, as an input.
@@ -1481,11 +1299,11 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Sets the RB2 as an input
-    I1_SetDigitalInput();
+    IO4_SetDigitalInput();
     </code>
 
 */
-#define I1_SetDigitalInput()   ( TRISBSET = (1 << 2) )
+#define IO4_SetDigitalInput()   ( TRISBSET = (1 << 2) )
 /**
   @Summary
     Configures the GPIO pin, RB2, as an output.
@@ -1505,11 +1323,11 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Sets the RB2 as an output
-    I1_SetDigitalOutput();
+    IO4_SetDigitalOutput();
     </code>
 
 */
-#define I1_SetDigitalOutput()   ( TRISBCLR = (1 << 2) )
+#define IO4_SetDigitalOutput()   ( TRISBCLR = (1 << 2) )
 /**
   @Summary
     Sets the GPIO pin, RB3, high using LATB3.
@@ -1529,11 +1347,11 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Set RB3 high (1)
-    I2_SetHigh();
+    IO3_SetHigh();
     </code>
 
 */
-#define I2_SetHigh()          ( LATBSET = (1 << 3) )
+#define IO3_SetHigh()          ( LATBSET = (1 << 3) )
 /**
   @Summary
     Sets the GPIO pin, RB3, low using LATB3.
@@ -1553,11 +1371,11 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Set RB3 low (0)
-    I2_SetLow();
+    IO3_SetLow();
     </code>
 
 */
-#define I2_SetLow()           ( LATBCLR = (1 << 3) )
+#define IO3_SetLow()           ( LATBCLR = (1 << 3) )
 
 /**
   @Summary
@@ -1578,19 +1396,19 @@ inline static void I1_SetValue(bool value)
   @Example
     <code>
     // Set RB3 to low.
-    I2_SetValue(false);
+    IO3_SetValue(false);
     </code>
 
 */
-inline static void I2_SetValue(bool value)
+inline static void IO3_SetValue(bool value)
 {
   if(value)
   {
-    I2_SetHigh();
+    IO3_SetHigh();
   }
   else
   {
-    I2_SetLow();
+    IO3_SetLow();
   }
 }
 
@@ -1613,11 +1431,11 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Toggle RB3
-    I2_Toggle();
+    IO3_Toggle();
     </code>
 
 */
-#define I2_Toggle()           ( LATBINV = (1 << 3) )
+#define IO3_Toggle()           ( LATBINV = (1 << 3) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB3.
@@ -1639,11 +1457,11 @@ inline static void I2_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB3
-    postValue = I2_GetValue();
+    postValue = IO3_GetValue();
     </code>
 
 */
-#define I2_GetValue()         PORTBbits.RB3
+#define IO3_GetValue()         PORTBbits.RB3
 /**
   @Summary
     Configures the GPIO pin, RB3, as an input.
@@ -1663,11 +1481,11 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Sets the RB3 as an input
-    I2_SetDigitalInput();
+    IO3_SetDigitalInput();
     </code>
 
 */
-#define I2_SetDigitalInput()   ( TRISBSET = (1 << 3) )
+#define IO3_SetDigitalInput()   ( TRISBSET = (1 << 3) )
 /**
   @Summary
     Configures the GPIO pin, RB3, as an output.
@@ -1687,11 +1505,11 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Sets the RB3 as an output
-    I2_SetDigitalOutput();
+    IO3_SetDigitalOutput();
     </code>
 
 */
-#define I2_SetDigitalOutput()   ( TRISBCLR = (1 << 3) )
+#define IO3_SetDigitalOutput()   ( TRISBCLR = (1 << 3) )
 /**
   @Summary
     Sets the GPIO pin, RB4, high using LATB4.
@@ -1711,11 +1529,11 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Set RB4 high (1)
-    I3_SetHigh();
+    IO2_SetHigh();
     </code>
 
 */
-#define I3_SetHigh()          ( LATBSET = (1 << 4) )
+#define IO2_SetHigh()          ( LATBSET = (1 << 4) )
 /**
   @Summary
     Sets the GPIO pin, RB4, low using LATB4.
@@ -1735,11 +1553,11 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Set RB4 low (0)
-    I3_SetLow();
+    IO2_SetLow();
     </code>
 
 */
-#define I3_SetLow()           ( LATBCLR = (1 << 4) )
+#define IO2_SetLow()           ( LATBCLR = (1 << 4) )
 
 /**
   @Summary
@@ -1760,19 +1578,19 @@ inline static void I2_SetValue(bool value)
   @Example
     <code>
     // Set RB4 to low.
-    I3_SetValue(false);
+    IO2_SetValue(false);
     </code>
 
 */
-inline static void I3_SetValue(bool value)
+inline static void IO2_SetValue(bool value)
 {
   if(value)
   {
-    I3_SetHigh();
+    IO2_SetHigh();
   }
   else
   {
-    I3_SetLow();
+    IO2_SetLow();
   }
 }
 
@@ -1795,11 +1613,11 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Toggle RB4
-    I3_Toggle();
+    IO2_Toggle();
     </code>
 
 */
-#define I3_Toggle()           ( LATBINV = (1 << 4) )
+#define IO2_Toggle()           ( LATBINV = (1 << 4) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB4.
@@ -1821,11 +1639,11 @@ inline static void I3_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB4
-    postValue = I3_GetValue();
+    postValue = IO2_GetValue();
     </code>
 
 */
-#define I3_GetValue()         PORTBbits.RB4
+#define IO2_GetValue()         PORTBbits.RB4
 /**
   @Summary
     Configures the GPIO pin, RB4, as an input.
@@ -1845,11 +1663,11 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Sets the RB4 as an input
-    I3_SetDigitalInput();
+    IO2_SetDigitalInput();
     </code>
 
 */
-#define I3_SetDigitalInput()   ( TRISBSET = (1 << 4) )
+#define IO2_SetDigitalInput()   ( TRISBSET = (1 << 4) )
 /**
   @Summary
     Configures the GPIO pin, RB4, as an output.
@@ -1869,11 +1687,11 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Sets the RB4 as an output
-    I3_SetDigitalOutput();
+    IO2_SetDigitalOutput();
     </code>
 
 */
-#define I3_SetDigitalOutput()   ( TRISBCLR = (1 << 4) )
+#define IO2_SetDigitalOutput()   ( TRISBCLR = (1 << 4) )
 /**
   @Summary
     Sets the GPIO pin, RB5, high using LATB5.
@@ -1893,11 +1711,11 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Set RB5 high (1)
-    I4_SetHigh();
+    IO1_SetHigh();
     </code>
 
 */
-#define I4_SetHigh()          ( LATBSET = (1 << 5) )
+#define IO1_SetHigh()          ( LATBSET = (1 << 5) )
 /**
   @Summary
     Sets the GPIO pin, RB5, low using LATB5.
@@ -1917,11 +1735,11 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Set RB5 low (0)
-    I4_SetLow();
+    IO1_SetLow();
     </code>
 
 */
-#define I4_SetLow()           ( LATBCLR = (1 << 5) )
+#define IO1_SetLow()           ( LATBCLR = (1 << 5) )
 
 /**
   @Summary
@@ -1942,19 +1760,19 @@ inline static void I3_SetValue(bool value)
   @Example
     <code>
     // Set RB5 to low.
-    I4_SetValue(false);
+    IO1_SetValue(false);
     </code>
 
 */
-inline static void I4_SetValue(bool value)
+inline static void IO1_SetValue(bool value)
 {
   if(value)
   {
-    I4_SetHigh();
+    IO1_SetHigh();
   }
   else
   {
-    I4_SetLow();
+    IO1_SetLow();
   }
 }
 
@@ -1977,11 +1795,11 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Toggle RB5
-    I4_Toggle();
+    IO1_Toggle();
     </code>
 
 */
-#define I4_Toggle()           ( LATBINV = (1 << 5) )
+#define IO1_Toggle()           ( LATBINV = (1 << 5) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB5.
@@ -2003,11 +1821,11 @@ inline static void I4_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB5
-    postValue = I4_GetValue();
+    postValue = IO1_GetValue();
     </code>
 
 */
-#define I4_GetValue()         PORTBbits.RB5
+#define IO1_GetValue()         PORTBbits.RB5
 /**
   @Summary
     Configures the GPIO pin, RB5, as an input.
@@ -2027,11 +1845,11 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Sets the RB5 as an input
-    I4_SetDigitalInput();
+    IO1_SetDigitalInput();
     </code>
 
 */
-#define I4_SetDigitalInput()   ( TRISBSET = (1 << 5) )
+#define IO1_SetDigitalInput()   ( TRISBSET = (1 << 5) )
 /**
   @Summary
     Configures the GPIO pin, RB5, as an output.
@@ -2051,11 +1869,11 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Sets the RB5 as an output
-    I4_SetDigitalOutput();
+    IO1_SetDigitalOutput();
     </code>
 
 */
-#define I4_SetDigitalOutput()   ( TRISBCLR = (1 << 5) )
+#define IO1_SetDigitalOutput()   ( TRISBCLR = (1 << 5) )
 /**
   @Summary
     Sets the GPIO pin, RB7, high using LATB7.
@@ -2075,11 +1893,11 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Set RB7 high (1)
-    I5_SetHigh();
+    IO5_SetHigh();
     </code>
 
 */
-#define I5_SetHigh()          ( LATBSET = (1 << 7) )
+#define IO5_SetHigh()          ( LATBSET = (1 << 7) )
 /**
   @Summary
     Sets the GPIO pin, RB7, low using LATB7.
@@ -2099,11 +1917,11 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Set RB7 low (0)
-    I5_SetLow();
+    IO5_SetLow();
     </code>
 
 */
-#define I5_SetLow()           ( LATBCLR = (1 << 7) )
+#define IO5_SetLow()           ( LATBCLR = (1 << 7) )
 
 /**
   @Summary
@@ -2124,19 +1942,19 @@ inline static void I4_SetValue(bool value)
   @Example
     <code>
     // Set RB7 to low.
-    I5_SetValue(false);
+    IO5_SetValue(false);
     </code>
 
 */
-inline static void I5_SetValue(bool value)
+inline static void IO5_SetValue(bool value)
 {
   if(value)
   {
-    I5_SetHigh();
+    IO5_SetHigh();
   }
   else
   {
-    I5_SetLow();
+    IO5_SetLow();
   }
 }
 
@@ -2159,11 +1977,11 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Toggle RB7
-    I5_Toggle();
+    IO5_Toggle();
     </code>
 
 */
-#define I5_Toggle()           ( LATBINV = (1 << 7) )
+#define IO5_Toggle()           ( LATBINV = (1 << 7) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB7.
@@ -2185,11 +2003,11 @@ inline static void I5_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB7
-    postValue = I5_GetValue();
+    postValue = IO5_GetValue();
     </code>
 
 */
-#define I5_GetValue()         PORTBbits.RB7
+#define IO5_GetValue()         PORTBbits.RB7
 /**
   @Summary
     Configures the GPIO pin, RB7, as an input.
@@ -2209,11 +2027,11 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Sets the RB7 as an input
-    I5_SetDigitalInput();
+    IO5_SetDigitalInput();
     </code>
 
 */
-#define I5_SetDigitalInput()   ( TRISBSET = (1 << 7) )
+#define IO5_SetDigitalInput()   ( TRISBSET = (1 << 7) )
 /**
   @Summary
     Configures the GPIO pin, RB7, as an output.
@@ -2233,11 +2051,11 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Sets the RB7 as an output
-    I5_SetDigitalOutput();
+    IO5_SetDigitalOutput();
     </code>
 
 */
-#define I5_SetDigitalOutput()   ( TRISBCLR = (1 << 7) )
+#define IO5_SetDigitalOutput()   ( TRISBCLR = (1 << 7) )
 /**
   @Summary
     Sets the GPIO pin, RB8, high using LATB8.
@@ -2257,11 +2075,11 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Set RB8 high (1)
-    I6_SetHigh();
+    IO6_SetHigh();
     </code>
 
 */
-#define I6_SetHigh()          ( LATBSET = (1 << 8) )
+#define IO6_SetHigh()          ( LATBSET = (1 << 8) )
 /**
   @Summary
     Sets the GPIO pin, RB8, low using LATB8.
@@ -2281,11 +2099,11 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Set RB8 low (0)
-    I6_SetLow();
+    IO6_SetLow();
     </code>
 
 */
-#define I6_SetLow()           ( LATBCLR = (1 << 8) )
+#define IO6_SetLow()           ( LATBCLR = (1 << 8) )
 
 /**
   @Summary
@@ -2306,19 +2124,19 @@ inline static void I5_SetValue(bool value)
   @Example
     <code>
     // Set RB8 to low.
-    I6_SetValue(false);
+    IO6_SetValue(false);
     </code>
 
 */
-inline static void I6_SetValue(bool value)
+inline static void IO6_SetValue(bool value)
 {
   if(value)
   {
-    I6_SetHigh();
+    IO6_SetHigh();
   }
   else
   {
-    I6_SetLow();
+    IO6_SetLow();
   }
 }
 
@@ -2341,11 +2159,11 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Toggle RB8
-    I6_Toggle();
+    IO6_Toggle();
     </code>
 
 */
-#define I6_Toggle()           ( LATBINV = (1 << 8) )
+#define IO6_Toggle()           ( LATBINV = (1 << 8) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB8.
@@ -2367,11 +2185,11 @@ inline static void I6_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB8
-    postValue = I6_GetValue();
+    postValue = IO6_GetValue();
     </code>
 
 */
-#define I6_GetValue()         PORTBbits.RB8
+#define IO6_GetValue()         PORTBbits.RB8
 /**
   @Summary
     Configures the GPIO pin, RB8, as an input.
@@ -2391,11 +2209,11 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Sets the RB8 as an input
-    I6_SetDigitalInput();
+    IO6_SetDigitalInput();
     </code>
 
 */
-#define I6_SetDigitalInput()   ( TRISBSET = (1 << 8) )
+#define IO6_SetDigitalInput()   ( TRISBSET = (1 << 8) )
 /**
   @Summary
     Configures the GPIO pin, RB8, as an output.
@@ -2415,11 +2233,11 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Sets the RB8 as an output
-    I6_SetDigitalOutput();
+    IO6_SetDigitalOutput();
     </code>
 
 */
-#define I6_SetDigitalOutput()   ( TRISBCLR = (1 << 8) )
+#define IO6_SetDigitalOutput()   ( TRISBCLR = (1 << 8) )
 /**
   @Summary
     Sets the GPIO pin, RB9, high using LATB9.
@@ -2439,11 +2257,11 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Set RB9 high (1)
-    O4_SetHigh();
+    OUT1_SetHigh();
     </code>
 
 */
-#define O4_SetHigh()          ( LATBSET = (1 << 9) )
+#define OUT1_SetHigh()          ( LATBSET = (1 << 9) )
 /**
   @Summary
     Sets the GPIO pin, RB9, low using LATB9.
@@ -2463,11 +2281,11 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Set RB9 low (0)
-    O4_SetLow();
+    OUT1_SetLow();
     </code>
 
 */
-#define O4_SetLow()           ( LATBCLR = (1 << 9) )
+#define OUT1_SetLow()           ( LATBCLR = (1 << 9) )
 
 /**
   @Summary
@@ -2488,19 +2306,19 @@ inline static void I6_SetValue(bool value)
   @Example
     <code>
     // Set RB9 to low.
-    O4_SetValue(false);
+    OUT1_SetValue(false);
     </code>
 
 */
-inline static void O4_SetValue(bool value)
+inline static void OUT1_SetValue(bool value)
 {
   if(value)
   {
-    O4_SetHigh();
+    OUT1_SetHigh();
   }
   else
   {
-    O4_SetLow();
+    OUT1_SetLow();
   }
 }
 
@@ -2523,11 +2341,11 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Toggle RB9
-    O4_Toggle();
+    OUT1_Toggle();
     </code>
 
 */
-#define O4_Toggle()           ( LATBINV = (1 << 9) )
+#define OUT1_Toggle()           ( LATBINV = (1 << 9) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB9.
@@ -2549,11 +2367,11 @@ inline static void O4_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB9
-    postValue = O4_GetValue();
+    postValue = OUT1_GetValue();
     </code>
 
 */
-#define O4_GetValue()         PORTBbits.RB9
+#define OUT1_GetValue()         PORTBbits.RB9
 /**
   @Summary
     Configures the GPIO pin, RB9, as an input.
@@ -2573,11 +2391,11 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Sets the RB9 as an input
-    O4_SetDigitalInput();
+    OUT1_SetDigitalInput();
     </code>
 
 */
-#define O4_SetDigitalInput()   ( TRISBSET = (1 << 9) )
+#define OUT1_SetDigitalInput()   ( TRISBSET = (1 << 9) )
 /**
   @Summary
     Configures the GPIO pin, RB9, as an output.
@@ -2597,11 +2415,11 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Sets the RB9 as an output
-    O4_SetDigitalOutput();
+    OUT1_SetDigitalOutput();
     </code>
 
 */
-#define O4_SetDigitalOutput()   ( TRISBCLR = (1 << 9) )
+#define OUT1_SetDigitalOutput()   ( TRISBCLR = (1 << 9) )
 /**
   @Summary
     Sets the GPIO pin, RC9, high using LATC9.
@@ -2621,11 +2439,11 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Set RC9 high (1)
-    O3_SetHigh();
+    OUT2_SetHigh();
     </code>
 
 */
-#define O3_SetHigh()          ( LATCSET = (1 << 9) )
+#define OUT2_SetHigh()          ( LATCSET = (1 << 9) )
 /**
   @Summary
     Sets the GPIO pin, RC9, low using LATC9.
@@ -2645,11 +2463,11 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Set RC9 low (0)
-    O3_SetLow();
+    OUT2_SetLow();
     </code>
 
 */
-#define O3_SetLow()           ( LATCCLR = (1 << 9) )
+#define OUT2_SetLow()           ( LATCCLR = (1 << 9) )
 
 /**
   @Summary
@@ -2670,19 +2488,19 @@ inline static void O4_SetValue(bool value)
   @Example
     <code>
     // Set RC9 to low.
-    O3_SetValue(false);
+    OUT2_SetValue(false);
     </code>
 
 */
-inline static void O3_SetValue(bool value)
+inline static void OUT2_SetValue(bool value)
 {
   if(value)
   {
-    O3_SetHigh();
+    OUT2_SetHigh();
   }
   else
   {
-    O3_SetLow();
+    OUT2_SetLow();
   }
 }
 
@@ -2705,11 +2523,11 @@ inline static void O3_SetValue(bool value)
   @Example
     <code>
     // Toggle RC9
-    O3_Toggle();
+    OUT2_Toggle();
     </code>
 
 */
-#define O3_Toggle()           ( LATCINV = (1 << 9) )
+#define OUT2_Toggle()           ( LATCINV = (1 << 9) )
 /**
   @Summary
     Reads the value of the GPIO pin, RC9.
@@ -2731,11 +2549,11 @@ inline static void O3_SetValue(bool value)
     uint16_t portValue;
 
     // Read RC9
-    postValue = O3_GetValue();
+    postValue = OUT2_GetValue();
     </code>
 
 */
-#define O3_GetValue()         PORTCbits.RC9
+#define OUT2_GetValue()         PORTCbits.RC9
 /**
   @Summary
     Configures the GPIO pin, RC9, as an input.
@@ -2755,11 +2573,11 @@ inline static void O3_SetValue(bool value)
   @Example
     <code>
     // Sets the RC9 as an input
-    O3_SetDigitalInput();
+    OUT2_SetDigitalInput();
     </code>
 
 */
-#define O3_SetDigitalInput()   ( TRISCSET = (1 << 9) )
+#define OUT2_SetDigitalInput()   ( TRISCSET = (1 << 9) )
 /**
   @Summary
     Configures the GPIO pin, RC9, as an output.
@@ -2779,11 +2597,11 @@ inline static void O3_SetValue(bool value)
   @Example
     <code>
     // Sets the RC9 as an output
-    O3_SetDigitalOutput();
+    OUT2_SetDigitalOutput();
     </code>
 
 */
-#define O3_SetDigitalOutput()   ( TRISCCLR = (1 << 9) )
+#define OUT2_SetDigitalOutput()   ( TRISCCLR = (1 << 9) )
 
 /**
     Section: Function Prototypes
