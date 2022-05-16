@@ -1,3 +1,0 @@
-
-PIC32MM0064GPL028
-Espresiff ESP-02
