@@ -136,6 +136,12 @@ int main(void)
 
 
     SYSTEM_Initialize();
+    
+    LogMessage("\r\n");
+    LogMessage("MAIN: Compilacion " __DATE__ " " __TIME__ ".\r\n");
+    LogMessage("MAIN: Compilador " __VERSION__ ".\r\n");
+    LogMessage("MAIN: Procesador PIC32MM256GPM028.\r\n");
+    
     ConfigInit();
     ConfigLoad();
 
@@ -145,7 +151,7 @@ int main(void)
     //DHT11Init();
     //WGND_Init();
     
-    LogMessage("Init Ok.\r\n");
+    LogMessage("MAIN: Init Ok.\r\n");
     
     while(1)
     {

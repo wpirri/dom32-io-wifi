@@ -62,9 +62,19 @@ void ConfigLoad( void )
         g_wifi_info.f.ui32[i] = FLASH_ReadWord( f + (i*4) );
     }
     
+    LogMessage("CONFIG: %d de %d bytes usados (%d%%)\r\n", 
+                sizeof(struct _config_),
+                sizeof(flash_reserved_space),
+                sizeof(struct _config_) * 100 / sizeof(flash_reserved_space));
+    
     if(g_wifi_info.f.config.flash_ok != CONFIG_FLASK_OK)
     {
         ConfigLoadDefault();
+        LogMessage("CONFIG: Load Defaults.\n\n");
+    }
+    else
+    {
+        LogMessage("CONFIG: Load Ok.\n\n");
     }
 }
 
@@ -108,7 +118,7 @@ void ConfigSave(void)
     
     FLASH_Lock();
     
-    LogMessage("Configuracion guardada\r\n");
+    LogMessage("CONFIG: Save Ok.\r\n");
 }
 
 void ConfigTimer(void)

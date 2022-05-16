@@ -65,6 +65,8 @@ char g_wifi_cmd[64];
 
 unsigned char g_loop_count;
 
+bool g_need_upgrade;
+
 void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
     g_wifi_task_stm = st;
@@ -208,7 +210,7 @@ int WifiCheckUnsol( void )
     int id;
     int len;
     char *p;
-    
+
     if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
     {
         /*
@@ -236,12 +238,12 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
     {
-        LogMessage("Conectado a un AP.\r\n");
+        LogMessage("WiFi: Conectado a un AP.\r\n");
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
-        LogMessage("Deconectado del AP.\r\n");
+        LogMessage("WiFi: Deconectado del AP.\r\n");
         if(g_wifi_info.status.wifi_conectado)
         {
             g_wifi_info.status.wifi_conectado = 0;
@@ -251,13 +253,13 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
-        LogMessage("Cliente conectado.\r\n");
+        LogMessage("WiFi: Cliente conectado.\r\n");
         /* Cliente conectado al AP */
         g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
     {
-        LogMessage("Cliente desconectado.\r\n");
+        LogMessage("WiFi: Cliente desconectado.\r\n");
         /* Cliente desconectado al AP */
         g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
     }
@@ -269,6 +271,7 @@ int WifiCheckUnsol( void )
          */
         if( !memcmp(&g_wifi_read_line_buffer[7], "STAMAC", 6))
         {
+            LogMessage("WiFi: MAC %.17s\r\n", &g_wifi_read_line_buffer[15]);
             g_wifi_info.status.hw_mac[0]  = g_wifi_read_line_buffer[15];
             g_wifi_info.status.hw_mac[1]  = g_wifi_read_line_buffer[16];
             g_wifi_info.status.hw_mac[2]  = g_wifi_read_line_buffer[18];
@@ -290,7 +293,21 @@ int WifiCheckUnsol( void )
          * AT version:1.6.2.0(Apr 13 2018 11:10:59)
          * AT version:1.7.4.0(May 11 2020 19:13:04)
          */
+        LogMessage("WiFi: %s.\r\n", g_wifi_read_line_buffer);
         
+        if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
+        {
+            //LogMessage("WiFi: El firware necesita upgrade.\r\n");
+            //g_need_upgrade = true;
+        }
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
+    {
+        LogMessage("WiFi: %s.\r\n", g_wifi_read_line_buffer);
+    }
+    else if( !memcmp(g_wifi_read_line_buffer, "compile time:", 13))
+    {
+        LogMessage("WiFi: %s.\r\n", g_wifi_read_line_buffer);
     }
     return 0;
 }
@@ -302,7 +319,7 @@ int WifiTaskInit( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //LogMessage("--> Init.\n");
+            LogMessage("WiFi: RESTORE factory defaults.\r\n");
             /* Restore a fabrica y espero a que el modulo se reinicie */
             WifiWriteLine("AT+RESTORE");
             g_wifi_task_stm_step = 1;
@@ -354,7 +371,6 @@ int WifiTaskInit( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //LogMessage("TIMEOUT esperando OK\n");
                 rc = (-1);
             }
             break;
@@ -497,7 +513,7 @@ int WifiTaskAPMode( void )
         case 13:
             if(WifiWaitLine("OK"))
             {
-                LogMessage("Modo configuracion.\r\n");
+                LogMessage("WiFi: Modo configuracion.\r\n");
                 g_wifi_task_stm_step = 14;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -681,14 +697,14 @@ int WifiTaskSTMode( void )
             else
             {
                 /* No hay AP definido */
-                LogMessage("ERROR: No hay AP definido.\r\n");
+                LogMessage("WiFi: No hay AP definido.\r\n");
                 rc = LOOP;
             }
             break;
         case 13:
             if(WifiWaitLine("OK"))
             {
-                LogMessage("Modo normal.\r\n");
+                LogMessage("WiFi: Modo normal.\r\n");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -717,12 +733,12 @@ int WifiTaskUpgrade( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            //LogMessage("--> Upgrade.\n");
+            LogMessage("WiFi: Firmware Upgrade.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPUPDATE");
             g_wifi_task_stm_step = 1;
             g_wifi_task_stm_delay = 0;
-            g_wifi_task_stm_timeout = 900;
+            g_wifi_task_stm_timeout = 1200;
             break;
         case 1:
             if(WifiWaitLine("OK"))
@@ -733,8 +749,10 @@ int WifiTaskUpgrade( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //LogMessage("TIMEOUT esperando OK\n");
-                rc = (-1);
+                LogMessage("WiFi: Upgrade TIMEOUT.\r\n");
+                g_wifi_task_stm_step = 0;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
             }
             break;
         default:
@@ -865,8 +883,12 @@ int WifiTaskLoop( void )
     }
     else if(HTTPPending() >= 0)
     {
-        LogMessage("HTTP Pendiente\r\n");
+        //LogMessage("HTTP Pendiente\r\n");
         return HTTP;
+    }
+    else if(g_need_upgrade && g_wifi_info.status.wifi_conectado)
+    {
+        return UPGRADE;
     }
     
     return 0;
@@ -915,6 +937,7 @@ void WiFiInit( void )
 {
     g_wifi_task_stm = RESET;
     g_wifi_task_stm_delay = 0;
+    g_need_upgrade = false;
 }
 
 /* *****************************************************************************
