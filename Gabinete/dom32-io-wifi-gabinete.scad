@@ -10,13 +10,13 @@ espesor_superior = 2;
 separacion_xyz = 0.25;
 separador_z = 5;
 borde_apoyo = 1.5;
-bornera_z = 10;
-relay_z = 20;
+bornera_z = 12;
+relay_z = 25;
 borneras_frente_x = 2.25;
 borneras_frente_len = 26;
 borneras_fondo_x = 2.25;
 borneras_fondo_len = 42;
-escalon_borneras_y = 11;
+escalon_borneras_y = 10;
 boton_x = 62;
 boton_y = 8;
 boton = [5,5,0];
@@ -30,6 +30,7 @@ tornillo_bornera_frente_x = 5;
 tornillo_bornera_fondo_x = 5;
 tornillo_bornera_y = 6;
 tornillo_bornera_diametro = 4;
+tol = 0.05;
 $fn = 100;
 
 caja_x = placa_x + (2*espesor_paredes) + (2*separacion_xyz);
@@ -117,10 +118,9 @@ module TapaSuperior()
 {
     difference()
     {
-        translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base])
-            cube([caja_x-(2*espesor_paredes),caja_y-(2*escalon_borneras_y)-(2*espesor_paredes),espesor_superior] , center=false);
+        translate(origen + [espesor_paredes/2 + tol, espesor_paredes/2 + tol, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base])
+            cube([caja_x-(2*espesor_paredes) - 2*tol,caja_y-(2*escalon_borneras_y)-(2*espesor_paredes) - 2*tol,espesor_superior] , center=false);
         
-        Logo();
     }
 }
 
@@ -128,22 +128,22 @@ module TapaSuperior()
 
 module CajonRelays()
 {
-    translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0])
-        cube([caja_x-espesor_paredes,caja_y-espesor_paredes-(2*escalon_borneras_y),relay_z-caja_z+separador_z+espesor_placa+espesor_base+espesor_superior] , center=false);
+    translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes/2 + tol/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0])
+        cube([caja_x-espesor_paredes-tol,caja_y-espesor_paredes-(2*escalon_borneras_y)-tol,relay_z-caja_z+separador_z+espesor_placa+espesor_base+espesor_superior] , center=false);
 }
 
 module TapaBase()
 {
-    translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes])
-        cube([caja_x-espesor_paredes,caja_y-espesor_paredes,espesor_paredes] , center=false);
+    translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes/2 + tol/2, caja_z-espesor_paredes])
+        cube([caja_x-espesor_paredes-tol,caja_y-espesor_paredes - tol,espesor_paredes] , center=false);
    
     CajonRelays();
 }
 
 module HuecoTapaMedia()
 {
-        translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes,espesor_paredes,0])
-            cube([caja_x-espesor_paredes-(2*espesor_paredes),caja_y-espesor_paredes-(2*escalon_borneras_y)-(2*espesor_paredes),relay_z-caja_z+separador_z+espesor_placa+espesor_base+espesor_superior] , center=false);
+        translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes/2 + tol/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes,espesor_paredes,0])
+            cube([caja_x-espesor_paredes-(2*espesor_paredes)-tol,caja_y-espesor_paredes-(2*escalon_borneras_y)-(2*espesor_paredes)-tol,relay_z-caja_z+separador_z+espesor_placa+espesor_base+espesor_superior] , center=false);
 }
 
 module TornilloBorneraFrente()
@@ -193,6 +193,10 @@ module TapaMedia()
 
 // -- Main
 
-Base();
+//Base();
 TapaMedia();
-TapaSuperior();
+//Difference()
+//{
+//    TapaSuperior();
+//    Logo();
+//}
