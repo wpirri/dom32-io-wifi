@@ -30,7 +30,7 @@ tornillo_bornera_frente_x = 5;
 tornillo_bornera_fondo_x = 5;
 tornillo_bornera_y = 6;
 tornillo_bornera_diametro = 4;
-tol = 0.05;
+tol = 0.25;
 $fn = 100;
 
 caja_x = placa_x + (2*espesor_paredes) + (2*separacion_xyz);
@@ -190,13 +190,36 @@ module TapaMedia()
     }
 }
 
+module TapaConLogo()
+{
+    difference()
+    {
+        TapaSuperior();
+        Logo();
+    }
+}
+
+module Pulsador()
+{
+    translate(origen)
+        cube([4,4,8], center = false);
+    translate(origen - [8,0,0])
+        cube([20,9,4.5], center = false);
+}
+
+module OjoDeBuey()
+{
+    translate(origen)
+        cube([5,4,10], center = false);
+    translate(origen + [1.6,0,10])
+        cube([1.8,4,2], center = false);
+    
+}
 
 // -- Main
 
 //Base();
-TapaMedia();
-//Difference()
-//{
-//    TapaSuperior();
-//    Logo();
-//}
+//TapaMedia();
+//TapaConLogo();
+Pulsador();
+//OjoDeBuey();
