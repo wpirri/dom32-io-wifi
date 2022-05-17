@@ -5,6 +5,8 @@
 *.drl
 *.obj
 * - copia.*
+*.pcapng
+*.zip
 Circuito/fp-info-cache
 Circuito/fp-info-cache
 /Programa/build/
@@ -28,4 +30,5 @@ Circuito/DomIO32.xml
 Documento/Conpra DigiKey - 20201101.pdf
 Documento/Conpra DigiKey - 20201109.pdf
 Documento/Cotizacion Mayer - 20201014.pdf
-*.zip
+Documento/Compra DigiKey - 20201101.pdf
+Documento/Compra DigiKey - 20201109.pdf
