@@ -130,7 +130,7 @@ void CTRLTask( void )
                 {
                     IO1_SetValue(g_control_io.stat1);
                     g_control_io.change1 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -158,7 +158,7 @@ void CTRLTask( void )
                 {
                     IO2_SetValue(g_control_io.stat2);
                     g_control_io.change2 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -186,7 +186,7 @@ void CTRLTask( void )
                 {
                     IO3_SetValue(g_control_io.stat3);
                     g_control_io.change3 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -214,7 +214,7 @@ void CTRLTask( void )
                 {
                     IO4_SetValue(g_control_io.stat4);
                     g_control_io.change4 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -242,7 +242,7 @@ void CTRLTask( void )
                 {
                     IO5_SetValue(g_control_io.stat5);
                     g_control_io.change5 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -270,7 +270,7 @@ void CTRLTask( void )
                 {
                     IO6_SetValue(g_control_io.stat6);
                     g_control_io.change6 = true;
-                    //CTRLNotificarStatus(25);
+                    CTRLNotificarStatus(10);
                 }
             }
             break;
@@ -279,7 +279,7 @@ void CTRLTask( void )
             {
                 OUT1_SetValue(g_control_out.stat1);
                 g_control_out.change1 = true;
-                //CTRLNotificarStatus(25);
+                CTRLNotificarStatus(10);
             }
             break;
         case 8:
@@ -287,7 +287,7 @@ void CTRLTask( void )
             {
                 OUT2_SetValue(g_control_out.stat2);
                 g_control_out.change2 = true;
-                //CTRLNotificarStatus(25);
+                CTRLNotificarStatus(10);
             }
             break;
         case 9:
@@ -295,7 +295,7 @@ void CTRLTask( void )
             {
                 OUT3_SetValue(g_control_out.stat3);
                 g_control_out.change3 = true;
-                //CTRLNotificarStatus(25);
+                CTRLNotificarStatus(10);
             }
             break;
         case 10:
@@ -303,7 +303,7 @@ void CTRLTask( void )
             {
                 OUT4_SetValue(g_control_out.stat4);
                 g_control_out.change4 = true;
-                //CTRLNotificarStatus(25);
+                CTRLNotificarStatus(10);
             }
             break;
         default:
