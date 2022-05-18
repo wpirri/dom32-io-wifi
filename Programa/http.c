@@ -76,6 +76,72 @@ typedef struct
 
 http_data htdat[WIFI_CIP_MAX_CONS+1];
 
+
+int Convert2CharToHex(const char* h)
+{
+    int h1, h2;
+    
+    if( (*h) >= '0' && (*h) <= '9' )
+    {
+        h1 = ((*h)-'0');
+    }
+    else if( (*h) >= 'A' && (*h) <= 'F' )
+    {
+        h1 = ((*h)-'A'+10);
+    }
+    else if( (*h) >= 'a' && (*h) <= 'f' )
+    {
+        h1 = ((*h)-'a'+10);
+    }
+    else
+    {
+        h1 = 0;
+    }
+    h++;
+    if( (*h) >= '0' && (*h) <= '9' )
+    {
+        h2 = ((*h)-'0');
+    }
+    else if( (*h) >= 'A' && (*h) <= 'F' )
+    {
+        h2 = ((*h)-'A'+10);
+    }
+    else if( (*h) >= 'a' && (*h) <= 'f' )
+    {
+        h2 = ((*h)-'a'+10);
+    }
+    else
+    {
+        h2 = 0;
+    }
+
+    return ((h1*16)+h2);
+}
+
+void HttpDecodeFormData(char* out, const char* in, unsigned int max_out)
+{
+    if(!in || !out) return;
+    
+    while(*in)
+    {
+        if(*in == 0x25) /* % */
+        {
+            in++;
+            *out = (unsigned char)Convert2CharToHex(in);
+            in += 2;
+        }
+        else
+        {
+            *out = *in;
+            in++;
+        }
+        out++;
+        max_out--;
+        if(max_out == 0) break;
+    }
+    *out = 0;
+}
+
 int HttpGetRequest(const char *buffer, char *request)
 {
 	int rc = 0;
@@ -696,8 +762,9 @@ int HTTPAdd(int id, const char* buffer)
                     if(p)
                     {
                         p += 4;
-                        strncpy(htdat[id].data, p, sizeof(htdat[id].data));
-                        htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                        //strncpy(htdat[id].data, p, sizeof(htdat[id].data));
+                        //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                        HttpDecodeFormData(htdat[id].data, p, sizeof(htdat[id].data));
                     }
                 }
                 return 1;
@@ -711,8 +778,9 @@ int HTTPAdd(int id, const char* buffer)
                 if(p)
                 {
                     p += 4;
-                    strncpy(htdat[id].data, p, sizeof(htdat[id].data));
-                    htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                    //strncpy(htdat[id].data, p, sizeof(htdat[id].data));
+                    //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                    HttpDecodeFormData(htdat[id].data, p, sizeof(htdat[id].data));
                 }
                 return 1;
             }
@@ -733,8 +801,9 @@ int HTTPAdd(int id, const char* buffer)
             {
                 htdat[id].timeout = 100;
                 htdat[id].type = 'S';
-                strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
-                htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                //strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
+                //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
+                HttpDecodeFormData(htdat[id].data, buffer, sizeof(htdat[id].data));
                 return 1;
             }
         }
