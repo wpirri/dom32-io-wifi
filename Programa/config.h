@@ -54,6 +54,7 @@ typedef struct
     {
         unsigned char wifi_ap_select;
         unsigned char wifi_conectado;
+        unsigned char host_conectado;
         unsigned char wifi_mode;
         unsigned char save_config;
         char hw_mac[13];

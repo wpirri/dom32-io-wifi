@@ -395,6 +395,7 @@ int WifiTaskAPMode( void )
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.host_conectado = 0;
             break;
         case 1:
             /* No controlo error */
@@ -546,6 +547,7 @@ int WifiTaskSTMode( void )
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 100;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.host_conectado = 0;
             break;
         case 1:
             if(WifiWaitLine("OK") || g_wifi_task_stm_timeout == 0)
@@ -693,6 +695,7 @@ int WifiTaskSTMode( void )
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 300;
                 g_wifi_info.status.wifi_conectado = 0;
+                g_wifi_info.status.host_conectado = 0;
             }
             else
             {
@@ -828,6 +831,8 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_step = 7;   /* CLOSE */
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
+                /**/
+                g_wifi_info.status.host_conectado = 0;
             }
             break;
         case 5:
@@ -843,6 +848,8 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_step = 7;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
+                /**/
+                g_wifi_info.status.host_conectado = 1;
             }
             break;
         case 7:
@@ -968,6 +975,7 @@ void WiFiTask( void )
             g_wifi_info.status.wifi_start_ap = true;
             g_wifi_timer_ap = 0;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.host_conectado = 0;
             
             WifiTaskSTMSet(START, 50, 0);
             break;
