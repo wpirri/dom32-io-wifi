@@ -29,6 +29,7 @@
 #include "http.h"
 
 unsigned int g_control_notificar;
+unsigned int g_control_init_complete;
 
 unsigned int g_control_count_in1;
 unsigned int g_control_count_in2;
@@ -45,9 +46,12 @@ void CTRLNotificarStatus( int time )
     }
 }
 
+
+
 void CTRLInit( void )
 {
     g_control_notificar = 0;
+    g_control_init_complete = 0;
     /* Entrada 1 - RB5 */
     g_control_io.ana1 = (g_wifi_info.f.config.an_config & 0x01)?1:0;
     g_control_io.dir1 = (g_wifi_info.f.config.io_config & 0x01)?1:0;
@@ -120,8 +124,11 @@ void CTRLTask( void )
                         (g_control_count_in1 == DELAY_INPUT && g_control_io.stat1 == 0) )
                 {
                     g_control_io.stat1 = (g_control_count_in1)?1:0;
-                    g_control_io.change1 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change1 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -129,8 +136,11 @@ void CTRLTask( void )
                 if(IO1_GetValue() != g_control_io.stat1)
                 {
                     IO1_SetValue(g_control_io.stat1);
-                    g_control_io.change1 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change1 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -148,8 +158,11 @@ void CTRLTask( void )
                         (g_control_count_in2 == DELAY_INPUT && g_control_io.stat2 == 0) )
                 {
                     g_control_io.stat2 = (g_control_count_in2)?1:0;
-                    g_control_io.change2 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change2 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -157,8 +170,11 @@ void CTRLTask( void )
                 if(IO2_GetValue() != g_control_io.stat2)
                 {
                     IO2_SetValue(g_control_io.stat2);
-                    g_control_io.change2 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change2 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -176,8 +192,11 @@ void CTRLTask( void )
                         (g_control_count_in3 == DELAY_INPUT && g_control_io.stat3 == 0) )
                 {
                     g_control_io.stat3 = (g_control_count_in3)?1:0;
-                    g_control_io.change3 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change3 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -185,8 +204,11 @@ void CTRLTask( void )
                 if(IO3_GetValue() != g_control_io.stat3)
                 {
                     IO3_SetValue(g_control_io.stat3);
-                    g_control_io.change3 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change3 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -204,8 +226,11 @@ void CTRLTask( void )
                         (g_control_count_in4 == DELAY_INPUT && g_control_io.stat4 == 0) )
                 {
                     g_control_io.stat4 = (g_control_count_in4)?1:0;
-                    g_control_io.change4 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change4 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -213,8 +238,11 @@ void CTRLTask( void )
                 if(IO4_GetValue() != g_control_io.stat4)
                 {
                     IO4_SetValue(g_control_io.stat4);
-                    g_control_io.change4 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change4 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -232,8 +260,11 @@ void CTRLTask( void )
                         (g_control_count_in5 == DELAY_INPUT && g_control_io.stat5 == 0) )
                 {
                     g_control_io.stat5 = (g_control_count_in5)?1:0;
-                    g_control_io.change5 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change5 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -241,8 +272,11 @@ void CTRLTask( void )
                 if(IO5_GetValue() != g_control_io.stat5)
                 {
                     IO5_SetValue(g_control_io.stat5);
-                    g_control_io.change5 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change5 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -260,8 +294,11 @@ void CTRLTask( void )
                         (g_control_count_in6 == DELAY_INPUT && g_control_io.stat6 == 0) )
                 {
                     g_control_io.stat6 = (g_control_count_in6)?1:0;
-                    g_control_io.change6 = true;
-                    CTRLNotificarStatus(5);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change6 = true;
+                        CTRLNotificarStatus(5);
+                    }
                 }
             }
             else                        /* Output */
@@ -269,8 +306,11 @@ void CTRLTask( void )
                 if(IO6_GetValue() != g_control_io.stat6)
                 {
                     IO6_SetValue(g_control_io.stat6);
-                    g_control_io.change6 = true;
-                    //CTRLNotificarStatus(10);
+                    if(g_control_init_complete)
+                    {
+                        g_control_io.change6 = true;
+                        //CTRLNotificarStatus(10);
+                    }
                 }
             }
             break;
@@ -278,32 +318,44 @@ void CTRLTask( void )
             if(OUT1_GetValue() != g_control_out.stat1)
             {
                 OUT1_SetValue(g_control_out.stat1);
-                g_control_out.change1 = true;
-                //CTRLNotificarStatus(10);
+                if(g_control_init_complete)
+                {
+                    g_control_out.change1 = true;
+                    //CTRLNotificarStatus(10);
+                }
             }
             break;
         case 8:
             if(OUT2_GetValue() != g_control_out.stat2)
             {
                 OUT2_SetValue(g_control_out.stat2);
-                g_control_out.change2 = true;
-                //CTRLNotificarStatus(10);
+                if(g_control_init_complete)
+                {
+                    g_control_out.change2 = true;
+                    //CTRLNotificarStatus(10);
+                }
             }
             break;
         case 9:
             if(OUT3_GetValue() != g_control_out.stat3)
             {
                 OUT3_SetValue(g_control_out.stat3);
-                g_control_out.change3 = true;
-                //CTRLNotificarStatus(10);
+                if(g_control_init_complete)
+                {
+                    g_control_out.change3 = true;
+                    //CTRLNotificarStatus(10);
+                }
             }
             break;
         case 10:
             if(OUT4_GetValue() != g_control_out.stat4)
             {
                 OUT4_SetValue(g_control_out.stat4);
-                g_control_out.change4 = true;
-                //CTRLNotificarStatus(10);
+                if(g_control_init_complete)
+                {
+                    g_control_out.change4 = true;
+                    //CTRLNotificarStatus(10);
+                }
             }
             break;
         default:
@@ -323,6 +375,9 @@ void CTRLTimer( void )
         g_control_notificar--;
         if(g_control_notificar == 0)
         {
+            /* Levanto el flag para que
+             * en adelante los cambios cuenten */
+            g_control_init_complete = 1;
             if(HTTPNotificarStatus() == 0 )
             {
                 /* programo un reintento */
