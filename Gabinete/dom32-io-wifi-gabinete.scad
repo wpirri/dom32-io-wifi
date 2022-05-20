@@ -210,8 +210,8 @@ module Pulsador()
 module OjoDeBuey()
 {
     translate(origen)
-        cube([5,4,10], center = false);
-    translate(origen + [1.6,0,10])
+        cube([5,4,9], center = false);
+    translate(origen + [1.6,0,9])
         cube([1.8,4,2], center = false);
     
 }
@@ -221,5 +221,5 @@ module OjoDeBuey()
 //Base();
 //TapaMedia();
 //TapaConLogo();
-Pulsador();
-//OjoDeBuey();
+//Pulsador();
+OjoDeBuey();
