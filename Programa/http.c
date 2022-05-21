@@ -288,41 +288,7 @@ void HttpReturnStatus(char *out)
     }
 }
 
-void HttpReturnIOStatus(char *out)
-{
-    sprintf(out, 
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_control_io.stat1)?"on":"off",
-            (g_control_io.stat2)?"on":"off",
-            (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off",
-            (g_control_io.stat5)?"on":"off",
-            (g_control_io.stat6)?"on":"off");
-    if(g_wifi_info.f.config.io_config_default)
-    {
-        strcat(http_rqst_data, "&GETCONF=1");
-    }
-}
-
-void HttpReturnExpStatus(char *out)
-{
-    sprintf(out, 
-            "%sID=%s&OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_control_out.stat1)?"on":"off",
-            (g_control_out.stat2)?"on":"off",
-            (g_control_out.stat3)?"on":"off",
-            (g_control_out.stat4)?"on":"off");
-    if(g_wifi_info.f.config.io_config_default)
-    {
-        strcat(http_rqst_data, "&GETCONF=1");
-    }
-}
-
-void HttpReturnIOStatusXML(char *out)
+void HttpReturnStatusXML(char *out)
 {
     sprintf(out,
             "%s"
@@ -342,24 +308,6 @@ void HttpReturnIOStatusXML(char *out)
             (g_control_io.stat4)?"on":"off",
             (g_control_io.stat5)?"on":"off",
             (g_control_io.stat6)?"on":"off");
-}
-
-void HttpReturnExpStatusXML(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<?xml version=\"1.0\"?>\r\n"
-            "<response>\n"
-            "<OUT1>%s</OUT1>\n"
-            "<OUT2>%s</OUT2>\n"
-            "<OUT3>%s</OUT3>\n"
-            "<OUT4>%s</OUT4>\n"
-            "</response>",
-            xml_200,
-            (g_control_out.stat1)?"on":"off",
-            (g_control_out.stat2)?"on":"off",
-            (g_control_out.stat3)?"on":"off",
-            (g_control_out.stat4)?"on":"off");
 }
 
 #ifdef INCLUDE_IO_FORMS
@@ -393,42 +341,6 @@ void HttpReturnIOStatusForm(char *out)
             (g_control_io.stat4)?" selected":" ", (g_control_io.stat4)?" ":" selected");
 }
 
-void HttpReturnExpStatusForm(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<html>\n"
-            "<head>\n"
-            "<title>Dom32IO - Expansion Status</title>\n"
-            "</head>\n"
-            "<style>\n"
-            "body{background-color:grey;font-size:24pt;}\n"
-            "#it{height:75;font-size:24pt}\n"
-            "</style>\n"
-            "<body>\n"
-            "<form method=\"POST\">\n"
-            "<h1>I/O</h1><hr />\n"
-            "EXP 1:&nbsp;"
-            "<select id=\"it\" name=\"EXP1\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP3\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP4\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP5\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP7\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP8\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "<select id=\"it\" name=\"EXP9\" onchange=\"submit();\"><option value=\"on\"%s>on</option><option value=\"off\"%s>off</option></select>\n"
-            "</form>\n"
-            "</body>\n"
-            "</html>\n",
-            http_200,
-            (g_control_exp.stat1)?" selected":" ", (g_control_exp.stat1)?" ":"selected",
-            (g_control_exp.stat3)?" selected":" ", (g_control_exp.stat3)?" ":"selected",
-            (g_control_exp.stat4)?" selected":" ", (g_control_exp.stat4)?" ":"selected",
-            (g_control_exp.stat5)?" selected":" ", (g_control_exp.stat5)?" ":"selected",
-            (g_control_exp.stat7)?" selected":" ", (g_control_exp.stat7)?" ":"selected",
-            (g_control_exp.stat8)?" selected":" ", (g_control_exp.stat8)?" ":"selected",
-            (g_control_exp.stat9)?" selected":" ", (g_control_exp.stat9)?" ":"selected");
-}
-
 void HttpReturnIOConfigForm(char *out)
 {
     sprintf(out,
@@ -459,41 +371,6 @@ void HttpReturnIOConfigForm(char *out)
             (g_control_io.dir4)?" selected":" ", (g_control_io.dir4)?" ":" selected");
 }
 
-void HttpReturnExpConfigForm(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<html>\n"
-            "<head>\n"
-            "<title>Dom32IO - Expansion Config</title>\n"
-            "</head>\n"
-            "<style>\n"
-            "body{background-color:grey;font-size:24pt;}\n"
-            "#it{height:75;font-size:24pt}\n"
-            "</style>\n"
-            "<body>\n"
-            "<form method=\"POST\">\n"
-            "<h1>I/O</h1><hr />\n"
-            "EXP 1:&nbsp;"
-            "<select id=\"it\" name=\"EXP1\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP3\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP4\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP5\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP7\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP8\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "<select id=\"it\" name=\"EXP9\" onchange=\"submit();\"><option value=\"in\"%s>in</option><option value=\"out\"%s>out</option></select>\n"
-            "</form>\n"
-            "</body>\n"
-            "</html>\n",
-            http_200,
-            (g_control_exp.dir1)?" selected":" ", (g_control_exp.dir1)?" ":"selected",
-            (g_control_exp.dir3)?" selected":" ", (g_control_exp.dir3)?" ":"selected",
-            (g_control_exp.dir4)?" selected":" ", (g_control_exp.dir4)?" ":"selected",
-            (g_control_exp.dir5)?" selected":" ", (g_control_exp.dir5)?" ":"selected",
-            (g_control_exp.dir7)?" selected":" ", (g_control_exp.dir7)?" ":"selected",
-            (g_control_exp.dir8)?" selected":" ", (g_control_exp.dir8)?" ":"selected",
-            (g_control_exp.dir9)?" selected":" ", (g_control_exp.dir9)?" ":"selected");
-}
 #endif /* INCLUDE_IO_FORMS */
 
 void HttpReturnConfig(char *out)
@@ -589,19 +466,11 @@ void HTTPTask( void )
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
         {
-            HttpReturnIOStatus(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/exstatus.htm"))
-        {
-            HttpReturnExpStatus(htdat[id].data);
+            HttpReturnStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.xml"))
         {
-            HttpReturnIOStatusXML(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/exstatus.xml"))
-        {
-            HttpReturnExpStatusXML(htdat[id].data);
+            HttpReturnStatusXML(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/config.htm"))
         {
@@ -620,17 +489,9 @@ void HTTPTask( void )
         {
             HttpReturnIOStatusForm(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/exstatus.cgi"))
-        {
-            HttpReturnExpStatusForm(htdat[id].data);
-        }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
             HttpReturnIOConfigForm(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/exconfig.cgi"))
-        {
-            HttpReturnExpConfigForm(htdat[id].data);
         }
 #endif /* INCLUDE_IO_FORMS */
         else
@@ -659,27 +520,22 @@ void HTTPTask( void )
 #ifdef INCLUDE_IO_FORMS
             HttpReturnIOStatusForm(htdat[id].data);
 #else
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnStatus(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
         }
         else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
         {
             CTRLSwitchIO(htdat[id].data);
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/exstatus.cgi"))
         {
             CTRLSetIO(htdat[id].data);
-#ifdef INCLUDE_IO_FORMS
-            HttpReturnExpStatusForm(htdat[id].data);
-#else
-            HttpReturnExpStatus(htdat[id].data);
-#endif /* INCLUDE_IO_FORMS */
         }
         else if( !strcmp(htdat[id].rqst, "/exswitch.cgi"))
         {
             CTRLSwitchIO(htdat[id].data);
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {

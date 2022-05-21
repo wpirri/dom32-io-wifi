@@ -780,7 +780,7 @@ void CTRLSwitchIO(char* in)
     {
         if( !strcmp(tmp, "on") )
         {
-            g_control_out.stat4 = (g_control_out.stat1)?0:1;
+            g_control_out.stat4 = (g_control_out.stat4)?0:1;
         }
     }
     
