@@ -222,4 +222,5 @@ module OjoDeBuey()
 //TapaMedia();
 //TapaConLogo();
 //Pulsador();
-OjoDeBuey();
+//OjoDeBuey();
+Logo();
