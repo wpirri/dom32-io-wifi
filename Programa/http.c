@@ -528,15 +528,6 @@ void HTTPTask( void )
             CTRLSwitchIO(htdat[id].data);
             HttpReturnStatus(htdat[id].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/exstatus.cgi"))
-        {
-            CTRLSetIO(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/exswitch.cgi"))
-        {
-            CTRLSwitchIO(htdat[id].data);
-            HttpReturnStatus(htdat[id].data);
-        }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
             CTRLConfIO(htdat[id].data);
