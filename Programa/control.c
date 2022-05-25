@@ -76,21 +76,60 @@ void CTRLInit( void )
     g_control_io.stat4 = false;
     if(g_control_io.dir4)   {TRISBSET = (1 << 2); CNPUBSET = (1 << 2);}
     else                    {TRISBCLR = (1 << 2); CNPUBCLR = (1 << 2);}
-    /* Entrada 5 - RB7 */
-    g_control_io.ana5 = (g_wifi_info.f.config.an_config & 0x10)?1:0;
-    g_control_io.dir5 = (g_wifi_info.f.config.io_config & 0x10)?1:0;
-    g_control_io.stat5 = false;
-    if(g_control_io.dir5)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
-    else                    {TRISBCLR = (1 << 7); CNPUBCLR = (1 << 7);}
-    /* Entrada 6 - RB8 */
-    g_control_io.ana6 = (g_wifi_info.f.config.an_config & 0x20)?1:0;
-    g_control_io.dir6 = (g_wifi_info.f.config.io_config & 0x20)?1:0;
-    g_control_io.stat6 = false;
-    if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
-    else                    {TRISBCLR = (1 << 8); CNPUBCLR = (1 << 8);}
+    if(IS_WIEGAND_ENABLE)
+    {
+        /* Entrada 5 - RB7 */
+        g_control_io.ana5 = 0;
+        g_control_io.dir5 = 1;
+        g_control_io.stat5 = false;
+        TRISBSET = (1 << 7);
+        CNPUBSET = (1 << 7);
+        /* Entrada 6 - RB8 */
+        g_control_io.ana6 = 0;
+        g_control_io.dir6 = 1;
+        g_control_io.stat6 = false;
+        TRISBSET = (1 << 8); 
+        CNPUBSET = (1 << 8);
+
+        /* Traido de interrupt_manager.c --> */
+        //    CNBI: PORT B Change Notification
+        //    Priority: 1
+        IPC2bits.CNBIP = 1;
+        //    Sub Priority: 0
+        IPC2bits.CNBIS = 0;
+        /* <-- Traido de interrupt_manager.c */
+        /* Traido de pin_manager.c --> */
+        /****************************************************************************
+         * Interrupt On Change: Interrupt Enable
+         ***************************************************************************/
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
+        IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+        /* <-- Traido de pin_manager.c */
+    }
+    else
+    {
+        /* Entrada 5 - RB7 */
+        g_control_io.ana5 = (g_wifi_info.f.config.an_config & 0x10)?1:0;
+        g_control_io.dir5 = (g_wifi_info.f.config.io_config & 0x10)?1:0;
+        g_control_io.stat5 = false;
+        if(g_control_io.dir5)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
+        else                    {TRISBCLR = (1 << 7); CNPUBCLR = (1 << 7);}
+        /* Entrada 6 - RB8 */
+        g_control_io.ana6 = (g_wifi_info.f.config.an_config & 0x20)?1:0;
+        g_control_io.dir6 = (g_wifi_info.f.config.io_config & 0x20)?1:0;
+        g_control_io.stat6 = false;
+        if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
+        else                    {TRISBCLR = (1 << 8); CNPUBCLR = (1 << 8);}
+
+        IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+    }
+
 
     LogMessage("TRISB: 0x%04X\r\n", TRISB);
     LogMessage("CNPUB: 0x%04X\r\n", CNPUB);
+    LogMessage("HTTPS: %s\r\n", (IS_HTTPS_ENABLE)?"on":"off");
+    LogMessage("WIEGAND: %s\r\n", (IS_WIEGAND_ENABLE)?"on":"off");
+    LogMessage("DHT11: %s\r\n", (IS_DHT11_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -913,6 +952,45 @@ void CTRLConfIO(char* in)
         }
     }
 
+    if(HTTPGetFormData(in, "WIEGAND", tmp))
+    {
+        change = true;
+        if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+        {
+            ENABLE_WIEGAND;
+        }
+        else
+        {
+            DISABLE_WIEGAND;
+        }
+    }
+    
+    if(HTTPGetFormData(in, "DHT11", tmp))
+    {
+        change = true;
+        if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+        {
+            ENABLE_DHT11;
+        }
+        else
+        {
+            DISABLE_DHT11;
+        }
+    }
+    
+    if(HTTPGetFormData(in, "HTTPS", tmp))
+    {
+        change = true;
+        if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+        {
+            ENABLE_HTTPS;
+        }
+        else
+        {
+            DISABLE_HTTPS;
+        }
+    }
+    
     if(change)
     {
         g_wifi_info.f.config.io_config_default = 0;

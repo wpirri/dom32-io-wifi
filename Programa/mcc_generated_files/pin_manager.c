@@ -53,6 +53,14 @@
 #include "pin_manager.h"
 #include "system.h"
 
+#include "../wiegand.h"
+
+/**
+ Section: File specific functions
+*/
+//void (*IO6_InterruptHandler)(void) = NULL;
+//void (*IO5_InterruptHandler)(void) = NULL;
+
 /**
  Section: Driver Interface Function Definitions
 */
@@ -101,10 +109,104 @@ void PIN_MANAGER_Initialize (void)
     SYSTEM_RegUnlock(); // unlock PPS
     RPCONbits.IOLOCK = 0;
 
-    RPINR9bits.U2RXR = 0x0003;    //RA2->UART2:U2RX
     RPOR0bits.RP4R = 0x0004;    //RA3->UART2:U2TX
+    RPINR9bits.U2RXR = 0x0003;    //RA2->UART2:U2RX
 
     RPCONbits.IOLOCK = 1; // lock   PPS
     SYSTEM_RegLock(); 
+
+    /****************************************************************************
+     * Interrupt On Change: negative
+     ***************************************************************************/
+    CNEN1Bbits.CNIE1B7 = 1;    //Pin : RB7
+    CNEN1Bbits.CNIE1B8 = 1;    //Pin : RB8
+    /****************************************************************************
+     * Interrupt On Change: flag
+     ***************************************************************************/
+    CNFBbits.CNFB7 = 0;    //Pin : RB7
+    CNFBbits.CNFB8 = 0;    //Pin : RB8
+    /****************************************************************************
+     * Interrupt On Change: config
+     ***************************************************************************/
+    CNCONBbits.CNSTYLE = 1;    //Config for PORTB
+    CNCONBbits.ON = 1;    //Config for PORTB
+    
+    /* Initialize IOC Interrupt Handler*/
+//    IO6_SetInterruptHandler(&IO6_CallBack);
+//    IO5_SetInterruptHandler(&IO5_CallBack);
+    
+#ifdef __SE_HACE_EN_CTRLInit__
+    /****************************************************************************
+     * Interrupt On Change: Interrupt Enable
+     ***************************************************************************/
+    IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
+    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+#endif /* __SE_HACE_EN_CTRLInit__ */        
+}
+
+//void __attribute__ ((weak)) IO6_CallBack(void)
+//{
+//
+//}
+//
+//void __attribute__ ((weak)) IO5_CallBack(void)
+//{
+//
+//}
+
+//void IO6_SetInterruptHandler(void (* InterruptHandler)(void))
+//{ 
+//    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+//    IO6_InterruptHandler = InterruptHandler; 
+//    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+//}
+//
+//void IO6_SetIOCInterruptHandler(void *handler)
+//{ 
+//    IO6_SetInterruptHandler(handler);
+//}
+//
+//void IO5_SetInterruptHandler(void (* InterruptHandler)(void))
+//{ 
+//    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+//    IO5_InterruptHandler = InterruptHandler; 
+//    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+//}
+//
+//void IO5_SetIOCInterruptHandler(void *handler)
+//{ 
+//    IO5_SetInterruptHandler(handler);
+//}
+
+/* Interrupt service routine for the CNBI interrupt. */
+void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_B( void )
+{
+    if(IFS0bits.CNBIF == 1)
+    {
+        if(CNFBbits.CNFB8 == 1)
+        {
+            WGND_IntData( 1, 0 );
+//            if(IO6_InterruptHandler) 
+//            { 
+//                IO6_InterruptHandler(); 
+//            }
+            
+            CNFBCLR = 0x100;  //Clear CNFBbits.CNFB8
+        }
+        
+        if(CNFBbits.CNFB7 == 1)
+        {
+            WGND_IntData( 0, 1 );
+//            if(IO5_InterruptHandler) 
+//            { 
+//                IO5_InterruptHandler(); 
+//            }
+            
+            CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
+        }
+        
+        // Clear the flag
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; // Clear IFS0bits.CNBIF
+    }
 }
 

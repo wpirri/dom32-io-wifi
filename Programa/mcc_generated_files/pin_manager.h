@@ -2637,6 +2637,128 @@ inline static void OUT2_SetValue(bool value)
 */
 void PIN_MANAGER_Initialize (void);
 
+/**
+  @Summary
+    Callback for IO6 Pin.
+
+  @Description
+    This routine is callback for IO6 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        IO6_SetInterruptHandler(&IO6_CallBack);
+    </code>
+*/
+void IO6_CallBack(void);
+
+/**
+  @Summary
+    Callback for IO5 Pin.
+
+  @Description
+    This routine is callback for IO5 Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        IO5_SetInterruptHandler(&IO5_CallBack);
+    </code>
+*/
+void IO5_CallBack(void);
+
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        IO6_SetInterruptHandler(&IO6_CallBack);
+    </code>
+*/
+void IO6_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        IO6_SetIOCInterruptHandler(&IO6_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse IO6_SetInterruptHandler instead."))) IO6_SetIOCInterruptHandler(void *handler);
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        IO5_SetInterruptHandler(&IO5_CallBack);
+    </code>
+*/
+void IO5_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        IO5_SetIOCInterruptHandler(&IO5_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse IO5_SetInterruptHandler instead."))) IO5_SetIOCInterruptHandler(void *handler);
 
 
 #endif

@@ -75,6 +75,13 @@ void INTERRUPT_Initialize (void)
         IPC14bits.U2RXIP = 1;
     //    Sub Priority: 0
         IPC14bits.U2RXIS = 0;
+#ifdef __SE_HACE_EN_CTRLInit__
+    //    CNBI: PORT B Change Notification
+    //    Priority: 1
+        IPC2bits.CNBIP = 1;
+    //    Sub Priority: 0
+        IPC2bits.CNBIS = 0;
+#endif /* __SE_HACE_EN_CTRLInit__ */        
     //    UERI: UART 1 Error
     //    Priority: 1
         IPC13bits.U1EIP = 1;

@@ -63,6 +63,7 @@
 #include "http.h"
 #include "wifi.h"
 #include "control.h"
+#include "wiegand.h"
 
 bool main_flag_core_timer;
 int main_flag_core_timer_div_count;
@@ -160,7 +161,7 @@ int main(void)
     WiFiInit();
     HTTPInit();
     //DHT11Init();
-    //WGND_Init();
+    WGND_Init();
     
     LogMessage("MAIN: Init Ok.\r\n");
     
@@ -172,7 +173,7 @@ int main(void)
         HTTPTask();
         CTRLTask();
         //DHT11Task();
-        //WGND_Task();
+        WGND_Task();
         
         if(main_flag_core_timer)
         {
@@ -187,7 +188,7 @@ int main(void)
                 WiFiTimer();
                 HTTPTimer();
                 CTRLTimer();
-                //WGND_Timer();
+                WGND_Timer();
             }
             /* Timer 100 veces por segundo - 10ms */
             //DHT11Timer();

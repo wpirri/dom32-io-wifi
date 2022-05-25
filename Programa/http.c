@@ -769,3 +769,28 @@ int HTTPNotificarStatus(void)
 
     return strlen(http_rqst);
 }
+
+int HTTPNotificarTarjeta( const char *crd)
+{
+    LogMessage("HTTPNotificarTarjeta\r\n");
+
+    sprintf(http_rqst_data, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
+    sprintf(http_rqst_uri, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
+/* POST
+ * 1.- %s: URI
+ * 2.- %s: Host
+ * 3.- %d: Content-Length
+ * 4.- %s: datos
+ */
+    sprintf(http_rqst, http_post,
+            http_rqst_uri,
+            g_wifi_info.f.config.wifi_host1,
+            strlen(http_rqst_data),
+            http_rqst_data);
+    if(HTTPAdd((-1), http_rqst) == 0)
+    {
+        /* No fue posible enviar */
+        return 0;
+    }
+    return strlen(http_rqst);
+}

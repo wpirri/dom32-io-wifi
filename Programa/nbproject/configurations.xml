@@ -26,6 +26,7 @@
       <itemPath>http.h</itemPath>
       <itemPath>strfunc.h</itemPath>
       <itemPath>wifi.h</itemPath>
+      <itemPath>wiegand.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -56,6 +57,7 @@
       <itemPath>http.c</itemPath>
       <itemPath>strfunc.c</itemPath>
       <itemPath>wifi.c</itemPath>
+      <itemPath>wiegand.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

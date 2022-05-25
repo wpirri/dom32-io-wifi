@@ -21,7 +21,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <plib.h>
+#include "http.h"
+#include "config.h"
 
 typedef struct _wgnd_data
 {
@@ -100,7 +101,7 @@ void WGND_IntData( unsigned char d0, unsigned char d1 )
 
     if(gWGND_BitCount == 26)
     {
-        /* desplaso los bits para alinearlos a 32 */
+        /* desplazo los bits para alinearlos a 32 */
         gWGND_Data.udata.ldata >>= 6;
         /* los 6 bits mas significativos no van */
         gWGND_Data.udata.ldata &= 0x3FFFFFFF;
@@ -114,81 +115,6 @@ void WGND_IntData( unsigned char d0, unsigned char d1 )
     }
 }
 
-void WGND_Exec(hw_dev *dev, const char* crd)
-{
-    system_user user;
-    unsigned int need_access;
-
-    if( !dev || !crd) return;
-    
-    user.name[0] = '\0';
-    memcpy(user.card, crd, sizeof(user.card));
-    if(GetUser(&user))
-    {
-        need_access = 0xffffffff;
-        if(dev->f.typ == DEV_NAME_GMHTOUCH315)
-        {
-            need_access = GetNeedAccess(dev->f.id, 0, 1);
-        }
-        else if(dev->f.typ == DEV_NAME_GMHREM315)
-        {
-            need_access = GetNeedAccess(dev->f.id, 4, 1);
-        }
-        else if(dev->f.typ == DEV_NAME_GMHWEB32)
-        {
-            need_access = GetNeedAccess(dev->f.id, 6, 1);
-        }
-        else if(dev->f.typ == DEV_NAME_MIO16X16AD)
-        {
-            /* TODO: Control de acceso para MIO-16x16-AD */
-        }
-        
-        EventAlarma("Acceso con tarjeta", user.name);
-
-        if(CheckAccess(user.name, NULL, need_access))
-        {
-            LogMessage("CARD", "Tarjeta %s de usuario %s en lectora de %s.",
-                    crd, user.name, dev->f.name);
-#ifdef ENABLE_GMHTOUCH315
-            if(dev->f.typ == DEV_NAME_GMHTOUCH315)
-            {
-                dev->hw.gmhtouch315.change |= 0x01;     // -> (0)
-            }
-            else
-#endif
-#ifdef ENABLE_GMHREM315
-            if(dev->f.typ == DEV_NAME_GMHREM315)
-            {
-                dev->hw.gmhkey2.change |= 0x10;         // -> (4)
-                dev->hw.gmhkey2.status |= 0x10;
-            }
-            else
-#endif
-                if(dev->f.typ == DEV_NAME_GMHWEB32)
-            {
-                dev->hw.gmhweb32.io[0].change |= 0x40;  // -> (6)
-                dev->hw.gmhweb32.io[0].status |= 0x40;
-            }
-            else if(dev->f.typ == DEV_NAME_MIO16X16AD)
-            {
-                /* TODO: Generar evento para MIO-16x16-AD */
-            }
-        }
-        else
-        {
-            LogMessage("CARD", "Usuario %s acceso no permitido en lectora de %s.",
-                    user.name, dev->f.name);
-        }
-    }
-    else
-    {
-        LogMessage("CARD", "Targeta %s desconocida en lectora de %s.",
-                crd, dev->f.name);
-        AddAlert("Tarjeta nueva: ", crd);
-    }
-
-}
-
 void WGND_Task( void )
 {
     char cardHexa[9];
@@ -200,23 +126,8 @@ void WGND_Task( void )
                 gWGND_Data.udata.bytes.b,
                 gWGND_Data.udata.bytes.c,
                 gWGND_Data.udata.bytes.d);
-        WGND_Exec(GetHardwareDevicePtr(1), cardHexa);
+        LogMessage("[WIEGAND] CRD: %s\r\n", cardHexa);
+        HTTPNotificarTarjeta(cardHexa);
         WGND_Ack();
     }
-    else
-    {
-        if(PORTAbits.RA6 != PORTAbits.RA7)
-        {
-            if( !gWGND_ReadFlag)
-            {
-                /* Cada vez que cambian los ports y son diferentes */
-                WGND_IntData( PORTAbits.RA6, PORTAbits.RA7 );
-                gWGND_ReadFlag = 1;
-            }
-        }
-        else
-        {
-            gWGND_ReadFlag = 0;
-        }
-    }    
 }

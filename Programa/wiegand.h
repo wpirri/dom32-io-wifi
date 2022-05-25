@@ -22,7 +22,7 @@ void WGND_Init( void );
 void WGND_Timer( void );
 void WGND_Ack( void );
 void WGND_IntData( unsigned char d0, unsigned char d1 );
-void WGND_Exec(hw_dev *dev, const char* crd);
+void WGND_Callback(const char* crd);
 void WGND_Task( void );
 
 #endif /* _WIEGAND_H_ */
