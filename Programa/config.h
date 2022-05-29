@@ -24,6 +24,12 @@
 #define LogMessage printf
 //#define DEBUG_WIFI
 
+// Clock frequency values
+#define _XTAL_FREQ  24000000UL             // Hz
+#define GetSystemClock()		(_XTAL_FREQ)
+#define GetInstructionClock()	(GetSystemClock()/*/4*/)
+#define GetPeripheralClock()	(GetSystemClock()/*/4*/)
+
 #define FLAG_HTTPS_ENABLE    0x01
 #define FLAG_WIEGAND_ENABLE  0x02
 #define FLAG_DHT11_ENABLE    0x04

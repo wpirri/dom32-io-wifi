@@ -124,12 +124,31 @@ void CTRLInit( void )
         IEC0bits.CNBIE = 0; //Disable CNBI interrupt
     }
 
-
-    LogMessage("TRISB: 0x%04X\r\n", TRISB);
-    LogMessage("CNPUB: 0x%04X\r\n", CNPUB);
-    LogMessage("HTTPS: %s\r\n", (IS_HTTPS_ENABLE)?"on":"off");
+    if(IS_DHT11_ENABLE)
+    {
+        /* Traido de interrupt_manager.c --> */
+        //    CNAI: PORT A Change Notification
+        //    Priority: 1
+//        IPC2bits.CNAIP = 1;
+        //    Sub Priority: 0
+//        IPC2bits.CNAIS = 0;
+        /* <-- Traido de interrupt_manager.c */
+        /****************************************************************************
+         * Interrupt On Change: Interrupt Enable
+         ***************************************************************************/
+//        IFS0CLR= 1 << _IFS0_CNAIF_POSITION; //Clear CNAI interrupt flag
+//        IEC0bits.CNAIE = 1; //Enable CNAI interrupt
+    }
+    else
+    {
+//        IEC0bits.CNAIE = 0; //Disable CNAI interrupt
+    }
+    
+    LogMessage("TRISB:   0x%04X\r\n", TRISB);
+    LogMessage("CNPUB:   0x%04X\r\n", CNPUB);
+    LogMessage("HTTPS:   %s\r\n", (IS_HTTPS_ENABLE)?"on":"off");
     LogMessage("WIEGAND: %s\r\n", (IS_WIEGAND_ENABLE)?"on":"off");
-    LogMessage("DHT11: %s\r\n", (IS_DHT11_ENABLE)?"on":"off");
+    LogMessage("DHT11:   %s\r\n", (IS_DHT11_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;

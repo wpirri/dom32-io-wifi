@@ -64,9 +64,11 @@
 #include "wifi.h"
 #include "control.h"
 #include "wiegand.h"
+#include "dhtxx.h"
 
 bool main_flag_core_timer;
 int main_flag_core_timer_div_count;
+int main_flag_dhtxx_timer_count;
 char led_aux_count;
 
 
@@ -145,7 +147,7 @@ int main(void)
 {
     main_flag_core_timer = false;
     main_flag_core_timer_div_count = 0;
-
+    main_flag_dhtxx_timer_count = 0;
 
     SYSTEM_Initialize();
     
@@ -160,8 +162,8 @@ int main(void)
     CTRLInit();
     WiFiInit();
     HTTPInit();
-    //DHT11Init();
     WGND_Init();
+    DHTxxInit();
     
     LogMessage("MAIN: Init Ok.\r\n");
     
@@ -172,8 +174,7 @@ int main(void)
         WiFiTask();
         HTTPTask();
         CTRLTask();
-        //DHT11Task();
-        WGND_Task();
+        if(IS_WIEGAND_ENABLE) WGND_Task();
         
         if(main_flag_core_timer)
         {
@@ -188,7 +189,19 @@ int main(void)
                 WiFiTimer();
                 HTTPTimer();
                 CTRLTimer();
-                WGND_Timer();
+                if(IS_WIEGAND_ENABLE) WGND_Timer();
+                if(IS_DHT11_ENABLE)
+                {
+                    main_flag_dhtxx_timer_count++;
+                    if(main_flag_dhtxx_timer_count > 50)
+                    {
+                        main_flag_dhtxx_timer_count = 0;
+                        /* */
+                        DHTxxGetData();
+                    }
+
+                }
+                
             }
             /* Timer 100 veces por segundo - 10ms */
             //DHT11Timer();

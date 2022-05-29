@@ -54,10 +54,12 @@
 #include "system.h"
 
 #include "../wiegand.h"
+#include "../dhtxx.h"
 
 /**
  Section: File specific functions
 */
+//void (*EXT_Data_InterruptHandler)(void) = NULL;
 //void (*IO6_InterruptHandler)(void) = NULL;
 //void (*IO5_InterruptHandler)(void) = NULL;
 
@@ -77,7 +79,7 @@ void PIN_MANAGER_Initialize (void)
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
     TRISA = 0x0004;
-    TRISB = 0x81FF;
+    TRISB = 0x81BF;
     TRISC = 0x0000;
 
     /****************************************************************************
@@ -110,11 +112,16 @@ void PIN_MANAGER_Initialize (void)
     RPCONbits.IOLOCK = 0;
 
     RPOR0bits.RP4R = 0x0004;    //RA3->UART2:U2TX
-    RPINR9bits.U2RXR = 0x0003;    //RA2->UART2:U2RX
-
+//    RPINR9bits.U2RXR = 0x0003;    //RA2->UART2:U2RX
+ 
     RPCONbits.IOLOCK = 1; // lock   PPS
     SYSTEM_RegLock(); 
 
+    /****************************************************************************
+     * Interrupt On Change: any
+     ***************************************************************************/
+    CNEN0Abits.CNIE0A2 = 1;    //Pin : RA2
+    CNEN1Abits.CNIE1A2 = 1;    //Pin : RA2
     /****************************************************************************
      * Interrupt On Change: negative
      ***************************************************************************/
@@ -123,15 +130,19 @@ void PIN_MANAGER_Initialize (void)
     /****************************************************************************
      * Interrupt On Change: flag
      ***************************************************************************/
+    CNFAbits.CNFA2 = 0;    //Pin : RA2
     CNFBbits.CNFB7 = 0;    //Pin : RB7
     CNFBbits.CNFB8 = 0;    //Pin : RB8
     /****************************************************************************
      * Interrupt On Change: config
      ***************************************************************************/
+    CNCONAbits.CNSTYLE = 1;    //Config for PORTA
+    CNCONAbits.ON = 1;    //Config for PORTA
     CNCONBbits.CNSTYLE = 1;    //Config for PORTB
     CNCONBbits.ON = 1;    //Config for PORTB
     
     /* Initialize IOC Interrupt Handler*/
+//    EXT_Data_SetInterruptHandler(&EXT_Data_CallBack);
 //    IO6_SetInterruptHandler(&IO6_CallBack);
 //    IO5_SetInterruptHandler(&IO5_CallBack);
     
@@ -139,16 +150,23 @@ void PIN_MANAGER_Initialize (void)
     /****************************************************************************
      * Interrupt On Change: Interrupt Enable
      ***************************************************************************/
+    IFS0CLR= 1 << _IFS0_CNAIF_POSITION; //Clear CNAI interrupt flag
+    IEC0bits.CNAIE = 1; //Enable CNAI interrupt
     IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
     IEC0bits.CNBIE = 1; //Enable CNBI interrupt
 #endif /* __SE_HACE_EN_CTRLInit__ */        
 }
 
+//void __attribute__ ((weak)) EXT_Data_CallBack(void)
+//{
+//
+//}
+
 //void __attribute__ ((weak)) IO6_CallBack(void)
 //{
 //
 //}
-//
+
 //void __attribute__ ((weak)) IO5_CallBack(void)
 //{
 //
@@ -160,23 +178,53 @@ void PIN_MANAGER_Initialize (void)
 //    IO6_InterruptHandler = InterruptHandler; 
 //    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
 //}
-//
+
 //void IO6_SetIOCInterruptHandler(void *handler)
 //{ 
 //    IO6_SetInterruptHandler(handler);
 //}
-//
+
 //void IO5_SetInterruptHandler(void (* InterruptHandler)(void))
 //{ 
 //    IEC0bits.CNBIE = 0; //Disable CNBI interrupt
 //    IO5_InterruptHandler = InterruptHandler; 
 //    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
 //}
-//
+
 //void IO5_SetIOCInterruptHandler(void *handler)
 //{ 
 //    IO5_SetInterruptHandler(handler);
 //}
+
+//void EXT_Data_SetInterruptHandler(void (* InterruptHandler)(void))
+//{ 
+//    IEC0bits.CNAIE = 0; //Disable CNAI interrupt
+//    EXT_Data_InterruptHandler = InterruptHandler; 
+//    IEC0bits.CNAIE = 1; //Enable CNAI interrupt
+//}
+
+/* Interrupt service routine for the CNAI interrupt. */
+void __attribute__ ((vector(_CHANGE_NOTICE_A_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_A( void )
+{
+    if(IFS0bits.CNAIF == 1)
+    {
+        if(CNFAbits.CNFA2 == 1)
+        {
+
+            /* TODO: Interrupcion RA2 */
+
+//            if(EXT_Data_InterruptHandler) 
+//            { 
+//                EXT_Data_InterruptHandler(); 
+//            }
+            
+            CNFACLR = 0x4;  //Clear CNFAbits.CNFA2
+        }
+        
+        // Clear the flag
+        IFS0CLR= 1 << _IFS0_CNAIF_POSITION; // Clear IFS0bits.CNAIF
+    }
+}
 
 /* Interrupt service routine for the CNBI interrupt. */
 void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_B( void )

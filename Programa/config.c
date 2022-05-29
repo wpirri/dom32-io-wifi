@@ -41,7 +41,7 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.wifi_host2_port = 80;
     strcpy(g_wifi_info.f.config.rqst_path, "/cgi-bin");
     g_wifi_info.f.config.io_config_default = 1;
-    g_wifi_info.f.config.config_flags = 0x00;
+    g_wifi_info.f.config.config_flags = 0x04;   /* TODO: DHTxx Habilitado */
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;

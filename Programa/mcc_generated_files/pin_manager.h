@@ -420,6 +420,188 @@ inline static void LED_Modo_SetValue(bool value)
 #define LED_Modo_SetDigitalOutput()   ( TRISACLR = (1 << 1) )
 /**
   @Summary
+    Sets the GPIO pin, RA2, high using LATA2.
+
+  @Description
+    Sets the GPIO pin, RA2, high using LATA2.
+
+  @Preconditions
+    The RA2 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA2 high (1)
+    EXT_Data_SetHigh();
+    </code>
+
+*/
+#define EXT_Data_SetHigh()          ( LATASET = (1 << 2) )
+/**
+  @Summary
+    Sets the GPIO pin, RA2, low using LATA2.
+
+  @Description
+    Sets the GPIO pin, RA2, low using LATA2.
+
+  @Preconditions
+    The RA2 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA2 low (0)
+    EXT_Data_SetLow();
+    </code>
+
+*/
+#define EXT_Data_SetLow()           ( LATACLR = (1 << 2) )
+
+/**
+  @Summary
+    Sets a value to the GPIO pin.
+
+  @Description
+    Sets or Resets the GPIO pin, RA2, low or high using LATA2.
+
+  @Preconditions
+    The RA2 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    bool value; : value to be set to the GPIO pin.
+
+  @Example
+    <code>
+    // Set RA2 to low.
+    EXT_Data_SetValue(false);
+    </code>
+
+*/
+inline static void EXT_Data_SetValue(bool value)
+{
+  if(value)
+  {
+    EXT_Data_SetHigh();
+  }
+  else
+  {
+    EXT_Data_SetLow();
+  }
+}
+
+/**
+  @Summary
+    Toggles the GPIO pin, RA2, using LATA2.
+
+  @Description
+    Toggles the GPIO pin, RA2, using LATA2.
+
+  @Preconditions
+    The RA2 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RA2
+    EXT_Data_Toggle();
+    </code>
+
+*/
+#define EXT_Data_Toggle()           ( LATAINV = (1 << 2) )
+/**
+  @Summary
+    Reads the value of the GPIO pin, RA2.
+
+  @Description
+    Reads the value of the GPIO pin, RA2.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RA2
+    postValue = EXT_Data_GetValue();
+    </code>
+
+*/
+#define EXT_Data_GetValue()         PORTAbits.RA2
+/**
+  @Summary
+    Configures the GPIO pin, RA2, as an input.
+
+  @Description
+    Configures the GPIO pin, RA2, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA2 as an input
+    EXT_Data_SetDigitalInput();
+    </code>
+
+*/
+#define EXT_Data_SetDigitalInput()   ( TRISASET = (1 << 2) )
+/**
+  @Summary
+    Configures the GPIO pin, RA2, as an output.
+
+  @Description
+    Configures the GPIO pin, RA2, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA2 as an output
+    EXT_Data_SetDigitalOutput();
+    </code>
+
+*/
+#define EXT_Data_SetDigitalOutput()   ( TRISACLR = (1 << 2) )
+/**
+  @Summary
     Sets the GPIO pin, RA4, high using LATA4.
 
   @Description
@@ -1876,6 +2058,188 @@ inline static void IO1_SetValue(bool value)
 #define IO1_SetDigitalOutput()   ( TRISBCLR = (1 << 5) )
 /**
   @Summary
+    Sets the GPIO pin, RB6, high using LATB6.
+
+  @Description
+    Sets the GPIO pin, RB6, high using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB6 high (1)
+    EXT_Power_SetHigh();
+    </code>
+
+*/
+#define EXT_Power_SetHigh()          ( LATBSET = (1 << 6) )
+/**
+  @Summary
+    Sets the GPIO pin, RB6, low using LATB6.
+
+  @Description
+    Sets the GPIO pin, RB6, low using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB6 low (0)
+    EXT_Power_SetLow();
+    </code>
+
+*/
+#define EXT_Power_SetLow()           ( LATBCLR = (1 << 6) )
+
+/**
+  @Summary
+    Sets a value to the GPIO pin.
+
+  @Description
+    Sets or Resets the GPIO pin, RB6, low or high using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    bool value; : value to be set to the GPIO pin.
+
+  @Example
+    <code>
+    // Set RB6 to low.
+    EXT_Power_SetValue(false);
+    </code>
+
+*/
+inline static void EXT_Power_SetValue(bool value)
+{
+  if(value)
+  {
+    EXT_Power_SetHigh();
+  }
+  else
+  {
+    EXT_Power_SetLow();
+  }
+}
+
+/**
+  @Summary
+    Toggles the GPIO pin, RB6, using LATB6.
+
+  @Description
+    Toggles the GPIO pin, RB6, using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB6
+    EXT_Power_Toggle();
+    </code>
+
+*/
+#define EXT_Power_Toggle()           ( LATBINV = (1 << 6) )
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB6.
+
+  @Description
+    Reads the value of the GPIO pin, RB6.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB6
+    postValue = EXT_Power_GetValue();
+    </code>
+
+*/
+#define EXT_Power_GetValue()         PORTBbits.RB6
+/**
+  @Summary
+    Configures the GPIO pin, RB6, as an input.
+
+  @Description
+    Configures the GPIO pin, RB6, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB6 as an input
+    EXT_Power_SetDigitalInput();
+    </code>
+
+*/
+#define EXT_Power_SetDigitalInput()   ( TRISBSET = (1 << 6) )
+/**
+  @Summary
+    Configures the GPIO pin, RB6, as an output.
+
+  @Description
+    Configures the GPIO pin, RB6, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB6 as an output
+    EXT_Power_SetDigitalOutput();
+    </code>
+
+*/
+#define EXT_Power_SetDigitalOutput()   ( TRISBCLR = (1 << 6) )
+/**
+  @Summary
     Sets the GPIO pin, RB7, high using LATB7.
 
   @Description
@@ -2639,6 +3003,27 @@ void PIN_MANAGER_Initialize (void);
 
 /**
   @Summary
+    Callback for EXT_Data Pin.
+
+  @Description
+    This routine is callback for EXT_Data Pin
+
+  @Param
+    None.
+
+  @Returns
+    None
+ 
+ 
+  @Example 
+    <code>
+        EXT_Data_SetInterruptHandler(&EXT_Data_CallBack);
+    </code>
+*/
+void EXT_Data_CallBack(void);
+
+/**
+  @Summary
     Callback for IO6 Pin.
 
   @Description
@@ -2679,6 +3064,46 @@ void IO6_CallBack(void);
 */
 void IO5_CallBack(void);
 
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXT_Data_SetInterruptHandler(&EXT_Data_CallBack);
+    </code>
+*/
+void EXT_Data_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Assigns a function pointer with a callback address.
+
+  @Description
+    This routine assigns a function pointer with a callback address.
+
+  @Param
+    Address of the callback routine.
+
+  @Returns
+    None
+ 
+  @Example 
+    <code>
+        EXT_Data_SetIOCInterruptHandler(&EXT_Data_CallBack);
+    </code>
+*/
+void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXT_Data_SetInterruptHandler instead."))) EXT_Data_SetIOCInterruptHandler(void *handler);
 
 /**
   @Summary

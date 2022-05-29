@@ -1,5 +1,5 @@
 /***************************************************************************
-    Copyright (C) 2018   Walter Pirri
+    Copyright (C) 2022   Walter Pirri
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -15,21 +15,27 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
-#ifndef _DHT11_H_
-#define	_DHT11_H_
+#ifndef _DHTxx_H_
+#define	_DHTxx_H_
 
-#define DHT11_DATA_TRIS
-#define DHT11_DATA_IO  
-#define DHT11_DATA_IN  
+//#define DHTxx_POWER_TRIS    TRISBbits.TRISB6  
+#define DHTxx_POWER_OUT     LATBbits.LATB6
+//#define DHTxx_POWER_IN      PORTBbits.RB6
 
-#define DHT11_REFRESH_DELAY 600
+#define DHTxx_DATA_TRIS   TRISAbits.TRISA2
+#define DHTxx_DATA_OUT    LATAbits.LATA2
+#define DHTxx_DATA_IN     PORTAbits.RA2
+#define DHTxx_DATA_PULLUP CNPUAbits.CNPUA2
 
-void DHT11Init( void );
-void DHT11Task( void );
-void DHT11Timer( void );
+#define DHTxx_REFRESH_DELAY 100
 
-int DHT11Temperatura( void );
-int DHT11Humedad( void );
+void DHTxxInit( void );
+void DHTxxGetData();
 
-#endif	/* _DHT11_H_ */
+/* Temp: 1000 = 10,00 °C */
+int DHTxxTemperatura( void );
+/* Hum: 1000 = 10,00 % */
+int DHTxxHumedad( void );
+
+#endif	/* _DHTxx_H_ */
 

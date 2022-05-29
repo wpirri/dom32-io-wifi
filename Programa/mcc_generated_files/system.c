@@ -83,11 +83,11 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
+#include "uart1.h"
+#include "uart2.h"
+#include "coretimer.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
-#include "uart2.h"
-#include "uart1.h"
-#include "coretimer.h"
 #include "memory/flash.h"
 
 void SYSTEM_Initialize(void)
