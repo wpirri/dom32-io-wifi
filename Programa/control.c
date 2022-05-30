@@ -124,7 +124,7 @@ void CTRLInit( void )
         IEC0bits.CNBIE = 0; //Disable CNBI interrupt
     }
 
-    if(IS_DHT11_ENABLE)
+    if(IS_DHT2x_ENABLE)
     {
         /* Traido de interrupt_manager.c --> */
         //    CNAI: PORT A Change Notification
@@ -148,7 +148,7 @@ void CTRLInit( void )
     LogMessage("CNPUB:   0x%04X\r\n", CNPUB);
     LogMessage("HTTPS:   %s\r\n", (IS_HTTPS_ENABLE)?"on":"off");
     LogMessage("WIEGAND: %s\r\n", (IS_WIEGAND_ENABLE)?"on":"off");
-    LogMessage("DHT11:   %s\r\n", (IS_DHT11_ENABLE)?"on":"off");
+    LogMessage("DHT2x:   %s\r\n", (IS_DHT2x_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -984,16 +984,16 @@ void CTRLConfIO(char* in)
         }
     }
     
-    if(HTTPGetFormData(in, "DHT11", tmp))
+    if(HTTPGetFormData(in, "DHT2x", tmp))
     {
         change = true;
         if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
         {
-            ENABLE_DHT11;
+            ENABLE_DHT2x;
         }
         else
         {
-            DISABLE_DHT11;
+            DISABLE_DHT2x;
         }
     }
     

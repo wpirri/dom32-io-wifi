@@ -23,6 +23,7 @@
 
 #include "control.h"
 #include "wifi.h"
+#include "dhtxx.h"
 #include "config.h"
 
 const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
@@ -706,6 +707,8 @@ const char* HTTPGet(int id, char* buffer)
  * ************************************************************************** */
 int HTTPNotificarStatus(void)
 {
+    int t1, t2, h1, h2;
+    
     LogMessage("HTTPNotificarStatus\r\n");
 
     sprintf(http_rqst_data, 
@@ -733,6 +736,15 @@ int HTTPNotificarStatus(void)
     (g_control_out.change2)?'1':'0',
     (g_control_out.change3)?'1':'0',
     (g_control_out.change4)?'1':'0');
+    
+    if(IS_DHT2x_ENABLE)
+    {
+        DHTxxTemperatura(&t1,&t2);
+        DHTxxHumedad(&h1,&h2); 
+        sprintf(&http_rqst_data[strlen(http_rqst_data)],
+                "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
+    }
+
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");

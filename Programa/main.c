@@ -190,13 +190,12 @@ int main(void)
                 HTTPTimer();
                 CTRLTimer();
                 if(IS_WIEGAND_ENABLE) WGND_Timer();
-                if(IS_DHT11_ENABLE)
+                if(IS_DHT2x_ENABLE)
                 {
                     main_flag_dhtxx_timer_count++;
-                    if(main_flag_dhtxx_timer_count > 50)
+                    if(main_flag_dhtxx_timer_count > 300)
                     {
                         main_flag_dhtxx_timer_count = 0;
-                        /* */
                         DHTxxGetData();
                     }
 
@@ -204,7 +203,7 @@ int main(void)
                 
             }
             /* Timer 100 veces por segundo - 10ms */
-            //DHT11Timer();
+            //DHT2xTimer();
         }
     }
     return 1; 

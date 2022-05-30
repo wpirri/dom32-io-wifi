@@ -32,10 +32,10 @@
 void DHTxxInit( void );
 void DHTxxGetData();
 
-/* Temp: 1000 = 10,00 °C */
-int DHTxxTemperatura( void );
-/* Hum: 1000 = 10,00 % */
-int DHTxxHumedad( void );
+/* Temp: 100 = 10,0 °C */
+int DHTxxTemperatura( int *t1, int *t2 );
+/* Hum: 100 = 10,0 % */
+int DHTxxHumedad( int *h1, int *h2 );
 
 #endif	/* _DHTxx_H_ */
 

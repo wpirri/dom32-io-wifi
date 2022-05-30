@@ -32,19 +32,19 @@
 
 #define FLAG_HTTPS_ENABLE    0x01
 #define FLAG_WIEGAND_ENABLE  0x02
-#define FLAG_DHT11_ENABLE    0x04
+#define FLAG_DHT2x_ENABLE    0x04
 
 #define IS_HTTPS_ENABLE (g_wifi_info.f.config.config_flags & FLAG_HTTPS_ENABLE)
 #define IS_WIEGAND_ENABLE (g_wifi_info.f.config.config_flags & FLAG_WIEGAND_ENABLE)
-#define IS_DHT11_ENABLE (g_wifi_info.f.config.config_flags & FLAG_DHT11_ENABLE)
+#define IS_DHT2x_ENABLE (g_wifi_info.f.config.config_flags & FLAG_DHT2x_ENABLE)
 
 #define ENABLE_HTTPS (g_wifi_info.f.config.config_flags |= FLAG_HTTPS_ENABLE)
 #define ENABLE_WIEGAND (g_wifi_info.f.config.config_flags |= FLAG_WIEGAND_ENABLE)
-#define ENABLE_DHT11 (g_wifi_info.f.config.config_flags |= FLAG_DHT11_ENABLE)
+#define ENABLE_DHT2x (g_wifi_info.f.config.config_flags |= FLAG_DHT2x_ENABLE)
 
 #define DISABLE_HTTPS (g_wifi_info.f.config.config_flags &= (FLAG_HTTPS_ENABLE ^ 0xFF) )
 #define DISABLE_WIEGAND (g_wifi_info.f.config.config_flags &= (FLAG_WIEGAND_ENABLE ^ 0xFF) )
-#define DISABLE_DHT11 (g_wifi_info.f.config.config_flags &= (FLAG_DHT11_ENABLE ^ 0xFF) )
+#define DISABLE_DHT2x (g_wifi_info.f.config.config_flags &= (FLAG_DHT2x_ENABLE ^ 0xFF) )
 
 struct _config_ /* 2176 bits, 272 bytes */
 {

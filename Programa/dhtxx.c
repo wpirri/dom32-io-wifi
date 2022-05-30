@@ -23,23 +23,28 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mcc_generated_files/interrupt_manager.h"
+
 #include "config.h"
 #include "delay.h"
 
-unsigned char DHTxx_bitCount;
-unsigned char DHTxx_highlen;
-unsigned char DHTxx_lowlen;
+#define DHTxx_MAX_BIT_COUNT 150
 
-#define DHTxx_MAX_BIT_COUNT 200
+typedef struct _hl_values
+{
+    unsigned char h;
+    unsigned char l;
+    
+} hl_values;
 
 typedef union _dhtxx
 {
     struct
     {
-        unsigned char hum_ent;
-        unsigned char hum_dec;
-        unsigned char temp_ent;
-        unsigned char temp_dec;
+        unsigned char h1;
+        unsigned char h2;
+        unsigned char t1;
+        unsigned char t2;
         unsigned char chksum;
     } data;
     unsigned char buffer[5];
@@ -50,17 +55,44 @@ dht_xx dhtxx;
 void DHTxxInit( void )
 {
     DHTxx_POWER_OUT = 1;
-    memset(&dhtxx, 0, sizeof(dht_xx));
 }
 
-int DHTxxTemperatura( void )
+int DHTxxTemperatura( int *t1, int *t2 )
 {
-    return (dhtxx.data.temp_ent*100)+dhtxx.data.temp_dec;
+    int t;
+    /* De la libreria de Arduino para DHT22
+      f = ((word)(data[2] & 0x7F)) << 8 | data[3];
+      f *= 0.1;
+      if (data[2] & 0x80) {
+        f *= -1;
+     */
+    t = (dhtxx.data.t1 & 0x7F) << 8;
+    t |= dhtxx.data.t2; 
+    if(dhtxx.data.t1 & 0x08) t *= (-1);
+    if(t1 && t2)
+    {
+        *t1 = t / 10;
+        *t2 = t % 10;
+    }
+    
+    return t;
 }
 
-int DHTxxHumedad( void )
+int DHTxxHumedad( int *h1, int *h2 )
 {
-    return (dhtxx.data.hum_ent*100)+dhtxx.data.hum_dec;
+    int h;
+    /*
+     f = ((word)data[0]) << 8 | data[1];
+     f *= 0.1;
+    */
+    h = dhtxx.data.h1 << 8;
+    h |= dhtxx.data.h2; 
+    if(h1 && h2)
+    {
+        *h1 = h / 10;
+        *h2 = h % 10;
+    }
+    return h;
 }
 
 /*
@@ -80,101 +112,96 @@ int DHTxxHumedad( void )
 */
 void DHTxxGetData( void )
 {
-    LogMessage("[DHTxx] GetData\r\n");
-    /* Genero el pulso para solicitar datos */
-    DHTxx_DATA_TRIS = 0;
-    DHTxx_DATA_OUT = 0;
-    /* Cada DHT11_REFRESH_DELAY pongo en out en canal de datos 
-       y mando un cero por 20ms (con 18ms alcanza) */
-    __delay_ms(20);
-    /* Fin del pulso, pongo el canal como input, el pull-up deberia mantenerlo arriba */
-    DHTxx_DATA_TRIS = 1;
-    /* mientras espero inicializo las vaiables */
-    DHTxx_bitCount = 0;
-
-    DHTxx_bitCount = 0;
-
+    unsigned char b;
+    unsigned char DHTxx_bitLen;
+    hl_values v[40];
+    
+    //LogMessage("[DHTxx] GetData\r\n");
+    memset(v, 0, sizeof(hl_values)*40);
     dhtxx.buffer[0] = 0;
     dhtxx.buffer[1] = 0;
     dhtxx.buffer[2] = 0;
     dhtxx.buffer[3] = 0;
     dhtxx.buffer[4] = 0;
-    
+    /* Genero el pulso para solicitar datos */
+    DHTxx_DATA_TRIS = 0;
+    DHTxx_DATA_OUT = 0;
+    /* Cada DHT11_REFRESH_DELAY pongo en out en canal de datos 
+       y mando un cero por 20ms (con 18ms alcanza) */
+    __delay_ms(1);
+    /* Fin del pulso, pongo el canal como input, el pull-up deberia mantenerlo arriba */
+    DHTxx_DATA_TRIS = 1;
+    /* Inicio parte crítica */
+    INTERRUPT_GlobalDisable();    
     /* Espera el start */
-    DHTxx_lowlen = 0;
-    while( DHTxx_DATA_IN == 0 && ++DHTxx_lowlen < DHTxx_MAX_BIT_COUNT);
-    if(DHTxx_lowlen == DHTxx_MAX_BIT_COUNT)
+    DHTxx_bitLen = 0;
+    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        LogMessage("[DHTxx] Low overflow en START\r\n");
+        INTERRUPT_GlobalEnable();
         return;
     }
-    DHTxx_highlen = 0;
-    while(DHTxx_DATA_IN == 1 && ++DHTxx_highlen < DHTxx_MAX_BIT_COUNT);
-    if(DHTxx_highlen == DHTxx_MAX_BIT_COUNT)
+    DHTxx_bitLen = 0;
+    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        LogMessage("[DHTxx] High overflow en START\r\n");
+        INTERRUPT_GlobalEnable();
         return;
     }
     /* Fin del start */
-
     /* Salteo el header */
-    while( DHTxx_DATA_IN == 0 && ++DHTxx_lowlen < DHTxx_MAX_BIT_COUNT);
-    if(DHTxx_lowlen == DHTxx_MAX_BIT_COUNT)
+    DHTxx_bitLen = 0;
+    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        LogMessage("[DHTxx] Low overflow en HEAD\r\n");
+        INTERRUPT_GlobalEnable();
         return;
     }
-    DHTxx_highlen = 0;
-    while(DHTxx_DATA_IN == 1 && ++DHTxx_highlen < DHTxx_MAX_BIT_COUNT);
-    if(DHTxx_highlen == DHTxx_MAX_BIT_COUNT)
+    DHTxx_bitLen = 0;
+    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        LogMessage("[DHTxx] High overflow en HEAD\r\n");
+        INTERRUPT_GlobalEnable();
         return;
     }
     /* Fin del header */
-    
     /* Aca arrancan los datos */
-    
-    for(DHTxx_bitCount = 0; DHTxx_bitCount < 40; DHTxx_bitCount++)
+    for(b = 0; b < 40; b++)
     {
         /* Mientras esta abajo o error */
-        DHTxx_lowlen = 0;
-        while( DHTxx_DATA_IN == 0 && ++DHTxx_lowlen < DHTxx_MAX_BIT_COUNT);
-        DHTxx_highlen = 0;
-        while( DHTxx_DATA_IN == 1 && ++DHTxx_highlen < DHTxx_MAX_BIT_COUNT);
-        
-        if(DHTxx_highlen > DHTxx_MAX_BIT_COUNT || DHTxx_lowlen > DHTxx_MAX_BIT_COUNT) break;
-
-        if(DHTxx_highlen > DHTxx_lowlen)
-        {
-            dhtxx.buffer[DHTxx_bitCount/8] |= 1 << (7 - (DHTxx_bitCount%8));
-        }
+        while( DHTxx_DATA_IN == 0 && ++v[b].l < DHTxx_MAX_BIT_COUNT);
+        while( DHTxx_DATA_IN == 1 && ++v[b].h < DHTxx_MAX_BIT_COUNT);
+        if(v[b].l >= DHTxx_MAX_BIT_COUNT || v[b].h >= DHTxx_MAX_BIT_COUNT) break;
     }
-
-    if(DHTxx_bitCount < 40)
+    INTERRUPT_GlobalEnable();
+    /* Fin parte crítica */
+    if(b < 40)
     {
         LogMessage("[DHTxx] overflow en datos. H: %d L: %d Bit: %d\r\n",
-                DHTxx_highlen, DHTxx_lowlen, DHTxx_bitCount);
+                v[b].h, v[b].l, b);
         return;
     }
+    for(b = 0; b < 40; b++)
+    {
+        if(v[b].h > v[b].l)
+        {
+            dhtxx.buffer[b/8] |= 1 << (7 - (b%8));
+        }
+    }    
     /* Fin de datos */
-    
     /* Controlo el checksum */
-    dhtxx.buffer[4] -= dhtxx.buffer[3];
-    dhtxx.buffer[4] -= dhtxx.buffer[2];
-    dhtxx.buffer[4] -= dhtxx.buffer[1];
-    dhtxx.buffer[4] -= dhtxx.buffer[0];
-
-    if(dhtxx.buffer[4] == 0)
+    if(dhtxx.buffer[4] == (0xFF&(dhtxx.buffer[0]+dhtxx.buffer[1]+dhtxx.buffer[2]+dhtxx.buffer[3])))
     {
         /* Todo OK, lo paso a las variables correspondientes */
-        LogMessage("[DHTxx] Temp: %d.%d °C - HR: %d.%d %%\r\n",
-                    dhtxx.data.temp_ent, dhtxx.data.temp_dec,
-                    dhtxx.data.hum_ent, dhtxx.data.hum_dec);
+        LogMessage("[DHTxx] %02x %02x %02x %02x %02x\r\n",
+                    dhtxx.buffer[0],dhtxx.buffer[1],dhtxx.buffer[2],dhtxx.buffer[3],dhtxx.buffer[4]);
+        LogMessage("[DHTxx] HR: %d.%d %% - Temp: %d.%d °C\r\n",
+                    DHTxxHumedad(0,0)/10, DHTxxHumedad(0,0)%10,
+                    DHTxxTemperatura(0,0)/10, DHTxxTemperatura(0,0)%10);
     }
     else
     {
-        LogMessage("DHT11 - Error de CHKSum %02X %02X %02X %02X (%02X != 0)\r\n",
+        LogMessage("[DHTxx] Error de CHKSum %02X %02X %02X %02X %02X\r\n",
                 dhtxx.buffer[0], dhtxx.buffer[1], dhtxx.buffer[2],
                 dhtxx.buffer[3], dhtxx.buffer[4]);
     }
