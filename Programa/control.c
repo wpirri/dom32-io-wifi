@@ -305,6 +305,7 @@ void CTRLTask( void )
             }
             break;
         case 5:
+            if(IS_WIEGAND_ENABLE) break;
             if(g_control_io.ana5)       /* Anal�gico */
             {
                 
@@ -339,6 +340,7 @@ void CTRLTask( void )
             }
             break;
         case 6:
+            if(IS_WIEGAND_ENABLE) break;
             if(g_control_io.ana6)       /* Anal�gico */
             {
                 
