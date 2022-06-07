@@ -30,6 +30,8 @@ tornillo_bornera_frente_x = 5;
 tornillo_bornera_fondo_x = 5;
 tornillo_bornera_y = 6;
 tornillo_bornera_diametro = 4;
+tornillo_fijacion_diametro = 3.5;
+oreja_fijacion = 10;
 tol = 0.25;
 $fn = 100;
 
@@ -49,6 +51,46 @@ module Logo()
 }
 
 // -- Base --
+module Oreja(x, y, dir)
+{
+    if(dir == 1)
+    {
+        translate([x-oreja_fijacion, y, 0])
+            cube([oreja_fijacion, oreja_fijacion, 3], center = false);
+        translate([x-oreja_fijacion, y+(oreja_fijacion/2), 0])
+            cylinder(h=3, d=oreja_fijacion, center=false);
+    }
+    else
+    {
+        translate([x, y, 0])
+            cube([oreja_fijacion, oreja_fijacion, 3], center = false);
+        translate([x+oreja_fijacion, y+(oreja_fijacion/2), 0])
+            cylinder(h=3, d=oreja_fijacion, center=false);
+    }
+}
+
+module OrejaTornillo(x, y, dir)
+{
+    if(dir == 1)
+    {
+        difference()
+        {
+            Oreja(x, y, dir);
+            translate([x-oreja_fijacion, y+(oreja_fijacion/2), 0])
+                cylinder(h=3, d=tornillo_fijacion_diametro, center=false);
+        }
+    }
+    else
+    {
+        difference()
+        {
+            Oreja(x, y, dir);
+            translate([x+oreja_fijacion, y+(oreja_fijacion/2), 0])
+                cylinder(h=3, d=tornillo_fijacion_diametro, center=false);
+        }
+    }
+}
+
 module Ventilacion()
 {
     for(i = [0:3:20])
@@ -97,6 +139,10 @@ module Cajon()
         translate(origen+[espesor_paredes+borde_apoyo,espesor_paredes+borde_apoyo,espesor_base])
             cube([placa_x-(2*borde_apoyo),placa_y-(2*borde_apoyo),caja_z],center=false);
     }
+    OrejaTornillo(origen.x, origen.y + 5, 1);
+    OrejaTornillo(origen.x, caja_y-15, 1);
+    OrejaTornillo(caja_x, origen.y + 5, 2);
+    OrejaTornillo(caja_x, caja_y-15, 2);
 }
 
 module Base()
@@ -218,9 +264,9 @@ module OjoDeBuey()
 
 // -- Main
 
-//Base();
+Base();
 //TapaMedia();
 //TapaConLogo();
 //Pulsador();
 //OjoDeBuey();
-Logo();
+//Logo();
