@@ -1,5 +1,0 @@
-EN PCB
-===============================================================================
-Corregir conexiòn faltante en pin 5 de ESP-02
-Corregir footprint de D4 y D5
-Correjir footprint de conector de expansión
