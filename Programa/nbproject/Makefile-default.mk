@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=mcc_generated_files/memory/flash.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c dhtxx.c
+SOURCEFILES_QUOTED_IF_SPACED=mcc_generated_files/memory/flash.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c dhtxx.c adc.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/mcc_generated_files/memory/flash.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/dhtxx.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/mcc_generated_files/memory/flash.o.d ${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/coretimer.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/exceptions.o.d ${OBJECTDIR}/mcc_generated_files/uart1.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/uart2.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/config.o.d ${OBJECTDIR}/control.o.d ${OBJECTDIR}/http.o.d ${OBJECTDIR}/strfunc.o.d ${OBJECTDIR}/wifi.o.d ${OBJECTDIR}/wiegand.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/dhtxx.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/mcc_generated_files/memory/flash.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/dhtxx.o ${OBJECTDIR}/adc.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/mcc_generated_files/memory/flash.o.d ${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/coretimer.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/exceptions.o.d ${OBJECTDIR}/mcc_generated_files/uart1.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/uart2.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/config.o.d ${OBJECTDIR}/control.o.d ${OBJECTDIR}/http.o.d ${OBJECTDIR}/strfunc.o.d ${OBJECTDIR}/wifi.o.d ${OBJECTDIR}/wiegand.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/dhtxx.o.d ${OBJECTDIR}/adc.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/mcc_generated_files/memory/flash.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/dhtxx.o
+OBJECTFILES=${OBJECTDIR}/mcc_generated_files/memory/flash.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/dhtxx.o ${OBJECTDIR}/adc.o
 
 # Source Files
-SOURCEFILES=mcc_generated_files/memory/flash.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c dhtxx.c
+SOURCEFILES=mcc_generated_files/memory/flash.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c dhtxx.c adc.c
 
 
 
@@ -221,6 +221,12 @@ ${OBJECTDIR}/dhtxx.o: dhtxx.c  .generated_files/flags/default/c31f350824815e88c2
 	@${RM} ${OBJECTDIR}/dhtxx.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/dhtxx.o.d" -o ${OBJECTDIR}/dhtxx.o dhtxx.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/adc.o: adc.c  .generated_files/flags/default/4fec68bcff488101f3c51341145fb0fbbcff2d9a .generated_files/flags/default/63f80d3e53f67d92df857c76536421b47c21c374
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adc.o.d 
+	@${RM} ${OBJECTDIR}/adc.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/adc.o.d" -o ${OBJECTDIR}/adc.o adc.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/mcc_generated_files/memory/flash.o: mcc_generated_files/memory/flash.c  .generated_files/flags/default/ba21274f604e6debd6c5d18c4918eb8bddb96ca4 .generated_files/flags/default/63f80d3e53f67d92df857c76536421b47c21c374
 	@${MKDIR} "${OBJECTDIR}/mcc_generated_files/memory" 
@@ -335,6 +341,12 @@ ${OBJECTDIR}/dhtxx.o: dhtxx.c  .generated_files/flags/default/3530555175d6675a92
 	@${RM} ${OBJECTDIR}/dhtxx.o.d 
 	@${RM} ${OBJECTDIR}/dhtxx.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/dhtxx.o.d" -o ${OBJECTDIR}/dhtxx.o dhtxx.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/adc.o: adc.c  .generated_files/flags/default/b2248ccf7b980cb9cae6d8569441e8a15a3d574c .generated_files/flags/default/63f80d3e53f67d92df857c76536421b47c21c374
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adc.o.d 
+	@${RM} ${OBJECTDIR}/adc.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/adc.o.d" -o ${OBJECTDIR}/adc.o adc.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

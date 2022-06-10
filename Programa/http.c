@@ -283,6 +283,30 @@ void HttpReturnStatus(char *out)
             (g_control_out.stat2)?"on":"off",
             (g_control_out.stat3)?"on":"off",
             (g_control_out.stat4)?"on":"off");
+    if(g_wifi_info.f.config.an_config & 0x01)
+    {
+        sprintf(&out[strlen(out)], "&ANA1=%d", g_control_io.stat1ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x02)
+    {
+        sprintf(&out[strlen(out)], "&ANA2=%d", g_control_io.stat2ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x04)
+    {
+        sprintf(&out[strlen(out)], "&ANA3=%d", g_control_io.stat3ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x08)
+    {
+        sprintf(&out[strlen(out)], "&ANA4=%d", g_control_io.stat4ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x10)
+    {
+        sprintf(&out[strlen(out)], "&ANA5=%d", g_control_io.stat5ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x20)
+    {
+        sprintf(&out[strlen(out)], "&ANA6=%d", g_control_io.stat6ana);
+    }
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
@@ -374,56 +398,22 @@ void HttpReturnIOConfigForm(char *out)
 
 #endif /* INCLUDE_IO_FORMS */
 
-void HttpReturnConfig(char *out)
+void HttpReturnIOConfig(char *out)
 {
     sprintf(out, 
             "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
             http_200,
             g_wifi_info.status.hw_mac,
-            (g_control_io.dir1)?"in":"out",
-            (g_control_io.dir2)?"in":"out",
-            (g_control_io.dir3)?"in":"out",
-            (g_control_io.dir4)?"in":"out",
-            (g_control_io.dir5)?"in":"out",
-            (g_control_io.dir6)?"in":"out");
+            (g_wifi_info.f.config.io_config & 0x01)?((g_wifi_info.f.config.an_config & 0x01)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x02)?((g_wifi_info.f.config.an_config & 0x02)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x04)?((g_wifi_info.f.config.an_config & 0x04)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x08)?((g_wifi_info.f.config.an_config & 0x08)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x10)?((g_wifi_info.f.config.an_config & 0x10)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x20)?((g_wifi_info.f.config.an_config & 0x20)?"ana":"in"):"out");
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
     }
-}
-
-void HttpReturnIOConfig(char *out)
-{
-    sprintf(out, 
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_control_io.dir1)?"in":"out",
-            (g_control_io.dir2)?"in":"out",
-            (g_control_io.dir3)?"in":"out",
-            (g_control_io.dir4)?"in":"out");
-    if(g_wifi_info.f.config.io_config_default)
-    {
-        strcat(http_rqst_data, "&GETCONF=1");
-    }
-}
-
-void HttpReturnIOConfigXML(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<?xml version=\"1.0\"?>\r\n"
-            "<response>\n"
-            "<IO1>%s</IO1>\n"
-            "<IO2>%s</IO2>\n"
-            "<IO3>%s</IO3>\n"
-            "<IO4>%s</IO4>\n"
-            "</response>",
-            xml_200,
-            (g_control_io.dir1)?"in":"out",
-            (g_control_io.dir2)?"in":"out",
-            (g_control_io.dir3)?"in":"out",
-            (g_control_io.dir4)?"in":"out");
 }
 
 void HttpProcessWiFiFormConfig(char* in)
@@ -475,15 +465,11 @@ void HTTPTask( void )
         }
         else if( !strcmp(htdat[id].rqst, "/config.htm"))
         {
-            HttpReturnConfig(htdat[id].data);
+            HttpReturnIOConfig(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.htm"))
         {
             HttpReturnIOConfig(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/ioconfig.xml"))
-        {
-            HttpReturnIOConfigXML(htdat[id].data);
         }
 #ifdef INCLUDE_IO_FORMS
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
@@ -737,6 +723,31 @@ int HTTPNotificarStatus(void)
     (g_control_out.change3)?'1':'0',
     (g_control_out.change4)?'1':'0');
     
+    if(g_wifi_info.f.config.an_config & 0x01)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA1=%d", g_control_io.stat1ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x02)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA2=%d", g_control_io.stat2ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x04)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA3=%d", g_control_io.stat3ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x08)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA4=%d", g_control_io.stat4ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x10)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA5=%d", g_control_io.stat5ana);
+    }
+    if(g_wifi_info.f.config.an_config & 0x20)
+    {
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA6=%d", g_control_io.stat6ana);
+    }
+
     if(IS_DHT2x_ENABLE)
     {
         DHTxxTemperatura(&t1,&t2);

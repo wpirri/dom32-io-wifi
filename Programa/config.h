@@ -59,6 +59,8 @@ struct _config_ /* 2176 bits, 272 bytes */
     uint16_t wifi_host2_port;
     unsigned char io_config;
     unsigned char an_config;
+    unsigned int an_config_min[6];
+    unsigned int an_config_max[6];
     unsigned char io_config_default;
     uint16_t config_flags;
     uint32_t flash_ok;

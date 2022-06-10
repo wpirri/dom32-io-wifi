@@ -27,6 +27,7 @@
 #include "mcc_generated_files/pin_manager.h"
 #include "config.h"
 #include "http.h"
+#include "adc.h"
 
 unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
@@ -52,44 +53,102 @@ void CTRLInit( void )
 {
     g_control_notificar = 0;
     g_control_init_complete = 0;
+    
     /* Entrada 1 - RB5 */
-    g_control_io.ana1 = (g_wifi_info.f.config.an_config & 0x01)?1:0;
-    g_control_io.dir1 = (g_wifi_info.f.config.io_config & 0x01)?1:0;
     g_control_io.stat1 = false;
-    if(g_control_io.dir1)   {TRISBSET = (1 << 5); CNPUBSET = (1 << 5);}
-    else                    {TRISBCLR = (1 << 5); CNPUBCLR = (1 << 5);}
+    g_control_io.change1 = false;
+    if(g_wifi_info.f.config.io_config & 0x01)
+    {
+        TRISBbits.TRISB5 = 1;
+        CNPUBbits.CNPUB5 = 1;
+        if(g_wifi_info.f.config.an_config & 0x01)
+        {
+            LogMessage("[CONTROL] IO1 no puede ser analogico.\r\n");
+        }
+    }
+    else
+    {
+        TRISBbits.TRISB5 = 0;
+        CNPUBbits.CNPUB5 = 0;
+    }
     /* Entrada 2 - RB4 */
-    g_control_io.ana2 = (g_wifi_info.f.config.an_config & 0x02)?1:0;
-    g_control_io.dir2 = (g_wifi_info.f.config.io_config & 0x02)?1:0;
     g_control_io.stat2 = false;
-    if(g_control_io.dir2)   {TRISBSET = (1 << 4); CNPUBSET = (1 << 4);}
-    else                    {TRISBCLR = (1 << 4); CNPUBCLR = (1 << 4);}
-    /* Entrada 3 - RB3 */
-    g_control_io.ana3 = (g_wifi_info.f.config.an_config & 0x04)?1:0;
-    g_control_io.dir3 = (g_wifi_info.f.config.io_config & 0x04)?1:0;
+    g_control_io.change2 = false;
+    if(g_wifi_info.f.config.io_config & 0x02)
+    {
+        TRISBbits.TRISB4 = 1;
+        CNPUBbits.CNPUB4 = 1;
+        if(g_wifi_info.f.config.an_config & 0x02)
+        {
+            LogMessage("[CONTROL] IO2 no puede ser analogico.\r\n");
+        }
+    }
+    else
+    {
+        TRISBbits.TRISB4 = 0;
+        CNPUBbits.CNPUB4 = 0;
+    }
+    /* Entrada 3 - RB3 / AN11 */
     g_control_io.stat3 = false;
-    if(g_control_io.dir3)   {TRISBSET = (1 << 3); CNPUBSET = (1 << 3);}
-    else                    {TRISBCLR = (1 << 3); CNPUBCLR = (1 << 3);}
+    g_control_io.change3 = false;
+    if(g_wifi_info.f.config.io_config & 0x04)
+    {
+        TRISBbits.TRISB3 = 1;
+        if(g_wifi_info.f.config.an_config & 0x04)
+        {
+            ANSELBbits.ANSB3 = 1;   // AN11
+            CNPUBbits.CNPUB3 = 0;
+        }
+        else
+        {
+            ANSELBbits.ANSB3 = 0;   // AN11
+            CNPUBbits.CNPUB3 = 1;
+        }
+    }
+    else
+    {
+        TRISBbits.TRISB3 = 0;
+        CNPUBbits.CNPUB3 = 0;
+    }
     /* Entrada 4 - RB2 */
-    g_control_io.ana4 = (g_wifi_info.f.config.an_config & 0x08)?1:0;
-    g_control_io.dir4 = (g_wifi_info.f.config.io_config & 0x08)?1:0;
     g_control_io.stat4 = false;
-    if(g_control_io.dir4)   {TRISBSET = (1 << 2); CNPUBSET = (1 << 2);}
-    else                    {TRISBCLR = (1 << 2); CNPUBCLR = (1 << 2);}
+    g_control_io.change4 = false;
+    if(g_wifi_info.f.config.io_config & 0x08)
+    {
+        TRISBbits.TRISB2 = 1;
+        if(g_wifi_info.f.config.an_config & 0x08)
+        {
+            ANSELBbits.ANSB2 = 1;   // AN4
+            CNPUBbits.CNPUB2 = 0;
+        }
+        else
+        {
+            ANSELBbits.ANSB2 = 0;   // AN4
+            CNPUBbits.CNPUB2 = 1;
+        }
+    }
+    else
+    {
+        TRISBbits.TRISB2 = 0;
+        CNPUBbits.CNPUB2 = 0;
+    }
+
     if(IS_WIEGAND_ENABLE)
     {
         /* Entrada 5 - RB7 */
-        g_control_io.ana5 = 0;
-        g_control_io.dir5 = 1;
+        g_wifi_info.f.config.an_config &= (0x10^0xFF);
+        g_wifi_info.f.config.io_config |= 0x10;
         g_control_io.stat5 = false;
-        TRISBSET = (1 << 7);
-        CNPUBSET = (1 << 7);
+        g_control_io.change5 = false;
+        TRISBbits.TRISB7 = 1;
+        CNPUBbits.CNPUB7 = 1;
         /* Entrada 6 - RB8 */
-        g_control_io.ana6 = 0;
-        g_control_io.dir6 = 1;
+        g_wifi_info.f.config.an_config &= (0x20^0xFF);
+        g_wifi_info.f.config.io_config |= 0x20;
         g_control_io.stat6 = false;
-        TRISBSET = (1 << 8); 
-        CNPUBSET = (1 << 8);
+        g_control_io.change6 = false;
+        TRISBbits.TRISB8 = 1;
+        CNPUBbits.CNPUB8 = 1;
 
         /* Traido de interrupt_manager.c --> */
         //    CNBI: PORT B Change Notification
@@ -109,19 +168,42 @@ void CTRLInit( void )
     else
     {
         /* Entrada 5 - RB7 */
-        g_control_io.ana5 = (g_wifi_info.f.config.an_config & 0x10)?1:0;
-        g_control_io.dir5 = (g_wifi_info.f.config.io_config & 0x10)?1:0;
         g_control_io.stat5 = false;
-        if(g_control_io.dir5)   {TRISBSET = (1 << 7); CNPUBSET = (1 << 7);}
-        else                    {TRISBCLR = (1 << 7); CNPUBCLR = (1 << 7);}
+        g_control_io.change5 = false;
+        if(g_wifi_info.f.config.io_config & 0x10)
+        {
+            TRISBbits.TRISB7 = 1;
+            CNPUBbits.CNPUB7 = 1;
+            if(g_wifi_info.f.config.an_config & 0x10)
+            {
+                LogMessage("[CONTROL] IO5 no puede ser analogico.\r\n");
+            }
+        }
+        else
+        {
+            TRISBbits.TRISB7 = 0;
+            CNPUBbits.CNPUB7 = 0;
+        }
         /* Entrada 6 - RB8 */
-        g_control_io.ana6 = (g_wifi_info.f.config.an_config & 0x20)?1:0;
-        g_control_io.dir6 = (g_wifi_info.f.config.io_config & 0x20)?1:0;
         g_control_io.stat6 = false;
-        if(g_control_io.dir6)   {TRISBSET = (1 << 8); CNPUBSET = (1 << 8);}
-        else                    {TRISBCLR = (1 << 8); CNPUBCLR = (1 << 8);}
-
-        IEC0bits.CNBIE = 0; //Disable CNBI interrupt
+        g_control_io.change6 = false;
+        if(g_wifi_info.f.config.io_config & 0x20)
+        {
+            TRISBbits.TRISB8 = 1;
+            CNPUBbits.CNPUB8 = 1;
+            if(g_wifi_info.f.config.an_config & 0x20)
+            {
+                LogMessage("[CONTROL] IO6 no puede ser analogico.\r\n");
+            }
+        }
+        else
+        {
+            TRISBbits.TRISB8 = 0;
+            CNPUBbits.CNPUB8 = 0;
+        }
+        
+        //Disable CNBI interrupt
+        IEC0bits.CNBIE = 0;
     }
 
     if(IS_DHT2x_ENABLE)
@@ -143,6 +225,8 @@ void CTRLInit( void )
     {
 //        IEC0bits.CNAIE = 0; //Disable CNAI interrupt
     }
+    
+    ADCConfig();
     
     LogMessage("TRISB:   0x%04X\r\n", TRISB);
     LogMessage("CNPUB:   0x%04X\r\n", CNPUB);
@@ -169,11 +253,28 @@ void CTRLTask( void )
     switch(ctrl_stm)
     {
         case 1:
-            if(g_control_io.ana1)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x01)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat1ana < g_wifi_info.f.config.an_config_min[0])
+                {
+                    if(g_control_io.stat1)
+                    {
+                        g_control_io.stat1 = 0;
+                        g_control_io.change1 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat1ana > g_wifi_info.f.config.an_config_max[0])
+                {
+                    if(g_control_io.stat1 == 0)
+                    {
+                        g_control_io.stat1 = 1;
+                        g_control_io.change1 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir1)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x01)  /* Input */
             {
                 if(IO1_GetValue() && g_control_count_in1 < DELAY_INPUT) g_control_count_in1++;
                 else if( !IO1_GetValue() && g_control_count_in1 > 0) g_control_count_in1--;
@@ -203,11 +304,28 @@ void CTRLTask( void )
             }
             break;
         case 2:
-            if(g_control_io.ana2)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x02)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat2ana < g_wifi_info.f.config.an_config_min[1])
+                {
+                    if(g_control_io.stat2)
+                    {
+                        g_control_io.stat2 = 0;
+                        g_control_io.change2 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat2ana > g_wifi_info.f.config.an_config_max[1])
+                {
+                    if(g_control_io.stat2 == 0)
+                    {
+                        g_control_io.stat2 = 1;
+                        g_control_io.change2 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir2)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x02)  /* Input */
             {
                 if(IO2_GetValue() && g_control_count_in2 < DELAY_INPUT) g_control_count_in2++;
                 else if( !IO2_GetValue() && g_control_count_in2 > 0) g_control_count_in2--;
@@ -237,11 +355,28 @@ void CTRLTask( void )
             }
             break;
         case 3:
-            if(g_control_io.ana3)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x04)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat3ana < g_wifi_info.f.config.an_config_min[2])
+                {
+                    if(g_control_io.stat3)
+                    {
+                        g_control_io.stat3 = 0;
+                        g_control_io.change3 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat3ana > g_wifi_info.f.config.an_config_max[2])
+                {
+                    if(g_control_io.stat3 == 0)
+                    {
+                        g_control_io.stat3 = 1;
+                        g_control_io.change3 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir3)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x04)  /* Input */
             {
                 if(IO3_GetValue() && g_control_count_in3 < DELAY_INPUT) g_control_count_in3++;
                 else if( !IO3_GetValue() && g_control_count_in3 > 0) g_control_count_in3--;
@@ -271,11 +406,28 @@ void CTRLTask( void )
             }
             break;
         case 4:
-            if(g_control_io.ana4)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x08)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat4ana < g_wifi_info.f.config.an_config_min[3])
+                {
+                    if(g_control_io.stat4)
+                    {
+                        g_control_io.stat4 = 0;
+                        g_control_io.change4 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat4ana > g_wifi_info.f.config.an_config_max[3])
+                {
+                    if(g_control_io.stat4 == 0)
+                    {
+                        g_control_io.stat4 = 1;
+                        g_control_io.change4 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir4)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x08)  /* Input */
             {
                 if(IO4_GetValue() && g_control_count_in4 < DELAY_INPUT) g_control_count_in4++;
                 else if( !IO4_GetValue() && g_control_count_in4 > 0) g_control_count_in4--;
@@ -306,11 +458,28 @@ void CTRLTask( void )
             break;
         case 5:
             if(IS_WIEGAND_ENABLE) break;
-            if(g_control_io.ana5)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x10)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat5ana < g_wifi_info.f.config.an_config_min[4])
+                {
+                    if(g_control_io.stat5)
+                    {
+                        g_control_io.stat5 = 0;
+                        g_control_io.change5 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat5ana > g_wifi_info.f.config.an_config_max[4])
+                {
+                    if(g_control_io.stat5 == 0)
+                    {
+                        g_control_io.stat5 = 1;
+                        g_control_io.change5 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir5)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x10)  /* Input */
             {
                 if(IO5_GetValue() && g_control_count_in5 < DELAY_INPUT) g_control_count_in5++;
                 else if( !IO5_GetValue() && g_control_count_in5 > 0) g_control_count_in5--;
@@ -341,11 +510,28 @@ void CTRLTask( void )
             break;
         case 6:
             if(IS_WIEGAND_ENABLE) break;
-            if(g_control_io.ana6)       /* Anal�gico */
+            if(g_wifi_info.f.config.an_config & 0x20)       /* Anal�gico */
             {
-                
+                if(g_control_io.stat6ana < g_wifi_info.f.config.an_config_min[5])
+                {
+                    if(g_control_io.stat6)
+                    {
+                        g_control_io.stat6 = 0;
+                        g_control_io.change6 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
+                else if(g_control_io.stat6ana > g_wifi_info.f.config.an_config_max[5])
+                {
+                    if(g_control_io.stat6 == 0)
+                    {
+                        g_control_io.stat6 = 1;
+                        g_control_io.change6 = true;
+                        CTRLNotificarStatus(5);
+                    }
+                }
             }
-            else if(g_control_io.dir6)  /* Input */
+            else if(g_wifi_info.f.config.io_config & 0x20)  /* Input */
             {
                 if(IO6_GetValue() && g_control_count_in6 < DELAY_INPUT) g_control_count_in6++;
                 else if( !IO6_GetValue() && g_control_count_in6 > 0) g_control_count_in6--;
@@ -551,7 +737,7 @@ void CTRLSetIO(char* in)
     char tmp[10];
     
     LogMessage("CTRLSetIO: %s\r\n", in);
-    if(g_control_io.dir1 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "PULSE-IO1", tmp))
         {
@@ -571,7 +757,7 @@ void CTRLSetIO(char* in)
         }
     }
 
-    if(g_control_io.dir2 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x02))
     {
         if(HTTPGetFormData(in, "PULSE-IO2", tmp))
         {
@@ -591,7 +777,7 @@ void CTRLSetIO(char* in)
         }
     }
 
-    if(g_control_io.dir3 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x04))
     {
         if(HTTPGetFormData(in, "PULSE-IO3", tmp))
         {
@@ -611,7 +797,7 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(g_control_io.dir4 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x08))
     {
         if(HTTPGetFormData(in, "PULSE-IO4", tmp))
         {
@@ -631,7 +817,7 @@ void CTRLSetIO(char* in)
         }
     }
     
-    if(g_control_io.dir5 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x10))
     {
         if(HTTPGetFormData(in, "PULSE-IO5", tmp))
         {
@@ -651,7 +837,7 @@ void CTRLSetIO(char* in)
         }
     }
 
-    if(g_control_io.dir6 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x20))
     {
         if(HTTPGetFormData(in, "PULSE-IO6", tmp))
         {
@@ -746,7 +932,7 @@ void CTRLSwitchIO(char* in)
     char tmp[10];
     
     LogMessage("CTRLSwitchIO: %s\r\n", in);
-    if(g_control_io.dir1 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "IO1", tmp))
         {
@@ -757,7 +943,7 @@ void CTRLSwitchIO(char* in)
         }
     }
 
-    if(g_control_io.dir2 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x02))
     {
         if(HTTPGetFormData(in, "IO2", tmp))
         {
@@ -768,7 +954,7 @@ void CTRLSwitchIO(char* in)
         }
     }
 
-    if(g_control_io.dir3 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x04))
     {
         if(HTTPGetFormData(in, "IO3", tmp))
         {
@@ -779,7 +965,7 @@ void CTRLSwitchIO(char* in)
         }
     }
     
-    if(g_control_io.dir4 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x08))
     {
         if(HTTPGetFormData(in, "IO4", tmp))
         {
@@ -790,7 +976,7 @@ void CTRLSwitchIO(char* in)
         }
     }
     
-    if(g_control_io.dir5 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x10))
     {
         if(HTTPGetFormData(in, "IO5", tmp))
         {
@@ -801,7 +987,7 @@ void CTRLSwitchIO(char* in)
         }
     }
     
-    if(g_control_io.dir6 == 0)
+    if( !(g_wifi_info.f.config.io_config & 0x20))
     {
         if(HTTPGetFormData(in, "IO6", tmp))
         {
@@ -858,18 +1044,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana1 = 0;
-            g_control_io.dir1 = 1;
+            g_wifi_info.f.config.an_config &= (0x01^0xFF);
+            g_wifi_info.f.config.io_config |= 0x01;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana1 = 0;
-            g_control_io.dir1 = 0;
+            g_wifi_info.f.config.an_config &= (0x01^0xFF);
+            g_wifi_info.f.config.io_config &= (0x01^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana1 = 1;
-            g_control_io.dir1 = 1;
+            g_wifi_info.f.config.an_config |= 0x01;
+            g_wifi_info.f.config.io_config |= 0x01;
         }
     }
     
@@ -878,18 +1064,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana2 = 0;
-            g_control_io.dir2 = 1;
+            g_wifi_info.f.config.an_config &= (0x02^0xFF);
+            g_wifi_info.f.config.io_config |= 0x02;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana2 = 0;
-            g_control_io.dir2 = 0;
+            g_wifi_info.f.config.an_config &= (0x02^0xFF);
+            g_wifi_info.f.config.io_config &= (0x02^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana2 = 1;
-            g_control_io.dir2 = 1;
+            g_wifi_info.f.config.an_config |= 0x02;
+            g_wifi_info.f.config.io_config |= 0x02;
         }
     }
     
@@ -898,18 +1084,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana3 = 0;
-            g_control_io.dir3 = 1;
+            g_wifi_info.f.config.an_config &= (0x04^0xFF);
+            g_wifi_info.f.config.io_config |= 0x04;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana3 = 0;
-            g_control_io.dir3 = 0;
+            g_wifi_info.f.config.an_config &= (0x04^0xFF);
+            g_wifi_info.f.config.io_config &= (0x04^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana3 = 1;
-            g_control_io.dir3 = 1;
+            g_wifi_info.f.config.an_config |= 0x04;
+            g_wifi_info.f.config.io_config |= 0x04;
         }
     }
     
@@ -918,18 +1104,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana4 = 0;
-            g_control_io.dir4 = 1;
+            g_wifi_info.f.config.an_config &= (0x08^0xFF);
+            g_wifi_info.f.config.io_config |= 0x08;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana4 = 0;
-            g_control_io.dir4 = 0;
+            g_wifi_info.f.config.an_config &= (0x08^0xFF);
+            g_wifi_info.f.config.io_config &= (0x08^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana4 = 1;
-            g_control_io.dir4 = 1;
+            g_wifi_info.f.config.an_config |= 0x08;
+            g_wifi_info.f.config.io_config |= 0x08;
         }
     }
     
@@ -938,18 +1124,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana5 = 0;
-            g_control_io.dir5 = 1;
+            g_wifi_info.f.config.an_config &= (0x10^0xFF);
+            g_wifi_info.f.config.io_config |= 0x10;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana5 = 0;
-            g_control_io.dir5 = 0;
+            g_wifi_info.f.config.an_config &= (0x10^0xFF);
+            g_wifi_info.f.config.io_config &= (0x10^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana5 = 1;
-            g_control_io.dir5 = 1;
+            g_wifi_info.f.config.an_config |= 0x10;
+            g_wifi_info.f.config.io_config |= 0x10;
         }
     }
     
@@ -958,18 +1144,18 @@ void CTRLConfIO(char* in)
         change = true;
         if( !strcmp(tmp, "in") )
         {
-            g_control_io.ana6 = 0;
-            g_control_io.dir6 = 1;
+            g_wifi_info.f.config.an_config &= (0x20^0xFF);
+            g_wifi_info.f.config.io_config |= 0x20;
         }
         else if( !strcmp(tmp, "out") )
         {
-            g_control_io.ana6 = 0;
-            g_control_io.dir6 = 0;
+            g_wifi_info.f.config.an_config &= (0x20^0xFF);
+            g_wifi_info.f.config.io_config &= (0x20^0xFF);
         }
         else if( !strcmp(tmp, "ana") )
         {
-            g_control_io.ana6 = 1;
-            g_control_io.dir6 = 1;
+            g_wifi_info.f.config.an_config |= 0x20;
+            g_wifi_info.f.config.io_config |= 0x20;
         }
     }
 

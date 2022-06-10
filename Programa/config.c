@@ -42,6 +42,18 @@ void ConfigLoadDefault( void)
     strcpy(g_wifi_info.f.config.rqst_path, "/cgi-bin");
     g_wifi_info.f.config.io_config_default = 1;
     g_wifi_info.f.config.config_flags = 0x00;
+    g_wifi_info.f.config.an_config_min[0] = 0x0000;
+    g_wifi_info.f.config.an_config_min[1] = 0x0000;
+    g_wifi_info.f.config.an_config_min[2] = 0x0000;
+    g_wifi_info.f.config.an_config_min[3] = 0x0000;
+    g_wifi_info.f.config.an_config_min[4] = 0x0000;
+    g_wifi_info.f.config.an_config_min[5] = 0x0000;
+    g_wifi_info.f.config.an_config_max[0] = 0xffff;
+    g_wifi_info.f.config.an_config_max[1] = 0xffff;
+    g_wifi_info.f.config.an_config_max[2] = 0xffff;
+    g_wifi_info.f.config.an_config_max[3] = 0xffff;
+    g_wifi_info.f.config.an_config_max[4] = 0xffff;
+    g_wifi_info.f.config.an_config_max[5] = 0xffff;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;
@@ -86,22 +98,6 @@ void ConfigSave(void)
     g_wifi_info.status.flash_error = false;
     g_wifi_info.status.save_config = 0;
     
-    g_wifi_info.f.config.an_config = (
-            ((g_control_io.ana1)?0x01:0) |
-            ((g_control_io.ana2)?0x02:0) |
-            ((g_control_io.ana3)?0x04:0) |
-            ((g_control_io.ana4)?0x08:0) |
-            ((g_control_io.ana5)?0x10:0) |
-            ((g_control_io.ana6)?0x20:0) );
-
-    g_wifi_info.f.config.io_config = (
-            ((g_control_io.dir1)?0x01:0) |
-            ((g_control_io.dir2)?0x02:0) |
-            ((g_control_io.dir3)?0x04:0) |
-            ((g_control_io.dir4)?0x08:0) |
-            ((g_control_io.dir5)?0x10:0) |
-            ((g_control_io.dir6)?0x20:0) );
-
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
     FLASH_ErasePage(f);

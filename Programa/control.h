@@ -24,35 +24,29 @@
 
 typedef struct
 {
-    bool dir1;      /* true = input, false = output */
-    bool ana1;
     bool stat1;
     bool change1;
+    unsigned int stat1ana;
     unsigned int pulse1;
-    bool dir2;
-    bool ana2;
     bool stat2;
     bool change2;
+    unsigned int stat2ana;
     unsigned int pulse2;
-    bool dir3;
-    bool ana3;
     bool stat3;
     bool change3;
+    unsigned int stat3ana;
     unsigned int pulse3;
-    bool dir4;
-    bool ana4;
     bool stat4;
     bool change4;
+    unsigned int stat4ana;
     unsigned int pulse4;
-    bool dir5;
-    bool ana5;
     bool stat5;
     bool change5;
+    unsigned int stat5ana;
     unsigned int pulse5;
-    bool dir6;
-    bool ana6;
     bool stat6;
     bool change6;
+    unsigned int stat6ana;
     unsigned int pulse6;
 }IO;
 

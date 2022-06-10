@@ -23,23 +23,23 @@
  * 3    RA1                 out         Led Modo
  * 4    RB0/PGED1                       Programacion/Debug
  * 5    RB1/PGEC1                       Programacion/Debug
- * 6    RB2                 in          IO1
- * 7    RB3                 in          IO2
+ * 6    RB2/AN4             in          IO4
+ * 7    RB3/AN11            in          IO3
  * 8    Vss                             Vss
- * 9    RA2/RP3             UART2       Rx
+ * 9    RA2/RP3/AN5         UART2       Rx/DHT22-DATA/Analog Input
  * 10   RA3/RP4             UART2       Tx
- * 11   RB4/RP5             in          IO3
+ * 11   RB4/RP5             in          IO2
  * 12   RA4/RP6             out         Led Aux
  * 13   Vdd                             +3v3
- * 14   RB5                 in          IO4
- * 15   RB6                 
+ * 14   RB5                 in          IO1
+ * 15   RB6                 out         Aux/DHT22-Power
  * 16   RB7                 in          IO5
  * 17   RB8/SCK1            in          IO6
- * 18   RB9/SDO1            out         OUT4
- * 19   RC9                 out         OUT3
+ * 18   RB9/SDO1            out         OUT1
+ * 19   RC9                 out         OUT2
  * 20   VCap                            Cap 100n + 10uF
- * 21   RB10/RP17           out         OUT2
- * 22   RB11/RP18           out         OUT1
+ * 21   RB10/RP17           out         OUT3
+ * 22   RB11/RP18           out         OUT4
  * 23   RB12/RP12           
  * 24   RB13/RP13           out/oc      RESET -> ESP-WROOM-02_Reset-pin15
  * 25   RB14/RP19           UART1       Tx    -> ESP-WROOM-02_Rx-pin11
@@ -60,6 +60,7 @@
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/watchdog.h"
 #include "config.h"
+#include "adc.h"
 #include "http.h"
 #include "wifi.h"
 #include "control.h"
@@ -159,6 +160,7 @@ int main(void)
     ConfigInit();
     ConfigLoad();
 
+    ADCInit();
     CTRLInit();
     WiFiInit();
     HTTPInit();
@@ -174,6 +176,7 @@ int main(void)
         WiFiTask();
         HTTPTask();
         CTRLTask();
+        ADCTask();
         if(IS_WIEGAND_ENABLE) WGND_Task();
         
         if(main_flag_core_timer)
@@ -186,6 +189,7 @@ int main(void)
                 /* Timer 10 veces por segundo - 100ms */
                 LedControl();
                 ConfigTimer();
+                ADCTimer();
                 WiFiTimer();
                 HTTPTimer();
                 CTRLTimer();
