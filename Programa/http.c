@@ -266,73 +266,187 @@ void HttpReturnWiFiConfig(char *out)
             g_wifi_info.f.config.rqst_path);
 }
 
-void HttpReturnStatus(char *out)
+/* *****************************************************************************
+ * Genera un mensaje WEB con formato de formulario POST
+ * y lo copia a un buffer (respuesta) o encola para enviar (notificación)
+ * ************************************************************************** */
+int HTTPNotificarStatus(char *out)
 {
-    sprintf(out, 
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
-            "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_control_io.stat1)?"on":"off",
-            (g_control_io.stat2)?"on":"off",
-            (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off",
-            (g_control_io.stat5)?"on":"off",
-            (g_control_io.stat6)?"on":"off",
-            (g_control_out.stat1)?"on":"off",
-            (g_control_out.stat2)?"on":"off",
-            (g_control_out.stat3)?"on":"off",
-            (g_control_out.stat4)?"on":"off");
+    int t1, t2, h1, h2;
+    bool first_change;
+    
+    LogMessage("HTTPNotificarStatus\r\n");
+
+    /* Parte fija con la MAC y las entradas y salidas */
+    sprintf(http_rqst_data, 
+        "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
+        g_wifi_info.status.hw_mac,
+        (g_control_io.stat1)?"on":"off",
+        (g_control_io.stat2)?"on":"off",
+        (g_control_io.stat3)?"on":"off",
+        (g_control_io.stat4)?"on":"off",
+        (g_control_io.stat5)?"on":"off",
+        (g_control_io.stat6)?"on":"off",
+        (g_control_out.stat1)?"on":"off",
+        (g_control_out.stat2)?"on":"off",
+        (g_control_out.stat3)?"on":"off",
+        (g_control_out.stat4)?"on":"off");
+    
+    /* Agrego las salidas analogicas configuradas */
     if(g_wifi_info.f.config.an_config & 0x01)
     {
-        sprintf(&out[strlen(out)], "&ANA1=%d", g_control_io.stat1ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA1=%d", g_control_io.stat1ana);
     }
     if(g_wifi_info.f.config.an_config & 0x02)
     {
-        sprintf(&out[strlen(out)], "&ANA2=%d", g_control_io.stat2ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA2=%d", g_control_io.stat2ana);
     }
     if(g_wifi_info.f.config.an_config & 0x04)
     {
-        sprintf(&out[strlen(out)], "&ANA3=%d", g_control_io.stat3ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA3=%d", g_control_io.stat3ana);
     }
     if(g_wifi_info.f.config.an_config & 0x08)
     {
-        sprintf(&out[strlen(out)], "&ANA4=%d", g_control_io.stat4ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA4=%d", g_control_io.stat4ana);
     }
     if(g_wifi_info.f.config.an_config & 0x10)
     {
-        sprintf(&out[strlen(out)], "&ANA5=%d", g_control_io.stat5ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA5=%d", g_control_io.stat5ana);
     }
     if(g_wifi_info.f.config.an_config & 0x20)
     {
-        sprintf(&out[strlen(out)], "&ANA6=%d", g_control_io.stat6ana);
+        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA6=%d", g_control_io.stat6ana);
     }
+
+    if( g_control_io.change1 ||
+        g_control_io.change2 ||
+        g_control_io.change3 ||
+        g_control_io.change4 ||
+        g_control_io.change5 ||
+        g_control_io.change6 ||
+        g_control_out.change1 ||
+        g_control_out.change2 ||
+        g_control_out.change3 ||
+        g_control_out.change4  )
+    {
+        strcat(http_rqst_data, "&CHG=");
+        first_change = true;
+        
+        if(g_control_io.change1)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO1");
+        }
+        if(g_control_io.change2)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO2");
+        }
+        if(g_control_io.change3)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO3");
+        }
+        if(g_control_io.change4)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO4");
+        }
+        if(g_control_io.change5)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO5");
+        }
+        if(g_control_io.change6)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "IO6");
+        }
+        if(g_control_out.change1)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "OUT1");
+        }
+        if(g_control_out.change2)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "OUT2");
+        }
+        if(g_control_out.change3)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "OUT3");
+        }
+        if(g_control_out.change4)
+        {
+            if(!first_change) strcat(http_rqst_data, ",");
+            first_change = false;
+            strcat(http_rqst_data, "OUT4");
+        }
+    }
+    
+    /* Agrego info de Temperatura y humedad si está configurado */
+    if(IS_DHT2x_ENABLE)
+    {
+        DHTxxTemperatura(&t1,&t2);
+        DHTxxHumedad(&h1,&h2); 
+        sprintf(&http_rqst_data[strlen(http_rqst_data)],
+                "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
+    }
+
+    /* Agrego solicitud de configuración */
     if(g_wifi_info.f.config.io_config_default)
     {
         strcat(http_rqst_data, "&GETCONF=1");
     }
-}
+    
+    sprintf(http_rqst_uri, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
+/* POST
+ * 1.- %s: URI
+ * 2.- %s: Host
+ * 3.- %d: Content-Length
+ * 4.- %s: datos
+ */
+    sprintf(http_rqst, http_post,
+            http_rqst_uri,
+            g_wifi_info.f.config.wifi_host1,
+            strlen(http_rqst_data),
+            http_rqst_data);
 
-void HttpReturnStatusXML(char *out)
-{
-    sprintf(out,
-            "%s"
-            "<?xml version=\"1.0\"?>\r\n"
-            "<response>\n"
-            "<IO1>%s</IO1>\n"
-            "<IO2>%s</IO2>\n"
-            "<IO3>%s</IO3>\n"
-            "<IO4>%s</IO4>\n"
-            "<IO5>%s</IO5>\n"
-            "<IO6>%s</IO6>\n"
-            "</response>",
-            xml_200,
-            (g_control_io.stat1)?"on":"off",
-            (g_control_io.stat2)?"on":"off",
-            (g_control_io.stat3)?"on":"off",
-            (g_control_io.stat4)?"on":"off",
-            (g_control_io.stat5)?"on":"off",
-            (g_control_io.stat6)?"on":"off");
+    /* Debo poner en un buffer o enviar? */
+    if(out)
+    {
+        /* Poner en un buffer */
+        strcpy(out, http_rqst);
+    }
+    else if(HTTPAdd((-1), http_rqst) == 0)
+    {
+        /* No fue posible enviar */
+        return 0;
+    }
+    
+    /* Reseteo los cambios */
+    g_control_io.change1 = 0;
+    g_control_io.change2 = 0;
+    g_control_io.change3 = 0;
+    g_control_io.change4 = 0;
+    g_control_io.change5 = 0;
+    g_control_io.change6 = 0;
+    g_control_out.change1 = 0;
+    g_control_out.change2 = 0;
+    g_control_out.change3 = 0;
+    g_control_out.change4 = 0;
+
+    return strlen(http_rqst);
 }
 
 #ifdef INCLUDE_IO_FORMS
@@ -453,15 +567,11 @@ void HTTPTask( void )
         }
         else if( !strcmp(htdat[id].rqst, "/status.htm"))
         {
-            HttpReturnStatus(htdat[id].data);
+            HTTPNotificarStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
         {
-            HttpReturnStatus(htdat[id].data);
-        }
-        else if( !strcmp(htdat[id].rqst, "/iostatus.xml"))
-        {
-            HttpReturnStatusXML(htdat[id].data);
+            HTTPNotificarStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/config.htm"))
         {
@@ -507,13 +617,13 @@ void HTTPTask( void )
 #ifdef INCLUDE_IO_FORMS
             HttpReturnIOStatusForm(htdat[id].data);
 #else
-            HttpReturnStatus(htdat[id].data);
+            HTTPNotificarStatus(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
         }
         else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
         {
             CTRLSwitchIO(htdat[id].data);
-            HttpReturnStatus(htdat[id].data);
+            HTTPNotificarStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
@@ -686,111 +796,6 @@ const char* HTTPGet(int id, char* buffer)
         return (const char*)&htdat[id].data[0];
     }
     return NULL;
-}
-
-/* *****************************************************************************
- * Genera un mensaje WEB con formato de formulario POST y lo encola para enviar
- * ************************************************************************** */
-int HTTPNotificarStatus(void)
-{
-    int t1, t2, h1, h2;
-    
-    LogMessage("HTTPNotificarStatus\r\n");
-
-    sprintf(http_rqst_data, 
-    "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&"
-    "OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s&"
-    "CHG=%c%c%c%c%c%c00%c%c%c%c0000",
-    g_wifi_info.status.hw_mac,
-    (g_control_io.stat1)?"on":"off",
-    (g_control_io.stat2)?"on":"off",
-    (g_control_io.stat3)?"on":"off",
-    (g_control_io.stat4)?"on":"off",
-    (g_control_io.stat5)?"on":"off",
-    (g_control_io.stat6)?"on":"off",
-    (g_control_out.stat1)?"on":"off",
-    (g_control_out.stat2)?"on":"off",
-    (g_control_out.stat3)?"on":"off",
-    (g_control_out.stat4)?"on":"off",
-    (g_control_io.change1)?'1':'0',
-    (g_control_io.change2)?'1':'0',
-    (g_control_io.change3)?'1':'0',
-    (g_control_io.change4)?'1':'0',
-    (g_control_io.change5)?'1':'0',
-    (g_control_io.change6)?'1':'0',
-    (g_control_out.change1)?'1':'0',
-    (g_control_out.change2)?'1':'0',
-    (g_control_out.change3)?'1':'0',
-    (g_control_out.change4)?'1':'0');
-    
-    if(g_wifi_info.f.config.an_config & 0x01)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA1=%d", g_control_io.stat1ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x02)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA2=%d", g_control_io.stat2ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x04)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA3=%d", g_control_io.stat3ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x08)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA4=%d", g_control_io.stat4ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x10)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA5=%d", g_control_io.stat5ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x20)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA6=%d", g_control_io.stat6ana);
-    }
-
-    if(IS_DHT2x_ENABLE)
-    {
-        DHTxxTemperatura(&t1,&t2);
-        DHTxxHumedad(&h1,&h2); 
-        sprintf(&http_rqst_data[strlen(http_rqst_data)],
-                "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
-    }
-
-    if(g_wifi_info.f.config.io_config_default)
-    {
-        strcat(http_rqst_data, "&GETCONF=1");
-    }
-    sprintf(http_rqst_uri, "%s/infoio.cgi", 
-            g_wifi_info.f.config.rqst_path);
-/* POST
- * 1.- %s: URI
- * 2.- %s: Host
- * 3.- %d: Content-Length
- * 4.- %s: datos
- */
-    sprintf(http_rqst, http_post,
-            http_rqst_uri,
-            g_wifi_info.f.config.wifi_host1,
-            strlen(http_rqst_data),
-            http_rqst_data);
-    if(HTTPAdd((-1), http_rqst) == 0)
-    {
-        /* No fue posible enviar */
-        return 0;
-    }
-    
-    g_control_io.change1 = 0;
-    g_control_io.change2 = 0;
-    g_control_io.change3 = 0;
-    g_control_io.change4 = 0;
-    g_control_io.change5 = 0;
-    g_control_io.change6 = 0;
-    g_control_out.change1 = 0;
-    g_control_out.change2 = 0;
-    g_control_out.change3 = 0;
-    g_control_out.change4 = 0;
-
-    return strlen(http_rqst);
 }
 
 int HTTPNotificarTarjeta( const char *crd)

@@ -29,7 +29,7 @@ int HTTPPending(void);
 char HTTPGetType(int id);
 const char*  HTTPGet(int id, char* buffer);
 
-int HTTPNotificarStatus(void);
+int HTTPNotificarStatus(char *out);
 int HTTPNotificarTarjeta( const char *crd);
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
