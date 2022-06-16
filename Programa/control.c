@@ -1052,11 +1052,6 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x01^0xFF);
             g_wifi_info.f.config.io_config &= (0x01^0xFF);
         }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_wifi_info.f.config.an_config |= 0x01;
-            g_wifi_info.f.config.io_config |= 0x01;
-        }
     }
     
     if(HTTPGetFormData(in, "IO2", tmp))
@@ -1071,11 +1066,6 @@ void CTRLConfIO(char* in)
         {
             g_wifi_info.f.config.an_config &= (0x02^0xFF);
             g_wifi_info.f.config.io_config &= (0x02^0xFF);
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_wifi_info.f.config.an_config |= 0x02;
-            g_wifi_info.f.config.io_config |= 0x02;
         }
     }
     
@@ -1132,11 +1122,6 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x10^0xFF);
             g_wifi_info.f.config.io_config &= (0x10^0xFF);
         }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_wifi_info.f.config.an_config |= 0x10;
-            g_wifi_info.f.config.io_config |= 0x10;
-        }
     }
     
     if(HTTPGetFormData(in, "IO6", tmp))
@@ -1151,11 +1136,6 @@ void CTRLConfIO(char* in)
         {
             g_wifi_info.f.config.an_config &= (0x20^0xFF);
             g_wifi_info.f.config.io_config &= (0x20^0xFF);
-        }
-        else if( !strcmp(tmp, "ana") )
-        {
-            g_wifi_info.f.config.an_config |= 0x20;
-            g_wifi_info.f.config.io_config |= 0x20;
         }
     }
 
