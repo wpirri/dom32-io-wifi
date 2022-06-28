@@ -253,28 +253,7 @@ void CTRLTask( void )
     switch(ctrl_stm)
     {
         case 1:
-            if(g_wifi_info.f.config.an_config & 0x01)       /* Anal�gico */
-            {
-                if(g_control_io.stat1ana < g_wifi_info.f.config.an_config_min[0])
-                {
-                    if(g_control_io.stat1)
-                    {
-                        g_control_io.stat1 = 0;
-                        g_control_io.change1 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat1ana > g_wifi_info.f.config.an_config_max[0])
-                {
-                    if(g_control_io.stat1 == 0)
-                    {
-                        g_control_io.stat1 = 1;
-                        g_control_io.change1 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x01)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x01)  /* Input */
             {
                 if(IO1_GetValue() && g_control_count_in1 < DELAY_INPUT) g_control_count_in1++;
                 else if( !IO1_GetValue() && g_control_count_in1 > 0) g_control_count_in1--;
@@ -304,28 +283,7 @@ void CTRLTask( void )
             }
             break;
         case 2:
-            if(g_wifi_info.f.config.an_config & 0x02)       /* Anal�gico */
-            {
-                if(g_control_io.stat2ana < g_wifi_info.f.config.an_config_min[1])
-                {
-                    if(g_control_io.stat2)
-                    {
-                        g_control_io.stat2 = 0;
-                        g_control_io.change2 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat2ana > g_wifi_info.f.config.an_config_max[1])
-                {
-                    if(g_control_io.stat2 == 0)
-                    {
-                        g_control_io.stat2 = 1;
-                        g_control_io.change2 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x02)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x02)  /* Input */
             {
                 if(IO2_GetValue() && g_control_count_in2 < DELAY_INPUT) g_control_count_in2++;
                 else if( !IO2_GetValue() && g_control_count_in2 > 0) g_control_count_in2--;
@@ -355,28 +313,7 @@ void CTRLTask( void )
             }
             break;
         case 3:
-            if(g_wifi_info.f.config.an_config & 0x04)       /* Anal�gico */
-            {
-                if(g_control_io.stat3ana < g_wifi_info.f.config.an_config_min[2])
-                {
-                    if(g_control_io.stat3)
-                    {
-                        g_control_io.stat3 = 0;
-                        g_control_io.change3 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat3ana > g_wifi_info.f.config.an_config_max[2])
-                {
-                    if(g_control_io.stat3 == 0)
-                    {
-                        g_control_io.stat3 = 1;
-                        g_control_io.change3 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x04)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x04)  /* Input */
             {
                 if(IO3_GetValue() && g_control_count_in3 < DELAY_INPUT) g_control_count_in3++;
                 else if( !IO3_GetValue() && g_control_count_in3 > 0) g_control_count_in3--;
@@ -406,28 +343,7 @@ void CTRLTask( void )
             }
             break;
         case 4:
-            if(g_wifi_info.f.config.an_config & 0x08)       /* Anal�gico */
-            {
-                if(g_control_io.stat4ana < g_wifi_info.f.config.an_config_min[3])
-                {
-                    if(g_control_io.stat4)
-                    {
-                        g_control_io.stat4 = 0;
-                        g_control_io.change4 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat4ana > g_wifi_info.f.config.an_config_max[3])
-                {
-                    if(g_control_io.stat4 == 0)
-                    {
-                        g_control_io.stat4 = 1;
-                        g_control_io.change4 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x08)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x08)  /* Input */
             {
                 if(IO4_GetValue() && g_control_count_in4 < DELAY_INPUT) g_control_count_in4++;
                 else if( !IO4_GetValue() && g_control_count_in4 > 0) g_control_count_in4--;
@@ -458,28 +374,7 @@ void CTRLTask( void )
             break;
         case 5:
             if(IS_WIEGAND_ENABLE) break;
-            if(g_wifi_info.f.config.an_config & 0x10)       /* Anal�gico */
-            {
-                if(g_control_io.stat5ana < g_wifi_info.f.config.an_config_min[4])
-                {
-                    if(g_control_io.stat5)
-                    {
-                        g_control_io.stat5 = 0;
-                        g_control_io.change5 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat5ana > g_wifi_info.f.config.an_config_max[4])
-                {
-                    if(g_control_io.stat5 == 0)
-                    {
-                        g_control_io.stat5 = 1;
-                        g_control_io.change5 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x10)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x10)  /* Input */
             {
                 if(IO5_GetValue() && g_control_count_in5 < DELAY_INPUT) g_control_count_in5++;
                 else if( !IO5_GetValue() && g_control_count_in5 > 0) g_control_count_in5--;
@@ -510,28 +405,7 @@ void CTRLTask( void )
             break;
         case 6:
             if(IS_WIEGAND_ENABLE) break;
-            if(g_wifi_info.f.config.an_config & 0x20)       /* Anal�gico */
-            {
-                if(g_control_io.stat6ana < g_wifi_info.f.config.an_config_min[5])
-                {
-                    if(g_control_io.stat6)
-                    {
-                        g_control_io.stat6 = 0;
-                        g_control_io.change6 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-                else if(g_control_io.stat6ana > g_wifi_info.f.config.an_config_max[5])
-                {
-                    if(g_control_io.stat6 == 0)
-                    {
-                        g_control_io.stat6 = 1;
-                        g_control_io.change6 = true;
-                        CTRLNotificarStatus(5);
-                    }
-                }
-            }
-            else if(g_wifi_info.f.config.io_config & 0x20)  /* Input */
+            if(g_wifi_info.f.config.io_config & 0x20)  /* Input */
             {
                 if(IO6_GetValue() && g_control_count_in6 < DELAY_INPUT) g_control_count_in6++;
                 else if( !IO6_GetValue() && g_control_count_in6 > 0) g_control_count_in6--;
@@ -746,11 +620,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO1", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat1 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat1 = 0;
             }
@@ -766,11 +640,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO2", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat2 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat2 = 0;
             }
@@ -786,11 +660,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO3", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat3 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat3 = 0;
             }
@@ -806,11 +680,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO4", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat4 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat4 = 0;
             }
@@ -826,11 +700,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO5", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat5 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat5 = 0;
             }
@@ -846,11 +720,11 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO6", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat6 = 1;
             }
-            else if( !strcmp(tmp, "off") )
+            else if( tmp[0] == '0' )
             {
                 g_control_io.stat6 = 0;
             }
@@ -864,11 +738,11 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT1", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat1 = 1;
         }
-        else if( !strcmp(tmp, "off") )
+        else if( tmp[0] == '0' )
         {
             g_control_out.stat1 = 0;
         }
@@ -881,11 +755,11 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT2", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat2 = 1;
         }
-        else if( !strcmp(tmp, "off") )
+        else if( tmp[0] == '0' )
         {
             g_control_out.stat2 = 0;
         }
@@ -898,11 +772,11 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT3", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat3 = 1;
         }
-        else if( !strcmp(tmp, "off") )
+        else if( tmp[0] == '0' )
         {
             g_control_out.stat3 = 0;
         }
@@ -915,11 +789,11 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT4", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat4 = 1;
         }
-        else if( !strcmp(tmp, "off") )
+        else if( tmp[0] == '0' )
         {
             g_control_out.stat4 = 0;
         }
@@ -936,7 +810,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO1", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat1 = (g_control_io.stat1)?0:1;
             }
@@ -947,7 +821,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO2", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat2 = (g_control_io.stat2)?0:1;
             }
@@ -958,7 +832,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO3", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat3 = (g_control_io.stat3)?0:1;
             }
@@ -969,7 +843,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO4", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat4 = (g_control_io.stat4)?0:1;
             }
@@ -980,7 +854,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO5", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat5 = (g_control_io.stat5)?0:1;
             }
@@ -991,7 +865,7 @@ void CTRLSwitchIO(char* in)
     {
         if(HTTPGetFormData(in, "IO6", tmp))
         {
-            if( !strcmp(tmp, "on") )
+            if( tmp[0] == '1' )
             {
                 g_control_io.stat6 = (g_control_io.stat6)?0:1;
             }
@@ -1000,7 +874,7 @@ void CTRLSwitchIO(char* in)
     
     if(HTTPGetFormData(in, "OUT1", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat1 = (g_control_out.stat1)?0:1;
         }
@@ -1008,7 +882,7 @@ void CTRLSwitchIO(char* in)
     
     if(HTTPGetFormData(in, "OUT2", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat2 = (g_control_out.stat2)?0:1;
         }
@@ -1016,7 +890,7 @@ void CTRLSwitchIO(char* in)
     
     if(HTTPGetFormData(in, "OUT3", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat3 = (g_control_out.stat3)?0:1;
         }
@@ -1024,7 +898,7 @@ void CTRLSwitchIO(char* in)
     
     if(HTTPGetFormData(in, "OUT4", tmp))
     {
-        if( !strcmp(tmp, "on") )
+        if( tmp[0] == '1' )
         {
             g_control_out.stat4 = (g_control_out.stat4)?0:1;
         }

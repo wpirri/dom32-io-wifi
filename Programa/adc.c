@@ -141,10 +141,10 @@ void ADCTask(void)
             switch(ADC_count_channel)
             {
                 case 1:
-                    g_control_io.stat3ana = ADC1BUF0 * 3300l / 1023;
+                    g_control_io.stat3 = ADC1BUF0 * 3300l / 1023;
                     break;
                 case 2:
-                    g_control_io.stat4ana = ADC1BUF0 * 3300l / 1023;
+                    g_control_io.stat4 = ADC1BUF0 * 3300l / 1023;
                     break;
                 case 3:
 

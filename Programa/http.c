@@ -279,45 +279,19 @@ int HTTPNotificarStatus(char *out)
 
     /* Parte fija con la MAC y las entradas y salidas */
     sprintf(http_rqst_data, 
-        "ID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s&OUT1=%s&OUT2=%s&OUT3=%s&OUT4=%s",
+        "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         g_wifi_info.status.hw_mac,
-        (g_control_io.stat1)?"on":"off",
-        (g_control_io.stat2)?"on":"off",
-        (g_control_io.stat3)?"on":"off",
-        (g_control_io.stat4)?"on":"off",
-        (g_control_io.stat5)?"on":"off",
-        (g_control_io.stat6)?"on":"off",
-        (g_control_out.stat1)?"on":"off",
-        (g_control_out.stat2)?"on":"off",
-        (g_control_out.stat3)?"on":"off",
-        (g_control_out.stat4)?"on":"off");
+        g_control_io.stat1,
+        g_control_io.stat2,
+        g_control_io.stat3,
+        g_control_io.stat4,
+        g_control_io.stat5,
+        g_control_io.stat6,
+        (g_control_out.stat1)?1:0,
+        (g_control_out.stat2)?1:0,
+        (g_control_out.stat3)?1:0,
+        (g_control_out.stat4)?1:0);
     
-    /* Agrego las salidas analogicas configuradas */
-    if(g_wifi_info.f.config.an_config & 0x01)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA1=%d", g_control_io.stat1ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x02)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA2=%d", g_control_io.stat2ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x04)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA3=%d", g_control_io.stat3ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x08)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA4=%d", g_control_io.stat4ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x10)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA5=%d", g_control_io.stat5ana);
-    }
-    if(g_wifi_info.f.config.an_config & 0x20)
-    {
-        sprintf(&http_rqst_data[strlen(http_rqst_data)], "&ANA6=%d", g_control_io.stat6ana);
-    }
-
     if( g_control_io.change1 ||
         g_control_io.change2 ||
         g_control_io.change3 ||
