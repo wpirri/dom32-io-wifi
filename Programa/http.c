@@ -730,7 +730,7 @@ int HTTPAdd(int id, const char* buffer)
 }
 
 /* *****************************************************************************
- * Devuelve el indice de un mensaje pendiente de procesar
+ * Devuelve el indice de un mensaje pendiente de responder o enviar
  * ************************************************************************** */
 int HTTPPending(void)
 {
