@@ -56,6 +56,8 @@ unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
 unsigned int g_wifi_task_retry;
 int g_wifi_http_id;
+unsigned char g_wifi_send_error_count;
+unsigned char g_wifi_recv_error_count;
 
 unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 unsigned int g_wifi_read_line_buffer_index;
@@ -67,9 +69,7 @@ unsigned int g_wifi_port;
 
 char g_wifi_cmd[64];
 
-unsigned char g_loop_count;
-
-bool g_need_upgrade;
+bool g_wifi_need_upgrade;
 
 void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
@@ -302,7 +302,7 @@ int WifiCheckUnsol( void )
         //if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
         //{
         //    LogMessage("WiFi: El firware necesita upgrade.\r\n");
-        //    g_need_upgrade = true;
+        //    g_wifi_need_upgrade = true;
         //}
     }
     else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
@@ -851,8 +851,6 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_step = 10;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
-                /**/
-                g_wifi_info.status.host_conectado = 0;
             }
             break;
         case 5:
@@ -865,11 +863,20 @@ int WifiTaskHttp( void )
             if(WifiWaitLine("SEND OK") || g_wifi_task_stm_timeout == 0)
             {
                 LogMessage("WifiTaskHttp -> Envio Ok\r\n");
+                if(HTTPGetType(g_wifi_http_id) == 'S')
+                {
+                    /* Si es un requerimiento saliente */
+                    g_wifi_send_error_count = 0;
+                    g_wifi_info.status.host_conectado = 1;
+                }
+                else
+                {
+                    /* Si es una respuesta saliente */
+                    g_wifi_recv_error_count = 0;
+                }
                 g_wifi_task_stm_step = 7;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
-                /**/
-                g_wifi_info.status.host_conectado = 1;
             }
             break;
         case 7:
@@ -889,6 +896,17 @@ int WifiTaskHttp( void )
             break;
         case 9:
             /* Send Error */
+            if(HTTPGetType(g_wifi_http_id) == 'S')
+            {
+                /* Si es un requerimiento saliente */
+                g_wifi_send_error_count++;
+                g_wifi_info.status.host_conectado = 0;
+            }
+            else
+            {
+                /* Si es una respuesta saliente */
+                g_wifi_recv_error_count++;
+            }
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step = 10;
@@ -900,6 +918,9 @@ int WifiTaskHttp( void )
             if(HTTPGetType(g_wifi_http_id) == 'S')
             {
                 /* Si es un  requerimiento saliente */
+                g_wifi_info.status.host_conectado = 0;
+                g_wifi_send_error_count++;
+                /**/
                 g_wifi_task_retry++;
                 if(g_wifi_task_retry < 2)
                 {
@@ -909,6 +930,11 @@ int WifiTaskHttp( void )
                     g_wifi_task_stm_timeout = 0;
                     break;
                 }
+            }
+            else
+            {
+                /* Si es una respuesta saliente */
+                g_wifi_recv_error_count++;
             }
             rc = LOOP;
             break;
@@ -923,8 +949,16 @@ int WifiTaskLoop( void )
 {
     int rc = 0;
 
+    if(g_wifi_send_error_count >= 5)
+    {
+        return (-1);
+    }
+    else if(g_wifi_recv_error_count >= 5)
+    {
+        return (-1);
+    }
     /* Espero no solicitados */
-    if((rc = WifiWaitLine(NULL)) > 0)
+    else if((rc = WifiWaitLine(NULL)) > 0)
     {
         return rc;
     }
@@ -938,7 +972,7 @@ int WifiTaskLoop( void )
         //LogMessage("HTTP Pendiente\r\n");
         return HTTP;
     }
-    else if(g_need_upgrade && g_wifi_info.status.wifi_conectado)
+    else if(g_wifi_need_upgrade && g_wifi_info.status.wifi_conectado)
     {
         return UPGRADE;
     }
@@ -989,7 +1023,9 @@ void WiFiInit( void )
 {
     g_wifi_task_stm = RESET;
     g_wifi_task_stm_delay = 0;
-    g_need_upgrade = false;
+    g_wifi_need_upgrade = false;
+    g_wifi_send_error_count = 0;
+    g_wifi_recv_error_count = 0;
     
     g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
     g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80;
@@ -1016,8 +1052,10 @@ void WiFiTask( void )
             g_wifi_read_line_buffer_timer = 0;
             g_wifi_read_line_wait_crlf = true;
 
+            g_wifi_send_error_count = 0;
+            g_wifi_recv_error_count = 0;
+
             g_wifi_info.status.wifi_need_firmware_update = false;
-            g_loop_count = 0;
             g_wifi_info.status.wifi_conectado = 0;
             g_wifi_info.status.wifi_ap_select = 1;
             g_wifi_info.status.wifi_start_ap = true;
