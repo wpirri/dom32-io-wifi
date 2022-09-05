@@ -277,7 +277,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change1 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -307,7 +307,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change2 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -337,7 +337,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change3 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -367,7 +367,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change4 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -398,7 +398,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change5 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -429,7 +429,7 @@ void CTRLTask( void )
                     if(g_control_init_complete)
                     {
                         g_control_io.change6 = true;
-                        //CTRLNotificarStatus(10);
+                        CTRLNotificarStatus(0);
                     }
                 }
             }
@@ -441,7 +441,7 @@ void CTRLTask( void )
                 if(g_control_init_complete)
                 {
                     g_control_out.change1 = true;
-                    //CTRLNotificarStatus(10);
+                    CTRLNotificarStatus(0);
                 }
             }
             break;
@@ -452,7 +452,7 @@ void CTRLTask( void )
                 if(g_control_init_complete)
                 {
                     g_control_out.change2 = true;
-                    //CTRLNotificarStatus(10);
+                    CTRLNotificarStatus(0);
                 }
             }
             break;
@@ -463,7 +463,7 @@ void CTRLTask( void )
                 if(g_control_init_complete)
                 {
                     g_control_out.change3 = true;
-                    //CTRLNotificarStatus(10);
+                    CTRLNotificarStatus(0);
                 }
             }
             break;
@@ -474,7 +474,7 @@ void CTRLTask( void )
                 if(g_control_init_complete)
                 {
                     g_control_out.change4 = true;
-                    //CTRLNotificarStatus(10);
+                    CTRLNotificarStatus(0);
                 }
             }
             break;
