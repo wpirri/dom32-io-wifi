@@ -757,11 +757,11 @@ char HTTPGetType(int id)
 /* *****************************************************************************
  * Saca un mensaje de la cola para procesar
  * ************************************************************************** */
-const char* HTTPGet(int id, char* buffer)
+const char* HTTPGet(int id, char* buffer, bool clear)
 {
     if(id >= 0 && id < (WIFI_CIP_MAX_CONS+1))
     {
-        htdat[id].type = 0;
+        if(clear) htdat[id].type = 0;
         if(buffer)
         {
             strcpy(buffer, htdat[id].data);

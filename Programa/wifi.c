@@ -70,6 +70,7 @@ unsigned int g_wifi_port;
 char g_wifi_cmd[64];
 
 bool g_wifi_need_upgrade;
+bool g_wifi_fast_start;
 
 void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
@@ -832,7 +833,7 @@ int WifiTaskHttp( void )
             break;
         case 3:
             LogMessage("WifiTaskHttp -> Enviando...\r\n");
-            sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL)));
+            sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL, false)));
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step = 4;
             g_wifi_task_stm_delay = 0;
@@ -848,13 +849,13 @@ int WifiTaskHttp( void )
             else if(g_wifi_task_stm_timeout == 0)
             {
                 LogMessage("WifiTaskHttp -> Send time-out\r\n");
-                g_wifi_task_stm_step = 10;
+                g_wifi_task_stm_step = 9;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
             break;
         case 5:
-            WifiWrite(HTTPGet(g_wifi_http_id, NULL));
+            WifiWrite(HTTPGet(g_wifi_http_id, NULL, false));
             g_wifi_task_stm_step = 6;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
@@ -868,12 +869,15 @@ int WifiTaskHttp( void )
                     /* Si es un requerimiento saliente */
                     g_wifi_send_error_count = 0;
                     g_wifi_info.status.host_conectado = 1;
+                    g_wifi_fast_start = true;
                 }
                 else
                 {
                     /* Si es una respuesta saliente */
                     g_wifi_recv_error_count = 0;
                 }
+                /* Borro el mensaje de la cola */
+                HTTPGet(g_wifi_http_id, NULL, true);
                 g_wifi_task_stm_step = 7;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
@@ -896,17 +900,6 @@ int WifiTaskHttp( void )
             break;
         case 9:
             /* Send Error */
-            if(HTTPGetType(g_wifi_http_id) == 'S')
-            {
-                /* Si es un requerimiento saliente */
-                g_wifi_send_error_count++;
-                g_wifi_info.status.host_conectado = 0;
-            }
-            else
-            {
-                /* Si es una respuesta saliente */
-                g_wifi_recv_error_count++;
-            }
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step = 10;
@@ -936,6 +929,8 @@ int WifiTaskHttp( void )
                 /* Si es una respuesta saliente */
                 g_wifi_recv_error_count++;
             }
+            /* Borro el mensaje de la cola */
+            HTTPGet(g_wifi_http_id, NULL, true);
             rc = LOOP;
             break;
         default:
@@ -965,7 +960,14 @@ int WifiTaskLoop( void )
     else if(g_wifi_info.status.wifi_start_ap)
     {
         g_wifi_info.status.wifi_start_ap = false;
-        return APMODE;
+        if(g_wifi_fast_start)
+        {
+            return STMODE;
+        }
+        else
+        {
+            return APMODE;
+        }
     }
     else if(HTTPPending() >= 0)
     {
@@ -1026,6 +1028,7 @@ void WiFiInit( void )
     g_wifi_need_upgrade = false;
     g_wifi_send_error_count = 0;
     g_wifi_recv_error_count = 0;
+    g_wifi_fast_start = false;
     
     g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
     g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80;

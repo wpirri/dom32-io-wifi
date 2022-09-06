@@ -18,6 +18,8 @@
 #ifndef _HTTP_H_
 #define _HTTP_H_
 
+#include <stdbool.h>
+
 void HTTPInit( void );
 
 void HTTPTask( void );
@@ -27,7 +29,7 @@ void HTTPTimer( void );
 int HTTPAdd(int id, const char* buffer);
 int HTTPPending(void);
 char HTTPGetType(int id);
-const char*  HTTPGet(int id, char* buffer);
+const char*  HTTPGet(int id, char* buffer, bool clear);
 
 int HTTPNotificarStatus(char *out);
 int HTTPNotificarTarjeta( const char *crd);
