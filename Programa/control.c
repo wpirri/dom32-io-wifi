@@ -1051,6 +1051,16 @@ void CTRLConfIO(char* in)
             DISABLE_HTTPS;
         }
     }
+
+    /* Por si el HW no tiene configurado ninguna IO
+     * asi deja de pedir config */
+    if( HTTPGetFormData(in, "OUT1", tmp) ||
+        HTTPGetFormData(in, "OUT2", tmp) ||
+        HTTPGetFormData(in, "OUT3", tmp) ||
+        HTTPGetFormData(in, "OUT4", tmp)  )
+    {
+        change = true;
+    }
     
     if(change)
     {
