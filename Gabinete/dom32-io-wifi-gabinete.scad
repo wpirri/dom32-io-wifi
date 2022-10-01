@@ -15,7 +15,7 @@ relay_z = 25;
 borneras_frente_x = 2.25;
 borneras_frente_len = 26;
 borneras_fondo_x = 2.25;
-borneras_fondo_len = 42;
+borneras_fondo_len = 40;
 escalon_borneras_y = 10;
 boton_x = 62;
 boton_y = 8;
@@ -34,6 +34,9 @@ tornillo_fijacion_diametro = 3.5;
 oreja_fijacion = 10;
 tol = 0.25;
 $fn = 100;
+color_pieza = [0.2,0.2,0.2];
+color_botones = [0.7,0.7,0.7];
+color_serigrafia = [1,1,1];
 
 caja_x = placa_x + (2*espesor_paredes) + (2*separacion_xyz);
 caja_y = placa_y + (2*espesor_paredes) + (2*separacion_xyz);
@@ -46,6 +49,7 @@ interior_z = caja_z - espesor_base - separador_z;
 module Logo()
 {
     translate(origen + [espesor_paredes/2, espesor_paredes/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base+(espesor_superior/4*3)] + [10,30,0])
+        color(color_serigrafia)
         linear_extrude(espesor_superior/4)
             text("Dom32 IO WiFi", size = 6, font = "Liberation Sans:style=Bold Italic");
 }
@@ -56,15 +60,19 @@ module Oreja(x, y, dir)
     if(dir == 1)
     {
         translate([x-oreja_fijacion, y, 0])
+            color(color_pieza)
             cube([oreja_fijacion, oreja_fijacion, 3], center = false);
         translate([x-oreja_fijacion, y+(oreja_fijacion/2), 0])
+            color(color_pieza)
             cylinder(h=3, d=oreja_fijacion, center=false);
     }
     else
     {
         translate([x, y, 0])
+            color(color_pieza)
             cube([oreja_fijacion, oreja_fijacion, 3], center = false);
         translate([x+oreja_fijacion, y+(oreja_fijacion/2), 0])
+            color(color_pieza)
             cylinder(h=3, d=oreja_fijacion, center=false);
     }
 }
@@ -96,7 +104,7 @@ module Ventilacion()
     for(i = [0:3:20])
     {
     translate(origen + [(ventilacion_frente_x + (ventilacion * i)),(caja_y-(caja_z/2)),0])
-        cube([ventilacion,caja_z/2,caja_z/2], center=false);
+        cube([(ventilacion * 1.5),caja_z/2,caja_z/2], center=false);
     }
 }
 
@@ -120,7 +128,7 @@ module VentanaBorneraFrente()
 
 module VentanaBorneraFondo()
 {
-    translate(origen+[-espesor_paredes-borneras_frente_x,0,espesor_base+separador_z+espesor_placa]+[caja_x,caja_y,0])
+    translate(origen+[-espesor_paredes-borneras_fondo_x,0,espesor_base+separador_z+espesor_placa]+[caja_x,caja_y,0])
     rotate([0,0,180])
         cube([borneras_fondo_len,espesor_paredes,caja_z -espesor_base - separador_z - espesor_placa], center=false);
 }
@@ -131,6 +139,7 @@ module Cajon()
     {
         // Cubo exterior
         translate(origen)
+            color(color_pieza)
             cube([caja_x,caja_y,caja_z],center=false);
         // Calado del interfior
         translate(origen + [espesor_paredes,espesor_paredes,espesor_base+separador_z])
@@ -165,6 +174,7 @@ module TapaSuperior()
     difference()
     {
         translate(origen + [espesor_paredes/2 + tol, espesor_paredes/2 + tol, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0] + [espesor_paredes/2,espesor_paredes/2,relay_z-caja_z+separador_z+espesor_placa+espesor_base])
+            color(color_pieza)
             cube([caja_x-(2*espesor_paredes) - 2*tol,caja_y-(2*escalon_borneras_y)-(2*espesor_paredes) - 2*tol,espesor_superior] , center=false);
         
     }
@@ -175,12 +185,14 @@ module TapaSuperior()
 module CajonRelays()
 {
     translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes/2 + tol/2, caja_z-espesor_paredes] + [0, escalon_borneras_y, 0])
+        color(color_pieza)
         cube([caja_x-espesor_paredes-tol,caja_y-espesor_paredes-(2*escalon_borneras_y)-tol,relay_z-caja_z+separador_z+espesor_placa+espesor_base+espesor_superior] , center=false);
 }
 
 module TapaBase()
 {
     translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes/2 + tol/2, caja_z-espesor_paredes])
+        color(color_pieza)
         cube([caja_x-espesor_paredes-tol,caja_y-espesor_paredes - tol,espesor_paredes] , center=false);
    
     CajonRelays();
@@ -197,7 +209,7 @@ module TornilloBorneraFrente()
     for(i=[0:5:20])
     {
         translate(origen + [tornillo_bornera_frente_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, caja_z-espesor_paredes])
-            cylinder(h=espesor_superior, d=tornillo_bornera_diametro,center=false);
+            cylinder(h=espesor_paredes, d=tornillo_bornera_diametro,center=false);
     }
 }
 
@@ -205,21 +217,61 @@ module TornilloBorneraFondo()
 {
     for(i=[0:5:35])
     {
-        translate(origen + [caja_x,caja_y,caja_z-espesor_superior] - [tornillo_bornera_frente_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, 0])
-            cylinder(h=espesor_superior, d=tornillo_bornera_diametro,center=false);
+        translate(origen + [caja_x,caja_y,caja_z-espesor_paredes] - [tornillo_bornera_fondo_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, 0])
+            cylinder(h=espesor_paredes, d=tornillo_bornera_diametro,center=false);
     }
 }
 
 module OrificioPulsador()
 {
     translate(origen + [boton_x-(boton.x/2), boton_y-(boton.y/2), caja_z-espesor_paredes])
-        cube([boton.x,boton.y,espesor_superior], center=false);
+        cube([boton.x,boton.y,espesor_paredes], center=false);
 }
 
 module OrificioLed()
 {
     translate(origen + [led_x-(led.x/2), led_y-(led.y/2), caja_z-espesor_paredes])
-        cube([led.x,led.y,espesor_superior], center=false);
+        cube([led.x,led.y,espesor_paredes], center=false);
+}
+
+module SerigrafiaIO()
+{
+    // Serigrafia de la bornera
+    translate(origen + [caja_x-tornillo_bornera_fondo_x, caja_y-espesor_paredes-(2*escalon_borneras_y)-tol-0.5, caja_z-espesor_paredes] + [0, escalon_borneras_y, 5])
+        rotate([90,0,180])
+        color(color_serigrafia)
+        linear_extrude(espesor_paredes)
+            text("+  -  1 2 3  4 5 6", size = 4, font = "Liberation Sans:style=Bold Italic");
+    // Anillo en primer y segundo borne
+    for(i=[0:5:5])
+    {
+        translate(origen + [caja_x,caja_y,caja_z-espesor_paredes] - [tornillo_bornera_fondo_x+i+espesor_paredes, tornillo_bornera_y+espesor_paredes, 0])
+        difference()
+        {
+            color(color_serigrafia)
+            cylinder(h=espesor_paredes, d=tornillo_bornera_diametro+1,center=false);
+            cylinder(h=espesor_paredes, d=tornillo_bornera_diametro,center=false);
+        }
+    }
+}
+
+module SerigrafiaOUT()
+{
+    // Serigrafia de la bornera
+    translate(origen + [espesor_paredes/2 + tol/2, espesor_paredes + tol + 0.5, caja_z-espesor_paredes] + [4, escalon_borneras_y, 5])
+        rotate([90,0,0])
+        color(color_serigrafia)
+        linear_extrude(espesor_paredes)
+            text("C  1 2 3 4     Estado Reset", size = 4, font = "Liberation Sans:style=Bold Italic");   
+   
+    // Anillo en primer borne
+    translate(origen + [tornillo_bornera_frente_x+espesor_paredes, tornillo_bornera_y+espesor_paredes, caja_z-espesor_paredes])
+        difference()
+            {
+                color(color_serigrafia)
+                cylinder(h=espesor_paredes, d=tornillo_bornera_diametro+1,center=false);    
+                cylinder(h=espesor_paredes, d=tornillo_bornera_diametro,center=false);
+            }
 }
 
 module TapaMedia()
@@ -233,6 +285,8 @@ module TapaMedia()
         TornilloBorneraFondo();
         OrificioPulsador();
         OrificioLed();
+        SerigrafiaOUT();
+        SerigrafiaIO();
     }
 }
 
@@ -248,16 +302,20 @@ module TapaConLogo()
 module Pulsador()
 {
     translate(origen)
+        color(color_botones)
         cube([4,4,8], center = false);
     translate(origen - [8,0,0])
+        color(color_botones)
         cube([20,9,4.5], center = false);
 }
 
 module OjoDeBuey()
 {
     translate(origen)
+        color(color_botones)
         cube([5,4,9], center = false);
     translate(origen + [1.6,0,9])
+        color(color_botones)
         cube([1.8,4,2], center = false);
     
 }
@@ -265,8 +323,13 @@ module OjoDeBuey()
 // -- Main
 
 Base();
-//TapaMedia();
-//TapaConLogo();
+TapaMedia();
+TapaConLogo();
+
+Logo();
+SerigrafiaOUT();
+SerigrafiaIO();
+
+
 //Pulsador();
 //OjoDeBuey();
-//Logo();
