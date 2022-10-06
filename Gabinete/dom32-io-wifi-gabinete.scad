@@ -285,8 +285,9 @@ module TapaMedia()
         TornilloBorneraFondo();
         OrificioPulsador();
         OrificioLed();
-        SerigrafiaOUT();
-        SerigrafiaIO();
+        // No sale bien impreso
+        //SerigrafiaOUT();
+        //SerigrafiaIO();
     }
 }
 
@@ -322,14 +323,16 @@ module OjoDeBuey()
 
 // -- Main
 
-Base();
+//Base();
 TapaMedia();
-TapaConLogo();
+//TapaConLogo();
 
-Logo();
-SerigrafiaOUT();
-SerigrafiaIO();
+//Logo();
 
 
 //Pulsador();
 //OjoDeBuey();
+
+// No sale bien impreso
+//SerigrafiaOUT();
+//SerigrafiaIO();
