@@ -31,7 +31,7 @@
 #include "config.h"
 #include "clog.h"
 
-#define DEBUG_WIFI
+//#define DEBUG_WIFI
 #define WIFI_READ_LINE_BUFFER_LEN 1024
 #define TIMER_AP_VALUE 600
 
