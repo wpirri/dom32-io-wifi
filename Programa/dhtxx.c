@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "delay.h"
+#include "clog.h"
 
 #define DHTxx_MAX_BIT_COUNT 150
 
@@ -116,7 +117,7 @@ void DHTxxGetData( void )
     unsigned char DHTxx_bitLen;
     hl_values v[40];
     
-    //LogMessage("[DHTxx] GetData\r\n");
+    //LogMessage("[DHTxx] GetData");
     memset(v, 0, sizeof(hl_values)*40);
     dhtxx.buffer[0] = 0;
     dhtxx.buffer[1] = 0;
@@ -177,7 +178,7 @@ void DHTxxGetData( void )
     /* Fin parte crítica */
     if(b < 40)
     {
-        LogMessage("[DHTxx] overflow en datos. H: %d L: %d Bit: %d\r\n",
+        LogMessage("[DHTxx] overflow en datos. H: %d L: %d Bit: %d",
                 v[b].h, v[b].l, b);
         return;
     }
@@ -193,15 +194,15 @@ void DHTxxGetData( void )
     if(dhtxx.buffer[4] == (0xFF&(dhtxx.buffer[0]+dhtxx.buffer[1]+dhtxx.buffer[2]+dhtxx.buffer[3])))
     {
         /* Todo OK, lo paso a las variables correspondientes */
-        LogMessage("[DHTxx] %02x %02x %02x %02x %02x\r\n",
+        LogMessage("[DHTxx] %02x %02x %02x %02x %02x",
                     dhtxx.buffer[0],dhtxx.buffer[1],dhtxx.buffer[2],dhtxx.buffer[3],dhtxx.buffer[4]);
-        LogMessage("[DHTxx] HR: %d.%d %% - Temp: %d.%d °C\r\n",
+        LogMessage("[DHTxx] HR: %d.%d %% - Temp: %d.%d °C",
                     DHTxxHumedad(0,0)/10, DHTxxHumedad(0,0)%10,
                     DHTxxTemperatura(0,0)/10, DHTxxTemperatura(0,0)%10);
     }
     else
     {
-        LogMessage("[DHTxx] Error de CHKSum %02X %02X %02X %02X %02X\r\n",
+        LogMessage("[DHTxx] Error de CHKSum %02X %02X %02X %02X %02X",
                 dhtxx.buffer[0], dhtxx.buffer[1], dhtxx.buffer[2],
                 dhtxx.buffer[3], dhtxx.buffer[4]);
     }

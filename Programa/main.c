@@ -66,6 +66,8 @@
 #include "control.h"
 #include "wiegand.h"
 #include "dhtxx.h"
+#include "rtcc.h"
+#include "clog.h"
 
 bool main_flag_core_timer;
 int main_flag_core_timer_div_count;
@@ -152,10 +154,12 @@ int main(void)
 
     SYSTEM_Initialize();
     
-    LogMessage("\r\n");
-    LogMessage("MAIN: Compilacion " __DATE__ " " __TIME__ ".\r\n");
-    LogMessage("MAIN: Compilador " __VERSION__ ".\r\n");
-    LogMessage("MAIN: Procesador PIC32MM256GPM028.\r\n");
+    RTCCInit();
+    LogInit();
+
+    LogMessage("MAIN: Compilacion " __DATE__ " " __TIME__ ".");
+    LogMessage("MAIN: Compilador " __VERSION__ ".");
+    LogMessage("MAIN: Procesador PIC32MM256GPM028.");
     
     ConfigInit();
     ConfigLoad();
@@ -167,7 +171,7 @@ int main(void)
     WGND_Init();
     DHTxxInit();
     
-    LogMessage("MAIN: Init Ok.\r\n");
+    LogMessage("MAIN: Init Ok.");
     
     while(1)
     {
@@ -193,6 +197,7 @@ int main(void)
                 WiFiTimer();
                 HTTPTimer();
                 CTRLTimer();
+                RTCC_Task();
                 if(IS_WIEGAND_ENABLE) WGND_Timer();
                 if(IS_DHT2x_ENABLE)
                 {

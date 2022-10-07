@@ -25,6 +25,7 @@
 #include "wifi.h"
 #include "dhtxx.h"
 #include "config.h"
+#include "clog.h"
 
 const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
                             "Content-Type: text/xml\r\n\r\n";
@@ -147,7 +148,7 @@ int HttpGetRequest(const char *buffer, char *request)
 {
 	int rc = 0;
     
-    LogMessage("HttpGetRequest\r\n");
+    LogMessage("HttpGetRequest");
     
 	while(*buffer && *buffer != '/') buffer++;
 	if( !(*buffer)) return 0;
@@ -275,7 +276,7 @@ int HTTPNotificarStatus(char *out)
     int t1, t2, h1, h2;
     bool first_change;
     
-    LogMessage("HTTPNotificarStatus\r\n");
+    LogMessage("HTTPNotificarStatus");
 
     /* Parte fija con la MAC y las entradas y salidas */
     sprintf(http_rqst_data, 
@@ -534,7 +535,7 @@ void HTTPTask( void )
     
     if(htdat[id].type == 'G')
     {
-        LogMessage("GET HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("GET HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpReturnWiFiFormConfig(htdat[id].data);
@@ -570,11 +571,11 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
-        LogMessage("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'P')
     {
-        LogMessage("PUT HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("PUT HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
@@ -613,11 +614,11 @@ void HTTPTask( void )
             strcpy(htdat[id].data, http_404);
         }
         htdat[id].type = 'R';
-        LogMessage("RESP HTTP: %s %u bytes\r\n", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
     }
     else if(htdat[id].type == 'H')
     {
-        LogMessage("HTTP RESPONSE: %u bytes\r\n", strlen(htdat[id].data));
+        LogMessage("HTTP RESPONSE: %u bytes", strlen(htdat[id].data));
         /* Se trata de una respuesta HTTP/1... */
         CTRLConfIO(htdat[id].data);
         CTRLSetIO(htdat[id].data);
@@ -643,7 +644,7 @@ void HTTPTimer( void )
             if(htdat[i].timeout == 0)
             {
                 htdat[i].type = 0;
-                LogMessage("HTTPTimer time-out htdat[%i]\r\n", i);
+                LogMessage("HTTPTimer time-out htdat[%i]", i);
             }
         }
     }
@@ -658,17 +659,17 @@ int HTTPAdd(int id, const char* buffer)
 {
     char *p;
     
-    LogMessage("HTTPAdd(%i)\r\n", id);
+    LogMessage("HTTPAdd(%i)", id);
     
     if(id >= 0 && id < WIFI_CIP_MAX_CONS)
     {
-        LogMessage("  mensaje entrante.\r\n");
+        LogMessage("  mensaje entrante.");
         /* Mensaje entrante */
         if(htdat[id].type == 0)
         {
             if(*buffer == 'G' || *buffer == 'P')
             {
-                LogMessage("    requerimiento.\r\n");
+                LogMessage("    requerimiento.");
                 htdat[id].type = *buffer;
                 htdat[id].timeout = 50;
 
@@ -689,7 +690,7 @@ int HTTPAdd(int id, const char* buffer)
             }
             else if(*buffer == 'H')
             {
-                LogMessage("    respuesta.\r\n");
+                LogMessage("    respuesta.");
                 htdat[id].type = *buffer;
                 htdat[id].timeout = 50;
                 p = strstr(buffer, "\r\n\r\n");
@@ -705,12 +706,12 @@ int HTTPAdd(int id, const char* buffer)
         }
         else
         {
-            LogMessage("HTTPAdd Error. Conexion %i ocupada.\r\n", id);
+            LogMessage("HTTPAdd Error. Conexion %i ocupada.", id);
         }
     }
     else if(id < 0)
     {
-        LogMessage("  mensaje saliente.\r\n");
+        LogMessage("  mensaje saliente.");
         /* Mensaje Saliente */
         for(id = 0; id < (WIFI_CIP_MAX_CONS+1); id++)
         {
@@ -774,7 +775,7 @@ const char* HTTPGet(int id, char* buffer, bool clear)
 
 int HTTPNotificarTarjeta( const char *crd)
 {
-    LogMessage("HTTPNotificarTarjeta\r\n");
+    LogMessage("HTTPNotificarTarjeta");
 
     sprintf(http_rqst_data, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
     sprintf(http_rqst_uri, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);

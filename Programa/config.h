@@ -21,9 +21,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define LogMessage printf
-//#define DEBUG_WIFI
-
 // Clock frequency values
 #define _XTAL_FREQ  24000000UL             // Hz
 #define GetSystemClock()		(_XTAL_FREQ)

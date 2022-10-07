@@ -28,6 +28,7 @@
 #include "config.h"
 #include "http.h"
 #include "adc.h"
+#include "clog.h"
 
 unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
@@ -63,7 +64,7 @@ void CTRLInit( void )
         CNPUBbits.CNPUB5 = 1;
         if(g_wifi_info.f.config.an_config & 0x01)
         {
-            LogMessage("[CONTROL] IO1 no puede ser analogico.\r\n");
+            LogMessage("[CONTROL] IO1 no puede ser analogico.");
         }
     }
     else
@@ -80,7 +81,7 @@ void CTRLInit( void )
         CNPUBbits.CNPUB4 = 1;
         if(g_wifi_info.f.config.an_config & 0x02)
         {
-            LogMessage("[CONTROL] IO2 no puede ser analogico.\r\n");
+            LogMessage("[CONTROL] IO2 no puede ser analogico.");
         }
     }
     else
@@ -176,7 +177,7 @@ void CTRLInit( void )
             CNPUBbits.CNPUB7 = 1;
             if(g_wifi_info.f.config.an_config & 0x10)
             {
-                LogMessage("[CONTROL] IO5 no puede ser analogico.\r\n");
+                LogMessage("[CONTROL] IO5 no puede ser analogico.");
             }
         }
         else
@@ -193,7 +194,7 @@ void CTRLInit( void )
             CNPUBbits.CNPUB8 = 1;
             if(g_wifi_info.f.config.an_config & 0x20)
             {
-                LogMessage("[CONTROL] IO6 no puede ser analogico.\r\n");
+                LogMessage("[CONTROL] IO6 no puede ser analogico.");
             }
         }
         else
@@ -228,11 +229,11 @@ void CTRLInit( void )
     
     ADCConfig();
     
-    LogMessage("TRISB:   0x%04X\r\n", TRISB);
-    LogMessage("CNPUB:   0x%04X\r\n", CNPUB);
-    LogMessage("HTTPS:   %s\r\n", (IS_HTTPS_ENABLE)?"on":"off");
-    LogMessage("WIEGAND: %s\r\n", (IS_WIEGAND_ENABLE)?"on":"off");
-    LogMessage("DHT2x:   %s\r\n", (IS_DHT2x_ENABLE)?"on":"off");
+    LogMessage("TRISB:   0x%04X", TRISB);
+    LogMessage("CNPUB:   0x%04X", CNPUB);
+    LogMessage("HTTPS:   %s", (IS_HTTPS_ENABLE)?"on":"off");
+    LogMessage("WIEGAND: %s", (IS_WIEGAND_ENABLE)?"on":"off");
+    LogMessage("DHT2x:   %s", (IS_DHT2x_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -610,7 +611,7 @@ void CTRLSetIO(char* in)
 {
     char tmp[10];
     
-    LogMessage("CTRLSetIO: %s\r\n", in);
+    LogMessage("CTRLSetIO: %s", in);
     if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "PULSE-IO1", tmp))
@@ -805,7 +806,7 @@ void CTRLSwitchIO(char* in)
 {
     char tmp[10];
     
-    LogMessage("CTRLSwitchIO: %s\r\n", in);
+    LogMessage("CTRLSwitchIO: %s", in);
     if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "IO1", tmp))
@@ -912,7 +913,7 @@ void CTRLConfIO(char* in)
     char tmp[10];
     bool change = false;
     
-    LogMessage("CTRLConfIO: %s\r\n", in);
+    LogMessage("CTRLConfIO: %s", in);
     if(HTTPGetFormData(in, "IO1", tmp))
     {
         change = true;
@@ -1065,6 +1066,6 @@ void CTRLConfIO(char* in)
     if(change)
     {
         g_wifi_info.f.config.io_config_default = 0;
-        g_wifi_info.status.save_config = 50;
+        g_wifi_info.status.save_config = 150;
     }
 }

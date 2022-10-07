@@ -23,6 +23,7 @@
 
 #include "http.h"
 #include "config.h"
+#include "clog.h"
 
 typedef struct _wgnd_data
 {
@@ -126,7 +127,7 @@ void WGND_Task( void )
                 gWGND_Data.udata.bytes.b,
                 gWGND_Data.udata.bytes.c,
                 gWGND_Data.udata.bytes.d);
-        LogMessage("[WIEGAND] CRD: %s\r\n", cardHexa);
+        LogMessage("[WIEGAND] CRD: %s", cardHexa);
         HTTPNotificarTarjeta(cardHexa);
         WGND_Ack();
     }

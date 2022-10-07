@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "control.h"
+#include "clog.h"
 
 typedef enum
 {

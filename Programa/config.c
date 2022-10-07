@@ -26,6 +26,7 @@
 
 #include "mcc_generated_files/memory/flash.h"
 #include "control.h"
+#include "clog.h"
 
 #define CONFIG_FLASK_OK 0x5A5A5A5A
 
@@ -74,7 +75,7 @@ void ConfigLoad( void )
         g_wifi_info.f.ui32[i] = FLASH_ReadWord( f + (i*4) );
     }
     
-    LogMessage("CONFIG: %d de %d bytes usados (%d%%)\r\n", 
+    LogMessage("CONFIG: %d de %d bytes usados (%d%%)", 
                 sizeof(struct _config_),
                 sizeof(flash_reserved_space),
                 sizeof(struct _config_) * 100 / sizeof(flash_reserved_space));
@@ -114,7 +115,7 @@ void ConfigSave(void)
     
     FLASH_Lock();
     
-    LogMessage("CONFIG: Save Ok.\r\n");
+    LogMessage("CONFIG: Save Ok.");
 }
 
 void ConfigTimer(void)
