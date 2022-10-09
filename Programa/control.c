@@ -29,6 +29,7 @@
 #include "http.h"
 #include "adc.h"
 #include "clog.h"
+#include "rtcc.h"
 
 unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
@@ -910,8 +911,10 @@ void CTRLSwitchIO(char* in)
 
 void CTRLConfIO(char* in)
 {
-    char tmp[10];
+    char tmp[32];
     bool change = false;
+    struct tm tm_time;
+    int i;
     
     LogMessage("CTRLConfIO: %s", in);
     if(HTTPGetFormData(in, "IO1", tmp))
@@ -1053,6 +1056,32 @@ void CTRLConfIO(char* in)
         }
     }
 
+    if(HTTPGetFormData(in, "TIME", tmp))
+    {
+        /*             1111111111
+         *   01234567890123456789
+         tmp YYYY/MM/DD hh:mm:ss
+         */
+        if(tmp[4] == '/' && tmp[7] == '/' && tmp[10] == ' ' && 
+                tmp[13] == ':' && tmp[16] == ':' && tmp[19] == 0)
+        {
+            tmp[4] = 0;
+            tmp[7] = 0;
+            tmp[10] = 0;
+            tmp[13] = 0;
+            tmp[16] = 0;
+            
+            tm_time.tm_year = atoi(&tmp[0]) - 1900;
+            tm_time.tm_mon = atoi(&tmp[5]);
+            tm_time.tm_wday = atoi(&tmp[8]);
+            tm_time.tm_hour = atoi(&tmp[11]);
+            tm_time.tm_min = atoi(&tmp[14]);
+            tm_time.tm_sec = atoi(&tmp[17]);
+
+            RTCC_TimeSet(&tm_time);
+        }
+    }
+    
     /* Por si el HW no tiene configurado ninguna IO
      * asi deja de pedir config */
     if( HTTPGetFormData(in, "OUT1", tmp) ||
