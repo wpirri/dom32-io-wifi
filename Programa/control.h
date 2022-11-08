@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-#define DELAY_INPUT 1000
+#define DELAY_INPUT 100
 
 typedef struct
 {
