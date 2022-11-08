@@ -1,15 +1,12 @@
 ESP-WROOM-02D
 
-PIC32MM0064GPL028-I/SS  SSOP
-(PIC32MM0064GPL028-I/SP DIL)
+PIC32MM0256GPM028-I/SS
 
-Alternativa:
-PIC32MX170F256B-I/SS    SSOP
-(PIC32MX170F256B-I/SP DIL)
-
+Alternativas:
+    PIC32MM0256GPM028-E/SS      Rango extendido de temperaturas
+    PIC32MM0256GPM028T-I/SS     Embalado en Tape & Reel
 
 Orificio 1,25
-
 
 
 Conector
