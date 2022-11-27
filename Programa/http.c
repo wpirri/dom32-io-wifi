@@ -487,6 +487,24 @@ void HttpReturnIOConfigForm(char *out)
 
 #endif /* INCLUDE_IO_FORMS */
 
+void HttpReturnIOStatus(char *out)
+{
+    sprintf(out, 
+        "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        http_200,
+        g_wifi_info.status.hw_mac,
+        g_control_io.stat1,
+        g_control_io.stat2,
+        g_control_io.stat3,
+        g_control_io.stat4,
+        g_control_io.stat5,
+        g_control_io.stat6,
+        (g_control_out.stat1)?1:0,
+        (g_control_out.stat2)?1:0,
+        (g_control_out.stat3)?1:0,
+        (g_control_out.stat4)?1:0);
+}
+
 void HttpReturnIOConfig(char *out)
 {
     sprintf(out, 
@@ -592,13 +610,13 @@ void HTTPTask( void )
 #ifdef INCLUDE_IO_FORMS
             HttpReturnIOStatusForm(htdat[id].data);
 #else
-            HTTPNotificarStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
 #endif /* INCLUDE_IO_FORMS */
         }
         else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
         {
             CTRLSwitchIO(htdat[id].data);
-            HTTPNotificarStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
