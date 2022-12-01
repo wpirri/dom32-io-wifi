@@ -489,8 +489,10 @@ void HttpReturnIOConfigForm(char *out)
 
 void HttpReturnIOStatus(char *out)
 {
+    int t1, t2, h1, h2;
+    
     sprintf(out, 
-        "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        "%sID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         http_200,
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
@@ -503,6 +505,16 @@ void HttpReturnIOStatus(char *out)
         (g_control_out.stat2)?1:0,
         (g_control_out.stat3)?1:0,
         (g_control_out.stat4)?1:0);
+    
+    /* Agrego info de Temperatura y humedad si está configurado */
+    if(IS_DHT2x_ENABLE)
+    {
+        DHTxxTemperatura(&t1,&t2);
+        DHTxxHumedad(&h1,&h2); 
+        sprintf(&out[strlen(out)],
+                "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
+    }
+    
 }
 
 void HttpReturnIOConfig(char *out)
@@ -560,11 +572,11 @@ void HTTPTask( void )
         }
         else if( !strcmp(htdat[id].rqst, "/status.htm"))
         {
-            HTTPNotificarStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
         {
-            HTTPNotificarStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data);
         }
         else if( !strcmp(htdat[id].rqst, "/config.htm"))
         {
