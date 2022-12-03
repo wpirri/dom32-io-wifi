@@ -83,10 +83,12 @@ uint32_t CORETIMER_CountGet()
 
 void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIMER_ISR(void)
 {
-   uint32_t static compare = 0x1D4C0;
+   uint32_t static compare = 0x124F80;
 
    // Update the compare value
-   compare = compare + 0x1D4C0;
+   // 0x1D4C0 = 10ms
+   // 0x124F80 = 100ms
+   compare = compare + 0x124F80;
 
    _CP0_SET_COMPARE(compare);
 

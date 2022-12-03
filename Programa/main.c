@@ -70,7 +70,6 @@
 #include "clog.h"
 
 bool main_flag_core_timer;
-int main_flag_core_timer_div_count;
 int main_flag_dhtxx_timer_count;
 char led_aux_count;
 
@@ -149,7 +148,6 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
-    main_flag_core_timer_div_count = 0;
     main_flag_dhtxx_timer_count = 0;
 
     SYSTEM_Initialize();
@@ -186,33 +184,24 @@ int main(void)
         if(main_flag_core_timer)
         {
             main_flag_core_timer = false;
-            main_flag_core_timer_div_count++;
-            if(main_flag_core_timer_div_count >= 10)
+            /* Timer 10 veces por segundo - 100ms */
+            LedControl();
+            ConfigTimer();
+            ADCTimer();
+            WiFiTimer();
+            HTTPTimer();
+            CTRLTimer();
+            RTCC_Task();
+            if(IS_WIEGAND_ENABLE) WGND_Timer();
+            if(IS_DHT2x_ENABLE)
             {
-                main_flag_core_timer_div_count = 0;
-                /* Timer 10 veces por segundo - 100ms */
-                LedControl();
-                ConfigTimer();
-                ADCTimer();
-                WiFiTimer();
-                HTTPTimer();
-                CTRLTimer();
-                RTCC_Task();
-                if(IS_WIEGAND_ENABLE) WGND_Timer();
-                if(IS_DHT2x_ENABLE)
+                main_flag_dhtxx_timer_count++;
+                if(main_flag_dhtxx_timer_count > 300)
                 {
-                    main_flag_dhtxx_timer_count++;
-                    if(main_flag_dhtxx_timer_count > 300)
-                    {
-                        main_flag_dhtxx_timer_count = 0;
-                        DHTxxGetData();
-                    }
-
+                    main_flag_dhtxx_timer_count = 0;
+                    DHTxxGetData();
                 }
-                
             }
-            /* Timer 100 veces por segundo - 10ms */
-            //DHT2xTimer();
         }
     }
     return 1; 

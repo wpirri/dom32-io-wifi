@@ -276,7 +276,7 @@ void CTRLTask( void )
                 if(IO1_GetValue() != g_control_io.stat1)
                 {
                     IO1_SetValue(g_control_io.stat1);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse1 == 0)
                     {
                         g_control_io.change1 = true;
                         CTRLNotificarStatus(0);
@@ -306,7 +306,7 @@ void CTRLTask( void )
                 if(IO2_GetValue() != g_control_io.stat2)
                 {
                     IO2_SetValue(g_control_io.stat2);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse2 == 0)
                     {
                         g_control_io.change2 = true;
                         CTRLNotificarStatus(0);
@@ -336,7 +336,7 @@ void CTRLTask( void )
                 if(IO3_GetValue() != g_control_io.stat3)
                 {
                     IO3_SetValue(g_control_io.stat3);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse3 == 0)
                     {
                         g_control_io.change3 = true;
                         CTRLNotificarStatus(0);
@@ -366,7 +366,7 @@ void CTRLTask( void )
                 if(IO4_GetValue() != g_control_io.stat4)
                 {
                     IO4_SetValue(g_control_io.stat4);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse4 == 0)
                     {
                         g_control_io.change4 = true;
                         CTRLNotificarStatus(0);
@@ -397,7 +397,7 @@ void CTRLTask( void )
                 if(IO5_GetValue() != g_control_io.stat5)
                 {
                     IO5_SetValue(g_control_io.stat5);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse5 == 0)
                     {
                         g_control_io.change5 = true;
                         CTRLNotificarStatus(0);
@@ -428,7 +428,7 @@ void CTRLTask( void )
                 if(IO6_GetValue() != g_control_io.stat6)
                 {
                     IO6_SetValue(g_control_io.stat6);
-                    if(g_control_init_complete)
+                    if(g_control_init_complete && g_control_io.pulse6 == 0)
                     {
                         g_control_io.change6 = true;
                         CTRLNotificarStatus(0);
@@ -440,7 +440,7 @@ void CTRLTask( void )
             if(OUT1_GetValue() != g_control_out.stat1)
             {
                 OUT1_SetValue(g_control_out.stat1);
-                if(g_control_init_complete)
+                if(g_control_init_complete && g_control_out.pulse1 == 0)
                 {
                     g_control_out.change1 = true;
                     CTRLNotificarStatus(0);
@@ -451,7 +451,7 @@ void CTRLTask( void )
             if(OUT2_GetValue() != g_control_out.stat2)
             {
                 OUT2_SetValue(g_control_out.stat2);
-                if(g_control_init_complete)
+                if(g_control_init_complete && g_control_out.pulse2 == 0)
                 {
                     g_control_out.change2 = true;
                     CTRLNotificarStatus(0);
@@ -462,7 +462,7 @@ void CTRLTask( void )
             if(OUT3_GetValue() != g_control_out.stat3)
             {
                 OUT3_SetValue(g_control_out.stat3);
-                if(g_control_init_complete)
+                if(g_control_init_complete && g_control_out.pulse3 == 0)
                 {
                     g_control_out.change3 = true;
                     CTRLNotificarStatus(0);
@@ -473,7 +473,7 @@ void CTRLTask( void )
             if(OUT4_GetValue() != g_control_out.stat4)
             {
                 OUT4_SetValue(g_control_out.stat4);
-                if(g_control_init_complete)
+                if(g_control_init_complete && g_control_out.pulse4 == 0)
                 {
                     g_control_out.change4 = true;
                     CTRLNotificarStatus(0);
@@ -520,6 +520,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse1 == 0)
         {
             g_control_io.stat1 = 0;
+            LogMessage("Fin pulso IO1");
             CTRLNotificarStatus(10);
         }
     }
@@ -529,6 +530,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse2 == 0)
         {
             g_control_io.stat2 = 0;
+            LogMessage("Fin pulso IO2");
             CTRLNotificarStatus(10);
         }
     }
@@ -538,6 +540,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse3 == 0)
         {
             g_control_io.stat3 = 0;
+            LogMessage("Fin pulso IO3");
             CTRLNotificarStatus(10);
         }
     }
@@ -547,6 +550,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse4 == 0)
         {
             g_control_io.stat4 = 0;
+            LogMessage("Fin pulso IO4");
             CTRLNotificarStatus(10);
         }
     }
@@ -556,6 +560,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse5 == 0)
         {
             g_control_io.stat5 = 0;
+            LogMessage("Fin pulso IO5");
             CTRLNotificarStatus(10);
         }
     }
@@ -565,6 +570,7 @@ void CTRLTimer( void )
         if(g_control_io.pulse6 == 0)
         {
             g_control_io.stat6 = 0;
+            LogMessage("Fin pulso IO6");
             CTRLNotificarStatus(10);
         }
     }
@@ -574,6 +580,7 @@ void CTRLTimer( void )
         if(g_control_out.pulse1 == 0)
         {
             g_control_out.stat1 = 0;
+            LogMessage("Fin pulso OUT1");
             CTRLNotificarStatus(10);
         }
     }
@@ -583,6 +590,7 @@ void CTRLTimer( void )
         if(g_control_out.pulse2 == 0)
         {
             g_control_out.stat2 = 0;
+            LogMessage("Fin pulso OUT2");
             CTRLNotificarStatus(10);
         }
     }
@@ -592,6 +600,7 @@ void CTRLTimer( void )
         if(g_control_out.pulse3 == 0)
         {
             g_control_out.stat3 = 0;
+            LogMessage("Fin pulso OUT3");
             CTRLNotificarStatus(10);
         }
     }
@@ -601,6 +610,7 @@ void CTRLTimer( void )
         if(g_control_out.pulse4 == 0)
         {
             g_control_out.stat4 = 0;
+            LogMessage("Fin pulso OUT4");
             CTRLNotificarStatus(10);
         }
     }
@@ -619,6 +629,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat1 = 1;
             g_control_io.pulse1 = atoi(tmp)*10;
+            LogMessage("IO1: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO1", tmp))
         {
@@ -630,6 +641,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat1 = 0;
             }
+            LogMessage("IO1: %s", tmp);
         }
     }
 
@@ -639,6 +651,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat2 = 1;
             g_control_io.pulse2 = atoi(tmp)*10;
+            LogMessage("IO2: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO2", tmp))
         {
@@ -650,6 +663,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat2 = 0;
             }
+            LogMessage("IO2: %s", tmp);
         }
     }
 
@@ -659,6 +673,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat3 = 1;
             g_control_io.pulse3 = atoi(tmp)*10;
+            LogMessage("IO3: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO3", tmp))
         {
@@ -670,6 +685,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat3 = 0;
             }
+            LogMessage("IO3: %s", tmp);
         }
     }
     
@@ -679,6 +695,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat4 = 1;
             g_control_io.pulse4 = atoi(tmp)*10;
+            LogMessage("IO4: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO4", tmp))
         {
@@ -690,6 +707,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat4 = 0;
             }
+            LogMessage("IO4: %s", tmp);
         }
     }
     
@@ -699,6 +717,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat5 = 1;
             g_control_io.pulse5 = atoi(tmp)*10;
+            LogMessage("IO5: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO5", tmp))
         {
@@ -710,6 +729,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat5 = 0;
             }
+            LogMessage("IO5: %s", tmp);
         }
     }
 
@@ -719,6 +739,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat6 = 1;
             g_control_io.pulse6 = atoi(tmp)*10;
+            LogMessage("IO6: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO6", tmp))
         {
@@ -730,6 +751,7 @@ void CTRLSetIO(char* in)
             {
                 g_control_io.stat6 = 0;
             }
+            LogMessage("IO6: %s", tmp);
         }
     }
 
@@ -737,6 +759,7 @@ void CTRLSetIO(char* in)
     {
         g_control_out.stat1 = 1;
         g_control_out.pulse1 = atoi(tmp)*10;
+        LogMessage("OUT1: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT1", tmp))
     {
@@ -748,12 +771,14 @@ void CTRLSetIO(char* in)
         {
             g_control_out.stat1 = 0;
         }
+        LogMessage("OUT1: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "PULSE-OUT2", tmp))
     {
         g_control_out.stat2 = 1;
         g_control_out.pulse2 = atoi(tmp)*10;
+        LogMessage("OUT2: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT2", tmp))
     {
@@ -765,12 +790,14 @@ void CTRLSetIO(char* in)
         {
             g_control_out.stat2 = 0;
         }
+        LogMessage("OUT1: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "PULSE-OUT3", tmp))
     {
         g_control_out.stat3 = 1;
         g_control_out.pulse3 = atoi(tmp)*10;
+        LogMessage("OUT3: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT3", tmp))
     {
@@ -782,12 +809,14 @@ void CTRLSetIO(char* in)
         {
             g_control_out.stat3 = 0;
         }
+        LogMessage("OUT3: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "PULSE-OUT4", tmp))
     {
         g_control_out.stat4 = 1;
         g_control_out.pulse4 = atoi(tmp)*10;
+        LogMessage("OUT4: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT4", tmp))
     {
@@ -799,6 +828,7 @@ void CTRLSetIO(char* in)
         {
             g_control_out.stat4 = 0;
         }
+        LogMessage("OUT4: %s", tmp);
     }
     
 }
@@ -815,6 +845,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat1 = (g_control_io.stat1)?0:1;
+                LogMessage("IO1: %d", g_control_io.stat1);
             }
         }
     }
@@ -826,6 +857,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat2 = (g_control_io.stat2)?0:1;
+                LogMessage("IO2: %d", g_control_io.stat2);
             }
         }
     }
@@ -837,6 +869,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat3 = (g_control_io.stat3)?0:1;
+                LogMessage("IO3: %d", g_control_io.stat3);
             }
         }
     }
@@ -848,6 +881,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat4 = (g_control_io.stat4)?0:1;
+                LogMessage("IO4: %d", g_control_io.stat4);
             }
         }
     }
@@ -859,6 +893,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat5 = (g_control_io.stat5)?0:1;
+                LogMessage("IO5: %d", g_control_io.stat5);
             }
         }
     }
@@ -870,6 +905,7 @@ void CTRLSwitchIO(char* in)
             if( tmp[0] == '1' )
             {
                 g_control_io.stat6 = (g_control_io.stat6)?0:1;
+                LogMessage("IO6: %d", g_control_io.stat6);
             }
         }
     }
@@ -879,6 +915,7 @@ void CTRLSwitchIO(char* in)
         if( tmp[0] == '1' )
         {
             g_control_out.stat1 = (g_control_out.stat1)?0:1;
+            LogMessage("OUT1: %d", g_control_out.stat1);
         }
     }
     
@@ -887,6 +924,7 @@ void CTRLSwitchIO(char* in)
         if( tmp[0] == '1' )
         {
             g_control_out.stat2 = (g_control_out.stat2)?0:1;
+            LogMessage("OUT2: %d", g_control_out.stat2);
         }
     }
     
@@ -895,6 +933,7 @@ void CTRLSwitchIO(char* in)
         if( tmp[0] == '1' )
         {
             g_control_out.stat3 = (g_control_out.stat3)?0:1;
+            LogMessage("OUT3: %d", g_control_out.stat3);
         }
     }
     
@@ -903,6 +942,7 @@ void CTRLSwitchIO(char* in)
         if( tmp[0] == '1' )
         {
             g_control_out.stat4 = (g_control_out.stat4)?0:1;
+            LogMessage("OUT4: %d", g_control_out.stat4);
         }
     }
     
@@ -930,6 +970,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x01^0xFF);
             g_wifi_info.f.config.io_config &= (0x01^0xFF);
         }
+        LogMessage("IO1: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO2", tmp))
@@ -945,6 +986,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x02^0xFF);
             g_wifi_info.f.config.io_config &= (0x02^0xFF);
         }
+        LogMessage("IO2: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO3", tmp))
@@ -965,6 +1007,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config |= 0x04;
             g_wifi_info.f.config.io_config |= 0x04;
         }
+        LogMessage("IO3: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO4", tmp))
@@ -985,6 +1028,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config |= 0x08;
             g_wifi_info.f.config.io_config |= 0x08;
         }
+        LogMessage("IO4: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO5", tmp))
@@ -1000,6 +1044,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x10^0xFF);
             g_wifi_info.f.config.io_config &= (0x10^0xFF);
         }
+        LogMessage("IO5: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO6", tmp))
@@ -1015,6 +1060,7 @@ void CTRLConfIO(char* in)
             g_wifi_info.f.config.an_config &= (0x20^0xFF);
             g_wifi_info.f.config.io_config &= (0x20^0xFF);
         }
+        LogMessage("IO6: %s", tmp);
     }
 
     if(HTTPGetFormData(in, "WIEGAND", tmp))
@@ -1028,6 +1074,7 @@ void CTRLConfIO(char* in)
         {
             DISABLE_WIEGAND;
         }
+        LogMessage("WIEGAND: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "DHT2x", tmp))
@@ -1041,6 +1088,7 @@ void CTRLConfIO(char* in)
         {
             DISABLE_DHT2x;
         }
+        LogMessage("DHT2x: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "HTTPS", tmp))
@@ -1054,6 +1102,7 @@ void CTRLConfIO(char* in)
         {
             DISABLE_HTTPS;
         }
+        LogMessage("HTTPS: %s", tmp);
     }
 
     if(HTTPGetFormData(in, "TIME", tmp))
