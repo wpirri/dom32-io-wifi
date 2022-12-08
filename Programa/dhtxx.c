@@ -29,7 +29,7 @@
 #include "delay.h"
 #include "clog.h"
 
-#define DHTxx_MAX_BIT_COUNT 150
+#define DHTxx_MAX_BIT_COUNT 250
 
 typedef struct _hl_values
 {
@@ -136,33 +136,53 @@ void DHTxxGetData( void )
     INTERRUPT_GlobalDisable();    
     /* Espera el start */
     DHTxx_bitLen = 0;
-    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
+    {
+        Nop();Nop();Nop();Nop();Nop();
+        Nop();Nop();Nop();Nop();Nop();
+    }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
+        LogMessage("[DHTxx] start overflow 0");
         return;
     }
     DHTxx_bitLen = 0;
-    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
+    {
+        Nop();Nop();Nop();Nop();Nop();
+        Nop();Nop();Nop();Nop();Nop();
+    }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
+        LogMessage("[DHTxx] start overflow 1");
         return;
     }
     /* Fin del start */
     /* Salteo el header */
     DHTxx_bitLen = 0;
-    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
+    {
+        Nop();Nop();Nop();Nop();Nop();
+        Nop();Nop();Nop();Nop();Nop();
+    }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
+        LogMessage("[DHTxx] header overflow 0");
         return;
     }
     DHTxx_bitLen = 0;
-    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT);
+    while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
+    {
+        Nop();Nop();Nop();Nop();Nop();
+        Nop();Nop();Nop();Nop();Nop();
+    }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
+        LogMessage("[DHTxx] header overflow 1");
         return;
     }
     /* Fin del header */
