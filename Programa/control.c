@@ -500,7 +500,7 @@ void CTRLTimer( void )
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;
-            if(HTTPNotificarStatus(NULL) == 0 )
+            if(HTTPNotificarStatus(NULL, 0) <= 0 )
             {
                 /* programo un reintento */
                 CTRLNotificarStatus(30);

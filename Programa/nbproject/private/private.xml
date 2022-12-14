@@ -13,26 +13,22 @@
             <url>http.c</url>
             <bookmark id="1">
                 <name/>
-                <line>273</line>
+                <line>279</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>489</line>
+                <line>495</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>619</line>
+                <line>625</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/Domotica-IoT/dom32-io-wifi/Programa/main.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/Domotica-IoT/dom32-io-wifi/Programa/control.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/Domotica-IoT/dom32-io-wifi/Programa/http.c</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

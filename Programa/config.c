@@ -91,7 +91,7 @@ void ConfigLoad( void )
     }
 }
 
-void ConfigSave(void)
+void __attribute__((optimize("-O0"))) ConfigSave(void)
 {
     int i;
     uint32_t f = (uint32_t)flash_reserved_space;

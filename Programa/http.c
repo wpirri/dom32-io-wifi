@@ -60,20 +60,21 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
                             "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
                             "Accept: text/html,text/xml\r\n\r\n";
 
-char http_rqst[1024];
-char http_rqst_data[256];
-char http_rqst_uri[64];
+#define MAX_HTTP_HEAD 256
+#define MAX_HTTP_DATA 2048
+#define MAX_HTTP_URI  64
+
+
+char http_rqst[MAX_HTTP_DATA + MAX_HTTP_HEAD];
+char http_rqst_data[MAX_HTTP_DATA];
+char http_rqst_uri[MAX_HTTP_URI];
 
 typedef struct
 {
     char type;
     char timeout;
-    char rqst[16];
-#ifdef INCLUDE_IO_FORMS    
-    char data[2048];
-#else
-    char data[1024];
-#endif
+    char rqst[MAX_HTTP_URI];
+    char data[MAX_HTTP_DATA];
 } http_data;
 
 http_data htdat[WIFI_CIP_MAX_CONS+1];
@@ -120,9 +121,13 @@ int Convert2CharToHex(const char* h)
     return ((h1*16)+h2);
 }
 
-void HttpDecodeFormData(char* out, const char* in, unsigned int max_out)
+int HttpDecodeFormData(char* out, const char* in, unsigned int max_out)
 {
-    if(!in || !out) return;
+    int len = 0;
+    
+    LogMessage("HttpDecodeFormData");
+
+    if(!in || !out) return (-1);
     
     while(*in)
     {
@@ -138,13 +143,14 @@ void HttpDecodeFormData(char* out, const char* in, unsigned int max_out)
             in++;
         }
         out++;
-        max_out--;
-        if(max_out == 0) break;
+        len++;
+        if(len >= max_out) break;
     }
     *out = 0;
+    return (len < max_out)?len:(-1);
 }
 
-int HttpGetRequest(const char *buffer, char *request)
+int HttpGetRequest(const char *buffer, char *request, int max_len)
 {
 	int rc = 0;
     
@@ -152,7 +158,7 @@ int HttpGetRequest(const char *buffer, char *request)
     
 	while(*buffer && *buffer != '/') buffer++;
 	if( !(*buffer)) return 0;
-	while(*buffer && *buffer != ' ')
+	while(*buffer && *buffer != ' ' && rc < max_len)
 	{
 		*request = *buffer;
 		buffer++;
@@ -160,7 +166,7 @@ int HttpGetRequest(const char *buffer, char *request)
 		rc++;
 	}
 	*request = 0;
-	return rc;
+	return (rc < max_len)?rc:(-1);
 }
 
 int HTTPGetFormData(char *buffer, const char *label, char *value)
@@ -215,9 +221,9 @@ body{background-color:grey;font-size:24pt;}
 </body>
 </html>
 */
-void HttpReturnWiFiFormConfig(char *out)
+void HttpReturnWiFiFormConfig(char *out, int max_len)
 {
-    sprintf(out,
+    snprintf(out, max_len, 
             "%s"
             "<html>\n"
             "<head>\n"
@@ -254,9 +260,9 @@ void HttpReturnWiFiFormConfig(char *out)
             g_wifi_info.f.config.rqst_path);
 }
 
-void HttpReturnWiFiConfig(char *out)
+void HttpReturnWiFiConfig(char *out, int max_len)
 {
-    sprintf(out,
+    snprintf(out, max_len,
             "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
             http_200,
             g_wifi_info.status.hw_mac,
@@ -271,7 +277,7 @@ void HttpReturnWiFiConfig(char *out)
  * Genera un mensaje WEB con formato de formulario POST
  * y lo copia a un buffer (respuesta) o encola para enviar (notificación)
  * ************************************************************************** */
-int HTTPNotificarStatus(char *out)
+int HTTPNotificarStatus(char *out, int max_len)
 {
     int t1, t2, h1, h2;
     bool first_change;
@@ -279,7 +285,7 @@ int HTTPNotificarStatus(char *out)
     LogMessage("HTTPNotificarStatus");
 
     /* Parte fija con la MAC y las entradas y salidas */
-    sprintf(http_rqst_data, 
+    snprintf(http_rqst_data, MAX_HTTP_DATA,
         "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
@@ -374,24 +380,24 @@ int HTTPNotificarStatus(char *out)
     {
         DHTxxTemperatura(&t1,&t2);
         DHTxxHumedad(&h1,&h2); 
-        sprintf(&http_rqst_data[strlen(http_rqst_data)],
+        snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
 
     /* Agrego solicitud de configuración */
-    if(g_wifi_info.f.config.io_config_default)
+    if(g_wifi_info.f.config.io_config_default && (MAX_HTTP_DATA - strlen(http_rqst_data) > 10) )
     {
         strcat(http_rqst_data, "&GETCONF=1");
     }
     
-    sprintf(http_rqst_uri, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
+    snprintf(http_rqst_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 /* POST
  * 1.- %s: URI
  * 2.- %s: Host
  * 3.- %d: Content-Length
  * 4.- %s: datos
  */
-    sprintf(http_rqst, http_post,
+    snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_post,
             http_rqst_uri,
             g_wifi_info.f.config.wifi_host1,
             strlen(http_rqst_data),
@@ -401,9 +407,9 @@ int HTTPNotificarStatus(char *out)
     if(out)
     {
         /* Poner en un buffer */
-        strcpy(out, http_rqst);
+        strncpy(out, http_rqst, max_len);
     }
-    else if(HTTPAdd((-1), http_rqst) == 0)
+    else if(HTTPAdd((-1), http_rqst) <= 0)
     {
         /* No fue posible enviar */
         return 0;
@@ -425,9 +431,9 @@ int HTTPNotificarStatus(char *out)
 }
 
 #ifdef INCLUDE_IO_FORMS
-void HttpReturnIOStatusForm(char *out)
+void HttpReturnIOStatusForm(char *out, int max_len)
 {
-    sprintf(out,
+    snprintf(out, max_len,
             "%s"
             "<html>\n"
             "<head>\n"
@@ -455,9 +461,9 @@ void HttpReturnIOStatusForm(char *out)
             (g_control_io.stat4)?" selected":" ", (g_control_io.stat4)?" ":" selected");
 }
 
-void HttpReturnIOConfigForm(char *out)
+void HttpReturnIOConfigForm(char *out, int max_len)
 {
-    sprintf(out,
+    snprintf(out, max_len
             "%s"
             "<html>\n"
             "<head>\n"
@@ -487,11 +493,11 @@ void HttpReturnIOConfigForm(char *out)
 
 #endif /* INCLUDE_IO_FORMS */
 
-void HttpReturnIOStatus(char *out)
+void HttpReturnIOStatus(char *out, int max_len)
 {
     int t1, t2, h1, h2;
     
-    sprintf(out, 
+    snprintf(out, max_len,
         "%sID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         http_200,
         g_wifi_info.status.hw_mac,
@@ -511,15 +517,15 @@ void HttpReturnIOStatus(char *out)
     {
         DHTxxTemperatura(&t1,&t2);
         DHTxxHumedad(&h1,&h2); 
-        sprintf(&out[strlen(out)],
+        snprintf(&out[strlen(out)], max_len - strlen(out),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
     
 }
 
-void HttpReturnIOConfig(char *out)
+void HttpReturnIOConfig(char *out, int max_len)
 {
-    sprintf(out, 
+    snprintf(out, max_len,
             "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
             http_200,
             g_wifi_info.status.hw_mac,
@@ -529,9 +535,9 @@ void HttpReturnIOConfig(char *out)
             (g_wifi_info.f.config.io_config & 0x08)?((g_wifi_info.f.config.an_config & 0x08)?"ana":"in"):"out",
             (g_wifi_info.f.config.io_config & 0x10)?((g_wifi_info.f.config.an_config & 0x10)?"ana":"in"):"out",
             (g_wifi_info.f.config.io_config & 0x20)?((g_wifi_info.f.config.an_config & 0x20)?"ana":"in"):"out");
-    if(g_wifi_info.f.config.io_config_default)
+    if(g_wifi_info.f.config.io_config_default && (strlen(out)+10) < max_len)
     {
-        strcat(http_rqst_data, "&GETCONF=1");
+        strcat(out, "&GETCONF=1");
     }
 }
 
@@ -568,23 +574,23 @@ void HTTPTask( void )
         LogMessage("GET HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
-            HttpReturnWiFiFormConfig(htdat[id].data);
+            HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/status.htm"))
         {
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
         {
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/config.htm"))
         {
-            HttpReturnIOConfig(htdat[id].data);
+            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.htm"))
         {
-            HttpReturnIOConfig(htdat[id].data);
+            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
         }
 #ifdef INCLUDE_IO_FORMS
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
@@ -598,7 +604,7 @@ void HTTPTask( void )
 #endif /* INCLUDE_IO_FORMS */
         else
         {
-            strcpy(htdat[id].data, http_404);
+            strncpy(htdat[id].data, http_404, MAX_HTTP_DATA);
         }
         htdat[id].type = 'R';
         LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
@@ -609,12 +615,12 @@ void HTTPTask( void )
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
-            HttpReturnWiFiFormConfig(htdat[id].data);
+            HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/wifi.cgi"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
-            HttpReturnWiFiConfig(htdat[id].data);
+            HttpReturnWiFiConfig(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
         {
@@ -622,13 +628,13 @@ void HTTPTask( void )
 #ifdef INCLUDE_IO_FORMS
             HttpReturnIOStatusForm(htdat[id].data);
 #else
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
 #endif /* INCLUDE_IO_FORMS */
         }
         else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
         {
             CTRLSwitchIO(htdat[id].data);
-            HttpReturnIOStatus(htdat[id].data);
+            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
         }
         else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
         {
@@ -636,12 +642,12 @@ void HTTPTask( void )
 #ifdef INCLUDE_IO_FORMS
             HttpReturnIOConfigForm(htdat[id].data);
 #else
-            HttpReturnIOConfig(htdat[id].data);
+            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
 #endif /* INCLUDE_IO_FORMS */
         }
         else
         {
-            strcpy(htdat[id].data, http_404);
+            strncpy(htdat[id].data, http_404, MAX_HTTP_DATA);
         }
         htdat[id].type = 'R';
         LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
@@ -703,17 +709,22 @@ int HTTPAdd(int id, const char* buffer)
                 htdat[id].type = *buffer;
                 htdat[id].timeout = 50;
 
-                HttpGetRequest(buffer, htdat[id].rqst);
-
+                if(HttpGetRequest(buffer, htdat[id].rqst, MAX_HTTP_URI) <= 0)
+                {
+                    LogMessage("Request overflow");
+                    return (-1);
+                }
                 if(htdat[id].type == 'P')
                 {
                     p = strstr(buffer, "\r\n\r\n");
                     if(p)
                     {
                         p += 4;
-                        //strncpy(htdat[id].data, p, sizeof(htdat[id].data));
-                        //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
-                        HttpDecodeFormData(htdat[id].data, p, sizeof(htdat[id].data));
+                        if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
+                        {
+                            LogMessage("Data overflow");
+                            return (-1);
+                        }
                     }
                 }
                 return 1;
@@ -727,9 +738,11 @@ int HTTPAdd(int id, const char* buffer)
                 if(p)
                 {
                     p += 4;
-                    //strncpy(htdat[id].data, p, sizeof(htdat[id].data));
-                    //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
-                    HttpDecodeFormData(htdat[id].data, p, sizeof(htdat[id].data));
+                    if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
+                    {
+                        LogMessage("Data overflow");
+                        return (-1);
+                    }
                 }
                 return 1;
             }
@@ -750,9 +763,11 @@ int HTTPAdd(int id, const char* buffer)
             {
                 htdat[id].timeout = 100;
                 htdat[id].type = 'S';
-                //strncpy(htdat[id].data, buffer, sizeof(htdat[id].data));
-                //htdat[id].data[sizeof(htdat[id].data)-1] = 0;
-                HttpDecodeFormData(htdat[id].data, buffer, sizeof(htdat[id].data));
+                if(HttpDecodeFormData(htdat[id].data, buffer, MAX_HTTP_DATA) <= 0)
+                {
+                    LogMessage("Data overflow");
+                    return (-1);
+                }
                 return 1;
             }
         }
@@ -807,20 +822,20 @@ int HTTPNotificarTarjeta( const char *crd)
 {
     LogMessage("HTTPNotificarTarjeta");
 
-    sprintf(http_rqst_data, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
-    sprintf(http_rqst_uri, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
+    snprintf(http_rqst_data, MAX_HTTP_DATA, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
+    snprintf(http_rqst_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 /* POST
  * 1.- %s: URI
  * 2.- %s: Host
  * 3.- %d: Content-Length
  * 4.- %s: datos
  */
-    sprintf(http_rqst, http_post,
+    snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_post,
             http_rqst_uri,
             g_wifi_info.f.config.wifi_host1,
             strlen(http_rqst_data),
             http_rqst_data);
-    if(HTTPAdd((-1), http_rqst) == 0)
+    if(HTTPAdd((-1), http_rqst) <= 0)
     {
         /* No fue posible enviar */
         return 0;

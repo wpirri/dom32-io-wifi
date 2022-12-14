@@ -111,7 +111,7 @@ int DHTxxHumedad( int *h1, int *h2 )
            8 bits   Checksum
 
 */
-void DHTxxGetData( void )
+void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
 {
     unsigned char b;
     unsigned char DHTxx_bitLen;
