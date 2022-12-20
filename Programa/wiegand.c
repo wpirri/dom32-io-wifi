@@ -69,6 +69,7 @@ void WGND_Timer( void )
         gWGND_TimerCount--;
         if( !gWGND_TimerCount)
         {
+            LogMessage("[WIEGAND] time-out");
             /* Reseteo los datos que pueda haber */
             gWGND_BitCount = 0;
             gWGND_Data.udata.ldata = 0l;
