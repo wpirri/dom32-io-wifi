@@ -40,17 +40,13 @@ typedef struct _wgnd_data
     } udata;
 } wgnd_data;
 
-unsigned char gWGND_DataReady;
-unsigned char gWGND_TimerCount;
-unsigned char gWGND_BitCount;
-unsigned char gWGND_ReadFlag;
+volatile unsigned char gWGND_TimerCount;
+volatile unsigned char gWGND_BitCount;
 wgnd_data gWGND_Data;
 
 void WGND_Init( void )
 {
-    gWGND_DataReady = 0;
     gWGND_TimerCount = 0;
-    gWGND_ReadFlag = 0;
     gWGND_BitCount = 0;
     gWGND_Data.udata.ldata = 0l;
 
@@ -64,16 +60,30 @@ void WGND_Init( void )
  */
 void WGND_Timer( void )
 {
+    char cardHexa[9];
+    
     if(gWGND_TimerCount)
     {
         gWGND_TimerCount--;
         if( !gWGND_TimerCount)
         {
-            LogMessage("[WIEGAND] time-out");
-            /* Reseteo los datos que pueda haber */
-            gWGND_BitCount = 0;
-            gWGND_Data.udata.ldata = 0l;
-            gWGND_DataReady = 0;
+            LogMessage("[WIEGAND] bit-count: %d", gWGND_BitCount);
+            if(gWGND_BitCount == 26)
+            {
+                /* desplazo los bits para alinearlos a 32 */
+                gWGND_Data.udata.ldata >>= 6;
+                /* los 6 bits mas significativos no van */
+                gWGND_Data.udata.ldata &= 0x3FFFFFFF;
+
+                sprintf(cardHexa, "%02X%02X%02X%02X",
+                        gWGND_Data.udata.bytes.a,
+                        gWGND_Data.udata.bytes.b,
+                        gWGND_Data.udata.bytes.c,
+                        gWGND_Data.udata.bytes.d);
+                LogMessage("[WIEGAND] CRD: %s", cardHexa);
+                HTTPNotificarTarjeta(cardHexa);
+            }
+            WGND_Ack();
         }
     }
 }
@@ -83,7 +93,6 @@ void WGND_Ack( void )
     /* Reseteo todo para una nueva recepci�n */
     gWGND_BitCount = 0;
     gWGND_Data.udata.ldata = 0l;
-    gWGND_DataReady = 0;
 }
 
 /*  WGND_IntData
@@ -91,45 +100,13 @@ void WGND_Ack( void )
  */
 void WGND_IntData( unsigned char d0, unsigned char d1 )
 {
-    if(gWGND_DataReady) return;
     if(d0 == d1) return;
 
     gWGND_Data.udata.ldata >>= 1;
     
-    if(!d1) gWGND_Data.udata.ldata |= 0x80000000;
+    if(d1)  gWGND_Data.udata.ldata |= 0x80000000;
     else    gWGND_Data.udata.ldata &= 0x7FFFFFFF;
 
     gWGND_BitCount++;
-
-    if(gWGND_BitCount == 26)
-    {
-        /* desplazo los bits para alinearlos a 32 */
-        gWGND_Data.udata.ldata >>= 6;
-        /* los 6 bits mas significativos no van */
-        gWGND_Data.udata.ldata &= 0x3FFFFFFF;
-
-        gWGND_TimerCount = 0;
-        gWGND_DataReady = 1;
-    }
-    else
-    {
-        gWGND_TimerCount = 5;
-    }
-}
-
-void WGND_Task( void )
-{
-    char cardHexa[9];
-
-    if(gWGND_DataReady)
-    {
-        sprintf(cardHexa, "%02X%02X%02X%02X",
-                gWGND_Data.udata.bytes.a,
-                gWGND_Data.udata.bytes.b,
-                gWGND_Data.udata.bytes.c,
-                gWGND_Data.udata.bytes.d);
-        LogMessage("[WIEGAND] CRD: %s", cardHexa);
-        HTTPNotificarTarjeta(cardHexa);
-        WGND_Ack();
-    }
+    gWGND_TimerCount = 5;
 }

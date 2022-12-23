@@ -179,7 +179,6 @@ int main(void)
         HTTPTask();
         CTRLTask();
         ADCTask();
-        if(IS_WIEGAND_ENABLE) WGND_Task();
         
         if(main_flag_core_timer)
         {

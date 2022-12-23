@@ -231,9 +231,9 @@ void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHA
 {
     if(IFS0bits.CNBIF == 1)
     {
+        WGND_IntData( CNFBbits.CNFB8, CNFBbits.CNFB7 );
         if(CNFBbits.CNFB8 == 1)
         {
-            WGND_IntData( 1, 0 );
 //            if(IO6_InterruptHandler) 
 //            { 
 //                IO6_InterruptHandler(); 
@@ -244,12 +244,11 @@ void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHA
         
         if(CNFBbits.CNFB7 == 1)
         {
-            WGND_IntData( 0, 1 );
 //            if(IO5_InterruptHandler) 
 //            { 
 //                IO5_InterruptHandler(); 
 //            }
-            
+//            
             CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
         }
         
