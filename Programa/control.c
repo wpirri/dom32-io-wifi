@@ -63,10 +63,6 @@ void CTRLInit( void )
     {
         TRISBbits.TRISB5 = 1;
         CNPUBbits.CNPUB5 = 1;
-        if(g_wifi_info.f.config.an_config & 0x01)
-        {
-            LogMessage("[CONTROL] IO1 no puede ser analogico.");
-        }
     }
     else
     {
@@ -80,10 +76,6 @@ void CTRLInit( void )
     {
         TRISBbits.TRISB4 = 1;
         CNPUBbits.CNPUB4 = 1;
-        if(g_wifi_info.f.config.an_config & 0x02)
-        {
-            LogMessage("[CONTROL] IO2 no puede ser analogico.");
-        }
     }
     else
     {
@@ -176,10 +168,6 @@ void CTRLInit( void )
         {
             TRISBbits.TRISB7 = 1;
             CNPUBbits.CNPUB7 = 1;
-            if(g_wifi_info.f.config.an_config & 0x10)
-            {
-                LogMessage("[CONTROL] IO5 no puede ser analogico.");
-            }
         }
         else
         {
@@ -193,10 +181,6 @@ void CTRLInit( void )
         {
             TRISBbits.TRISB8 = 1;
             CNPUBbits.CNPUB8 = 1;
-            if(g_wifi_info.f.config.an_config & 0x20)
-            {
-                LogMessage("[CONTROL] IO6 no puede ser analogico.");
-            }
         }
         else
         {
@@ -315,11 +299,12 @@ void CTRLTask( void )
             }
             break;
         case 3:
+            if(g_wifi_info.f.config.an_config & 0x04) break; /* Analog */
             if(g_wifi_info.f.config.io_config & 0x04)  /* Input */
             {
                 if(IO3_GetValue() && g_control_count_in3 < DELAY_INPUT) g_control_count_in3++;
                 else if( !IO3_GetValue() && g_control_count_in3 > 0) g_control_count_in3--;
-                    
+
                 if( (g_control_count_in3 == 0 && g_control_io.stat3 == 1) ||
                         (g_control_count_in3 == DELAY_INPUT && g_control_io.stat3 == 0) )
                 {
@@ -345,11 +330,12 @@ void CTRLTask( void )
             }
             break;
         case 4:
+            if(g_wifi_info.f.config.an_config & 0x08) break; /* Analog */
             if(g_wifi_info.f.config.io_config & 0x08)  /* Input */
             {
                 if(IO4_GetValue() && g_control_count_in4 < DELAY_INPUT) g_control_count_in4++;
                 else if( !IO4_GetValue() && g_control_count_in4 > 0) g_control_count_in4--;
-                    
+
                 if( (g_control_count_in4 == 0 && g_control_io.stat4 == 1) ||
                         (g_control_count_in4 == DELAY_INPUT && g_control_io.stat4 == 0) )
                 {

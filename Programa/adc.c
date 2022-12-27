@@ -75,7 +75,7 @@ void ADCTask(void)
 {
     if(ANSELBbits.ANSB3 == 0 &&
        ANSELBbits.ANSB2 == 0 &&
-       ANSELAbits.ANSA2  ) return;
+       ANSELAbits.ANSA2 == 0  ) return;
 
     if(ADC_count_time) return;
 
@@ -148,7 +148,7 @@ void ADCTask(void)
                     g_control_io.stat4 = ADC1BUF0 * 3300l / 1023;
                     break;
                 case 3:
-
+                    /* TODO: Implementar captura de entrada analogica externa */
                     break;
             }
             ADC_count_time = 10;
