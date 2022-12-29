@@ -1184,13 +1184,14 @@ void WiFiTask( void )
     {
         case INVALID:
         case RESET:
-			//LogMessage("RESET\n");
+			LogMessage("RESET\n");
             WIFI_RESET_SetLow();
             g_wifi_task_stm_timeout = 0;
             g_wifi_task_stm_step = 0;
             g_wifi_read_line_buffer_index = 0;
             g_wifi_read_line_buffer_timer = 0;
             g_wifi_read_line_wait_crlf = true;
+            g_wifi_task_stm_delay = 30;
 
             g_wifi_send_error_count = 0;
             g_wifi_recv_error_count = 0;
@@ -1208,11 +1209,13 @@ void WiFiTask( void )
         case START:
 			//LogMessage("START\n");
             WIFI_RESET_SetHigh();
+            g_wifi_task_stm_delay = 10;
             WifiTaskSTMSet(CLEAN, 5, 50);
             break;
         case CLEAN:
             /* Me quedo recibiendo un rato la basura de la POST del ESP-02 */
             /* No es basura, pero se ve como basura porque esta a otra velocidad */
+            g_wifi_task_stm_delay = 0;
             WifiWaitLine(0, 0, 0, 0, 0);
             if(g_wifi_task_stm_timeout == 0)
             {
