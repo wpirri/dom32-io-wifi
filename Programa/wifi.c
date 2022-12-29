@@ -556,8 +556,11 @@ int WifiTaskAPMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //LogMessage("TIMEOUT esperando OK\n");
-                rc = (-1);
+                /* Los módulos con firmware viejo no soportan este comando */
+                LogMessage("WiFi: AT+CIPSERVERMAXCONN no soportado.");
+                g_wifi_task_stm_step = 12;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
             }
             break;
         case 12:
@@ -670,8 +673,10 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                //LogMessage("TIMEOUT esperando OK\n");
-                rc = (-1);
+                LogMessage("WiFi: AT+CIPSERVERMAXCONN no soportado.");
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
             }
             break;
         case 8:
