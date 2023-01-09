@@ -154,6 +154,22 @@ module Cajon()
     OrejaTornillo(caja_x, caja_y-15, 2);
 }
 
+module VentanaDebug()
+{
+    translate(origen + [caja_x-espesor_paredes, 17, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+    translate(origen + [caja_x-espesor_paredes, 19, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+    translate(origen + [caja_x-espesor_paredes, 21, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+    translate(origen + [caja_x-espesor_paredes, 23, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+    translate(origen + [caja_x-espesor_paredes, 25, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+    translate(origen + [caja_x-espesor_paredes, 27, separador_z+espesor_placa+5])
+        cube([espesor_paredes, 1, 7], center=false);
+}
+
 module Base()
 {
     difference()
@@ -164,6 +180,7 @@ module Base()
         VentanaBorneraFrente();
         VentanaBorneraFondo();
         Ventilacion();
+        VentanaDebug();
     }
 }
 
@@ -323,8 +340,8 @@ module OjoDeBuey()
 
 // -- Main
 
-//Base();
-TapaMedia();
+Base();
+//TapaMedia();
 //TapaConLogo();
 
 //Logo();
