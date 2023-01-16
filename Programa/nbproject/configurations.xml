@@ -311,7 +311,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d03ffff"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename"
                   value="C:\Users\walte\OneDrive\Documentos\Git\Domotica-IoT\dom32-io-wifi\Programa\dist\default\production\Programa.production.hex"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
@@ -385,7 +385,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="1d000000-1d03ffff"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename"
                   value="C:\Users\walte\OneDrive\Documentos\Git\Domotica-IoT\dom32-io-wifi\Programa\dist\default\production\Programa.production.hex"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
