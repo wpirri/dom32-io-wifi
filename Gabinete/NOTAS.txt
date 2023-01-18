@@ -1,0 +1,17 @@
+Gabinete
+    Fuente: dom32-io-wifi-gabinete.scad
+    Descomentar en el fuente la parte que se quiere generar
+
+    Parte 1:        Base();         dom32-io-wifi-gabinete-base.stl             Negro
+    Parte 2:        TapaMedia();    dom32-io-wifi-gabinete-tapa-media.stl       Negro
+    Parte 3a:       Logo();         dom32-io-wifi-gabinete-logo.stl             Blanco
+    Parte 3b:       TapaConLogo();  dom32-io-wifi-gabinete-tapa-superior.stl    Negro
+    Accesorio 1:    Pulsador();     dom32-io-wifi-gabinete-pulsador.stl         Transparente
+    Accesorio 2:    OjoDeBuey();    dom32-io-wifi-gabinete-ojo-de-buey.stl      Transparente
+
+Tapa con logo (Parte 3a + Parte 3b)
+    Archivo: dom32-io-wifi-tapa-con-logo.3mf
+    Originales: dom32-io-wifi-gabinete-logo.stl
+                dom32-io-wifi-gabinete-tapa-superior.stl
+    Estrusor 1: PLA Blanco
+    Estrusor 2: PLA Negro
