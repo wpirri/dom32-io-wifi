@@ -282,8 +282,6 @@ int HTTPNotificarStatus(char *out, int max_len)
     int t1, t2, h1, h2;
     bool first_change;
     
-    LogMessage("HTTPNotificarStatus");
-
     /* Parte fija con la MAC y las entradas y salidas */
     snprintf(http_rqst_data, MAX_HTTP_DATA,
         "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
@@ -384,6 +382,25 @@ int HTTPNotificarStatus(char *out, int max_len)
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
 
+    /* Version del stack AT del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(http_rqst_data) > sizeof(g_wifi_info.status.wifi_at)))
+    {
+        snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
+                "&AT=%s", g_wifi_info.status.wifi_at);
+    }
+    /* Version del SDK del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(http_rqst_data) > sizeof(g_wifi_info.status.wifi_sdk)))
+    {
+        snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
+                "&SDK=%s", g_wifi_info.status.wifi_sdk);
+    }
+    /* Compilacion del firmware */
+    if((MAX_HTTP_DATA - strlen(http_rqst_data) > sizeof(g_wifi_info.status.up_fw)))
+    {
+        snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
+                "&FW=%s", g_wifi_info.status.up_fw);
+    }
+
     /* Agrego solicitud de configuración */
     if(g_wifi_info.f.config.io_config_default && (MAX_HTTP_DATA - strlen(http_rqst_data) > 10) )
     {
@@ -402,6 +419,8 @@ int HTTPNotificarStatus(char *out, int max_len)
             g_wifi_info.f.config.wifi_host1,
             strlen(http_rqst_data),
             http_rqst_data);
+
+    LogMessage("HTTPNotificarStatus - data-len: %d", strlen(http_rqst));
 
     /* Debo poner en un buffer o enviar? */
     if(out)
@@ -520,7 +539,27 @@ void HttpReturnIOStatus(char *out, int max_len)
         snprintf(&out[strlen(out)], max_len - strlen(out),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
+
+    /* Version del stack AT del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_at)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&AT=%s", g_wifi_info.status.wifi_at);
+    }
+    /* Version del SDK del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_sdk)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&SDK=%s", g_wifi_info.status.wifi_sdk);
+    }
+    /* Compilacion del firmware */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.up_fw)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&FW=%s", g_wifi_info.status.up_fw);
+    }
     
+    LogMessage("HttpReturnIOStatus - data-len: %d", strlen(out));
 }
 
 void HttpReturnIOConfig(char *out, int max_len)

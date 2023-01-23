@@ -80,6 +80,9 @@ typedef struct
         unsigned char wifi_mode;
         unsigned char save_config;
         char hw_mac[13];
+        char wifi_at[65];
+        char wifi_sdk[65];
+        char up_fw[65];
         bool wifi_ok;
         bool wifi_need_firmware_update;
         bool wifi_start_ap;

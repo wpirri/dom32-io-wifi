@@ -169,6 +169,9 @@ int main(void)
     WGND_Init();
     DHTxxInit();
     
+    strncpy(g_wifi_info.status.up_fw, __DATE__ " " __TIME__, 
+            sizeof(g_wifi_info.status.up_fw)-1);
+
     LogMessage("MAIN: Init Ok.");
     
     while(1)
