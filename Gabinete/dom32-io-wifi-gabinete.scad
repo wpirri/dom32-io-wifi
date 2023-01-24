@@ -321,7 +321,7 @@ module Pulsador()
 {
     translate(origen)
         color(color_botones)
-        cube([4,4,8], center = false);
+        cube([4,4,10], center = false);
     translate(origen - [8,0,0])
         color(color_botones)
         cube([20,9,4.5], center = false);
@@ -340,14 +340,14 @@ module OjoDeBuey()
 
 // -- Main
 
-Base();
+//Base();
 //TapaMedia();
 //TapaConLogo();
 
 //Logo();
 
 
-//Pulsador();
+Pulsador();
 //OjoDeBuey();
 
 // No sale bien impreso
