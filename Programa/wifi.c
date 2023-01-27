@@ -431,7 +431,7 @@ int WifiTaskInit( void )
             break;
         case 6:
             /* Check soporte SSL */
-            WifiWriteLine("AT+CIPSSLCCONF=0");
+            WifiWriteLine("AT+CIPSSLCCONF?");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
@@ -452,6 +452,7 @@ int WifiTaskInit( void )
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_ssl_capable = false;
                 LogMessage("WiFi: Sin soporte SSL");
+                //g_wifi_need_upgrade = true;
             }
             break;
         case 8:
