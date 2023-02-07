@@ -16,7 +16,7 @@
 "Q1, Q2, Q3, Q4, ","4","BC848","Q_NPN_BEC","Package_TO_SOT_SMD:SOT-23","NPN transistor, base/emitter/collector",""
 "R1, ","1","10K","R","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","Resistor",""
 "R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R15, R16, R17, R18, R19, R20, R21, ","18","1K","R","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","Resistor",""
-"R13, R14, R22, ","3","22R","R","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","Resistor",""
+"R13, R14, R22, ","3","33R","R","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","Resistor",""
 "SW1, ","1","TactSwitch","SW_Push","Button_Switch_THT:SW_PUSH_6mm_H5mm","Push button switch, generic, two pins",""
 "U1, ","1","ZLDO1117QG33TADICT-ND","LM1117-3.3","Package_TO_SOT_SMD:SOT-223-3_TabPin2","800mA Low-Dropout Linear Regulator, 3.3V fixed output, TO-220/TO-252/TO-263/SOT-223",""
 "U2, ","1","PIC32MM0256GPM028-I-SS","PIC32MM0256GPM028-I-SS","Package_SO:SSOP-28_5.3x10.2mm_P0.65mm","",""
