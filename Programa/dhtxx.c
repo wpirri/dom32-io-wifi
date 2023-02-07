@@ -56,6 +56,21 @@ dht_xx dhtxx;
 void DHTxxInit( void )
 {
     DHTxx_POWER_OUT = 1;
+    dhtxx.buffer[0] = 0;
+    dhtxx.buffer[1] = 0;
+    dhtxx.buffer[2] = 0;
+    dhtxx.buffer[3] = 0;
+    dhtxx.buffer[4] = 0;
+}
+
+void DHTxxClose( void )
+{
+    DHTxx_POWER_OUT = 0;
+    dhtxx.buffer[0] = 0;
+    dhtxx.buffer[1] = 0;
+    dhtxx.buffer[2] = 0;
+    dhtxx.buffer[3] = 0;
+    dhtxx.buffer[4] = 0;
 }
 
 int DHTxxTemperatura( int *t1, int *t2 )
@@ -111,13 +126,13 @@ int DHTxxHumedad( int *h1, int *h2 )
            8 bits   Checksum
 
 */
-void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
+int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
 {
     unsigned char b;
     unsigned char DHTxx_bitLen;
     hl_values v[40];
     
-    //LogMessage("[DHTxx] GetData");
+    //LogMessage("[DHT] GetData");
     memset(v, 0, sizeof(hl_values)*40);
     dhtxx.buffer[0] = 0;
     dhtxx.buffer[1] = 0;
@@ -144,8 +159,8 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
-        LogMessage("[DHTxx] start overflow 0");
-        return;
+        LogMessage("[DHT] start overflow 0");
+        return 0;
     }
     DHTxx_bitLen = 0;
     while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
@@ -156,8 +171,8 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
-        LogMessage("[DHTxx] start overflow 1");
-        return;
+        LogMessage("[DHT] start overflow 1");
+        return 0;
     }
     /* Fin del start */
     /* Salteo el header */
@@ -170,8 +185,8 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
-        LogMessage("[DHTxx] header overflow 0");
-        return;
+        LogMessage("[DHT] header overflow 0");
+        return (-1);
     }
     DHTxx_bitLen = 0;
     while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
@@ -182,8 +197,8 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
-        LogMessage("[DHTxx] header overflow 1");
-        return;
+        LogMessage("[DHT] header overflow 1");
+        return (-1);
     }
     /* Fin del header */
     /* Aca arrancan los datos */
@@ -198,9 +213,9 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     /* Fin parte crítica */
     if(b < 40)
     {
-        LogMessage("[DHTxx] overflow en datos. H: %d L: %d Bit: %d",
+        LogMessage("[DHT] overflow en datos. H: %d L: %d Bit: %d",
                 v[b].h, v[b].l, b);
-        return;
+        return (-1);
     }
     for(b = 0; b < 40; b++)
     {
@@ -214,16 +229,18 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(dhtxx.buffer[4] == (0xFF&(dhtxx.buffer[0]+dhtxx.buffer[1]+dhtxx.buffer[2]+dhtxx.buffer[3])))
     {
         /* Todo OK, lo paso a las variables correspondientes */
-        LogMessage("[DHTxx] %02x %02x %02x %02x %02x",
+        LogMessage("[DHT] %02x %02x %02x %02x %02x",
                     dhtxx.buffer[0],dhtxx.buffer[1],dhtxx.buffer[2],dhtxx.buffer[3],dhtxx.buffer[4]);
-        LogMessage("[DHTxx] HR: %d.%d %% - Temp: %d.%d °C",
+        LogMessage("[DHT] HR: %d.%d %% - Temp: %d.%d °C",
                     DHTxxHumedad(0,0)/10, DHTxxHumedad(0,0)%10,
                     DHTxxTemperatura(0,0)/10, DHTxxTemperatura(0,0)%10);
+        return 1;
     }
     else
     {
-        LogMessage("[DHTxx] Error de CHKSum %02X %02X %02X %02X %02X",
+        LogMessage("[DHT] Error de CHKSum %02X %02X %02X %02X %02X",
                 dhtxx.buffer[0], dhtxx.buffer[1], dhtxx.buffer[2],
                 dhtxx.buffer[3], dhtxx.buffer[4]);
+        return (-1);
     }
 }

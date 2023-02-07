@@ -30,7 +30,8 @@
 #define DHTxx_REFRESH_DELAY 100
 
 void DHTxxInit( void );
-void DHTxxGetData();
+void DHTxxClose( void );
+int DHTxxGetData();
 
 /* Temp: 100 = 10,0 °C */
 int DHTxxTemperatura( int *t1, int *t2 );

@@ -374,7 +374,7 @@ int HTTPNotificarStatus(char *out, int max_len)
     }
     
     /* Agrego info de Temperatura y humedad si está configurado */
-    if(IS_DHT2x_ENABLE)
+    if(g_wifi_info.status.dht_sensor_present)
     {
         DHTxxTemperatura(&t1,&t2);
         DHTxxHumedad(&h1,&h2); 
@@ -532,12 +532,15 @@ void HttpReturnIOStatus(char *out, int max_len)
         (g_control_out.stat4)?1:0);
     
     /* Agrego info de Temperatura y humedad si está configurado */
-    if(IS_DHT2x_ENABLE)
+    if(g_wifi_info.status.dht_sensor_present)
     {
         DHTxxTemperatura(&t1,&t2);
-        DHTxxHumedad(&h1,&h2); 
-        snprintf(&out[strlen(out)], max_len - strlen(out),
+        DHTxxHumedad(&h1,&h2);
+        if(h1 != 0)
+        {
+            snprintf(&out[strlen(out)], max_len - strlen(out),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
+        }
     }
 
     /* Version del stack AT del ESP-02 */

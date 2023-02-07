@@ -70,7 +70,7 @@
 #include "clog.h"
 
 bool main_flag_core_timer;
-int main_flag_dhtxx_timer_count;
+unsigned int main_flag_dhtxx_timer_count;
 char led_aux_count;
 
 
@@ -148,7 +148,7 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
-    main_flag_dhtxx_timer_count = 0;
+    main_flag_dhtxx_timer_count = 1200; /* primer medición en 2 minutos */
 
     SYSTEM_Initialize();
     
@@ -168,7 +168,7 @@ int main(void)
     HTTPInit();
     WGND_Init();
     DHTxxInit();
-    
+    g_wifi_info.status.dht_sensor_present = true;
     strncpy(g_wifi_info.status.up_fw, __DATE__ " " __TIME__, 
             sizeof(g_wifi_info.status.up_fw)-1);
 
@@ -195,13 +195,33 @@ int main(void)
             CTRLTimer();
             RTCC_Task();
             if(IS_WIEGAND_ENABLE) WGND_Timer();
-            if(IS_DHT2x_ENABLE)
+            if(main_flag_dhtxx_timer_count)
             {
-                main_flag_dhtxx_timer_count++;
-                if(main_flag_dhtxx_timer_count > 300)
+                main_flag_dhtxx_timer_count--;
+                if(main_flag_dhtxx_timer_count == 0)
                 {
-                    main_flag_dhtxx_timer_count = 0;
-                    DHTxxGetData();
+                    if(g_wifi_info.status.dht_sensor_present)
+                    {
+                        /* Ya se que hay un sensor */
+                        if( DHTxxGetData() == 0)
+                        {
+                            LogMessage("[DHT] Sensor no detectado");
+                            g_wifi_info.status.dht_sensor_present = false;
+                            DHTxxClose();
+                            main_flag_dhtxx_timer_count = 6000; /* Vuelvo en 10 min */
+                        }
+                        else
+                        {
+                            main_flag_dhtxx_timer_count = 300; /* Medición cada 30 seg */
+                        }
+                    }
+                    else
+                    {
+                        /* Trato de detectarlo de nuevo */
+                        DHTxxInit();
+                        g_wifi_info.status.dht_sensor_present = true;
+                        main_flag_dhtxx_timer_count = 300; /* Medición en 30 seg */
+                    }
                 }
             }
         }
