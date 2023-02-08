@@ -82,7 +82,7 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
     g_wifi_task_stm_step = 0;
 }
 
-void WifiWrite( const char *buffer )
+void __attribute__((optimize("-O0"))) WifiWrite( const char *buffer )
 {
 #ifdef DEBUG_WIFI
 	LogMessage("WifiWrite: %.80s", buffer);
@@ -99,7 +99,7 @@ void WifiWrite( const char *buffer )
     }
 }
 
-void WifiWriteLine( const char *line )
+void __attribute__((optimize("-O0"))) WifiWriteLine( const char *line )
 {
 #ifdef DEBUG_WIFI
 	LogMessage("WifiWriteLine: %.80s", line);
