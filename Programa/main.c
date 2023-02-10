@@ -71,12 +71,12 @@
 
 bool main_flag_core_timer;
 unsigned int main_flag_dhtxx_timer_count;
-char led_aux_count;
 
 
 void LedControl( void )
 {
     static char led_count = 0;
+    static char led_aux_count = 0;
     
     if(led_aux_count)
     {
@@ -87,12 +87,14 @@ void LedControl( void )
             LED_Aux_SetLow();
         }
     }
+    
     if(++led_count >= 50)
     {
         LED_Status_SetLow();
         LED_Modo_SetLow();
         led_count = 0;
     }
+    
     if(g_wifi_info.status.wifi_ok)
     {
         if(led_count > 10)
@@ -113,6 +115,7 @@ void LedControl( void )
         {
             LED_Status_SetLow();
         }
+
         if(g_wifi_info.status.wifi_mode)
         {
             if(led_count <= (g_wifi_info.status.wifi_mode*2))
@@ -124,22 +127,22 @@ void LedControl( void )
         {
             LED_Modo_SetLow();
         }
+
+        if(g_wifi_info.status.host_conectado)
+        {
+            LED_Aux_SetValue(led_count & 0x02);
+        }
+        else
+        {
+            LED_Aux_SetLow();
+        }
     }
     else
     {
-        LED_Status_SetValue(led_count & 0x01);
-        LED_Modo_SetValue(!(led_count & 0x01));
+        LED_Status_SetValue((led_count) & 0x04);
+        LED_Modo_SetValue((led_count+1) & 0x04);
+        LED_Aux_SetValue((led_count+2) & 0x04);
     }
-    
-    if(g_wifi_info.status.host_conectado)
-    {
-        LED_Aux_SetValue(led_count & 0x02);
-    }
-    else
-    {
-        LED_Aux_SetLow();
-    }
-    
     
 }
 /*
