@@ -30,6 +30,7 @@
 #include "http.h"
 #include "config.h"
 #include "clog.h"
+#include "delay.h"
 
 //#define DEBUG_WIFI
 #define WIFI_READ_LINE_BUFFER_LEN 1024
@@ -82,7 +83,7 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
     g_wifi_task_stm_step = 0;
 }
 
-void __attribute__((optimize("-O0"))) WifiWrite( const char *buffer )
+void WifiWrite( const char *buffer )
 {
 #ifdef DEBUG_WIFI
 	LogMessage("WifiWrite: %.80s", buffer);
@@ -96,10 +97,11 @@ void __attribute__((optimize("-O0"))) WifiWrite( const char *buffer )
             UART1_Write((uint8_t)*buffer);
             buffer++;
         }
+        __delay_us(5);
     }
 }
 
-void __attribute__((optimize("-O0"))) WifiWriteLine( const char *line )
+void WifiWriteLine( const char *line )
 {
 #ifdef DEBUG_WIFI
 	LogMessage("WifiWriteLine: %.80s", line);
@@ -116,6 +118,7 @@ void __attribute__((optimize("-O0"))) WifiWriteLine( const char *line )
     }
     UART1_Write('\r');
     UART1_Write('\n');
+    __delay_us(5);
 }
 
 /*
