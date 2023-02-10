@@ -87,8 +87,10 @@ static bool volatile rxOverflowed;
 static uint8_t txQueue[UART2_CONFIG_TX_BYTEQ_LENGTH] ;
 static uint8_t rxQueue[UART2_CONFIG_RX_BYTEQ_LENGTH] ;
 
+/*
 void (*UART2_TxDefaultInterruptHandler)(void);
 void (*UART2_RxDefaultInterruptHandler)(void);
+*/
 
 /**
   Section: Driver Interface
@@ -114,9 +116,11 @@ void UART2_Initialize (void)
    
    rxOverflowed = 0;
 
+/*
    UART2_SetTxInterruptHandler(UART2_Transmit_ISR);
 
    UART2_SetRxInterruptHandler(UART2_Receive_ISR);
+*/
    IEC1bits.U2RXIE = 1;
    
     //Make sure to set LAT bit corresponding to TxPin as high before UART initialization
@@ -128,17 +132,21 @@ void UART2_Initialize (void)
 /**
     Maintains the driver's transmitter state machine and implements its ISR
 */
+/*
 void UART2_SetTxInterruptHandler(void* handler){
     UART2_TxDefaultInterruptHandler = handler;
 }
+*/
 
 void __attribute__ ((vector(_UART2_TX_VECTOR), interrupt(IPL1SOFT))) _UART2_TX ( void )
 {
+/*
     (*UART2_TxDefaultInterruptHandler)();
 }
 
 void UART2_Transmit_ISR(void)
-{ 
+{
+*/
     if(txHead == txTail)
     {
         IEC1bits.U2TXIE = 0;
@@ -164,17 +172,21 @@ void UART2_Transmit_ISR(void)
     }
 }
 
+/*
 void UART2_SetRxInterruptHandler(void* handler){
     UART2_RxDefaultInterruptHandler = handler;
 }
+*/
 
 void __attribute__ ((vector(_UART2_RX_VECTOR), interrupt(IPL1SOFT))) _UART2_RX( void )
 {
+/*
     (*UART2_RxDefaultInterruptHandler)();
 }
 
 void UART2_Receive_ISR(void)
 {
+*/
     while((U2STAbits.URXDA == 1))
     {
         *rxTail = U2RXREG;
