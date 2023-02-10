@@ -616,7 +616,14 @@ void HTTPTask( void )
         LogMessage("GET HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
-            HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
+            if(g_wifi_info.status.wifi_mode == 3)
+            {
+                HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
+            }
+            else
+            {
+                HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+            }
         }
         else if( !strcmp(htdat[id].rqst, "/status.htm"))
         {
