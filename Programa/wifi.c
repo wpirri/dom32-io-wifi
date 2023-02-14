@@ -97,7 +97,7 @@ void WifiWrite( const char *buffer )
             UART1_Write((uint8_t)*buffer);
             buffer++;
         }
-        __delay_us(5);
+//        __delay_us(5);
     }
 }
 
@@ -118,7 +118,7 @@ void WifiWriteLine( const char *line )
     }
     UART1_Write('\r');
     UART1_Write('\n');
-    __delay_us(5);
+//    __delay_us(5);
 }
 
 /*
