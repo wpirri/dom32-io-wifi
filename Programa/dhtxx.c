@@ -56,21 +56,6 @@ dht_xx dhtxx;
 void DHTxxInit( void )
 {
     DHTxx_POWER_OUT = 1;
-    dhtxx.buffer[0] = 0;
-    dhtxx.buffer[1] = 0;
-    dhtxx.buffer[2] = 0;
-    dhtxx.buffer[3] = 0;
-    dhtxx.buffer[4] = 0;
-}
-
-void DHTxxClose( void )
-{
-    DHTxx_POWER_OUT = 0;
-    dhtxx.buffer[0] = 0;
-    dhtxx.buffer[1] = 0;
-    dhtxx.buffer[2] = 0;
-    dhtxx.buffer[3] = 0;
-    dhtxx.buffer[4] = 0;
 }
 
 int DHTxxTemperatura( int *t1, int *t2 )
@@ -126,13 +111,13 @@ int DHTxxHumedad( int *h1, int *h2 )
            8 bits   Checksum
 
 */
-int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
+void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
 {
     unsigned char b;
     unsigned char DHTxx_bitLen;
     hl_values v[40];
     
-    //LogMessage("[DHT] GetData");
+    //LogMessage("[DHTxx] GetData");
     memset(v, 0, sizeof(hl_values)*40);
     dhtxx.buffer[0] = 0;
     dhtxx.buffer[1] = 0;
@@ -159,8 +144,8 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
         INTERRUPT_GlobalEnable();
-        LogMessage("[DHT] start overflow 0");
-        return 0;
+        LogMessage("[DHTxx] start overflow 0");
+        return;
     }
     DHTxx_bitLen = 0;
     while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
@@ -213,9 +198,9 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     /* Fin parte crítica */
     if(b < 40)
     {
-        LogMessage("[DHT] overflow en datos. H: %d L: %d Bit: %d",
+        LogMessage("[DHTxx] overflow en datos. H: %d L: %d Bit: %d",
                 v[b].h, v[b].l, b);
-        return (-1);
+        return;
     }
     for(b = 0; b < 40; b++)
     {
@@ -229,18 +214,16 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     if(dhtxx.buffer[4] == (0xFF&(dhtxx.buffer[0]+dhtxx.buffer[1]+dhtxx.buffer[2]+dhtxx.buffer[3])))
     {
         /* Todo OK, lo paso a las variables correspondientes */
-        LogMessage("[DHT] %02x %02x %02x %02x %02x",
+        LogMessage("[DHTxx] %02x %02x %02x %02x %02x",
                     dhtxx.buffer[0],dhtxx.buffer[1],dhtxx.buffer[2],dhtxx.buffer[3],dhtxx.buffer[4]);
-        LogMessage("[DHT] HR: %d.%d %% - Temp: %d.%d °C",
+        LogMessage("[DHTxx] HR: %d.%d %% - Temp: %d.%d °C",
                     DHTxxHumedad(0,0)/10, DHTxxHumedad(0,0)%10,
                     DHTxxTemperatura(0,0)/10, DHTxxTemperatura(0,0)%10);
-        return 1;
     }
     else
     {
-        LogMessage("[DHT] Error de CHKSum %02X %02X %02X %02X %02X",
+        LogMessage("[DHTxx] Error de CHKSum %02X %02X %02X %02X %02X",
                 dhtxx.buffer[0], dhtxx.buffer[1], dhtxx.buffer[2],
                 dhtxx.buffer[3], dhtxx.buffer[4]);
-        return (-1);
     }
 }
