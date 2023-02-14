@@ -148,7 +148,7 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     /* Fin del pulso, pongo el canal como input, el pull-up deberia mantenerlo arriba */
     DHTxx_DATA_TRIS = 1;
     /* Inicio parte crítica */
-    INTERRUPT_GlobalDisable();    
+    //INTERRUPT_GlobalDisable();    
     /* Espera el start */
     DHTxx_bitLen = 0;
     while( DHTxx_DATA_IN == 0 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
@@ -170,7 +170,7 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        INTERRUPT_GlobalEnable();
+        //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] start overflow 1");
         return 0;
     }
@@ -184,7 +184,7 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        INTERRUPT_GlobalEnable();
+        //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] header overflow 0");
         return (-1);
     }
@@ -196,7 +196,7 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        INTERRUPT_GlobalEnable();
+        //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] header overflow 1");
         return (-1);
     }
@@ -209,7 +209,7 @@ int /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
         while( DHTxx_DATA_IN == 1 && ++v[b].h < DHTxx_MAX_BIT_COUNT);
         if(v[b].l >= DHTxx_MAX_BIT_COUNT || v[b].h >= DHTxx_MAX_BIT_COUNT) break;
     }
-    INTERRUPT_GlobalEnable();
+    //INTERRUPT_GlobalEnable();
     /* Fin parte crítica */
     if(b < 40)
     {
