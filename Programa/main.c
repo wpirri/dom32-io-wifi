@@ -198,14 +198,12 @@ int main(void)
             CTRLTimer();
             RTCC_Task();
             if(IS_WIEGAND_ENABLE) WGND_Timer();
-            if(IS_DHT2x_ENABLE)
+
+            main_flag_dhtxx_timer_count++;
+            if(main_flag_dhtxx_timer_count > 300)
             {
-                main_flag_dhtxx_timer_count++;
-                if(main_flag_dhtxx_timer_count > 300)
-                {
-                    main_flag_dhtxx_timer_count = 0;
-                    DHTxxGetData();
-                }
+                main_flag_dhtxx_timer_count = 0;
+                DHTxxGetData();
             }
         }
     }

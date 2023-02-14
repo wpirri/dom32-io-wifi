@@ -192,33 +192,13 @@ void CTRLInit( void )
         IEC0bits.CNBIE = 0;
     }
 
-    if(IS_DHT2x_ENABLE)
-    {
-        /* Traido de interrupt_manager.c --> */
-        //    CNAI: PORT A Change Notification
-        //    Priority: 1
-//        IPC2bits.CNAIP = 1;
-        //    Sub Priority: 0
-//        IPC2bits.CNAIS = 0;
-        /* <-- Traido de interrupt_manager.c */
-        /****************************************************************************
-         * Interrupt On Change: Interrupt Enable
-         ***************************************************************************/
-//        IFS0CLR= 1 << _IFS0_CNAIF_POSITION; //Clear CNAI interrupt flag
-//        IEC0bits.CNAIE = 1; //Enable CNAI interrupt
-    }
-    else
-    {
-//        IEC0bits.CNAIE = 0; //Disable CNAI interrupt
-    }
-    
     ADCConfig();
     
     LogMessage("TRISB:   0x%04X", TRISB);
     LogMessage("CNPUB:   0x%04X", CNPUB);
     LogMessage("HTTPS:   %s", (IS_HTTPS_ENABLE)?"on":"off");
     LogMessage("WIEGAND: %s", (IS_WIEGAND_ENABLE)?"on":"off");
-    LogMessage("DHT2x:   %s", (IS_DHT2x_ENABLE)?"on":"off");
+//    LogMessage("DHT2x:   %s", (IS_DHT2x_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -1063,6 +1043,7 @@ void CTRLConfIO(char* in)
         LogMessage("WIEGAND: %s", tmp);
     }
     
+/*
     if(HTTPGetFormData(in, "DHT2x", tmp))
     {
         change = true;
@@ -1076,6 +1057,7 @@ void CTRLConfIO(char* in)
         }
         LogMessage("DHT2x: %s", tmp);
     }
+*/
     
     if(HTTPGetFormData(in, "HTTPS", tmp))
     {

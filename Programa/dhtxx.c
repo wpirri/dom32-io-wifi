@@ -55,6 +55,11 @@ dht_xx dhtxx;
 
 void DHTxxInit( void )
 {
+    dhtxx.buffer[0] = 0;
+    dhtxx.buffer[1] = 0;
+    dhtxx.buffer[2] = 0;
+    dhtxx.buffer[3] = 0;
+    dhtxx.buffer[4] = 0;
     DHTxx_POWER_OUT = 1;
 }
 
@@ -143,7 +148,7 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     }
     if(DHTxx_bitLen == DHTxx_MAX_BIT_COUNT)
     {
-        INTERRUPT_GlobalEnable();
+        //INTERRUPT_GlobalEnable();
         LogMessage("[DHTxx] start overflow 0");
         return;
     }
@@ -157,7 +162,7 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     {
         //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] start overflow 1");
-        return 0;
+        return;
     }
     /* Fin del start */
     /* Salteo el header */
@@ -171,7 +176,7 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     {
         //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] header overflow 0");
-        return (-1);
+        return;
     }
     DHTxx_bitLen = 0;
     while(DHTxx_DATA_IN == 1 && ++DHTxx_bitLen < DHTxx_MAX_BIT_COUNT)
@@ -183,7 +188,7 @@ void /*__attribute__((optimize("-O0")))*/ DHTxxGetData( void )
     {
         //INTERRUPT_GlobalEnable();
         LogMessage("[DHT] header overflow 1");
-        return (-1);
+        return;
     }
     /* Fin del header */
     /* Aca arrancan los datos */
