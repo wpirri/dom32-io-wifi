@@ -158,6 +158,7 @@ int main(void)
     RTCCInit();
     LogInit();
 
+    LogMessage("MAIN: Dom32-IO-WiFi.");
     LogMessage("MAIN: Compilacion " __DATE__ " " __TIME__ ".");
     LogMessage("MAIN: Compilador " __VERSION__ ".");
     LogMessage("MAIN: Procesador PIC32MM256GPM028.");
