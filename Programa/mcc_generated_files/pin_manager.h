@@ -3003,27 +3003,6 @@ void PIN_MANAGER_Initialize (void);
 
 /**
   @Summary
-    Callback for EXT_Data Pin.
-
-  @Description
-    This routine is callback for EXT_Data Pin
-
-  @Param
-    None.
-
-  @Returns
-    None
- 
- 
-  @Example 
-    <code>
-        EXT_Data_SetInterruptHandler(&EXT_Data_CallBack);
-    </code>
-*/
-void EXT_Data_CallBack(void);
-
-/**
-  @Summary
     Callback for IO6 Pin.
 
   @Description
@@ -3064,46 +3043,6 @@ void IO6_CallBack(void);
 */
 void IO5_CallBack(void);
 
-
-/**
-  @Summary
-    Assigns a function pointer with a callback address.
-
-  @Description
-    This routine assigns a function pointer with a callback address.
-
-  @Param
-    Address of the callback routine.
-
-  @Returns
-    None
- 
-  @Example 
-    <code>
-        EXT_Data_SetInterruptHandler(&EXT_Data_CallBack);
-    </code>
-*/
-void EXT_Data_SetInterruptHandler(void (* InterruptHandler)(void));
-
-/**
-  @Summary
-    Assigns a function pointer with a callback address.
-
-  @Description
-    This routine assigns a function pointer with a callback address.
-
-  @Param
-    Address of the callback routine.
-
-  @Returns
-    None
- 
-  @Example 
-    <code>
-        EXT_Data_SetIOCInterruptHandler(&EXT_Data_CallBack);
-    </code>
-*/
-void __attribute__((deprecated("\nThis will be removed in future MCC releases. \nUse EXT_Data_SetInterruptHandler instead."))) EXT_Data_SetIOCInterruptHandler(void *handler);
 
 /**
   @Summary

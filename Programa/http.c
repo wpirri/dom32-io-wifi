@@ -263,7 +263,7 @@ void HttpReturnWiFiFormConfig(char *out, int max_len)
 void HttpReturnWiFiConfig(char *out, int max_len)
 {
     snprintf(out, max_len,
-            "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
+            "%sID=%s&TYP=IO&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
@@ -284,7 +284,7 @@ int HTTPNotificarStatus(char *out, int max_len)
     
     /* Parte fija con la MAC y las entradas y salidas */
     snprintf(http_rqst_data, MAX_HTTP_DATA,
-        "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        "ID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
         g_control_io.stat2,
@@ -400,12 +400,19 @@ int HTTPNotificarStatus(char *out, int max_len)
         snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
                 "&FW=%s", g_wifi_info.status.up_fw);
     }
-
+    /* Compilacion del firmware */
+    if((MAX_HTTP_DATA - strlen(http_rqst_data) > 10))
+    {
+        snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
+                "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
+    }
+    
     /* Agrego solicitud de configuración */
     if(g_wifi_info.f.config.io_config_default && (MAX_HTTP_DATA - strlen(http_rqst_data) > 10) )
     {
         strcat(http_rqst_data, "&GETCONF=1");
     }
+    
     
     snprintf(http_rqst_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 /* POST
@@ -517,7 +524,7 @@ void HttpReturnIOStatus(char *out, int max_len)
     int t1, t2, h1, h2;
     
     snprintf(out, max_len,
-        "%sID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        "%sID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         http_200,
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
@@ -565,7 +572,7 @@ void HttpReturnIOStatus(char *out, int max_len)
 void HttpReturnIOConfig(char *out, int max_len)
 {
     snprintf(out, max_len,
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
+            "%sID=%s&TYP=IO&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             (g_wifi_info.f.config.io_config & 0x01)?((g_wifi_info.f.config.an_config & 0x01)?"ana":"in"):"out",
@@ -657,7 +664,7 @@ void HTTPTask( void )
     }
     else if(htdat[id].type == 'P')
     {
-        LogMessage("PUT HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
+        LogMessage("POST HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
         if( !strcmp(htdat[id].rqst, "/"))
         {
             HttpProcessWiFiFormConfig(htdat[id].data);
@@ -868,7 +875,7 @@ int HTTPNotificarTarjeta( const char *crd)
 {
     LogMessage("HTTPNotificarTarjeta");
 
-    snprintf(http_rqst_data, MAX_HTTP_DATA, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
+    snprintf(http_rqst_data, MAX_HTTP_DATA, "ID=%s&TYP=IO&CARD=%s", g_wifi_info.status.hw_mac, crd);
     snprintf(http_rqst_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 /* POST
  * 1.- %s: URI
