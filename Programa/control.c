@@ -41,6 +41,8 @@ unsigned int g_control_count_in4;
 unsigned int g_control_count_in5;
 unsigned int g_control_count_in6;
 
+unsigned int g_ctrl_count_reset;
+
 void CTRLNotificarStatus( int time )
 {
     if(time < g_control_notificar || g_control_notificar == 0)
@@ -127,7 +129,7 @@ void CTRLInit( void )
         CNPUBbits.CNPUB2 = 0;
     }
 
-    if(IS_WIEGAND_ENABLE)
+    if(g_wifi_info.f.config.enable_wiegand)
     {
         /* Entrada 5 - RB7 */
         g_wifi_info.f.config.an_config &= (0x10^0xFF);
@@ -196,8 +198,8 @@ void CTRLInit( void )
     
     LogMessage("TRISB:   0x%04X", TRISB);
     LogMessage("CNPUB:   0x%04X", CNPUB);
-    LogMessage("HTTPS:   %s", (IS_HTTPS_ENABLE)?"on":"off");
-    LogMessage("WIEGAND: %s", (IS_WIEGAND_ENABLE)?"on":"off");
+    LogMessage("HTTPS:   %s", (g_wifi_info.f.config.enable_https)?"on":"off");
+    LogMessage("WIEGAND: %s", (g_wifi_info.f.config.enable_wiegand)?"on":"off");
 //    LogMessage("DHT2x:   %s", (IS_DHT2x_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
@@ -341,7 +343,7 @@ void CTRLTask( void )
             }
             break;
         case 5:
-            if(IS_WIEGAND_ENABLE) break;
+            if(g_wifi_info.f.config.enable_wiegand) break;
             if(g_wifi_info.f.config.io_config & 0x10)  /* Input */
             {
                 if(IO5_GetValue() && g_control_count_in5 < DELAY_INPUT) g_control_count_in5++;
@@ -372,7 +374,7 @@ void CTRLTask( void )
             }
             break;
         case 6:
-            if(IS_WIEGAND_ENABLE) break;
+            if(g_wifi_info.f.config.enable_wiegand) break;
             if(g_wifi_info.f.config.io_config & 0x20)  /* Input */
             {
                 if(IO6_GetValue() && g_control_count_in6 < DELAY_INPUT) g_control_count_in6++;
@@ -475,8 +477,8 @@ void CTRLTimer( void )
     }
     else if(g_control_notificar == 0)
     {
-        /* notifico cada minuto */
-        CTRLNotificarStatus(600);
+        /* notifico segun lo configurado */
+        CTRLNotificarStatus(g_wifi_info.f.config.report);
     }
     
     /* Control de pulso */
@@ -580,7 +582,37 @@ void CTRLTimer( void )
             CTRLNotificarStatus(10);
         }
     }
-    
+
+    /* Control de reset */
+    if(g_ctrl_count_reset)
+    {
+        g_ctrl_count_reset--;
+        if(g_ctrl_count_reset == 0)
+        {
+            if(g_wifi_info.status.save_config)
+            {
+                g_ctrl_count_reset = g_wifi_info.status.save_config + 10;                
+            }
+            else
+            {
+                /* The following code illustrates a software Reset */
+                // assume interrupts are disabled
+                // assume the DMA controller is suspended
+                // assume the device is locked
+                /* perform a system unlock sequence */
+                // starting critical sequence
+                SYSKEY = 0x00000000; //write invalid key to force lock
+                SYSKEY = 0xAA996655; //write key1 to SYSKEY
+                SYSKEY = 0x556699AA; //write key2 to SYSKEY
+                /* set SWRST bit to arm reset */
+                RSWRSTSET = 1;
+                /* read RSWRST register to trigger reset */
+                unsigned int dummy; dummy = RSWRST;
+                /* prevent any unwanted code execution until reset occurs*/
+                while(1);
+            }
+        }
+    }
     
 }
 
@@ -919,6 +951,7 @@ void CTRLConfIO(char* in)
 {
     char tmp[32];
     bool change = false;
+    bool reset = false;
     struct tm tm_time;
     int i;
     
@@ -1032,45 +1065,53 @@ void CTRLConfIO(char* in)
     if(HTTPGetFormData(in, "WIEGAND", tmp))
     {
         change = true;
+        
         if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
         {
-            ENABLE_WIEGAND;
+            if(g_wifi_info.f.config.enable_wiegand == 0) reset = true;
+            g_wifi_info.f.config.enable_wiegand = 1;
         }
         else
         {
-            DISABLE_WIEGAND;
+            if(g_wifi_info.f.config.enable_wiegand == 1) reset = true;
+            g_wifi_info.f.config.enable_wiegand = 0;
         }
         LogMessage("WIEGAND: %s", tmp);
     }
     
-/*
-    if(HTTPGetFormData(in, "DHT2x", tmp))
+    if(HTTPGetFormData(in, "report", tmp))
     {
         change = true;
-        if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+        g_wifi_info.f.config.report = atoi(tmp) * 10;
+        if(g_wifi_info.f.config.report == 0)
         {
-            ENABLE_DHT2x;
+            g_wifi_info.f.config.report = 600;
         }
-        else
-        {
-            DISABLE_DHT2x;
-        }
-        LogMessage("DHT2x: %s", tmp);
+        LogMessage("Keep Alive: %is", g_wifi_info.f.config.report/10);
     }
-*/
     
     if(HTTPGetFormData(in, "HTTPS", tmp))
     {
-        change = true;
-        if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+        if(g_wifi_info.status.wifi_ssl_capable)
         {
-            ENABLE_HTTPS;
+            change = true;
+            
+            if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+            {
+                if(g_wifi_info.f.config.enable_https == 0) reset = true;
+                g_wifi_info.f.config.enable_https = 1;
+            }
+            else
+            {
+                if(g_wifi_info.f.config.enable_https == 1) reset = true;
+                g_wifi_info.f.config.enable_https = 0;
+            }
+            LogMessage("HTTPS: %s", tmp);
         }
         else
         {
-            DISABLE_HTTPS;
+            LogMessage("HTTPS no posible");
         }
-        LogMessage("HTTPS: %s", tmp);
     }
 
     if(HTTPGetFormData(in, "TIME", tmp))
@@ -1114,4 +1155,15 @@ void CTRLConfIO(char* in)
         g_wifi_info.f.config.io_config_default = 0;
         g_wifi_info.status.save_config = 150;
     }
+    
+    if(reset)
+    {
+        CTRLReset();
+    }
+}
+
+void CTRLReset( void )
+{
+    /* reset en 5 seg */
+    g_ctrl_count_reset = 100;
 }

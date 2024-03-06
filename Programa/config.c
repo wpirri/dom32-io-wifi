@@ -41,20 +41,10 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.wifi_host1_port = 80;
     g_wifi_info.f.config.wifi_host2_port = 80;
     strcpy(g_wifi_info.f.config.rqst_path, "/cgi-bin");
+    g_wifi_info.f.config.report = 600;
+    g_wifi_info.f.config.enable_https = 0;
+    g_wifi_info.f.config.enable_wiegand = 0;
     g_wifi_info.f.config.io_config_default = 1;
-    g_wifi_info.f.config.config_flags = 0x00;
-    g_wifi_info.f.config.an_config_min[0] = 0x0000;
-    g_wifi_info.f.config.an_config_min[1] = 0x0000;
-    g_wifi_info.f.config.an_config_min[2] = 0x0000;
-    g_wifi_info.f.config.an_config_min[3] = 0x0000;
-    g_wifi_info.f.config.an_config_min[4] = 0x0000;
-    g_wifi_info.f.config.an_config_min[5] = 0x0000;
-    g_wifi_info.f.config.an_config_max[0] = 0xffff;
-    g_wifi_info.f.config.an_config_max[1] = 0xffff;
-    g_wifi_info.f.config.an_config_max[2] = 0xffff;
-    g_wifi_info.f.config.an_config_max[3] = 0xffff;
-    g_wifi_info.f.config.an_config_max[4] = 0xffff;
-    g_wifi_info.f.config.an_config_max[5] = 0xffff;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;

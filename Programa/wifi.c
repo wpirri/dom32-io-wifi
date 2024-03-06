@@ -70,7 +70,7 @@ bool g_wifi_read_line_wait_crlf;
 char *g_wifi_host;
 unsigned int g_wifi_port;
 
-char g_wifi_cmd[64];
+char g_wifi_cmd[256];
 
 bool g_wifi_need_upgrade;
 bool g_wifi_fast_start;
@@ -283,7 +283,8 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
     {
-        LogMessage("WiFi: Conectado a un AP.");
+        LogMessage("WiFi: Conectado al AP [%s].", 
+                ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2));
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
@@ -363,12 +364,12 @@ void WifiSwitchHost( void )
     if(g_wifi_host == &g_wifi_info.f.config.wifi_host1[0] && g_wifi_info.f.config.wifi_host2[0] != 0)
     {
         g_wifi_host = &g_wifi_info.f.config.wifi_host2[0];
-        g_wifi_port = (g_wifi_info.f.config.wifi_host2_port)?g_wifi_info.f.config.wifi_host2_port:80;
+        g_wifi_port = g_wifi_info.f.config.wifi_host2_port;
     }
     else
     {
         g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
-        g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80;
+        g_wifi_port = g_wifi_info.f.config.wifi_host1_port;
     }
 }
 
@@ -447,6 +448,8 @@ int WifiTaskInit( void )
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_ssl_capable = true;
                 LogMessage("WiFi: Con soporte SSL");
+                // Puede faltar
+                // AT+CIPSSLSIZE=4096
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
@@ -811,6 +814,9 @@ int WifiTaskSTMode( void )
                 rc = STMODE;
             }
             break;
+            // Puede faltar                
+            // AT+CIPSNTPCFG=1,8	 // set SNTP timezone
+            // AT+CIPSNTPTIME? // get SNTP time
         default:
             rc = LOOP;
             break;
@@ -876,9 +882,21 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_timeout = 0;
                 break;
             }
+            if(g_wifi_port == 0)
+            {
+                if(g_wifi_info.f.config.enable_https)
+                {
+                    g_wifi_port = 443;
+                }
+                else
+                {
+                    g_wifi_port = 80;
+                }
+            }
             LogMessage("WifiTaskHttp -> Conectando %s:%i ...",  g_wifi_host, g_wifi_port);
-            sprintf(g_wifi_cmd, "AT+CIPSTART=%d,\"TCP\",\"%s\",%d",
+            sprintf(g_wifi_cmd, "AT+CIPSTART=%d,\"%s\",\"%s\",%d",
                     g_wifi_http_id,
+                    (g_wifi_info.f.config.enable_https)?"SSL":"TCP",
                     g_wifi_host,
                     g_wifi_port);
             WifiWriteLine(g_wifi_cmd);
@@ -903,7 +921,8 @@ int WifiTaskHttp( void )
             break;
         case 3:
             LogMessage("WifiTaskHttp -> Enviando");
-            sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, strlen(HTTPGet(g_wifi_http_id, NULL, false)));
+            sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, 
+                    strlen(HTTPGet(g_wifi_http_id, NULL, false)));
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
@@ -1024,7 +1043,7 @@ int WifiTaskHttp( void )
                 g_wifi_recv_error_count++;
             }
             /* Borro el mensaje de la cola */
-            HTTPGet(g_wifi_http_id, NULL, true);
+            //HTTPGet(g_wifi_http_id, NULL, true);
             rc = LOOP;
             break;
         default:
@@ -1125,7 +1144,7 @@ void WiFiInit( void )
     g_wifi_fast_start = false;
     
     g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
-    g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:80;
+    g_wifi_port = g_wifi_info.f.config.wifi_host1_port;
 }
 
 /* *****************************************************************************
@@ -1153,7 +1172,6 @@ void WiFiTask( void )
             g_wifi_send_error_count = 0;
             g_wifi_recv_error_count = 0;
 
-            g_wifi_info.status.wifi_need_firmware_update = false;
             g_wifi_info.status.wifi_conectado = 0;
             g_wifi_info.status.wifi_ap_select = 1;
             g_wifi_info.status.wifi_start_ap = true;

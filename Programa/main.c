@@ -71,6 +71,7 @@
 
 bool main_flag_core_timer;
 unsigned int main_flag_dhtxx_timer_count;
+unsigned int main_count_inactividad;
 
 
 void LedControl( void )
@@ -152,6 +153,7 @@ int main(void)
 {
     main_flag_core_timer = false;
     main_flag_dhtxx_timer_count = 0;
+    main_count_inactividad = 0;
 
     SYSTEM_Initialize();
     
@@ -198,7 +200,7 @@ int main(void)
             HTTPTimer();
             CTRLTimer();
             RTCC_Task();
-            if(IS_WIEGAND_ENABLE) WGND_Timer();
+            if(g_wifi_info.f.config.enable_wiegand) WGND_Timer();
 
             main_flag_dhtxx_timer_count++;
             if(main_flag_dhtxx_timer_count > 300)
@@ -206,6 +208,14 @@ int main(void)
                 main_flag_dhtxx_timer_count = 0;
                 DHTxxGetData();
             }
+            
+            main_count_inactividad++;
+            if(main_count_inactividad == 36000)
+            {
+                /* una hora */
+                CTRLReset();
+            }
+            
         }
     }
     return 1; 

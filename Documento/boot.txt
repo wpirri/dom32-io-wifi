@@ -1,0 +1,15 @@
+24CS256T-I/ST
+
+Digikey: 150-24CS256T-I/STCT-ND
+Fabricante
+Microchip Technology
+Número de pieza del fabricante
+24CS256T-I/ST
+Descripción
+256K 3.4MHZ I2C SERIAL EEPROM, I
+Plazo estándar del fabricante
+10 semanas
+Descripción detallada
+EEPROM Memoria IC 256Kbit I2C 3.4 MHz 70 ns 8-TSSOP
+
+Precio: $0.84000

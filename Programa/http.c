@@ -78,6 +78,7 @@ typedef struct
 } http_data;
 
 http_data htdat[WIFI_CIP_MAX_CONS+1];
+extern unsigned int main_count_inactividad;
 
 
 int Convert2CharToHex(const char* h)
@@ -260,17 +261,28 @@ void HttpReturnWiFiFormConfig(char *out, int max_len)
             g_wifi_info.f.config.rqst_path);
 }
 
+void HttpReturnResult(char *out, const char* result, int max_len)
+{
+    snprintf(out, max_len,
+        "%sID=%s&TYP=IO&RESULT=%s",
+        http_200,
+        g_wifi_info.status.hw_mac,
+        result);
+    
+    LogMessage("HttpReturn: %s - data-len: %d", result, strlen(out));
+}
+
 void HttpReturnWiFiConfig(char *out, int max_len)
 {
     snprintf(out, max_len,
-            "%sID=%s&TYP=IO&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
+            "%sID=%s&TYP=IO&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%u&ce2=%s&ce2p=%u&report=%u&rqst=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
             g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port,
             g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port,
-            g_wifi_info.f.config.rqst_path);
+            g_wifi_info.f.config.report/10, g_wifi_info.f.config.rqst_path);
 }
 
 /* *****************************************************************************
@@ -400,7 +412,7 @@ int HTTPNotificarStatus(char *out, int max_len)
         snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
                 "&FW=%s", g_wifi_info.status.up_fw);
     }
-    /* Compilacion del firmware */
+    /* Capacidad SSL del módulo WIFI */
     if((MAX_HTTP_DATA - strlen(http_rqst_data) > 10))
     {
         snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
@@ -565,6 +577,12 @@ void HttpReturnIOStatus(char *out, int max_len)
         snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
                 "&FW=%s", g_wifi_info.status.up_fw);
     }
+    /* Capacidad SSL del módulo WIFI */
+    if((MAX_HTTP_DATA - strlen(out) > 10))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
+    }
     
     LogMessage("HttpReturnIOStatus - data-len: %d", strlen(out));
 }
@@ -589,13 +607,32 @@ void HttpReturnIOConfig(char *out, int max_len)
 
 void HttpProcessWiFiFormConfig(char* in)
 {
+    char tmp[32];
+    
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
     HTTPGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
     HTTPGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
     HTTPGetFormData(in, "ce1", g_wifi_info.f.config.wifi_host1);
+    if(HTTPGetFormData(in, "ce1p", tmp))
+    {
+        g_wifi_info.f.config.wifi_host1_port = atoi(tmp);
+    }
     HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
+    if(HTTPGetFormData(in, "ce2p", tmp))
+    {
+        g_wifi_info.f.config.wifi_host2_port = atoi(tmp);
+    }
     HTTPGetFormData(in, "path", g_wifi_info.f.config.rqst_path);
+    if(HTTPGetFormData(in, "report", tmp))
+    {
+        g_wifi_info.f.config.report = atoi(tmp) * 10;
+        if(g_wifi_info.f.config.report == 0)
+        {
+            g_wifi_info.f.config.report = 600;
+        }
+    }
+
     g_wifi_info.status.save_config = 50;
 }
 
@@ -644,6 +681,11 @@ void HTTPTask( void )
         else if( !strcmp(htdat[id].rqst, "/ioconfig.htm"))
         {
             HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
+        }
+        else if( !strcmp(htdat[id].rqst, "/reset.htm"))
+        {
+            CTRLReset();
+            HttpReturnResult(htdat[id].data, "Ok", MAX_HTTP_DATA);
         }
 #ifdef INCLUDE_IO_FORMS
         else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
@@ -712,6 +754,7 @@ void HTTPTask( void )
         CTRLConfIO(htdat[id].data);
         CTRLSetIO(htdat[id].data);
         htdat[id].type = 0;
+        main_count_inactividad = 0;
     }
     
     id++;

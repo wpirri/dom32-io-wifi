@@ -76,4 +76,6 @@ void CTRLSetIO(char* in);
 void CTRLSwitchIO(char* in);
 void CTRLConfIO(char* in);
 
+void CTRLReset( void );
+
 #endif /* _CONTROL_H_ */

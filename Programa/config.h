@@ -27,18 +27,6 @@
 #define GetInstructionClock()	(GetSystemClock()/*/4*/)
 #define GetPeripheralClock()	(GetSystemClock()/*/4*/)
 
-#define FLAG_HTTPS_ENABLE    0x01
-#define FLAG_WIEGAND_ENABLE  0x02
-
-#define IS_HTTPS_ENABLE (g_wifi_info.f.config.config_flags & FLAG_HTTPS_ENABLE)
-#define IS_WIEGAND_ENABLE (g_wifi_info.f.config.config_flags & FLAG_WIEGAND_ENABLE)
-
-#define ENABLE_HTTPS (g_wifi_info.f.config.config_flags |= FLAG_HTTPS_ENABLE)
-#define ENABLE_WIEGAND (g_wifi_info.f.config.config_flags |= FLAG_WIEGAND_ENABLE)
-
-#define DISABLE_HTTPS (g_wifi_info.f.config.config_flags &= (FLAG_HTTPS_ENABLE ^ 0xFF) )
-#define DISABLE_WIEGAND (g_wifi_info.f.config.config_flags &= (FLAG_WIEGAND_ENABLE ^ 0xFF) )
-
 struct _config_ /* 2176 bits, 272 bytes */
 {
     char wifi_ap1[33];
@@ -50,12 +38,12 @@ struct _config_ /* 2176 bits, 272 bytes */
     char rqst_path[33];
     uint16_t wifi_host1_port;
     uint16_t wifi_host2_port;
+    uint16_t report;
     unsigned char io_config;
     unsigned char an_config;
-    unsigned int an_config_min[6];
-    unsigned int an_config_max[6];
+    unsigned char enable_https;
+    unsigned char enable_wiegand;
     unsigned char io_config_default;
-    uint16_t config_flags;
     uint32_t flash_ok;
 };
 
@@ -80,7 +68,6 @@ typedef struct
         char wifi_sdk[65];
         char up_fw[65];
         bool wifi_ok;
-        bool wifi_need_firmware_update;
         bool wifi_start_ap;
         bool wifi_ssl_capable;
         bool flash_error;
