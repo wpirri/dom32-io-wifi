@@ -77,5 +77,6 @@ void CTRLSwitchIO(char* in);
 void CTRLConfIO(char* in);
 
 void CTRLReset( void );
+void CTRLNotificarStatus( int time );
 
 #endif /* _CONTROL_H_ */

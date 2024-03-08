@@ -45,8 +45,13 @@ unsigned int g_ctrl_count_reset;
 
 void CTRLNotificarStatus( int time )
 {
+    if(g_wifi_info.status.host_conectado == 0 && time > 100)
+    {
+        time = 100;
+    }
     if(time < g_control_notificar || g_control_notificar == 0)
     {
+        LogMessage("Notificar en %i segundos", time/10);
         g_control_notificar = time;
     }
 }

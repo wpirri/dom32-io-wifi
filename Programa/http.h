@@ -31,6 +31,7 @@ int HTTPPending(void);
 char HTTPGetType(int id);
 const char*  HTTPGet(int id, char* buffer, bool clear);
 
+void HTTPResetResponse();
 int HTTPNotificarStatus(char *out, int max_len);
 int HTTPNotificarTarjeta( const char *crd);
 

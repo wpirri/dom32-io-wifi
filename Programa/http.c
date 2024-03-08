@@ -80,7 +80,6 @@ typedef struct
 http_data htdat[WIFI_CIP_MAX_CONS+1];
 extern unsigned int main_count_inactividad;
 
-
 int Convert2CharToHex(const char* h)
 {
     int h1, h2;
@@ -199,6 +198,67 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
     
     return len;
 }
+
+void HTTPResetResponse()
+{
+    g_wifi_info.status.http_last_resp = -1;
+    g_wifi_info.status.http_last_resp_json = 0;
+    g_wifi_info.status.http_last_resp_form = 0;
+    g_wifi_info.status.http_last_resp_code = -1;
+}
+
+void HTTPAnalizeResponse(const char *http_head, const char *http_data)
+{
+    char str[256];
+    char *p1;
+
+    LogMessage("[HTTPAnalizeResponse] head: %.15s... data: %.15s...", 
+            (http_head)?http_head:"NULL", (http_data)?http_data:"NULL");
+
+    if(http_head)
+    {
+        HTTPResetResponse();
+        /* Busco el código de respuesta http en la cabecera
+         * "HTTP/1.1 200 OK\r\n" */
+        p1 = strchr(http_head, ' ');
+        if(p1)
+        {
+            str[0] = *(++p1);
+            str[1] = *(++p1);
+            str[2] = *(++p1);
+            str[3] = 0;
+            g_wifi_info.status.http_last_resp = atoi(str);
+        }
+    }
+    
+    if(http_data && g_wifi_info.status.http_last_resp == 200)
+    {
+        if( strchr(http_data, '{') && 
+            strchr(http_data, ':') && 
+            strchr(http_data, ',') && 
+            strchr(http_data, '}')  )
+        {
+            LogMessage("Respuesta en formato JSON no esperada");
+            g_wifi_info.status.http_last_resp_json = 1;
+            g_wifi_info.status.http_last_resp_code = 99;
+        }
+        else if( strchr(http_data, '=') )
+        {
+            LogMessage("Respuesta en formato de formulario");
+            g_wifi_info.status.http_last_resp_form = 1;
+            if(HTTPGetFormData((char*)http_data, "error", str))
+            {
+                g_wifi_info.status.http_last_resp_code = atoi(str);
+                LogMessage("Respuesta con error: %i", g_wifi_info.status.http_last_resp_code);
+            }
+            else
+            {
+                g_wifi_info.status.http_last_resp_code = 0;
+            }
+        }
+    }
+}
+
 /*<html>
 <head>
 <title>Dom32IO</title>
@@ -439,7 +499,7 @@ int HTTPNotificarStatus(char *out, int max_len)
             strlen(http_rqst_data),
             http_rqst_data);
 
-    LogMessage("HTTPNotificarStatus - data-len: %d", strlen(http_rqst));
+    LogMessage("HTTPNotificarStatus - [%s] data-len: %d", http_rqst_uri, strlen(http_rqst));
 
     /* Debo poner en un buffer o enviar? */
     if(out)
@@ -751,8 +811,13 @@ void HTTPTask( void )
     {
         LogMessage("HTTP RESPONSE: %u bytes", strlen(htdat[id].data));
         /* Se trata de una respuesta HTTP/1... */
-        CTRLConfIO(htdat[id].data);
-        CTRLSetIO(htdat[id].data);
+        if(g_wifi_info.status.http_last_resp == 200 && 
+                g_wifi_info.status.http_last_resp_form &&
+                g_wifi_info.status.http_last_resp_code == 0)
+        {
+            CTRLConfIO(htdat[id].data);
+            CTRLSetIO(htdat[id].data);
+        }
         htdat[id].type = 0;
         main_count_inactividad = 0;
     }
@@ -828,19 +893,30 @@ int HTTPAdd(int id, const char* buffer)
             else if(*buffer == 'H')
             {
                 LogMessage("    respuesta.");
-                htdat[id].type = *buffer;
-                htdat[id].timeout = 50;
-                p = strstr(buffer, "\r\n\r\n");
-                if(p)
+                HTTPAnalizeResponse(buffer, NULL);
+                if(g_wifi_info.status.http_last_resp == 200)
                 {
-                    p += 4;
-                    if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
+                    LogMessage("      200 OK");
+                    htdat[id].type = *buffer;
+                    htdat[id].timeout = 50;
+                    p = strstr(buffer, "\r\n\r\n");
+                    if(p)
                     {
-                        LogMessage("Data overflow");
-                        return (-1);
+                        p += 4;
+                        if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
+                        {
+                            LogMessage("Data overflow");
+                            return (-1);
+                        }
+                        HTTPAnalizeResponse(NULL, htdat[id].data);
                     }
+                    return 1;
                 }
-                return 1;
+                else
+                {
+                    LogMessage("      HTTP Error %i", g_wifi_info.status.http_last_resp);
+                    return 0;
+                }
             }
         }
         else
