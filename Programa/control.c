@@ -636,14 +636,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO1", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat1 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat1 = 0;
-            }
+            g_control_io.stat1 = atoi(tmp);
             LogMessage("IO1: %s", tmp);
         }
     }
@@ -658,14 +651,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO2", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat2 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat2 = 0;
-            }
+            g_control_io.stat2 = atoi(tmp);
             LogMessage("IO2: %s", tmp);
         }
     }
@@ -680,14 +666,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO3", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat3 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat3 = 0;
-            }
+            g_control_io.stat3 = atoi(tmp);
             LogMessage("IO3: %s", tmp);
         }
     }
@@ -702,14 +681,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO4", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat4 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat4 = 0;
-            }
+            g_control_io.stat4 = atoi(tmp);
             LogMessage("IO4: %s", tmp);
         }
     }
@@ -724,14 +696,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO5", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat5 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat5 = 0;
-            }
+            g_control_io.stat5 = atoi(tmp);
             LogMessage("IO5: %s", tmp);
         }
     }
@@ -746,14 +711,7 @@ void CTRLSetIO(char* in)
         }
         else if(HTTPGetFormData(in, "IO6", tmp))
         {
-            if( tmp[0] == '1' )
-            {
-                g_control_io.stat6 = 1;
-            }
-            else if( tmp[0] == '0' )
-            {
-                g_control_io.stat6 = 0;
-            }
+            g_control_io.stat6 = atoi(tmp);
             LogMessage("IO6: %s", tmp);
         }
     }
@@ -766,14 +724,7 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT1", tmp))
     {
-        if( tmp[0] == '1' )
-        {
-            g_control_out.stat1 = 1;
-        }
-        else if( tmp[0] == '0' )
-        {
-            g_control_out.stat1 = 0;
-        }
+        g_control_out.stat1 = atoi(tmp);
         LogMessage("OUT1: %s", tmp);
     }
     
@@ -785,14 +736,7 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT2", tmp))
     {
-        if( tmp[0] == '1' )
-        {
-            g_control_out.stat2 = 1;
-        }
-        else if( tmp[0] == '0' )
-        {
-            g_control_out.stat2 = 0;
-        }
+        g_control_out.stat2 = atoi(tmp);
         LogMessage("OUT1: %s", tmp);
     }
     
@@ -804,14 +748,7 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT3", tmp))
     {
-        if( tmp[0] == '1' )
-        {
-            g_control_out.stat3 = 1;
-        }
-        else if( tmp[0] == '0' )
-        {
-            g_control_out.stat3 = 0;
-        }
+        g_control_out.stat3 = atoi(tmp);
         LogMessage("OUT3: %s", tmp);
     }
     
@@ -823,17 +760,154 @@ void CTRLSetIO(char* in)
     }
     else if(HTTPGetFormData(in, "OUT4", tmp))
     {
-        if( tmp[0] == '1' )
-        {
-            g_control_out.stat4 = 1;
-        }
-        else if( tmp[0] == '0' )
-        {
-            g_control_out.stat4 = 0;
-        }
+        g_control_out.stat4 = atoi(tmp);
         LogMessage("OUT4: %s", tmp);
     }
+}
+
+void CTRLCompareIO(char* in)
+{
+    char tmp[10];
+    bool notificar = false;
     
+    LogMessage("CTRLCompareIO: %s", in);
+
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO1", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat1)
+        {
+            g_control_io.change1 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x01))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat1 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO2", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat2)
+        {
+            g_control_io.change2 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x02))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat2 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO3", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat3)
+        {
+            g_control_io.change3 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x04))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat3 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO4", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat4)
+        {
+            g_control_io.change4 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x08))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat4 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO5", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat5)
+        {
+            g_control_io.change5 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x10))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat5 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las entradas / salidas que vengan informadas */
+    if(HTTPGetFormData(in, "IO6", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_io.stat6)
+        {
+            g_control_io.change6 = 1;
+            notificar = true;
+            if( !(g_wifi_info.f.config.io_config & 0x20))
+            {
+                /* Si es una salida corrijo el estado */
+                g_control_io.stat6 = atoi(tmp);
+            }
+        }
+    }
+    /* Para las salidas que vengan informadas */
+    if(HTTPGetFormData(in, "OUT1", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_out.stat1)
+        {
+            g_control_out.change1 = 1;
+            notificar = true;
+            g_control_out.stat1 = atoi(tmp);
+        }
+    }
+    /* Para las salidas que vengan informadas */
+    if(HTTPGetFormData(in, "OUT2", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_out.stat2)
+        {
+            g_control_out.change2 = 1;
+            notificar = true;
+            g_control_out.stat2 = atoi(tmp);
+        }
+    }
+    /* Para las salidas que vengan informadas */
+    if(HTTPGetFormData(in, "OUT3", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_out.stat3)
+        {
+            g_control_out.change3 = 1;
+            notificar = true;
+            g_control_out.stat3 = atoi(tmp);
+        }
+    }
+    /* Para las salidas que vengan informadas */
+    if(HTTPGetFormData(in, "OUT4", tmp))
+    {
+        /* Si hay diferencia entre lo informado y el estado actual */
+        if(atoi(tmp) != g_control_out.stat4)
+        {
+            g_control_out.change4 = 1;
+            notificar = true;
+            g_control_out.stat4 = atoi(tmp);
+        }
+    }
+
+    if(notificar) { CTRLNotificarStatus(5); }
 }
 
 void CTRLSwitchIO(char* in)

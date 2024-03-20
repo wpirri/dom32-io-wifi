@@ -815,8 +815,7 @@ void HTTPTask( void )
                 g_wifi_info.status.http_last_resp_form &&
                 g_wifi_info.status.http_last_resp_code == 0)
         {
-            CTRLConfIO(htdat[id].data);
-            CTRLSetIO(htdat[id].data);
+            CTRLCompareIO(htdat[id].data);
         }
         htdat[id].type = 0;
         main_count_inactividad = 0;

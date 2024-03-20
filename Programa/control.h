@@ -75,6 +75,7 @@ void CTRLTimer( void );
 void CTRLSetIO(char* in);
 void CTRLSwitchIO(char* in);
 void CTRLConfIO(char* in);
+void CTRLCompareIO(char* in);
 
 void CTRLReset( void );
 void CTRLNotificarStatus( int time );
