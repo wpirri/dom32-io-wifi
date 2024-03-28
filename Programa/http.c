@@ -64,6 +64,10 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
 #define MAX_HTTP_DATA 2048
 #define MAX_HTTP_URI  64
 
+#define HTTP_DATA_IN_QUEUE_LEN 2
+#define HTTP_DATA_OUT_QUEUE_LEN 2
+
+#define WIFI_HTTP_OUT_ID 0
 
 char http_rqst[MAX_HTTP_DATA + MAX_HTTP_HEAD];
 char http_rqst_data[MAX_HTTP_DATA];
@@ -72,13 +76,23 @@ char http_rqst_uri[MAX_HTTP_URI];
 typedef struct
 {
     char type;
+    int conn_id;
+    int http_rc;
+    int form_rc;
     char timeout;
     char rqst[MAX_HTTP_URI];
     char data[MAX_HTTP_DATA];
 } http_data;
 
-http_data htdat[WIFI_CIP_MAX_CONS+1];
+int http_data_in_queue_read_idx;
+int http_data_in_queue_write_idx;
+http_data http_data_in_queue[HTTP_DATA_IN_QUEUE_LEN];
+int http_data_out_queue_read_idx;
+int http_data_out_queue_write_idx;
+http_data http_data_out_queue[HTTP_DATA_OUT_QUEUE_LEN];
+
 extern unsigned int main_count_inactividad;
+extern int g_wifi_http_response;
 
 int Convert2CharToHex(const char* h)
 {
@@ -199,25 +213,15 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
     return len;
 }
 
-void HTTPResetResponse()
-{
-    g_wifi_info.status.http_last_resp = -1;
-    g_wifi_info.status.http_last_resp_json = 0;
-    g_wifi_info.status.http_last_resp_form = 0;
-    g_wifi_info.status.http_last_resp_code = -1;
-}
-
-void HTTPAnalizeResponse(const char *http_head, const char *http_data)
+int HTTPHeadResponse(const char *http_head)
 {
     char str[256];
     char *p1;
-
-    LogMessage("[HTTPAnalizeResponse] head: %.15s... data: %.15s...", 
-            (http_head)?http_head:"NULL", (http_data)?http_data:"NULL");
+    
+    LogMessage("[HTTPHeadResponse] %.15s", http_head); 
 
     if(http_head)
     {
-        HTTPResetResponse();
         /* Busco el código de respuesta http en la cabecera
          * "HTTP/1.1 200 OK\r\n" */
         p1 = strchr(http_head, ' ');
@@ -227,11 +231,20 @@ void HTTPAnalizeResponse(const char *http_head, const char *http_data)
             str[1] = *(++p1);
             str[2] = *(++p1);
             str[3] = 0;
-            g_wifi_info.status.http_last_resp = atoi(str);
+            return atoi(str);
         }
     }
+    return 0;
+}
+
+int HTTPFormResponse(const char *http_data)
+{
+    char str[256];
+    char *p1;
     
-    if(http_data && g_wifi_info.status.http_last_resp == 200)
+    LogMessage("[HTTPFormResponse] %.15s", http_data); 
+
+    if(http_data)
     {
         if( strchr(http_data, '{') && 
             strchr(http_data, ':') && 
@@ -239,24 +252,24 @@ void HTTPAnalizeResponse(const char *http_head, const char *http_data)
             strchr(http_data, '}')  )
         {
             LogMessage("Respuesta en formato JSON no esperada");
-            g_wifi_info.status.http_last_resp_json = 1;
-            g_wifi_info.status.http_last_resp_code = 99;
+            return 99;
         }
         else if( strchr(http_data, '=') )
         {
             LogMessage("Respuesta en formato de formulario");
-            g_wifi_info.status.http_last_resp_form = 1;
             if(HTTPGetFormData((char*)http_data, "error", str))
             {
-                g_wifi_info.status.http_last_resp_code = atoi(str);
-                LogMessage("Respuesta con error: %i", g_wifi_info.status.http_last_resp_code);
+                LogMessage("Respuesta con error: %s", str);
+                return atoi(str);
             }
             else
             {
-                g_wifi_info.status.http_last_resp_code = 0;
+                /* Si no encuentra la leyenda error no hay error */
+                return 0;
             }
         }
     }
+    return (-1);
 }
 
 /*<html>
@@ -507,7 +520,7 @@ int HTTPNotificarStatus(char *out, int max_len)
         /* Poner en un buffer */
         strncpy(out, http_rqst, max_len);
     }
-    else if(HTTPAdd((-1), http_rqst) <= 0)
+    else if(HTTPAddOUTQueue(http_rqst) <= 0)
     {
         /* No fue posible enviar */
         return 0;
@@ -701,7 +714,10 @@ void HttpProcessWiFiFormConfig(char* in)
  * ************************************************************************** */
 void HTTPInit( void )
 {
-    memset(&htdat, 0, sizeof(htdat));
+    http_data_in_queue_read_idx = 0;
+    http_data_in_queue_write_idx = 0;
+    http_data_out_queue_read_idx = 0;
+    http_data_out_queue_write_idx = 0;
 }
 
 /* *****************************************************************************
@@ -709,120 +725,139 @@ void HTTPInit( void )
  * ************************************************************************** */
 void HTTPTask( void )
 {
-    static int id = 0;
-    unsigned int rc;
-    
-    if(htdat[id].type == 'G')
+    if(http_data_in_queue_read_idx == http_data_in_queue_write_idx) return;
+
+    if(http_data_in_queue[http_data_in_queue_read_idx].type == 'G')
     {
-        LogMessage("GET HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
-        if( !strcmp(htdat[id].rqst, "/"))
+        LogMessage("GET HTTP: %s %.15s",
+                http_data_in_queue[http_data_in_queue_read_idx].rqst,
+                http_data_in_queue[http_data_in_queue_read_idx].data);
+        
+        if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/"))
         {
             if(g_wifi_info.status.wifi_mode == 3)
             {
-                HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
+                HttpReturnWiFiFormConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
             }
             else
             {
-                HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+                HttpReturnIOStatus(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
             }
         }
-        else if( !strcmp(htdat[id].rqst, "/status.htm"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/status.htm"))
         {
-            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOStatus(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/iostatus.htm"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/iostatus.htm"))
         {
-            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOStatus(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/config.htm"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/config.htm"))
         {
-            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/ioconfig.htm"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/ioconfig.htm"))
         {
-            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/reset.htm"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/reset.htm"))
         {
             CTRLReset();
-            HttpReturnResult(htdat[id].data, "Ok", MAX_HTTP_DATA);
+            HttpReturnResult(http_data_in_queue[http_data_in_queue_read_idx].data, "Ok", MAX_HTTP_DATA);
         }
 #ifdef INCLUDE_IO_FORMS
-        else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/iostatus.cgi"))
         {
-            HttpReturnIOStatusForm(htdat[id].data);
+            HttpReturnIOStatusForm(http_data_in_queue[http_data_in_queue_read_idx].data);
         }
-        else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/ioconfig.cgi"))
         {
-            HttpReturnIOConfigForm(htdat[id].data);
+            HttpReturnIOConfigForm(http_data_in_queue[http_data_in_queue_read_idx].data);
         }
 #endif /* INCLUDE_IO_FORMS */
         else
         {
-            strncpy(htdat[id].data, http_404, MAX_HTTP_DATA);
+            strncpy(http_data_in_queue[http_data_in_queue_read_idx].data, http_404, MAX_HTTP_DATA);
         }
-        htdat[id].type = 'R';
-        LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
+        /* Genero la respuesta */
+        HTTPAddRespQueue(http_data_in_queue[http_data_in_queue_read_idx].conn_id, 
+                http_data_in_queue[http_data_in_queue_read_idx].data);
     }
-    else if(htdat[id].type == 'P')
+    else if(http_data_in_queue[http_data_in_queue_read_idx].type == 'P')
     {
-        LogMessage("POST HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
-        if( !strcmp(htdat[id].rqst, "/"))
+        LogMessage("POST HTTP: %s %.15s",
+                http_data_in_queue[http_data_in_queue_read_idx].rqst,
+                http_data_in_queue[http_data_in_queue_read_idx].data);
+
+        if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/"))
         {
-            HttpProcessWiFiFormConfig(htdat[id].data);
-            HttpReturnWiFiFormConfig(htdat[id].data, MAX_HTTP_DATA);
+            HttpProcessWiFiFormConfig(http_data_in_queue[http_data_in_queue_read_idx].data);
+            HttpReturnWiFiFormConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/wifi.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/wifi.cgi"))
         {
-            HttpProcessWiFiFormConfig(htdat[id].data);
-            HttpReturnWiFiConfig(htdat[id].data, MAX_HTTP_DATA);
+            HttpProcessWiFiFormConfig(http_data_in_queue[http_data_in_queue_read_idx].data);
+            HttpReturnWiFiConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/iostatus.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/iostatus.cgi"))
         {
-            CTRLSetIO(htdat[id].data);
+            CTRLSetIO(http_data_in_queue[http_data_in_queue_read_idx].data);
 #ifdef INCLUDE_IO_FORMS
-            HttpReturnIOStatusForm(htdat[id].data);
+            HttpReturnIOStatusForm(http_data_in_queue[http_data_in_queue_read_idx].data);
 #else
-            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOStatus(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
 #endif /* INCLUDE_IO_FORMS */
         }
-        else if( !strcmp(htdat[id].rqst, "/ioswitch.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/ioswitch.cgi"))
         {
-            CTRLSwitchIO(htdat[id].data);
-            HttpReturnIOStatus(htdat[id].data, MAX_HTTP_DATA);
+            CTRLSwitchIO(http_data_in_queue[http_data_in_queue_read_idx].data);
+            HttpReturnIOStatus(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
         }
-        else if( !strcmp(htdat[id].rqst, "/ioconfig.cgi"))
+        else if( !strcmp(http_data_in_queue[http_data_in_queue_read_idx].rqst, "/ioconfig.cgi"))
         {
-            CTRLConfIO(htdat[id].data);
+            CTRLConfIO(http_data_in_queue[http_data_in_queue_read_idx].data);
 #ifdef INCLUDE_IO_FORMS
-            HttpReturnIOConfigForm(htdat[id].data);
+            HttpReturnIOConfigForm(http_data_in_queue[http_data_in_queue_read_idx].data);
 #else
-            HttpReturnIOConfig(htdat[id].data, MAX_HTTP_DATA);
+            HttpReturnIOConfig(http_data_in_queue[http_data_in_queue_read_idx].data, MAX_HTTP_DATA);
 #endif /* INCLUDE_IO_FORMS */
         }
         else
         {
-            strncpy(htdat[id].data, http_404, MAX_HTTP_DATA);
+            strncpy(http_data_in_queue[http_data_in_queue_read_idx].data, http_404, MAX_HTTP_DATA);
         }
-        htdat[id].type = 'R';
-        LogMessage("RESP HTTP: %s %u bytes", htdat[id].rqst, strlen(htdat[id].data));
+        /* Genero la respuesta */
+        HTTPAddRespQueue(http_data_in_queue[http_data_in_queue_read_idx].conn_id,
+                http_data_in_queue[http_data_in_queue_read_idx].data);
     }
-    else if(htdat[id].type == 'H')
+    else if(http_data_in_queue[http_data_in_queue_read_idx].type == 'H')
     {
-        LogMessage("HTTP RESPONSE: %u bytes", strlen(htdat[id].data));
+        LogMessage("RESP HTTP: %i %.15s",
+                http_data_in_queue[http_data_in_queue_read_idx].http_rc,
+                http_data_in_queue[http_data_in_queue_read_idx].data);
         /* Se trata de una respuesta HTTP/1... */
-        if(g_wifi_info.status.http_last_resp == 200 && 
-                g_wifi_info.status.http_last_resp_form &&
-                g_wifi_info.status.http_last_resp_code == 0)
+        if(http_data_in_queue[http_data_in_queue_read_idx].http_rc == 200 &&
+           http_data_in_queue[http_data_in_queue_read_idx].form_rc == 0 )
         {
-            CTRLCompareIO(htdat[id].data);
+            g_wifi_http_response = 1;
+            CTRLCompareIO(http_data_in_queue[http_data_in_queue_read_idx].data);
         }
-        htdat[id].type = 0;
+        else
+        {
+            g_wifi_http_response = (-1);
+        }
         main_count_inactividad = 0;
     }
+    else
+    {
+        LogMessage("HTTP: typ: %c DESCONOCIDO %.15s",
+                http_data_in_queue[http_data_in_queue_read_idx].http_rc,
+                http_data_in_queue[http_data_in_queue_read_idx].data);
+    }
     
-    id++;
-    if(id > (WIFI_CIP_MAX_CONS+1)) id = 0;
+    /* Avanzo en la cola */
+    http_data_in_queue_read_idx++;
+    if(http_data_in_queue_read_idx == HTTP_DATA_IN_QUEUE_LEN) http_data_in_queue_read_idx = 0;
 }
 
 /* *****************************************************************************
@@ -831,162 +866,203 @@ void HTTPTask( void )
 void HTTPTimer( void )
 {
     int i;
-    
-    for(i = 0; i < (WIFI_CIP_MAX_CONS+1); i++)
+
+    if(http_data_out_queue_read_idx != http_data_out_queue_write_idx)
     {
-        if(htdat[i].timeout && htdat[i].type)
+        if(http_data_out_queue[http_data_out_queue_read_idx].timeout)
         {
-            htdat[i].timeout--;
-            if(htdat[i].timeout == 0)
+            http_data_out_queue[http_data_out_queue_read_idx].timeout--;
+            if(http_data_out_queue[http_data_out_queue_read_idx].timeout == 0)
             {
-                htdat[i].type = 0;
-                LogMessage("HTTPTimer time-out htdat[%i]", i);
+                /* time-out */
+                LogMessage("[HTTPTimer] time-out %.20s", http_data_out_queue[http_data_out_queue_read_idx].data);
+                http_data_out_queue_read_idx++;
+                if(http_data_out_queue_read_idx == HTTP_DATA_OUT_QUEUE_LEN) http_data_out_queue_read_idx = 0;
             }
         }
     }
 }
 
-/* *****************************************************************************
- * Agrega un mensaje HTTP a la cola para su tratamiento segun su tipo
- * P - POST recibido, hay que procesar
- * G - GET recibido, hay que procesar
- * ************************************************************************** */
-int HTTPAdd(int id, const char* buffer)
+int HTTPAddOUTQueue(const char* buffer)
+{
+    int next_i;
+    
+    LogMessage("[HTTPAddOUTQueue] %.40s", buffer);
+    
+    /* Punto de inserción */
+    next_i = http_data_out_queue_write_idx + 1;
+    /* Cola circular */
+    if(next_i == HTTP_DATA_OUT_QUEUE_LEN) next_i = 0;
+    /* Cola llena */
+    if(next_i == http_data_out_queue_read_idx) return (-1);
+    /* Cargo los datos en la cola */
+    http_data_out_queue[http_data_out_queue_write_idx].type = 'S';
+    http_data_out_queue[http_data_out_queue_write_idx].conn_id = WIFI_HTTP_OUT_ID;
+    http_data_out_queue[http_data_out_queue_write_idx].timeout = 100;
+    http_data_out_queue[http_data_out_queue_write_idx].rqst[0] = 0;
+    http_data_out_queue[http_data_out_queue_write_idx].data[0] = 0;
+    if(HttpDecodeFormData(http_data_out_queue[http_data_out_queue_write_idx].data, buffer, MAX_HTTP_DATA) <= 0)
+    {
+        LogMessage("Data overflow");
+        return (-1);
+    }
+    /* Adelanto el indice de la cola */
+    http_data_out_queue_write_idx = next_i;
+    return 1;
+}
+
+int HTTPAddRespQueue(int id, const char* buffer)
+{
+    int next_i;
+    
+    LogMessage("[HTTPAddRespQueue] %.40s", buffer);
+    
+    /* Punto de inserción */
+    next_i = http_data_out_queue_write_idx + 1;
+    /* Cola circular */
+    if(next_i == HTTP_DATA_OUT_QUEUE_LEN) next_i = 0;
+    /* Cola llena */
+    if(next_i == http_data_out_queue_read_idx) return (-1);
+    /* Cargo los datos en la cola */
+    http_data_out_queue[http_data_out_queue_write_idx].type = 'R';
+    http_data_out_queue[http_data_out_queue_write_idx].conn_id = id;
+    http_data_out_queue[http_data_out_queue_write_idx].timeout = 0;
+    http_data_out_queue[http_data_out_queue_write_idx].rqst[0] = 0;
+    http_data_out_queue[http_data_out_queue_write_idx].data[0] = 0;
+    if(HttpDecodeFormData(http_data_out_queue[http_data_out_queue_write_idx].data, buffer, MAX_HTTP_DATA) <= 0)
+    {
+        LogMessage("Data overflow");
+        return (-1);
+    }
+    /* Adelanto el indice de la cola */
+    http_data_out_queue_write_idx = next_i;
+    return 1;
+}
+
+int HTTPAddINQueue(int id, const char* buffer)
 {
     char *p;
+    int next_i;
     
-    LogMessage("HTTPAdd(%i)", id);
+    LogMessage("[HTTPAddINQueue] %.40s", buffer);
     
-    if(id >= 0 && id < WIFI_CIP_MAX_CONS)
+    /* Punto de inserción */
+    next_i = http_data_in_queue_write_idx + 1;
+    /* Cola circular */
+    if(next_i == HTTP_DATA_IN_QUEUE_LEN) next_i = 0;
+    /* Cola llena */
+    if(next_i == http_data_in_queue_read_idx) return (-1);
+    /* Cargo los datos en la cola */
+    if(*buffer == 'G' || *buffer == 'P')
     {
-        LogMessage("  mensaje entrante.");
-        /* Mensaje entrante */
-        if(htdat[id].type == 0)
-        {
-            if(*buffer == 'G' || *buffer == 'P')
-            {
-                LogMessage("    requerimiento.");
-                htdat[id].type = *buffer;
-                htdat[id].timeout = 50;
+        LogMessage("    requerimiento.");
+        http_data_in_queue[http_data_in_queue_write_idx].type = *buffer;
+        http_data_in_queue[http_data_in_queue_write_idx].conn_id = id;
+        http_data_in_queue[http_data_in_queue_write_idx].timeout = 50;
+        http_data_in_queue[http_data_in_queue_write_idx].http_rc = 0;
+        http_data_in_queue[http_data_in_queue_write_idx].form_rc = 0;
+        http_data_in_queue[http_data_in_queue_write_idx].rqst[0] = 0;
+        http_data_in_queue[http_data_in_queue_write_idx].data[0] = 0;
 
-                if(HttpGetRequest(buffer, htdat[id].rqst, MAX_HTTP_URI) <= 0)
+        if(HttpGetRequest(buffer, http_data_in_queue[http_data_in_queue_write_idx].rqst, MAX_HTTP_URI) <= 0)
+        {
+            LogMessage("Request overflow");
+            return (-1);
+        }
+        if(http_data_in_queue[http_data_in_queue_write_idx].type == 'P')
+        {
+            p = strstr(buffer, "\r\n\r\n");
+            if(p)
+            {
+                p += 4;
+                if(HttpDecodeFormData(http_data_in_queue[http_data_in_queue_write_idx].data, p, MAX_HTTP_DATA) <= 0)
                 {
-                    LogMessage("Request overflow");
+                    LogMessage("Data overflow");
                     return (-1);
                 }
-                if(htdat[id].type == 'P')
-                {
-                    p = strstr(buffer, "\r\n\r\n");
-                    if(p)
-                    {
-                        p += 4;
-                        if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
-                        {
-                            LogMessage("Data overflow");
-                            return (-1);
-                        }
-                    }
-                }
-                return 1;
             }
-            else if(*buffer == 'H')
+        }
+    }
+    else if(*buffer == 'H')
+    {
+        LogMessage("    respuesta.");
+        http_data_in_queue[http_data_in_queue_write_idx].type = *buffer;
+        http_data_in_queue[http_data_in_queue_write_idx].http_rc = HTTPHeadResponse(buffer);
+        if(http_data_in_queue[http_data_in_queue_write_idx].http_rc == 200)
+        {
+            LogMessage("      200 OK");
+            http_data_in_queue[http_data_in_queue_write_idx].type = *buffer;
+            http_data_in_queue[http_data_in_queue_write_idx].timeout = 50;
+            p = strstr(buffer, "\r\n\r\n");
+            if(p)
             {
-                LogMessage("    respuesta.");
-                HTTPAnalizeResponse(buffer, NULL);
-                if(g_wifi_info.status.http_last_resp == 200)
+                p += 4;
+                if(HttpDecodeFormData(http_data_in_queue[http_data_in_queue_write_idx].data, p, MAX_HTTP_DATA) <= 0)
                 {
-                    LogMessage("      200 OK");
-                    htdat[id].type = *buffer;
-                    htdat[id].timeout = 50;
-                    p = strstr(buffer, "\r\n\r\n");
-                    if(p)
-                    {
-                        p += 4;
-                        if(HttpDecodeFormData(htdat[id].data, p, MAX_HTTP_DATA) <= 0)
-                        {
-                            LogMessage("Data overflow");
-                            return (-1);
-                        }
-                        HTTPAnalizeResponse(NULL, htdat[id].data);
-                    }
-                    return 1;
+                    LogMessage("Data overflow");
+                    return (-1);
                 }
-                else
+                http_data_in_queue[http_data_in_queue_write_idx].form_rc = HTTPFormResponse(http_data_in_queue[http_data_in_queue_write_idx].data);
+                if(http_data_in_queue[http_data_in_queue_write_idx].form_rc != 0)
                 {
-                    LogMessage("      HTTP Error %i", g_wifi_info.status.http_last_resp);
-                    return 0;
+                    LogMessage("      FORM Error %i", http_data_in_queue[http_data_in_queue_write_idx].form_rc);
                 }
             }
         }
         else
         {
-            LogMessage("HTTPAdd Error. Conexion %i ocupada.", id);
+            LogMessage("      HTTP Error %i", http_data_in_queue[http_data_in_queue_write_idx].http_rc);
+            http_data_in_queue[http_data_in_queue_write_idx].form_rc = 0;
         }
     }
-    else if(id < 0)
-    {
-        LogMessage("  mensaje saliente.");
-        /* Mensaje Saliente */
-        for(id = 0; id < (WIFI_CIP_MAX_CONS+1); id++)
-        {
-            /* Busco un slot libre */
-            if(htdat[id].type == 0)
-            {
-                htdat[id].timeout = 100;
-                htdat[id].type = 'S';
-                if(HttpDecodeFormData(htdat[id].data, buffer, MAX_HTTP_DATA) <= 0)
-                {
-                    LogMessage("Data overflow");
-                    return (-1);
-                }
-                return 1;
-            }
-        }
-    }
-    return 0;
+
+    /* Adelanto el indice de la cola */
+    http_data_in_queue_write_idx = next_i;
+    return 1;
 }
 
 /* *****************************************************************************
- * Devuelve el indice de un mensaje pendiente de responder o enviar
+ * Devuelve si hay mensajes pendientes en cola de salida
  * ************************************************************************** */
-int HTTPPending(void)
+int HTTPOutPending(void)
 {
-    int i;
-    for(i = 0; i < (WIFI_CIP_MAX_CONS+1); i++)
-    {
-        if(htdat[i].type == 'R' || htdat[i].type == 'S') break;
-    }
-    return ((i < (WIFI_CIP_MAX_CONS+1))?i:(-1));
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    else return 1;
+}
+
+int HTTPOutConnId(void)
+{
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    else return http_data_out_queue[http_data_out_queue_read_idx].conn_id;
 }
 
 /* *****************************************************************************
- * Devuelte el tipo de mensaje encolado en el indice
+ * Devuelte el tipo de mensaje en cola de salida
  * ************************************************************************** */
-char HTTPGetType(int id)
+char HTTPOutType(void)
 {
-    if(id >= 0 && id < (WIFI_CIP_MAX_CONS+1))
-    {
-        return htdat[id].type;
-    }
-    return 0;
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    else return http_data_out_queue[http_data_out_queue_read_idx].type;
 }
 
 /* *****************************************************************************
- * Saca un mensaje de la cola para procesar
+ * Saca un mensaje de la cola de salida para procesar
  * ************************************************************************** */
-const char* HTTPGet(int id, char* buffer, bool clear)
+const char* HTTPOutData(void)
 {
-    if(id >= 0 && id < (WIFI_CIP_MAX_CONS+1))
-    {
-        if(clear) htdat[id].type = 0;
-        if(buffer)
-        {
-            strcpy(buffer, htdat[id].data);
-            return buffer;
-        }
-        return (const char*)&htdat[id].data[0];
-    }
-    return NULL;
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    else return (const char*)(&http_data_out_queue[http_data_out_queue_read_idx].data[0]);
+}
+
+/* *****************************************************************************
+ * Avanza la cola de salida
+ * ************************************************************************** */
+void HTTPOutNext(void)
+{
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return;
+    /* Avanzo en la cola */
+    http_data_out_queue_read_idx++;
+    if(http_data_out_queue_read_idx == HTTP_DATA_OUT_QUEUE_LEN) http_data_out_queue_read_idx = 0;
 }
 
 int HTTPNotificarTarjeta( const char *crd)
@@ -1006,7 +1082,7 @@ int HTTPNotificarTarjeta( const char *crd)
             g_wifi_info.f.config.wifi_host1,
             strlen(http_rqst_data),
             http_rqst_data);
-    if(HTTPAdd((-1), http_rqst) <= 0)
+    if(HTTPAddOUTQueue(http_rqst) <= 0)
     {
         /* No fue posible enviar */
         return 0;

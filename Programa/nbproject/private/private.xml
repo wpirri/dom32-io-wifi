@@ -5,12 +5,12 @@
             <url>wifi.c</url>
             <bookmark id="7">
                 <name/>
-                <line>1043</line>
+                <line>1048</line>
                 <key/>
             </bookmark>
             <bookmark id="3">
                 <name/>
-                <line>1073</line>
+                <line>1078</line>
                 <key/>
             </bookmark>
         </file>
@@ -39,11 +39,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa/wifi.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa/control.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa/http.c</file>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa/control.h</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

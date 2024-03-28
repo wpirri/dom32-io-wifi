@@ -60,6 +60,7 @@ unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
 unsigned int g_wifi_task_retry;
 int g_wifi_http_id;
+int g_wifi_http_response;
 unsigned char g_wifi_send_error_count;
 unsigned char g_wifi_recv_error_count;
 
@@ -279,7 +280,7 @@ int WifiCheckUnsol( void )
         {
             p++;
             *(p+len) = 0;
-            HTTPAdd(id, p);
+            HTTPAddINQueue(id, p);
         }
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
@@ -869,13 +870,13 @@ int WifiTaskHttp( void )
     {
         case 0:
             g_wifi_task_retry = 0;
-            g_wifi_http_id = HTTPPending();
-            if(g_wifi_http_id >= 0) g_wifi_task_stm_step++;
+            if(HTTPOutPending()) g_wifi_task_stm_step++;
             else rc = LOOP;
             break;
         case 1:
+            g_wifi_http_id = HTTPOutConnId();
             /* Si es una respuesta salteo la conexion */
-            if(HTTPGetType(g_wifi_http_id) == 'R')
+            if(HTTPOutType() == 'R')
             {
                 LogMessage("WifiTaskHttp -> Respondiendo");
                 g_wifi_task_stm_step += 2;
@@ -900,6 +901,7 @@ int WifiTaskHttp( void )
                     (g_wifi_info.f.config.enable_https)?"SSL":"TCP",
                     g_wifi_host,
                     g_wifi_port);
+            LogMessage("[WiFi CMD] %s", g_wifi_cmd);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
@@ -923,7 +925,8 @@ int WifiTaskHttp( void )
         case 3:
             LogMessage("WifiTaskHttp -> Enviando");
             sprintf(g_wifi_cmd, "AT+CIPSEND=%d,%d", g_wifi_http_id, 
-                    strlen(HTTPGet(g_wifi_http_id, NULL, false)));
+                    strlen(HTTPOutData()) );
+            LogMessage("[WiFi CMD] %s", g_wifi_cmd);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
@@ -945,7 +948,8 @@ int WifiTaskHttp( void )
             }
             break;
         case 5:
-            WifiWrite(HTTPGet(g_wifi_http_id, NULL, false));
+            LogMessage("[WiFi CMD] %s", HTTPOutData());
+            WifiWrite(HTTPOutData());
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
@@ -954,12 +958,11 @@ int WifiTaskHttp( void )
             if(WifiWaitLine("SEND OK", 0, 0, 0, 0) || g_wifi_task_stm_timeout == 0)
             {
                 LogMessage("WifiTaskHttp -> Envio Ok");
-                if(HTTPGetType(g_wifi_http_id) == 'S')
+                if(HTTPOutType() == 'S')
                 {
                     /* Si es un requerimiento saliente espero respuesta */
-                    HTTPResetResponse();
+                    g_wifi_http_response = 0;
                     g_wifi_send_error_count = 0;
-                    //g_wifi_info.status.host_conectado = 1;
                     g_wifi_fast_start = true;
                     g_wifi_task_stm_step++;
                     g_wifi_task_stm_delay = 0;
@@ -974,7 +977,7 @@ int WifiTaskHttp( void )
                     g_wifi_task_stm_timeout = 0;
                 }
                 /* Borro el mensaje de la cola */
-                HTTPGet(g_wifi_http_id, NULL, true);
+                HTTPOutNext();
             }
             break;
         case 7:
@@ -991,11 +994,10 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
-            else if(g_wifi_info.status.http_last_resp > 0)
+            else if(g_wifi_http_response)
             {
                 LogMessage("WifiTaskHttp -> Respuesta recibida");
-                if(g_wifi_info.status.http_last_resp == 200 &&
-                        g_wifi_info.status.http_last_resp_code <= 0)
+                if(g_wifi_http_response > 0)
                 {
                     g_wifi_info.status.host_conectado = 1;
                 }
@@ -1013,6 +1015,7 @@ int WifiTaskHttp( void )
         case 8:
             LogMessage("WifiTaskHttp -> Cerrando");
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
+            LogMessage("[WiFi CMD] %s", g_wifi_cmd);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
@@ -1034,6 +1037,7 @@ int WifiTaskHttp( void )
         case 10:
             /* Send Error */
             sprintf(g_wifi_cmd, "AT+CIPCLOSE=%d", g_wifi_http_id);
+            LogMessage("[WiFi CMD] %s", g_wifi_cmd);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 15;
@@ -1041,7 +1045,7 @@ int WifiTaskHttp( void )
             break;
         case 11:
             /* Open Error */
-            if(HTTPGetType(g_wifi_http_id) == 'S')
+            if(HTTPOutType() == 'S')
             {
                 /* Si es un  requerimiento saliente */
                 g_wifi_info.status.host_conectado = 0;
@@ -1102,7 +1106,7 @@ int WifiTaskLoop( void )
             return APMODE;
         }
     }
-    else if(HTTPPending() >= 0)
+    else if(HTTPOutPending())
     {
         //LogMessage("HTTP Pendiente");
         return HTTP;

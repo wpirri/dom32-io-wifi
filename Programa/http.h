@@ -26,15 +26,24 @@ void HTTPTask( void );
 
 void HTTPTimer( void );
 
-int HTTPAdd(int id, const char* buffer);
-int HTTPPending(void);
-char HTTPGetType(int id);
-const char*  HTTPGet(int id, char* buffer, bool clear);
+int HTTPOutPending(void);
+int HTTPOutConnId(void);
+char HTTPOutType(void);
+const char* HTTPOutData(void);
+void HTTPOutNext(void);
 
-void HTTPResetResponse();
 int HTTPNotificarStatus(char *out, int max_len);
 int HTTPNotificarTarjeta( const char *crd);
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
+
+int HTTPAddOUTQueue(const char* buffer);
+int HTTPAddRespQueue(int id, const char* buffer);
+int HTTPAddINQueue(int id, const char* buffer);
+
+int HTTPHeadResponse(const char *http_head);
+int HTTPFormResponse(const char *http_data);
+
+
 
 #endif /* _HTTP_H_ */

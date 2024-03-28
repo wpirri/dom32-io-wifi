@@ -67,10 +67,6 @@ typedef struct
         char wifi_at[65];
         char wifi_sdk[65];
         char up_fw[65];
-        int http_last_resp;
-        int http_last_resp_json;
-        int http_last_resp_form;
-        int http_last_resp_code;
         bool wifi_ok;
         bool wifi_start_ap;
         bool wifi_ssl_capable;
