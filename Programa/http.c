@@ -268,6 +268,11 @@ int HTTPFormResponse(const char *http_data)
                 return 0;
             }
         }
+        else
+        {
+            /* Si no dice nada asumo no error */
+            return 0;
+        }
     }
     return (-1);
 }
@@ -840,7 +845,8 @@ void HTTPTask( void )
            http_data_in_queue[http_data_in_queue_read_idx].form_rc == 0 )
         {
             g_wifi_http_response = 1;
-            CTRLCompareIO(http_data_in_queue[http_data_in_queue_read_idx].data);
+            /*CTRLCompareIO(http_data_in_queue[http_data_in_queue_read_idx].data);*/
+            CTRLSetIO(http_data_in_queue[http_data_in_queue_read_idx].data);
         }
         else
         {

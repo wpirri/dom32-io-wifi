@@ -291,7 +291,7 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
-        LogMessage("WiFi: Deconectado del AP.");
+        LogMessage("WiFi: Desconectado del AP.");
         if(g_wifi_info.status.wifi_conectado)
         {
             g_wifi_info.status.wifi_conectado = 0;
