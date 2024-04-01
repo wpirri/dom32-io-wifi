@@ -468,8 +468,9 @@ void CTRLTimer( void )
         g_wifi_info.status.wifi_conectado != 0 )
     {
         g_control_notificar--;
-        if(g_control_notificar == 0)
+        if(g_control_notificar == 0 || g_get_time_flag == 1)
         {
+            g_get_time_flag = 0;
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;
@@ -624,8 +625,9 @@ void CTRLTimer( void )
 void CTRLSetIO(char* in)
 {
     char tmp[10];
+    struct tm tm_time;
     
-    LogMessage("CTRLSetIO: %s", in);
+    LogMessage("[CTRLSetIO] %s", in);
     if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "PULSE-IO1", tmp))
@@ -737,7 +739,7 @@ void CTRLSetIO(char* in)
     else if(HTTPGetFormData(in, "OUT2", tmp))
     {
         g_control_out.stat2 = atoi(tmp);
-        LogMessage("OUT1: %s", tmp);
+        LogMessage("OUT2: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "PULSE-OUT3", tmp))
@@ -763,6 +765,39 @@ void CTRLSetIO(char* in)
         g_control_out.stat4 = atoi(tmp);
         LogMessage("OUT4: %s", tmp);
     }
+    
+    if(HTTPGetFormData(in, "TIME", tmp))
+    {
+        LogMessage("TIME: %s", tmp);
+        /*             1111111111
+         *   01234567890123456789
+         tmp YYYY/MM/DD hh:mm:ss
+         */
+        if(tmp[4] == '/' && tmp[7] == '/' && tmp[10] == ' ' && 
+                tmp[13] == ':' && tmp[16] == ':')
+        {
+            tmp[4] = 0;
+            tmp[7] = 0;
+            tmp[10] = 0;
+            tmp[13] = 0;
+            tmp[16] = 0;
+            tmp[19] = 0;
+            
+            tm_time.tm_year = atoi(&tmp[0]) - 1900;
+            tm_time.tm_mon = atoi(&tmp[5]);
+            tm_time.tm_mday = atoi(&tmp[8]);
+            tm_time.tm_hour = atoi(&tmp[11]);
+            tm_time.tm_min = atoi(&tmp[14]);
+            tm_time.tm_sec = atoi(&tmp[17]);
+
+            RTCC_TimeSet(&tm_time);
+        }
+        else
+        {
+            LogMessage("[CTRLSetIO] Error de formato para TIME");
+        }
+    }
+
 }
 
 void CTRLCompareIO(char* in)
@@ -770,7 +805,7 @@ void CTRLCompareIO(char* in)
     char tmp[10];
     bool notificar = false;
     
-    LogMessage("CTRLCompareIO: %s", in);
+    LogMessage("[CTRLCompareIO] %s", in);
 
     /* Para las entradas / salidas que vengan informadas */
     if(HTTPGetFormData(in, "IO1", tmp))
@@ -914,7 +949,7 @@ void CTRLSwitchIO(char* in)
 {
     char tmp[10];
     
-    LogMessage("CTRLSwitchIO: %s", in);
+    LogMessage("[CTRLSwitchIO] %s", in);
     if( !(g_wifi_info.f.config.io_config & 0x01))
     {
         if(HTTPGetFormData(in, "IO1", tmp))
@@ -1034,7 +1069,7 @@ void CTRLConfIO(char* in)
     struct tm tm_time;
     int i;
     
-    LogMessage("CTRLConfIO: %s", in);
+    LogMessage("[CTRLConfIO] %s", in);
     if(HTTPGetFormData(in, "IO1", tmp))
     {
         change = true;
@@ -1195,32 +1230,39 @@ void CTRLConfIO(char* in)
 
     if(HTTPGetFormData(in, "TIME", tmp))
     {
+        LogMessage("TIME: %s", tmp);
         /*             1111111111
          *   01234567890123456789
          tmp YYYY/MM/DD hh:mm:ss
          */
         if(tmp[4] == '/' && tmp[7] == '/' && tmp[10] == ' ' && 
-                tmp[13] == ':' && tmp[16] == ':' && tmp[19] == 0)
+                tmp[13] == ':' && tmp[16] == ':')
         {
             tmp[4] = 0;
             tmp[7] = 0;
             tmp[10] = 0;
             tmp[13] = 0;
             tmp[16] = 0;
+            tmp[19] = 0;
             
             tm_time.tm_year = atoi(&tmp[0]) - 1900;
             tm_time.tm_mon = atoi(&tmp[5]);
-            tm_time.tm_wday = atoi(&tmp[8]);
+            tm_time.tm_mday = atoi(&tmp[8]);
             tm_time.tm_hour = atoi(&tmp[11]);
             tm_time.tm_min = atoi(&tmp[14]);
             tm_time.tm_sec = atoi(&tmp[17]);
 
             RTCC_TimeSet(&tm_time);
         }
+        else
+        {
+            LogMessage("[CTRLSetIO] Error de formato para TIME");
+        }
     }
     
     /* Por si el HW no tiene configurado ninguna IO
      * asi deja de pedir config */
+    /*
     if( HTTPGetFormData(in, "OUT1", tmp) ||
         HTTPGetFormData(in, "OUT2", tmp) ||
         HTTPGetFormData(in, "OUT3", tmp) ||
@@ -1228,7 +1270,7 @@ void CTRLConfIO(char* in)
     {
         change = true;
     }
-    
+    */
     if(change)
     {
         g_wifi_info.f.config.io_config_default = 0;

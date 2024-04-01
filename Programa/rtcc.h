@@ -36,7 +36,7 @@ void RTCCInit(void);
 bool RTCC_TimeGet(struct tm *currentTime);
 void RTCC_TimeSet(struct tm *initialTime);
 void RTCC_TimeReset(bool reset);
-void RTCC_AdjustClk(char v);
+void RTCC_AdjustClk(int diferencia);
 
 void RTCC_SetAdjust(int div, int fdiv);
 

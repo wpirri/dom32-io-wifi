@@ -56,6 +56,8 @@ void RTCCInit(void)
     rtcc_status = RTCC_INIT;
     g_rtcc_refresh_count = 10;
     g_clk_div_adj = 48000;
+    g_get_time_flag = 0;
+    
     
     /* Reg Unlock */
     SYSKEY = 0x00000000; //write invalid key to force lock
@@ -115,9 +117,10 @@ bool RTCC_TimeGet(struct tm *currentTime)
 void RTCC_TimeSet(struct tm *newTime)
 {
     struct tm oldTime;
+    int diferencia;
     
     RTCC_TimeGet(&oldTime);
-    LogMessage("Cambio de hora [%d/%02d/%02d %02d:%02d:%02d] -> [%d/%02d/%02d %02d:%02d:%02d].",
+    LogMessage("[RTCC_TimeSet] Cambio de hora [%d/%02d/%02d %02d:%02d:%02d] -> [%d/%02d/%02d %02d:%02d:%02d].",
             oldTime.tm_year, oldTime.tm_mon, oldTime.tm_mday, oldTime.tm_hour, oldTime.tm_min, oldTime.tm_sec,
             newTime->tm_year, newTime->tm_mon, newTime->tm_mday, newTime->tm_hour, newTime->tm_min, newTime->tm_sec);
 
@@ -125,75 +128,52 @@ void RTCC_TimeSet(struct tm *newTime)
        oldTime.tm_mon == newTime->tm_mon && 
        oldTime.tm_mday == newTime->tm_mday)
     {
-        /* Me fijo la diferencia antes da hacer el cambio */
-        if(oldTime.tm_hour > newTime->tm_hour)
+        diferencia = (oldTime.tm_hour*3600 + oldTime.tm_min*60 + oldTime.tm_sec) - 
+                (newTime->tm_hour*3600 + newTime->tm_min*60 + newTime->tm_sec);
+        LogMessage("[RTCC_TimeSet] Diferencia: %i segundos", diferencia);
+        
+        if(diferencia == 0)
         {
-            /* Adelanta */
-            RTCC_AdjustClk(-1);
-        }
-        else if(oldTime.tm_hour < newTime->tm_hour)
-        {
-            /* Atrasa, hay que adelantarlo */
-            RTCC_AdjustClk(1);
-        }
-        else if(oldTime.tm_min > newTime->tm_min)
-        {
-            /* Adelanta, hay que atrasarlo */
-            RTCC_AdjustClk(-1);
-        }
-        else if(oldTime.tm_min < newTime->tm_min)
-        {
-            /* Atrasa */
-            RTCC_AdjustClk(1);
-        }
-        else if(oldTime.tm_sec > newTime->tm_sec)
-        {
-            /* Adelanta */
-            RTCC_AdjustClk(-1);
-        }
-        else if(oldTime.tm_sec < newTime->tm_sec)
-        {
-            /* Atrasa */
-            RTCC_AdjustClk(1);
+            if(rtcc_status < RTCC_SYNC_OK) rtcc_status++;
         }
         else
         {
-            if(rtcc_status < RTCC_SYNC_OK) rtcc_status++;
+            RTCC_AdjustClk(diferencia);
         }
     }
 
     switch(rtcc_status)
     {
         case RTCC_INIT:
-            LogMessage("Actualizar hora en 10 seg.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 10 seg.");
             g_rtcc_refresh_count = 100; /* Actualizar cada 10 seg */
             break;
         case RTCC_SINC_1:
-            LogMessage("Actualizar hora en 30 seg.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 30 seg.");
             g_rtcc_refresh_count = 300; /* Actualizar cada 30 seg */
             break;
         case RTCC_SINC_2:
-            LogMessage("Actualizar hora en 1 min.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 1 min.");
             g_rtcc_refresh_count = 600; /* Actualizar cada 1 min */
             break;
         case RTCC_SINC_3:
-            LogMessage("Actualizar hora en 10 min.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 10 min.");
             g_rtcc_refresh_count = 6000; /* Actualizar cada 10 min */
             break;
         case RTCC_SINC_4:
-            LogMessage("Actualizar hora en 1/2 hora.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 1/2 hora.");
             g_rtcc_refresh_count = 18000; /* Actualizar cada 1/2 hora */
             break;
         case RTCC_SINC_5:
-            LogMessage("Actualizar hora en 1 hora.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 1 hora.");
             g_rtcc_refresh_count = 36000; /* Actualizar cada 1 hora */
             break;
         case RTCC_SINC_6:
-            LogMessage("Actualizar hora en 12 horas.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 12 horas.");
             g_rtcc_refresh_count = 432000; /* Actualizar cada 12 horas */
             break;
         case RTCC_SYNC_OK:
-            LogMessage("Actualizar hora en 24 horas.");
+            LogMessage("[RTCC_TimeSet] Actualizar hora en 24 horas.");
             g_rtcc_refresh_count = 864000; /* Sincronizar cada 24 horas */
             break;
     }
@@ -228,7 +208,7 @@ void RTCC_TimeSet(struct tm *newTime)
     SYSKEY = 0x00000000; //write invalid key to force lock
     __builtin_enable_interrupts();
 
-    LogMessage("DIV: %d  FDIV: %d.", RTCCON2bits.DIV, RTCCON2bits.FDIV);
+    LogMessage("[RTCC_TimeSet] DIV: %d  FDIV: %d.", RTCCON2bits.DIV, RTCCON2bits.FDIV);
     
     //Enable RTCC interrupt
     //IEC0bits.RTCCIE = 1;
@@ -277,19 +257,24 @@ or decreases to the value of DIVx for large changes.
 On the other hand, a slow oscillator requires decreases to the value of FDIVx, or
 increases to the value of DIVx.
 */
-void RTCC_AdjustClk(char v)
+void RTCC_AdjustClk(int diferencia)
 {
-    if(v < 0)
+    if(diferencia < 0)
     {
-        LogMessage("Ajuste de clock (atrasar).");
-        if(g_clk_div_adj < 510000) g_clk_div_adj++;
+        LogMessage("[RTCC_AdjustClk] Ajuste de clock (adelantar).");
+        if(g_clk_div_adj > 45000) g_clk_div_adj += ((diferencia/5)-1);
+        LogMessage("[RTCC_AdjustClk] Ajuste fino de reloj: %d.", g_clk_div_adj);
     }
-    if(v > 0)
+    else if(diferencia > 0)
     {
-        LogMessage("Ajuste de clock (adelantar).");
-        if(g_clk_div_adj > 450000) g_clk_div_adj--;
+        LogMessage("[RTCC_AdjustClk] Ajuste de clock (atrasar).");
+        if(g_clk_div_adj < 51000) g_clk_div_adj += ((diferencia/5)+1);
+        LogMessage("[RTCC_AdjustClk] Ajuste fino de reloj: %d.", g_clk_div_adj);
     }
-    LogMessage("Ajuste fino de reloj: %d.", g_clk_div_adj);
+    else
+    {
+        LogMessage("[RTCC_AdjustClk] Ajuste de clock Ok.");
+    }
 }
 
 /* Se llama 2 veces por segundo */

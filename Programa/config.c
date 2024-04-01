@@ -65,7 +65,7 @@ void ConfigLoad( void )
         g_wifi_info.f.ui32[i] = FLASH_ReadWord( f + (i*4) );
     }
     
-    LogMessage("CONFIG: %d de %d bytes usados (%d%%)", 
+    LogMessage("[ConfigLoad] %d de %d bytes usados (%d%%)", 
                 sizeof(struct _config_),
                 sizeof(flash_reserved_space),
                 sizeof(struct _config_) * 100 / sizeof(flash_reserved_space));
@@ -73,12 +73,26 @@ void ConfigLoad( void )
     if(g_wifi_info.f.config.flash_ok != CONFIG_FLASK_OK)
     {
         ConfigLoadDefault();
-        LogMessage("CONFIG: Load Defaults.\n\n");
+        LogMessage("[ConfigLoad] Load Defaults.\n\n");
     }
     else
     {
-        LogMessage("CONFIG: Load Ok.\n\n");
+        LogMessage("[ConfigLoad] Load Ok.\n\n");
     }
+    LogMessage("[ConfigLoad] wifi_ap1:        %s", g_wifi_info.f.config.wifi_ap1);
+    LogMessage("[ConfigLoad] wifi_ap1_pass:   %s", g_wifi_info.f.config.wifi_ap1_pass);
+    LogMessage("[ConfigLoad] wifi_ap2:        %s", g_wifi_info.f.config.wifi_ap2);
+    LogMessage("[ConfigLoad] wifi_ap2_pass:   %s", g_wifi_info.f.config.wifi_ap2_pass);
+    LogMessage("[ConfigLoad] wifi_host1:      %s", g_wifi_info.f.config.wifi_host1);
+    LogMessage("[ConfigLoad] wifi_host1_port: %d", g_wifi_info.f.config.wifi_host1_port);
+    LogMessage("[ConfigLoad] wifi_host2:      %s", g_wifi_info.f.config.wifi_host2);
+    LogMessage("[ConfigLoad] wifi_host2_port: %d", g_wifi_info.f.config.wifi_host2_port);
+    LogMessage("[ConfigLoad] rqst_path:       %s", g_wifi_info.f.config.rqst_path);
+    LogMessage("[ConfigLoad] io_config:       0x%02X", g_wifi_info.f.config.io_config);
+    LogMessage("[ConfigLoad] an_config:       0x%02X", g_wifi_info.f.config.an_config);
+    LogMessage("[ConfigLoad] report:          %d", g_wifi_info.f.config.report);
+    LogMessage("[ConfigLoad] enable_https:    %s", (g_wifi_info.f.config.enable_https)?"si":"no");
+    LogMessage("[ConfigLoad] enable_wiegand:  %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
 }
 
 void __attribute__((optimize("-O0"))) ConfigSave(void)
@@ -105,7 +119,7 @@ void __attribute__((optimize("-O0"))) ConfigSave(void)
     
     FLASH_Lock();
     
-    LogMessage("CONFIG: Save Ok.");
+    LogMessage("[ConfigSave] Save Ok.");
 }
 
 void ConfigTimer(void)
