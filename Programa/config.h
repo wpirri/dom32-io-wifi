@@ -44,6 +44,7 @@ struct _config_ /* 2176 bits, 272 bytes */
     unsigned char enable_https;
     unsigned char enable_wiegand;
     unsigned char io_config_default;
+    unsigned long rtcc_clk_div_adj;
     uint32_t flash_ok;
 };
 

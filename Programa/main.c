@@ -66,7 +66,6 @@
 #include "control.h"
 #include "wiegand.h"
 #include "dhtxx.h"
-#include "rtcc.h"
 #include "clog.h"
 
 bool main_flag_core_timer;
@@ -157,7 +156,6 @@ int main(void)
 
     SYSTEM_Initialize();
     
-    RTCCInit();
     LogInit();
 
     LogMessage("MAIN: Dom32-IO-WiFi.");
@@ -199,7 +197,6 @@ int main(void)
             WiFiTimer();
             HTTPTimer();
             CTRLTimer();
-            RTCC_Task();
             if(g_wifi_info.f.config.enable_wiegand) WGND_Timer();
 
             main_flag_dhtxx_timer_count++;

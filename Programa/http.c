@@ -65,7 +65,7 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
 #define MAX_HTTP_URI  64
 
 #define HTTP_DATA_IN_QUEUE_LEN 2
-#define HTTP_DATA_OUT_QUEUE_LEN 2
+#define HTTP_DATA_OUT_QUEUE_LEN 3
 
 #define WIFI_HTTP_OUT_ID 0
 

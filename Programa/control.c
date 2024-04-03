@@ -25,11 +25,11 @@
 #include <stdbool.h>
 
 #include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/rtcc.h"
 #include "config.h"
 #include "http.h"
 #include "adc.h"
 #include "clog.h"
-#include "rtcc.h"
 
 unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
@@ -468,9 +468,8 @@ void CTRLTimer( void )
         g_wifi_info.status.wifi_conectado != 0 )
     {
         g_control_notificar--;
-        if(g_control_notificar == 0 || g_get_time_flag == 1)
+        if(g_control_notificar == 0)
         {
-            g_get_time_flag = 0;
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;

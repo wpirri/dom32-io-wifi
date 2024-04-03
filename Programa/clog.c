@@ -22,7 +22,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "rtcc.h"
+#include "mcc_generated_files/rtcc.h"
 
 void LogInit(void)
 {

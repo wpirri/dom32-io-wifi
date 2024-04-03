@@ -45,6 +45,7 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.enable_https = 0;
     g_wifi_info.f.config.enable_wiegand = 0;
     g_wifi_info.f.config.io_config_default = 1;
+    g_wifi_info.f.config.rtcc_clk_div_adj = 480000;
     g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;
@@ -79,20 +80,21 @@ void ConfigLoad( void )
     {
         LogMessage("[ConfigLoad] Load Ok.\n\n");
     }
-    LogMessage("[ConfigLoad] wifi_ap1:        %s", g_wifi_info.f.config.wifi_ap1);
-    LogMessage("[ConfigLoad] wifi_ap1_pass:   %s", g_wifi_info.f.config.wifi_ap1_pass);
-    LogMessage("[ConfigLoad] wifi_ap2:        %s", g_wifi_info.f.config.wifi_ap2);
-    LogMessage("[ConfigLoad] wifi_ap2_pass:   %s", g_wifi_info.f.config.wifi_ap2_pass);
-    LogMessage("[ConfigLoad] wifi_host1:      %s", g_wifi_info.f.config.wifi_host1);
-    LogMessage("[ConfigLoad] wifi_host1_port: %d", g_wifi_info.f.config.wifi_host1_port);
-    LogMessage("[ConfigLoad] wifi_host2:      %s", g_wifi_info.f.config.wifi_host2);
-    LogMessage("[ConfigLoad] wifi_host2_port: %d", g_wifi_info.f.config.wifi_host2_port);
-    LogMessage("[ConfigLoad] rqst_path:       %s", g_wifi_info.f.config.rqst_path);
-    LogMessage("[ConfigLoad] io_config:       0x%02X", g_wifi_info.f.config.io_config);
-    LogMessage("[ConfigLoad] an_config:       0x%02X", g_wifi_info.f.config.an_config);
-    LogMessage("[ConfigLoad] report:          %d", g_wifi_info.f.config.report);
-    LogMessage("[ConfigLoad] enable_https:    %s", (g_wifi_info.f.config.enable_https)?"si":"no");
-    LogMessage("[ConfigLoad] enable_wiegand:  %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
+    LogMessage("[ConfigLoad] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
+    LogMessage("[ConfigLoad] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
+    LogMessage("[ConfigLoad] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
+    LogMessage("[ConfigLoad] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
+    LogMessage("[ConfigLoad] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
+    LogMessage("[ConfigLoad] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
+    LogMessage("[ConfigLoad] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
+    LogMessage("[ConfigLoad] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
+    LogMessage("[ConfigLoad] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
+    LogMessage("[ConfigLoad] io_config:        0x%02X", g_wifi_info.f.config.io_config);
+    LogMessage("[ConfigLoad] an_config:        0x%02X", g_wifi_info.f.config.an_config);
+    LogMessage("[ConfigLoad] report:           %d", g_wifi_info.f.config.report);
+    LogMessage("[ConfigLoad] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
+    LogMessage("[ConfigLoad] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
+    LogMessage("[ConfigLoad] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
 }
 
 void __attribute__((optimize("-O0"))) ConfigSave(void)
@@ -118,6 +120,22 @@ void __attribute__((optimize("-O0"))) ConfigSave(void)
     }
     
     FLASH_Lock();
+
+    LogMessage("[ConfigSave] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
+    LogMessage("[ConfigSave] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
+    LogMessage("[ConfigSave] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
+    LogMessage("[ConfigSave] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
+    LogMessage("[ConfigSave] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
+    LogMessage("[ConfigSave] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
+    LogMessage("[ConfigSave] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
+    LogMessage("[ConfigSave] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
+    LogMessage("[ConfigSave] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
+    LogMessage("[ConfigSave] io_config:        0x%02X", g_wifi_info.f.config.io_config);
+    LogMessage("[ConfigSave] an_config:        0x%02X", g_wifi_info.f.config.an_config);
+    LogMessage("[ConfigSave] report:           %d", g_wifi_info.f.config.report);
+    LogMessage("[ConfigSave] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
+    LogMessage("[ConfigSave] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
+    LogMessage("[ConfigSave] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
     
     LogMessage("[ConfigSave] Save Ok.");
 }
