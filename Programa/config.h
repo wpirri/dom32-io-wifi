@@ -72,6 +72,7 @@ typedef struct
         bool wifi_start_ap;
         bool wifi_ssl_capable;
         bool flash_error;
+        bool sd_ok;
     } status;
 } wifi_info;
 
