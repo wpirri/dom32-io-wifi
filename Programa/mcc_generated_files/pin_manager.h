@@ -437,11 +437,11 @@ inline static void LED_Modo_SetValue(bool value)
   @Example
     <code>
     // Set RA2 high (1)
-    EXT_Data_SetHigh();
+    SPI_SCK_SetHigh();
     </code>
 
 */
-#define EXT_Data_SetHigh()          ( LATASET = (1 << 2) )
+#define SPI_SCK_SetHigh()          ( LATASET = (1 << 2) )
 /**
   @Summary
     Sets the GPIO pin, RA2, low using LATA2.
@@ -461,11 +461,11 @@ inline static void LED_Modo_SetValue(bool value)
   @Example
     <code>
     // Set RA2 low (0)
-    EXT_Data_SetLow();
+    SPI_SCK_SetLow();
     </code>
 
 */
-#define EXT_Data_SetLow()           ( LATACLR = (1 << 2) )
+#define SPI_SCK_SetLow()           ( LATACLR = (1 << 2) )
 
 /**
   @Summary
@@ -486,19 +486,19 @@ inline static void LED_Modo_SetValue(bool value)
   @Example
     <code>
     // Set RA2 to low.
-    EXT_Data_SetValue(false);
+    SPI_SCK_SetValue(false);
     </code>
 
 */
-inline static void EXT_Data_SetValue(bool value)
+inline static void SPI_SCK_SetValue(bool value)
 {
   if(value)
   {
-    EXT_Data_SetHigh();
+    SPI_SCK_SetHigh();
   }
   else
   {
-    EXT_Data_SetLow();
+    SPI_SCK_SetLow();
   }
 }
 
@@ -521,11 +521,11 @@ inline static void EXT_Data_SetValue(bool value)
   @Example
     <code>
     // Toggle RA2
-    EXT_Data_Toggle();
+    SPI_SCK_Toggle();
     </code>
 
 */
-#define EXT_Data_Toggle()           ( LATAINV = (1 << 2) )
+#define SPI_SCK_Toggle()           ( LATAINV = (1 << 2) )
 /**
   @Summary
     Reads the value of the GPIO pin, RA2.
@@ -547,11 +547,11 @@ inline static void EXT_Data_SetValue(bool value)
     uint16_t portValue;
 
     // Read RA2
-    postValue = EXT_Data_GetValue();
+    postValue = SPI_SCK_GetValue();
     </code>
 
 */
-#define EXT_Data_GetValue()         PORTAbits.RA2
+#define SPI_SCK_GetValue()         PORTAbits.RA2
 /**
   @Summary
     Configures the GPIO pin, RA2, as an input.
@@ -571,11 +571,11 @@ inline static void EXT_Data_SetValue(bool value)
   @Example
     <code>
     // Sets the RA2 as an input
-    EXT_Data_SetDigitalInput();
+    SPI_SCK_SetDigitalInput();
     </code>
 
 */
-#define EXT_Data_SetDigitalInput()   ( TRISASET = (1 << 2) )
+#define SPI_SCK_SetDigitalInput()   ( TRISASET = (1 << 2) )
 /**
   @Summary
     Configures the GPIO pin, RA2, as an output.
@@ -595,11 +595,11 @@ inline static void EXT_Data_SetValue(bool value)
   @Example
     <code>
     // Sets the RA2 as an output
-    EXT_Data_SetDigitalOutput();
+    SPI_SCK_SetDigitalOutput();
     </code>
 
 */
-#define EXT_Data_SetDigitalOutput()   ( TRISACLR = (1 << 2) )
+#define SPI_SCK_SetDigitalOutput()   ( TRISACLR = (1 << 2) )
 /**
   @Summary
     Sets the GPIO pin, RA4, high using LATA4.
@@ -782,6 +782,370 @@ inline static void LED_Aux_SetValue(bool value)
 
 */
 #define LED_Aux_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
+/**
+  @Summary
+    Sets the GPIO pin, RB0, high using LATB0.
+
+  @Description
+    Sets the GPIO pin, RB0, high using LATB0.
+
+  @Preconditions
+    The RB0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB0 high (1)
+    SPI_SDO_SetHigh();
+    </code>
+
+*/
+#define SPI_SDO_SetHigh()          ( LATBSET = (1 << 0) )
+/**
+  @Summary
+    Sets the GPIO pin, RB0, low using LATB0.
+
+  @Description
+    Sets the GPIO pin, RB0, low using LATB0.
+
+  @Preconditions
+    The RB0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB0 low (0)
+    SPI_SDO_SetLow();
+    </code>
+
+*/
+#define SPI_SDO_SetLow()           ( LATBCLR = (1 << 0) )
+
+/**
+  @Summary
+    Sets a value to the GPIO pin.
+
+  @Description
+    Sets or Resets the GPIO pin, RB0, low or high using LATB0.
+
+  @Preconditions
+    The RB0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    bool value; : value to be set to the GPIO pin.
+
+  @Example
+    <code>
+    // Set RB0 to low.
+    SPI_SDO_SetValue(false);
+    </code>
+
+*/
+inline static void SPI_SDO_SetValue(bool value)
+{
+  if(value)
+  {
+    SPI_SDO_SetHigh();
+  }
+  else
+  {
+    SPI_SDO_SetLow();
+  }
+}
+
+/**
+  @Summary
+    Toggles the GPIO pin, RB0, using LATB0.
+
+  @Description
+    Toggles the GPIO pin, RB0, using LATB0.
+
+  @Preconditions
+    The RB0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB0
+    SPI_SDO_Toggle();
+    </code>
+
+*/
+#define SPI_SDO_Toggle()           ( LATBINV = (1 << 0) )
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB0.
+
+  @Description
+    Reads the value of the GPIO pin, RB0.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB0
+    postValue = SPI_SDO_GetValue();
+    </code>
+
+*/
+#define SPI_SDO_GetValue()         PORTBbits.RB0
+/**
+  @Summary
+    Configures the GPIO pin, RB0, as an input.
+
+  @Description
+    Configures the GPIO pin, RB0, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB0 as an input
+    SPI_SDO_SetDigitalInput();
+    </code>
+
+*/
+#define SPI_SDO_SetDigitalInput()   ( TRISBSET = (1 << 0) )
+/**
+  @Summary
+    Configures the GPIO pin, RB0, as an output.
+
+  @Description
+    Configures the GPIO pin, RB0, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB0 as an output
+    SPI_SDO_SetDigitalOutput();
+    </code>
+
+*/
+#define SPI_SDO_SetDigitalOutput()   ( TRISBCLR = (1 << 0) )
+/**
+  @Summary
+    Sets the GPIO pin, RB1, high using LATB1.
+
+  @Description
+    Sets the GPIO pin, RB1, high using LATB1.
+
+  @Preconditions
+    The RB1 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB1 high (1)
+    SPI_SDI_SetHigh();
+    </code>
+
+*/
+#define SPI_SDI_SetHigh()          ( LATBSET = (1 << 1) )
+/**
+  @Summary
+    Sets the GPIO pin, RB1, low using LATB1.
+
+  @Description
+    Sets the GPIO pin, RB1, low using LATB1.
+
+  @Preconditions
+    The RB1 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB1 low (0)
+    SPI_SDI_SetLow();
+    </code>
+
+*/
+#define SPI_SDI_SetLow()           ( LATBCLR = (1 << 1) )
+
+/**
+  @Summary
+    Sets a value to the GPIO pin.
+
+  @Description
+    Sets or Resets the GPIO pin, RB1, low or high using LATB1.
+
+  @Preconditions
+    The RB1 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    bool value; : value to be set to the GPIO pin.
+
+  @Example
+    <code>
+    // Set RB1 to low.
+    SPI_SDI_SetValue(false);
+    </code>
+
+*/
+inline static void SPI_SDI_SetValue(bool value)
+{
+  if(value)
+  {
+    SPI_SDI_SetHigh();
+  }
+  else
+  {
+    SPI_SDI_SetLow();
+  }
+}
+
+/**
+  @Summary
+    Toggles the GPIO pin, RB1, using LATB1.
+
+  @Description
+    Toggles the GPIO pin, RB1, using LATB1.
+
+  @Preconditions
+    The RB1 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB1
+    SPI_SDI_Toggle();
+    </code>
+
+*/
+#define SPI_SDI_Toggle()           ( LATBINV = (1 << 1) )
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB1.
+
+  @Description
+    Reads the value of the GPIO pin, RB1.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB1
+    postValue = SPI_SDI_GetValue();
+    </code>
+
+*/
+#define SPI_SDI_GetValue()         PORTBbits.RB1
+/**
+  @Summary
+    Configures the GPIO pin, RB1, as an input.
+
+  @Description
+    Configures the GPIO pin, RB1, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB1 as an input
+    SPI_SDI_SetDigitalInput();
+    </code>
+
+*/
+#define SPI_SDI_SetDigitalInput()   ( TRISBSET = (1 << 1) )
+/**
+  @Summary
+    Configures the GPIO pin, RB1, as an output.
+
+  @Description
+    Configures the GPIO pin, RB1, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB1 as an output
+    SPI_SDI_SetDigitalOutput();
+    </code>
+
+*/
+#define SPI_SDI_SetDigitalOutput()   ( TRISBCLR = (1 << 1) )
 /**
   @Summary
     Sets the GPIO pin, RB10, high using LATB10.
@@ -2075,11 +2439,11 @@ inline static void IO1_SetValue(bool value)
   @Example
     <code>
     // Set RB6 high (1)
-    EXT_Power_SetHigh();
+    SPI_CS_SetHigh();
     </code>
 
 */
-#define EXT_Power_SetHigh()          ( LATBSET = (1 << 6) )
+#define SPI_CS_SetHigh()          ( LATBSET = (1 << 6) )
 /**
   @Summary
     Sets the GPIO pin, RB6, low using LATB6.
@@ -2099,11 +2463,11 @@ inline static void IO1_SetValue(bool value)
   @Example
     <code>
     // Set RB6 low (0)
-    EXT_Power_SetLow();
+    SPI_CS_SetLow();
     </code>
 
 */
-#define EXT_Power_SetLow()           ( LATBCLR = (1 << 6) )
+#define SPI_CS_SetLow()           ( LATBCLR = (1 << 6) )
 
 /**
   @Summary
@@ -2124,19 +2488,19 @@ inline static void IO1_SetValue(bool value)
   @Example
     <code>
     // Set RB6 to low.
-    EXT_Power_SetValue(false);
+    SPI_CS_SetValue(false);
     </code>
 
 */
-inline static void EXT_Power_SetValue(bool value)
+inline static void SPI_CS_SetValue(bool value)
 {
   if(value)
   {
-    EXT_Power_SetHigh();
+    SPI_CS_SetHigh();
   }
   else
   {
-    EXT_Power_SetLow();
+    SPI_CS_SetLow();
   }
 }
 
@@ -2159,11 +2523,11 @@ inline static void EXT_Power_SetValue(bool value)
   @Example
     <code>
     // Toggle RB6
-    EXT_Power_Toggle();
+    SPI_CS_Toggle();
     </code>
 
 */
-#define EXT_Power_Toggle()           ( LATBINV = (1 << 6) )
+#define SPI_CS_Toggle()           ( LATBINV = (1 << 6) )
 /**
   @Summary
     Reads the value of the GPIO pin, RB6.
@@ -2185,11 +2549,11 @@ inline static void EXT_Power_SetValue(bool value)
     uint16_t portValue;
 
     // Read RB6
-    postValue = EXT_Power_GetValue();
+    postValue = SPI_CS_GetValue();
     </code>
 
 */
-#define EXT_Power_GetValue()         PORTBbits.RB6
+#define SPI_CS_GetValue()         PORTBbits.RB6
 /**
   @Summary
     Configures the GPIO pin, RB6, as an input.
@@ -2209,11 +2573,11 @@ inline static void EXT_Power_SetValue(bool value)
   @Example
     <code>
     // Sets the RB6 as an input
-    EXT_Power_SetDigitalInput();
+    SPI_CS_SetDigitalInput();
     </code>
 
 */
-#define EXT_Power_SetDigitalInput()   ( TRISBSET = (1 << 6) )
+#define SPI_CS_SetDigitalInput()   ( TRISBSET = (1 << 6) )
 /**
   @Summary
     Configures the GPIO pin, RB6, as an output.
@@ -2233,11 +2597,11 @@ inline static void EXT_Power_SetValue(bool value)
   @Example
     <code>
     // Sets the RB6 as an output
-    EXT_Power_SetDigitalOutput();
+    SPI_CS_SetDigitalOutput();
     </code>
 
 */
-#define EXT_Power_SetDigitalOutput()   ( TRISBCLR = (1 << 6) )
+#define SPI_CS_SetDigitalOutput()   ( TRISBCLR = (1 << 6) )
 /**
   @Summary
     Sets the GPIO pin, RB7, high using LATB7.

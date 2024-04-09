@@ -54,7 +54,7 @@
 #include "system.h"
 
 #include "../wiegand.h"
-#include "../dhtxx.h"
+/* DHT #include "../dhtxx.h" */
 
 /**
  Section: File specific functions
@@ -78,7 +78,7 @@ void PIN_MANAGER_Initialize (void)
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
     TRISA = 0x0004;
-    TRISB = 0x81BF;
+    TRISB = 0x81FF;
     TRISC = 0x0000;
 
     /****************************************************************************

@@ -1,0 +1,666 @@
+�҂�Ғ�jb=�Init.
+00:00:28-[MAIN] Dom32-IO-WiFi.
+00:00:28-[MAIN] Compilacion Apr  8 2024 16:54:28.
+00:00:28-[MAIN] Compilador 8.3.1 20190819 [ARM/embedded-6-branch revision 243739].
+00:00:28-[MAIN] Procesador PIC32MM256GPM028.
+00:00:28-[ConfigLoad] 252 de 2048 bytes usados (12%)
+00:00:28-[ConfigLoad] Load Defaults.
+
+
+00:00:28-[ConfigLoad] wifi_ap1:         
+00:00:28-[ConfigLoad] wifi_ap1_pass:    
+00:00:28-[ConfigLoad] wifi_ap2:         
+00:00:28-[ConfigLoad] wifi_ap2_pass:    
+00:00:28-[ConfigLoad] wifi_host1:       
+00:00:28-[ConfigLoad] wifi_host1_port:  80
+00:00:28-[ConfigLoad] wifi_host2:       
+00:00:28-[ConfigLoad] wifi_host2_port:  80
+00:00:28-[ConfigLoad] rqst_path:        /cgi-bin
+00:00:28-[ConfigLoad] io_config:        0xFF
+00:00:28-[ConfigLoad] an_config:        0x00
+00:00:28-[ConfigLoad] report:           600
+00:00:28-[ConfigLoad] enable_https:     no
+00:00:28-[ConfigLoad] enable_wiegand:   no
+00:00:28-[ConfigLoad] rtcc_clk_div_adj: 480000
+00:00:28-TRISB:   0x81BF
+00:00:28-CNPUB:   0x01BC
+00:00:28-HTTPS:   off
+00:00:28-WIEGAND: off
+00:00:28-Notificar en 10 segundos
+00:00:28-[MAIN] Init Ok.
+00:00:28-[WiFiTask] STM INVALID -> RESET
+00:00:28-[WiFiTask] RESET
+00:00:28-[ConfigSave] wifi_ap1:         
+00:00:28-[ConfigSave] wifi_ap1_pass:    
+00:00:28-[ConfigSave] wifi_ap2:         
+00:00:28-[ConfigSave] wifi_ap2_pass:    
+00:00:28-[ConfigSave] wifi_host1:       
+00:00:28-[ConfigSave] wifi_host1_port:  80
+00:00:28-[ConfigSave] wifi_host2:       
+00:00:28-[ConfigSave] wifi_host2_port:  80
+00:00:28-[ConfigSave] rqst_path:        /cgi-bin
+00:00:28-[ConfigSave] io_config:        0xFF
+00:00:28-[ConfigSave] an_config:        0x00
+00:00:29-[ConfigSave] report:           600
+00:00:29-[ConfigSave] enable_https:     no
+00:00:29-[ConfigSave] enable_wiegand:   no
+00:00:29-[ConfigSave] rtcc_clk_div_adj: 480000
+00:00:29-[ConfigSave] Save Ok.
+00:00:29-TRISB:   0x81BF
+00:00:29-CNPUB:   0x01BC
+00:00:29-HTTPS:   off
+00:00:29-WIEGAND: off
+00:00:29-Notificar en 10 segundos
+00:00:32-[WiFiTask] STM RESET -> START
+00:00:33-[WiFiTask] STM START -> CLEAN
+00:00:37-[WiFiTask] STM CLEAN -> INIT
+00:00:37-WiFi: RESTORE factory defaults.
+00:00:38-WiFi: AT version:1.7.3.0(Mar 19 2020 18:15:04).
+00:00:38-WiFi: SDK version:3.0.3(8427744).
+00:00:38-WiFi: compile time:Mar 24 2020 16:16:12.
+00:00:38-WiFi: Con soporte SSL
+00:00:38-[WiFiTask] STM INIT -> LOOP
+00:00:38-[WiFiTask] STM LOOP -> APMODE
+00:00:39-WiFi: MAC c8:c9:a3:4a:61:a0
+00:00:39-WiFi: Modo configuracion.
+00:00:39-[WiFiTask] STM APMODE -> LOOP
+00:01:37-[WiFiTask] STM LOOP -> STMODE
+00:01:37-WiFi: No hay AP definido.
+00:01:37-[WiFiTask] STM STMODE -> LOOP
+�҂�Ғ�jb=�Init.
+00:00:28-[MAIN] Dom32-IO-WiFi.
+00:00:28-[MAIN] Compilacion Apr  8 2024 16:54:28.
+00:00:28-[MAIN] Compilador 8.3.1 20190819 [ARM/embedded-6-branch revision 243739].
+00:00:28-[MAIN] Procesador PIC32MM256GPM028.
+00:00:28-[ConfigLoad] 252 de 2048 bytes usados (12%)
+00:00:28-[ConfigLoad] Load Ok.
+
+
+00:00:28-[ConfigLoad] wifi_ap1:         
+00:00:28-[ConfigLoad] wifi_ap1_pass:    
+00:00:28-[ConfigLoad] wifi_ap2:         
+00:00:28-[ConfigLoad] wifi_ap2_pass:    
+00:00:28-[ConfigLoad] wifi_host1:       
+00:00:28-[ConfigLoad] wifi_host1_port:  80
+00:00:28-[ConfigLoad] wifi_host2:       
+00:00:28-[ConfigLoad] wifi_host2_port:  80
+00:00:28-[ConfigLoad] rqst_path:        /cgi-bin
+00:00:28-[ConfigLoad] io_config:        0xFF
+00:00:28-[ConfigLoad] an_config:        0x00
+00:00:28-[ConfigLoad] report:           600
+00:00:28-[ConfigLoad] enable_https:     no
+00:00:28-[ConfigLoad] enable_wiegand:   no
+00:00:28-[ConfigLoad] rtcc_clk_div_adj: 480000
+00:00:28-TRISB:   0x81BF
+00:00:28-CNPUB:   0x01BC
+00:00:28-HTTPS:   off
+00:00:28-WIEGAND: off
+00:00:28-Notificar en 10 segundos
+00:00:28-[MAIN] Init Ok.
+00:00:28-[WiFiTask] STM INVALID -> RESET
+00:00:28-[WiFiTask] RESET
+00:00:32-[WiFiTask] STM RESET -> START
+00:00:33-[WiFiTask] STM START -> CLEAN
+00:00:37-[WiFiTask] STM CLEAN -> INIT
+00:00:37-WiFi: RESTORE factory defaults.
+00:00:38-WiFi: AT version:1.7.3.0(Mar 19 2020 18:15:04).
+00:00:38-WiFi: SDK version:3.0.3(8427744).
+00:00:38-WiFi: compile time:Mar 24 2020 16:16:12.
+00:00:38-WiFi: Con soporte SSL
+00:00:38-[WiFiTask] STM INIT -> LOOP
+00:00:38-[WiFiTask] STM LOOP -> APMODE
+00:00:39-WiFi: MAC c8:c9:a3:4a:61:a0
+00:00:39-WiFi: Modo configuracion.
+00:00:39-[WiFiTask] STM APMODE -> LOOP
+00:00:49-WiFi: Cliente conectado.
+00:00:54-WiFi: Cliente desconectado.
+00:00:59-[WiFiTask] STM LOOP -> STMODE
+00:00:59-WiFi: No hay AP definido.
+00:00:59-[WiFiTask] STM STMODE -> LOOP
+�҂�Ғ�jb=�Init.
+00:00:28-[MAIN] Dom32-IO-WiFi.
+00:00:28-[MAIN] Compilacion Apr  8 2024 16:54:28.
+00:00:28-[MAIN] Compilador 8.3.1 20190819 [ARM/embedded-6-branch revision 243739].
+00:00:28-[MAIN] Procesador PIC32MM256GPM028.
+00:00:28-[ConfigLoad] 252 de 2048 bytes usados (12%)
+00:00:28-[ConfigLoad] Load Ok.
+
+
+00:00:28-[ConfigLoad] wifi_ap1:         
+00:00:28-[ConfigLoad] wifi_ap1_pass:    
+00:00:28-[ConfigLoad] wifi_ap2:         
+00:00:28-[ConfigLoad] wifi_ap2_pass:    
+00:00:28-[ConfigLoad] wifi_host1:       
+00:00:28-[ConfigLoad] wifi_host1_port:  80
+00:00:28-[ConfigLoad] wifi_host2:       
+00:00:28-[ConfigLoad] wifi_host2_port:  80
+00:00:28-[ConfigLoad] rqst_path:        /cgi-bin
+00:00:28-[ConfigLoad] io_config:        0xFF
+00:00:28-[ConfigLoad] an_config:        0x00
+00:00:28-[ConfigLoad] report:           600
+00:00:28-[ConfigLoad] enable_https:     no
+00:00:28-[ConfigLoad] enable_wiegand:   no
+00:00:28-[ConfigLoad] rtcc_clk_div_adj: 480000
+00:00:28-TRISB:   0x81BF
+00:00:28-CNPUB:   0x01BC
+00:00:28-HTTPS:   off
+00:00:28-WIEGAND: off
+00:00:28-Notificar en 10 segundos
+00:00:28-[MAIN] Init Ok.
+00:00:28-[WiFiTask] STM INVALID -> RESET
+00:00:28-[WiFiTask] RESET
+00:00:32-[WiFiTask] STM RESET -> START
+00:00:33-[WiFiTask] STM START -> CLEAN
+00:00:37-[WiFiTask] STM CLEAN -> INIT
+00:00:37-WiFi: RESTORE factory defaults.
+00:00:38-WiFi: AT version:1.7.3.0(Mar 19 2020 18:15:04).
+00:00:38-WiFi: SDK version:3.0.3(8427744).
+00:00:38-WiFi: compile time:Mar 24 2020 16:16:12.
+00:00:38-WiFi: Con soporte SSL
+00:00:38-[WiFiTask] STM INIT -> LOOP
+00:00:38-[WiFiTask] STM LOOP -> APMODE
+00:00:39-WiFi: MAC c8:c9:a3:4a:61:a0
+00:00:39-WiFi: Modo configuracion.
+00:00:39-[WiFiTask] STM APMODE -> LOOP
+00:00:46-WiFi: Cliente conectado.
+00:00:57-[HTTPAddINQueue] POST / HTTP/1.1
+Host: 192.168.4.1
+Conn
+00:00:57-    requerimiento.
+00:00:57-HttpGetRequest
+00:00:57-HttpDecodeFormData
+00:00:57-POST HTTP: / ap1=872e&ap1p=0
+00:00:57-[HTTPAddRespQueue] HTTP/1.1 200 OK
+Connection: close
+Cont
+00:00:57-HttpDecodeFormData
+00:00:57-[WiFiTask] STM LOOP -> HTTP
+00:00:57-WifiTaskHttp -> Respondiendo
+00:00:57-WifiTaskHttp -> Enviando
+00:00:57-[WiFi CMD] AT+CIPSEND=0,885
+00:00:57-[WiFi CMD] HTTP/1.1 200 OK
+Connection: close
+Content-Type: text/html
+Cache-Control: no-cache
+
+<html>
+<head>
+<title>Dom32IO</title>
+</head>
+<style>
+body{background-color:grey;font-size:24pt;}
+#it{height:75;font-size:24pt}
+</style>
+<body>
+<form method="post">
+<h1>WiFi</h1>
+<p>MAC: c8c9a34a61a0</p>
+<hr />
+<h2>AP1:</h2>
+&nbsp;<input id="it" type="text" name="ap1" value="872e">&nbsp;<input  id="it" type="text" name="ap1p" value="00464bab872e"><br>
+<h2>AP2:</h2>
+&nbsp;<input id="it" type="text" name="ap2" value="">&nbsp;<input  id="it" type="text" name="ap2p" value=""><br>
+<h2>Central:</h2>
+&nbsp;<input id="it" type="text" name="ce1" value="192.168.10.25">&nbsp;<input  id="it" type="text" name="ce2" value=""><br>
+<h2>Path:</h2>
+&nbsp;<input id="it" type="text" name="path" value="/cgi-bin"><br>
+<br>
+<br>
+&nbsp;&nbsp;<input  id="it" type="submit" value="Guardar"></form>
+</body>
+</html>
+
+00:00:58-WifiTaskHttp -> Envio Ok
+00:00:58-WifiTaskHttp -> Cerrando
+00:00:58-[WiFi CMD] AT+CIPCLOSE=0
+00:00:58-WifiTaskHttp -> Cerrado
+00:00:58-[WiFiTask] STM HTTP -> LOOP
+00:01:02-[ConfigSave] wifi_ap1:         872e
+00:01:02-[ConfigSave] wifi_ap1_pass:    00464bab872e
+00:01:02-[ConfigSave] wifi_ap2:         
+00:01:02-[ConfigSave] wifi_ap2_pass:    
+00:01:02-[ConfigSave] wifi_host1:       192.168.10.25
+00:01:02-[ConfigSave] wifi_host1_port:  80
+00:01:02-[ConfigSave] wifi_host2:       
+00:01:02-[ConfigSave] wifi_host2_port:  80
+00:01:02-[ConfigSave] rqst_path:        /cgi-bin
+00:01:02-[ConfigSave] io_config:        0xFF
+00:01:02-[ConfigSave] an_config:        0x00
+00:01:02-[ConfigSave] report:           600
+00:01:02-[ConfigSave] enable_https:     no
+00:01:02-[ConfigSave] enable_wiegand:   no
+00:01:02-[ConfigSave] rtcc_clk_div_adj: 480000
+00:01:02-[ConfigSave] Save Ok.
+00:01:02-TRISB:   0x81BF
+00:01:02-CNPUB:   0x01BC
+00:01:02-HTTPS:   off
+00:01:02-WIEGAND: off
+00:01:02-Notificar en 10 segundos
+00:01:06-WiFi: Cliente desconectado.
+00:01:11-[WiFiTask] STM LOOP -> STMODE
+00:01:15-WiFi: Conectado al AP [872e].
+00:01:19-WiFi: Modo normal.
+00:01:19-[WiFiTask] STM STMODE -> LOOP
+00:01:24-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 404
+00:01:24-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+00:01:24-HttpDecodeFormData
+00:01:24-[WiFiTask] STM LOOP -> HTTP
+00:01:24-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+00:01:24-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+00:01:25-Notificar en 10 segundos
+00:01:25-WifiTaskHttp -> Enviando
+00:01:25-[WiFi CMD] AT+CIPSEND=0,404
+00:01:25-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 180
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES&GETCONF=1
+00:01:25-WifiTaskHttp -> Envio Ok
+00:01:25-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+00:01:25-    respuesta.
+00:01:25-[HTTPHeadResponse] HTTP/1.1 200 OK
+00:01:25-      200 OK
+00:01:25-HttpDecodeFormData
+00:01:25-[HTTPFormResponse] TIME=2024/04/08
+00:01:25-Respuesta en formato de formulario
+00:01:25-RESP HTTP: 200 TIME=2024/04/08
+00:01:25-[CTRLSetIO] TIME=2024/04/08 17:03:19
+
+00:01:25-TIME: 2024/04/08 17:03:19
+
+00:01:25-[RTCC_AdjustClk] Diferencia -61314 (adelantar).
+00:01:25-[RTCC_AdjustClk] Ajuste fino de reloj: 479999.
+00:01:25-[RTCC_TimeSet] Cambio de hora [24/01/01 00:01:25] -> [124/04/08 17:03:19].
+17:03:19-WifiTaskHttp -> Respuesta recibida
+17:03:19-WifiTaskHttp -> Cerrando
+17:03:19-[WiFi CMD] AT+CIPCLOSE=0
+17:03:19-WifiTaskHttp -> Cerrado
+17:03:19-[WiFiTask] STM HTTP -> LOOP
+17:03:19-[HTTPAddINQueue] POST /ioconfig.cgi HTTP/1.1
+Host: 192.1
+17:03:19-    requerimiento.
+17:03:19-HttpGetRequest
+17:03:19-HttpDecodeFormData
+17:03:19-POST HTTP: /ioconfig.cgi HTTPS=no&WIEGAN
+17:03:19-[CTRLConfIO] HTTPS=no&WIEGAND=no&OUT1=out&OUT2=out&IO1=in&IO2=in
+17:03:19-IO1: in
+17:03:19-IO2: in
+17:03:19-WIEGAND: no
+17:03:19-HTTPS: no
+17:03:19-[HTTPAddRespQueue] HTTP/1.1 200 OK
+Connection: close
+Cont
+17:03:19-HttpDecodeFormData
+17:03:19-[WiFiTask] STM LOOP -> HTTP
+17:03:19-WifiTaskHttp -> Respondiendo
+17:03:19-WifiTaskHttp -> Enviando
+17:03:19-[WiFi CMD] AT+CIPSEND=0,152
+17:03:19-[WiFi CMD] HTTP/1.1 200 OK
+Connection: close
+Content-Type: text/html
+Cache-Control: no-cache
+
+ID=c8c9a34a61a0&TYP=IO&IO1=in&IO2=in&IO3=in&IO4=in&IO5=in&IO6=in
+17:03:19-WifiTaskHttp -> Envio Ok
+17:03:19-WifiTaskHttp -> Cerrando
+17:03:19-[WiFi CMD] AT+CIPCLOSE=0
+17:03:19-WifiTaskHttp -> Cerrado
+17:03:19-[WiFiTask] STM HTTP -> LOOP
+17:03:28-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:03:28-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:03:28-HttpDecodeFormData
+17:03:28-[WiFiTask] STM LOOP -> HTTP
+17:03:28-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:03:28-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:03:28-WifiTaskHttp -> Enviando
+17:03:28-[WiFi CMD] AT+CIPSEND=0,394
+17:03:28-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:03:28-WifiTaskHttp -> Envio Ok
+17:03:28-Notificar en 60 segundos
+17:03:28-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:03:28-    respuesta.
+17:03:28-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:03:28-      200 OK
+17:03:28-HttpDecodeFormData
+17:03:28-[HTTPFormResponse] TIME=2024/04/08
+17:03:28-Respuesta en formato de formulario
+17:03:28-RESP HTTP: 200 TIME=2024/04/08
+17:03:28-[CTRLSetIO] TIME=2024/04/08 17:03:29
+
+17:03:28-TIME: 2024/04/08 17:03:29
+
+17:03:28-[RTCC_AdjustClk] Diferencia -1 (adelantar).
+17:03:28-[RTCC_AdjustClk] Ajuste fino de reloj: 479998.
+17:03:28-[RTCC_TimeSet] Cambio de hora [124/04/08 17:03:28] -> [124/04/08 17:03:29].
+17:03:29-WifiTaskHttp -> Respuesta recibida
+17:03:29-WifiTaskHttp -> Cerrando
+17:03:29-[WiFi CMD] AT+CIPCLOSE=0
+17:03:29-WifiTaskHttp -> Cerrado
+17:03:29-[WiFiTask] STM HTTP -> LOOP
+17:03:34-[ConfigSave] wifi_ap1:         872e
+17:03:34-[ConfigSave] wifi_ap1_pass:    00464bab872e
+17:03:34-[ConfigSave] wifi_ap2:         
+17:03:34-[ConfigSave] wifi_ap2_pass:    
+17:03:34-[ConfigSave] wifi_host1:       192.168.10.25
+17:03:34-[ConfigSave] wifi_host1_port:  80
+17:03:34-[ConfigSave] wifi_host2:       
+17:03:34-[ConfigSave] wifi_host2_port:  80
+17:03:34-[ConfigSave] rqst_path:        /cgi-bin
+17:03:34-[ConfigSave] io_config:        0xFF
+17:03:34-[ConfigSave] an_config:        0x00
+17:03:34-[ConfigSave] report:           600
+17:03:34-[ConfigSave] enable_https:     no
+17:03:34-[ConfigSave] enable_wiegand:   no
+17:03:34-[ConfigSave] rtcc_clk_div_adj: 479998
+17:03:34-[ConfigSave] Save Ok.
+17:03:34-TRISB:   0x81BF
+17:03:34-CNPUB:   0x01BC
+17:03:34-HTTPS:   off
+17:03:34-WIEGAND: off
+17:03:34-Notificar en 10 segundos
+17:03:43-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:03:43-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:03:43-HttpDecodeFormData
+17:03:43-[WiFiTask] STM LOOP -> HTTP
+17:03:43-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:03:43-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:03:43-WifiTaskHttp -> Enviando
+17:03:43-[WiFi CMD] AT+CIPSEND=0,394
+17:03:43-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:03:43-WifiTaskHttp -> Envio Ok
+17:03:43-Notificar en 60 segundos
+17:03:44-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:03:44-    respuesta.
+17:03:44-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:03:44-      200 OK
+17:03:44-HttpDecodeFormData
+17:03:44-[HTTPFormResponse] TIME=2024/04/08
+17:03:44-Respuesta en formato de formulario
+17:03:44-RESP HTTP: 200 TIME=2024/04/08
+17:03:44-[CTRLSetIO] TIME=2024/04/08 17:03:44
+
+17:03:44-TIME: 2024/04/08 17:03:44
+
+17:03:44-[RTCC_AdjustClk] Ajuste fino de clock Ok.
+17:03:44-[RTCC_TimeSet] No se cambia el horario
+17:03:44-WifiTaskHttp -> Respuesta recibida
+17:03:44-WifiTaskHttp -> Cerrando
+17:03:44-[WiFi CMD] AT+CIPCLOSE=0
+17:03:44-WifiTaskHttp -> Cerrado
+17:03:44-[WiFiTask] STM HTTP -> LOOP
+17:03:45-[ConfigSave] wifi_ap1:         872e
+17:03:45-[ConfigSave] wifi_ap1_pass:    00464bab872e
+17:03:45-[ConfigSave] wifi_ap2:         
+17:03:45-[ConfigSave] wifi_ap2_pass:    
+17:03:45-[ConfigSave] wifi_host1:       192.168.10.25
+17:03:45-[ConfigSave] wifi_host1_port:  80
+17:03:45-[ConfigSave] wifi_host2:       
+17:03:45-[ConfigSave] wifi_host2_port:  80
+17:03:45-[ConfigSave] rqst_path:        /cgi-bin
+17:03:45-[ConfigSave] io_config:        0xFF
+17:03:45-[ConfigSave] an_config:        0x00
+17:03:45-[ConfigSave] report:           600
+17:03:45-[ConfigSave] enable_https:     no
+17:03:45-[ConfigSave] enable_wiegand:   no
+17:03:45-[ConfigSave] rtcc_clk_div_adj: 479998
+17:03:45-[ConfigSave] Save Ok.
+17:03:45-TRISB:   0x81BF
+17:03:45-CNPUB:   0x01BC
+17:03:45-HTTPS:   off
+17:03:45-WIEGAND: off
+17:03:45-Notificar en 10 segundos
+17:03:54-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:03:54-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:03:54-HttpDecodeFormData
+17:03:54-[WiFiTask] STM LOOP -> HTTP
+17:03:54-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:03:54-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:03:54-WifiTaskHttp -> Enviando
+17:03:54-[WiFi CMD] AT+CIPSEND=0,394
+17:03:54-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:03:54-WifiTaskHttp -> Envio Ok
+17:03:54-Notificar en 60 segundos
+17:03:55-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:03:55-    respuesta.
+17:03:55-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:03:55-      200 OK
+17:03:55-HttpDecodeFormData
+17:03:55-[HTTPFormResponse] TIME=2024/04/08
+17:03:55-Respuesta en formato de formulario
+17:03:55-RESP HTTP: 200 TIME=2024/04/08
+17:03:55-[CTRLSetIO] TIME=2024/04/08 17:03:56
+
+17:03:55-TIME: 2024/04/08 17:03:56
+
+17:03:55-[RTCC_AdjustClk] Diferencia -1 (adelantar).
+17:03:55-[RTCC_AdjustClk] Ajuste fino de reloj: 479997.
+17:03:55-[RTCC_TimeSet] Cambio de hora [124/04/08 17:03:55] -> [124/04/08 17:03:56].
+17:03:56-WifiTaskHttp -> Respuesta recibida
+17:03:56-WifiTaskHttp -> Cerrando
+17:03:56-[WiFi CMD] AT+CIPCLOSE=0
+17:03:56-WifiTaskHttp -> Cerrado
+17:03:56-[WiFiTask] STM HTTP -> LOOP
+17:04:53-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:04:53-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:04:53-HttpDecodeFormData
+17:04:53-[WiFiTask] STM LOOP -> HTTP
+17:04:53-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:04:53-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:04:53-WifiTaskHttp -> Enviando
+17:04:53-[WiFi CMD] AT+CIPSEND=0,394
+17:04:53-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:04:53-WifiTaskHttp -> Envio Ok
+17:04:53-Notificar en 60 segundos
+17:04:53-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:04:53-    respuesta.
+17:04:53-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:04:53-      200 OK
+17:04:53-HttpDecodeFormData
+17:04:53-[HTTPFormResponse] TIME=2024/04/08
+17:04:53-Respuesta en formato de formulario
+17:04:53-RESP HTTP: 200 TIME=2024/04/08
+17:04:53-[CTRLSetIO] TIME=2024/04/08 17:04:55
+
+17:04:53-TIME: 2024/04/08 17:04:55
+
+17:04:53-[RTCC_AdjustClk] Diferencia -2 (adelantar).
+17:04:53-[RTCC_AdjustClk] Ajuste fino de reloj: 479996.
+17:04:53-[RTCC_TimeSet] Cambio de hora [124/04/08 17:04:53] -> [124/04/08 17:04:55].
+17:04:55-WifiTaskHttp -> Respuesta recibida
+17:04:55-WifiTaskHttp -> Cerrando
+17:04:55-[WiFi CMD] AT+CIPCLOSE=0
+17:04:55-WifiTaskHttp -> Cerrado
+17:04:55-[WiFiTask] STM HTTP -> LOOP
+17:05:52-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:05:52-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:05:52-HttpDecodeFormData
+17:05:52-[WiFiTask] STM LOOP -> HTTP
+17:05:52-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:05:52-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:05:52-WifiTaskHttp -> Enviando
+17:05:52-[WiFi CMD] AT+CIPSEND=0,394
+17:05:52-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:05:52-WifiTaskHttp -> Envio Ok
+17:05:52-Notificar en 60 segundos
+17:05:52-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:05:52-    respuesta.
+17:05:52-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:05:52-      200 OK
+17:05:52-HttpDecodeFormData
+17:05:52-[HTTPFormResponse] TIME=2024/04/08
+17:05:52-Respuesta en formato de formulario
+17:05:52-RESP HTTP: 200 TIME=2024/04/08
+17:05:52-[CTRLSetIO] TIME=2024/04/08 17:05:55
+
+17:05:52-TIME: 2024/04/08 17:05:55
+
+17:05:52-[RTCC_AdjustClk] Diferencia -3 (adelantar).
+17:05:52-[RTCC_AdjustClk] Ajuste fino de reloj: 479995.
+17:05:52-[RTCC_TimeSet] Cambio de hora [124/04/08 17:05:52] -> [124/04/08 17:05:55].
+17:05:55-WifiTaskHttp -> Respuesta recibida
+17:05:55-WifiTaskHttp -> Cerrando
+17:05:55-[WiFi CMD] AT+CIPCLOSE=0
+17:05:55-WifiTaskHttp -> Cerrado
+17:05:55-[WiFiTask] STM HTTP -> LOOP
+17:06:52-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:06:52-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:06:52-HttpDecodeFormData
+17:06:52-[WiFiTask] STM LOOP -> HTTP
+17:06:52-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:06:52-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:06:52-WifiTaskHttp -> Enviando
+17:06:52-[WiFi CMD] AT+CIPSEND=0,394
+17:06:52-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:06:52-WifiTaskHttp -> Envio Ok
+17:06:52-Notificar en 60 segundos
+17:06:52-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:06:52-    respuesta.
+17:06:52-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:06:52-      200 OK
+17:06:52-HttpDecodeFormData
+17:06:52-[HTTPFormResponse] TIME=2024/04/08
+17:06:52-Respuesta en formato de formulario
+17:06:52-RESP HTTP: 200 TIME=2024/04/08
+17:06:52-[CTRLSetIO] TIME=2024/04/08 17:06:55
+
+17:06:52-TIME: 2024/04/08 17:06:55
+
+17:06:52-[RTCC_AdjustClk] Diferencia -3 (adelantar).
+17:06:52-[RTCC_AdjustClk] Ajuste fino de reloj: 479994.
+17:06:52-[RTCC_TimeSet] Cambio de hora [124/04/08 17:06:52] -> [124/04/08 17:06:55].
+17:06:55-WifiTaskHttp -> Respuesta recibida
+17:06:55-WifiTaskHttp -> Cerrando
+17:06:55-[WiFi CMD] AT+CIPCLOSE=0
+17:06:55-WifiTaskHttp -> Cerrado
+17:06:55-[WiFiTask] STM HTTP -> LOOP
+17:07:52-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:07:52-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:07:52-HttpDecodeFormData
+17:07:52-[WiFiTask] STM LOOP -> HTTP
+17:07:52-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:07:52-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:07:52-WifiTaskHttp -> Enviando
+17:07:52-[WiFi CMD] AT+CIPSEND=0,394
+17:07:52-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:07:52-WifiTaskHttp -> Envio Ok
+17:07:52-Notificar en 60 segundos
+17:07:52-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:07:52-    respuesta.
+17:07:52-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:07:52-      200 OK
+17:07:52-HttpDecodeFormData
+17:07:52-[HTTPFormResponse] TIME=2024/04/08
+17:07:52-Respuesta en formato de formulario
+17:07:52-RESP HTTP: 200 TIME=2024/04/08
+17:07:52-[CTRLSetIO] TIME=2024/04/08 17:07:54
+
+17:07:52-TIME: 2024/04/08 17:07:54
+
+17:07:52-[RTCC_AdjustClk] Diferencia -2 (adelantar).
+17:07:52-[RTCC_AdjustClk] Ajuste fino de reloj: 479993.
+17:07:52-[RTCC_TimeSet] Cambio de hora [124/04/08 17:07:52] -> [124/04/08 17:07:54].
+17:07:54-WifiTaskHttp -> Respuesta recibida
+17:07:54-WifiTaskHttp -> Cerrando
+17:07:54-[WiFi CMD] AT+CIPCLOSE=0
+17:07:54-WifiTaskHttp -> Cerrado
+17:07:54-[WiFiTask] STM HTTP -> LOOP
+17:08:51-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:08:51-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:08:51-HttpDecodeFormData
+17:08:51-[WiFiTask] STM LOOP -> HTTP
+17:08:51-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:08:51-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:08:51-WifiTaskHttp -> Enviando
+17:08:51-[WiFi CMD] AT+CIPSEND=0,394
+17:08:51-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=Apr  8 2024 16:54:28&SSL=YES
+17:08:51-WifiTaskHttp -> Envio Ok
+17:08:51-Notificar en 60 segundos
+17:08:51-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2024 
+17:08:51-    respuesta.
+17:08:51-[HTTPHe

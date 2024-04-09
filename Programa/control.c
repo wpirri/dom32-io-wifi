@@ -600,6 +600,7 @@ void CTRLTimer( void )
             }
             else
             {
+                LogMessage("[CTRL] RESET.");
                 /* The following code illustrates a software Reset */
                 // assume interrupts are disabled
                 // assume the DMA controller is suspended
@@ -1285,5 +1286,6 @@ void CTRLConfIO(char* in)
 void CTRLReset( void )
 {
     /* reset en 5 seg */
+    LogMessage("[CTRL] RESET solicitado.");
     g_ctrl_count_reset = 100;
 }

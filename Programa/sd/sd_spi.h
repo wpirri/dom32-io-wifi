@@ -62,19 +62,17 @@
 // Description: SD-SPI Write Protect Check TRIS bit
 //#define SD_WE_TRIS          TRISFbits.TRISF1
 // Description: The main SPI control register
-#define SPICON1             SPI2CON
+#define SPIxCON              SPI2CON
 // Description: The SPI status register
-#define SPISTAT             SPI2STAT
+#define SPIxSTAT             SPI2STAT
 // Description: The SPI Buffer
-#define SPIBUF              SPI2BUF
-// Description: The receive buffer full bit in the SPI status register
-#define SPISTAT_RBF         SPI2STATbits.SPIRBF
+#define SPIxBUF              SPI2BUF
 // Description: The bitwise define for the SPI control register (i.e. _____bits)
-#define SPICON1bits         SPI2CONbits
+#define SPIxCONbits         SPI2CONbits
 // Description: The bitwise define for the SPI status register (i.e. _____bits)
-#define SPISTATbits         SPI2STATbits
+#define SPIRBF              SPI2STATbits.SPIRBF
 // Description: The enable bit for the SPI module
-#define SPIENABLE           SPICON2bits.ON
+#define SPIENABLE           SPI2CONbits.ON
 // Description: The definition for the SPI baud rate generator register (PIC32)
 #define SPIBRG			    SPI2BRG
 // Tris pins for SCK/SDI/SDO lines
@@ -84,6 +82,12 @@
 #define SPIIN               TRISBbits.TRISB1
 // Description: The TRIS bit for the SDO pin
 #define SPIOUT              TRISBbits.TRISB0
+//
+#define SPITBE              SPI2STATbits.SPITBE
+//
+#define SPIRBF              SPI2STATbits.SPIRBF
+//
+#define __SPIxCONbits_t     __SPI2CONbits_t
 
 /*****************************************************************/
 /*                  Strcutures and defines                       */
@@ -528,11 +532,11 @@ typedef struct
 // Description: A macro to send 8 clock cycles for SD timing requirements
 #define mSend8ClkCycles()       WriteSPIM(0xFF);
 
-#define putcSPI(data_out)  do{while(!SPI1STATbits.SPITBE); SPI1BUF=(data_out); }while(0)
-#define WriteSPI(data_out) (SPI1BUF=(data_out))
-#define ReadSPI()  (SPI1BUF)
-#define TxBufFullSPI() (!SPI1STATbits.SPITBE)
-#define DataRdySPI() (SPI1STATbits.SPIRBF)
+#define putcSPI(data_out)  do{while(!SPITBE); SPIxBUF=(data_out); }while(0)
+#define WriteSPI(data_out) (SPIxBUF=(data_out))
+#define ReadSPI()  (SPIxBUF)
+#define TxBufFullSPI() (!SPITBE)
+#define DataRdySPI() (SPIRBF)
 
 /*****************************************************************************/
 /*                                 Public Prototypes                         */

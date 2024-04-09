@@ -71,7 +71,8 @@
 #include "string.h"
 #include "fsconfig.h"
 
-#include "../hwconf.h"
+#include "../config.h"
+
 /******************************************************************************
  * Global Variables
  *****************************************************************************/
@@ -166,7 +167,7 @@ static inline __attribute__((always_inline)) unsigned char SPICalutateBRG(unsign
  *
  * PreCondition:    None
  * Input:           None
- * Output:          the contents of SPIBUF register in byte/hword/word format
+ * Output:          the contents of SPIxBUF register in byte/hword/word format
  * Side Effects:    None
  * Overview:        This function waits for receive data to be available.
  * 					It will then read single byte/half word/word from SPI bus.
@@ -187,7 +188,7 @@ unsigned int getcSPI(void)
 }
 
 /*********************************************************************
- * Function:        unsigned int getsSPI1(unsigned int length, unsigned int *rdptr,
+ * Function:        unsigned int getsSPI(unsigned int length, unsigned int *rdptr,
  * 											unsigned int spi_data_wait)
  *
  * PreCondition:    None
@@ -214,10 +215,10 @@ unsigned int getsSPI(unsigned int length, unsigned int *rdptr, unsigned int spi_
 	int				wait;
 	unsigned int	rxData;
 	unsigned char*			pBuff8=(unsigned char*)rdptr;
-	__SPI1CONbits_t	conBits;
+	__SPIxCONbits_t	conBits;
 	unsigned short*			pBuff16=(unsigned short*)rdptr;
 
-	conBits.w=SPI1CONbits.w;
+	conBits.w=SPIxCONbits.w;
 
 	while (length)                     /* stay in loop until length = 0  */
 	{
@@ -229,7 +230,7 @@ unsigned int getsSPI(unsigned int length, unsigned int *rdptr, unsigned int spi_
 				return length;	/* if time out, return number of byte/hword/words left to be read */
 			}
 		}
-		rxData=SPIBUF;
+		rxData=SPIxBUF;
 		if(conBits.MODE32)
 		{
 			*rdptr++=rxData;			// 32 bits
@@ -264,25 +265,25 @@ unsigned int getsSPI(unsigned int length, unsigned int *rdptr, unsigned int spi_
 void putsSPI(unsigned int length, unsigned int *wrptr)
 {
 	unsigned char*			pBuff8=(unsigned char*)wrptr;
-	__SPI1CONbits_t 		conBits;
+	__SPIxCONbits_t 		conBits;
 	unsigned short*			pBuff16=(unsigned short*)wrptr;
 
-	conBits.w=SPI1CONbits.w;
+	conBits.w=SPIxCONbits.w;
 
     while (length--)                   /* write byte/word until length is 0 */
     {
 		while(TxBufFullSPI());  /* wait until there's room in the buffer */
 		if(conBits.MODE32)
 		{
-			SPIBUF=*wrptr++;
+			SPIxBUF=*wrptr++;
 		}
 		else if(conBits.MODE16)
 		{
-			SPIBUF=*pBuff16++;
+			SPIxBUF=*pBuff16++;
 		}
 		else
 		{
-			SPIBUF=*pBuff8++;
+			SPIxBUF=*pBuff8++;
 		}
     }
 }
@@ -988,17 +989,17 @@ BYTE MDD_SDSPI_AsyncReadTasks(ASYNC_IO* info)
                     localPointer--;
                     while(1)
                     {
-                        SPIBUF = 0xFF;
+                        SPIxBUF = 0xFF;
                         localPointer++;
                         if((--localCounter) == 0x0000)
                         {
                            break; 
                         } 
-                        while(!SPISTAT_RBF);
-                        *localPointer = (BYTE)SPIBUF;
+                        while(!SPIRBF);
+                        *localPointer = (BYTE)SPIxBUF;
                     }
-                    while(!SPISTAT_RBF);
-                    *localPointer = (BYTE)SPIBUF;  
+                    while(!SPIRBF);
+                    *localPointer = (BYTE)SPIxBUF;  
                 }  
                 //Check if we have received a multiple of the media block 
                 //size (ex: 512 bytes).  If so, the next two bytes are going to 
@@ -1288,10 +1289,10 @@ BYTE MDD_SDSPI_AsyncWriteTasks(ASYNC_IO* info)
             localCounter = ioInfo.wNumBytes;
             do
             {
-                SPIBUF = *localPointer++;
+                SPIxBUF = *localPointer++;
                 localCounter--;
-                while(!SPISTAT_RBF);
-                data_byte = SPIBUF; //Dummy read to clear SPISTAT_RBF
+                while(!SPIRBF);
+                data_byte = SPIxBUF; //Dummy read to clear SPIRBF
             }while(localCounter);         
             //Check if we have finshed sending a 512 byte block.  If so,
             //need to receive 16-bit CRC, and retrieve the data_response token
@@ -1587,7 +1588,7 @@ void Delayms(BYTE milliseconds)
 
 void CloseSPIM (void)
 {
-    SPISTAT &= 0x7FFF;
+    SPIxSTAT &= 0x7FFF;
 }
 
 
@@ -1637,7 +1638,7 @@ unsigned char WriteSPIM( unsigned char data_out )
     The MDD_SDSPI_ReadMedia function will read one byte from the SPI port.
   Remarks:
     This function replaces ReadSPI, since some implementations of that function
-    will initialize SSPBUF/SPIBUF to 0x00 when reading.  The card expects 0xFF.
+    will initialize SSPBUF/SPIxBUF to 0x00 when reading.  The card expects 0xFF.
   ***************************************************************************************/
 BYTE MDD_SDSPI_ReadMedia(void)
 {
@@ -1671,17 +1672,17 @@ BYTE MDD_SDSPI_ReadMedia(void)
 void InitSPISlowMode(void)
 {
     SPIENABLE = 0;
-    SPISTAT = 0x0000;               // power on state 
+    SPIxSTAT = 0x0000;               // power on state 
 
 //    if (GetSystemClock() <= 20000000)
 //        SPIBRG = SPICalutateBRG(GetPeripheralClock(), 10000);
 //    else
         SPIBRG = SPICalutateBRG(GetPeripheralClock(), 400000);
 
-    SPICON1bits.MSTEN = 1;  /*5*/
-    SPICON1bits.CKP = 0;    /*6*/
-    SPICON1bits.CKE = 1;    /*8*/
-    SPICON1bits.SMP = 1;    /*9*/
+    SPIxCONbits.MSTEN = 1;  /*5*/
+    SPIxCONbits.CKP = 0;    /*6*/
+    SPIxCONbits.CKE = 1;    /*8*/
+    SPIxCONbits.SMP = 1;    /*9*/
 
     SPIENABLE = 1;          // 15 - enable synchronous serial port
 }    
@@ -1710,7 +1711,7 @@ void InitSPIFastMode(void)
     if (GetSystemClock() <= 20000000) return;
 
     SPIENABLE = 0;
-    SPISTAT = 0x0000;               // power on state 
+    SPIxSTAT = 0x0000;               // power on state 
 
     //SPI module initilization depends on processor type
     SPIBRG = SPICalutateBRG(GetPeripheralClock(), SPI_FREQUENCY);
