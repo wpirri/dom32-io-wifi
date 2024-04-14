@@ -48,14 +48,11 @@ struct _config_ /* 2176 bits, 272 bytes */
     uint32_t flash_ok;
 };
 
-#define FLASH_ARRAY ((sizeof(struct _config_)/4) + 1)
-
 typedef struct
 {
     union
     {
         struct _config_ config;
-        uint32_t ui32[FLASH_ARRAY];
     } f;
     struct
     {

@@ -2,7 +2,7 @@
 
 manifest_file_version: 1.0.0
 project: Dom32-IO-WiFi
-creation_date: 2024-04-08T18:40:39.791-03:00[America/Buenos_Aires]
+creation_date: 2024-04-14T01:43:58.810-03:00[America/Buenos_Aires]
 operating_system: Windows 10
 mcc_mode: IDE
 mcc_mode_version: v6.20
@@ -19,7 +19,7 @@ device_library: {library_class: com.microchip.mcc.mcu16.Mcu16PeripheralLibrary, 
 packs: {name: PIC32MM-GPM-0XX_DFP, version: 1.4.156}
 modules:
 - {name: com.microchip.mcc.mcu16.Mcu16PeripheralLibrary, type: CLASSIC, version: 1.170.0}
-- {name: com.microchip.mcc.foundationservices.library.FoundationServicesLibrary, type: CLASSIC,
-  version: 0.2.3}
 - {name: com.microchip.mcc.boardsupportlibrary.BoardSuppportLibrary, type: CLASSIC,
   version: 1.12.0}
+- {name: com.microchip.mcc.foundationservices.library.FoundationServicesLibrary, type: CLASSIC,
+  version: 0.2.3}

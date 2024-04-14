@@ -7,9 +7,6 @@
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
-        <logicalFolder name="memory" displayName="memory" projectFiles="true">
-          <itemPath>mcc_generated_files/memory/flash.h</itemPath>
-        </logicalFolder>
         <itemPath>mcc_generated_files/watchdog.h</itemPath>
         <itemPath>mcc_generated_files/coretimer.h</itemPath>
         <itemPath>mcc_generated_files/clock.h</itemPath>
@@ -55,9 +52,6 @@
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
-        <logicalFolder name="memory" displayName="memory" projectFiles="true">
-          <itemPath>mcc_generated_files/memory/flash.c</itemPath>
-        </logicalFolder>
         <itemPath>mcc_generated_files/system.c</itemPath>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/interrupt_manager.c</itemPath>

@@ -83,19 +83,18 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "rtcc.h"
-#include "uart1.h"
-#include "uart2.h"
-#include "memory/flash.h"
-#include "coretimer.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
+#include "uart2.h"
+#include "uart1.h"
+#include "coretimer.h"
+#include "rtcc.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    CLOCK_Initialize();
     INTERRUPT_Initialize();
+    CLOCK_Initialize();
     UART2_Initialize();
     CORETIMER_Initialize();
     UART1_Initialize();
