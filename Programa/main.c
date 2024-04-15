@@ -73,7 +73,7 @@
 bool main_flag_core_timer;
 /* DHT unsigned int main_flag_dhtxx_timer_count;*/
 unsigned int main_count_inactividad;
-unsigned int main_count_sd_mount;
+
 
 
 void LedControl( void )
@@ -156,7 +156,6 @@ int main(void)
     main_flag_core_timer = false;
     /* DHT main_flag_dhtxx_timer_count = 0; */
     main_count_inactividad = 0;
-    main_count_sd_mount = 1;
 
     SYSTEM_Initialize();
     
@@ -166,6 +165,12 @@ int main(void)
     LogMessage("[MAIN] Compilacion " __DATE__ " " __TIME__ ".");
     LogMessage("[MAIN] Compilador " __VERSION__ ".");
     LogMessage("[MAIN] Procesador PIC32MM256GPM028.");
+
+    if( !FSInit())
+    {
+        LogMessage("[MAIN] Error de tarjeta SD.");
+        while(1);
+    }
     
     ConfigInit();
     ConfigLoad();
@@ -219,58 +224,6 @@ int main(void)
                 LogMessage("[MAIN] RESET por inactividad.");
                 CTRLReset();
             }
-            
-            if( main_count_sd_mount &&
-                !g_wifi_info.status.sd_ok &&
-                g_wifi_info.status.wifi_ok )
-            {
-                main_count_sd_mount--;
-                if(main_count_sd_mount == 0)
-                {
-                    LogMessage("[MAIN] Montando tarjeta SD.");
-                    if(FSInit())
-                    {
-                        g_wifi_info.status.sd_ok = true;
-                        LogMessage("[MAIN] Tarjeta SD montada.");
-                        
-                        
-                        
-                        {
-                            FSFILE *f;
-                            char fs_buffer[1024];
-                            int fs_read_len;
-                            
-                             f = FSfopen("test.txt", FS_READ);
-                             if(f)
-                             {
-                                 fs_read_len = FSfread(fs_buffer, 1, 1023, f);
-                                 if(fs_read_len > 0)
-                                 {
-                                    fs_buffer[fs_read_len] = 0;
-                                    LogMessage("[test.txt] [%s]", fs_buffer);
-                                 }
-                                 else
-                                 {
-                                    LogMessage("[test.txt] Read %i.", fs_read_len);
-                                 }
-                                 FSfclose(f);
-                             }
-                             else
-                             {
-                                LogMessage("[test.txt] Open Error.", fs_buffer);
-                             }
-                        }
-                        
-                        
-                    }
-                    else
-                    {
-                        main_count_sd_mount = 50;
-                        LogMessage("[MAIN] Sin tarjeta SD.");
-                    }
-                }
-            }
-            
         }
     }
     return 1; 

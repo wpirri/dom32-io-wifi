@@ -45,7 +45,6 @@ struct _config_ /* 2176 bits, 272 bytes */
     unsigned char enable_wiegand;
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
-    uint32_t flash_ok;
 };
 
 typedef struct
@@ -68,8 +67,6 @@ typedef struct
         bool wifi_ok;
         bool wifi_start_ap;
         bool wifi_ssl_capable;
-        bool flash_error;
-        bool sd_ok;
     } status;
 } wifi_info;
 

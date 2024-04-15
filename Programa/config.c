@@ -28,13 +28,11 @@
 #include "clog.h"
 #include "sd/fsio.h"
 
-#define CONFIG_FLASK_OK 0x5A5A5A5A
-
 #define CONFIG_FILENAME "D32WIFI.CFG"
 
 void ConfigLoadDefault( void)
 {
-    memset(&g_wifi_info.f.config, 0, sizeof(g_wifi_info.f.config));
+    memset(&g_wifi_info.f.config, 0, sizeof(struct _config_));
     g_wifi_info.f.config.io_config = 0xFF;
     g_wifi_info.f.config.an_config = 0x00;
     g_wifi_info.f.config.wifi_host1_port = 80;
@@ -45,7 +43,6 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.enable_wiegand = 0;
     g_wifi_info.f.config.io_config_default = 1;
     g_wifi_info.f.config.rtcc_clk_div_adj = 480000;
-    g_wifi_info.f.config.flash_ok = CONFIG_FLASK_OK;
 
     g_wifi_info.status.save_config = 10;
 }
@@ -60,38 +57,35 @@ void ConfigLoad( void )
     FSFILE* f;
     int rc;
     
-    f = FSfopen(CONFIG_FILENAME, "r");
+    f = FSfopen(CONFIG_FILENAME, FS_READ);
     if(f)
     {
-        rc = FSfread(&g_wifi_info.f, sizeof(g_wifi_info.f), 1, f);
+        rc = FSfread(&g_wifi_info.f.config, sizeof(struct _config_), 1, f);
         FSfclose(f);
-        if(rc == sizeof(g_wifi_info.f))
+        if(rc == 1)
         {
-            if(g_wifi_info.f.config.flash_ok != CONFIG_FLASK_OK)
-            {
-                LogMessage("[ConfigLoad] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
-                LogMessage("[ConfigLoad] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
-                LogMessage("[ConfigLoad] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
-                LogMessage("[ConfigLoad] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
-                LogMessage("[ConfigLoad] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
-                LogMessage("[ConfigLoad] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
-                LogMessage("[ConfigLoad] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
-                LogMessage("[ConfigLoad] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
-                LogMessage("[ConfigLoad] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
-                LogMessage("[ConfigLoad] io_config:        0x%02X", g_wifi_info.f.config.io_config);
-                LogMessage("[ConfigLoad] an_config:        0x%02X", g_wifi_info.f.config.an_config);
-                LogMessage("[ConfigLoad] report:           %d", g_wifi_info.f.config.report);
-                LogMessage("[ConfigLoad] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
-                LogMessage("[ConfigLoad] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
-                LogMessage("[ConfigLoad] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
+            LogMessage("[ConfigLoad] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
+            LogMessage("[ConfigLoad] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
+            LogMessage("[ConfigLoad] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
+            LogMessage("[ConfigLoad] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
+            LogMessage("[ConfigLoad] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
+            LogMessage("[ConfigLoad] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
+            LogMessage("[ConfigLoad] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
+            LogMessage("[ConfigLoad] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
+            LogMessage("[ConfigLoad] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
+            LogMessage("[ConfigLoad] io_config:        0x%02X", g_wifi_info.f.config.io_config);
+            LogMessage("[ConfigLoad] an_config:        0x%02X", g_wifi_info.f.config.an_config);
+            LogMessage("[ConfigLoad] report:           %d", g_wifi_info.f.config.report);
+            LogMessage("[ConfigLoad] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
+            LogMessage("[ConfigLoad] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
+            LogMessage("[ConfigLoad] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
 
-                LogMessage("[ConfigLoad] Load Ok.\n\n");
-                return;
-            }
+            LogMessage("[ConfigLoad] Load Ok.");
+            return;
         }
         LogMessage("[ConfigSave] Load Error.");
     }
-    LogMessage("[ConfigLoad] Load Defaults.\n\n");
+    LogMessage("[ConfigLoad] Load Defaults.");
     ConfigLoadDefault();
     ConfigSave();
 }
@@ -101,15 +95,14 @@ void ConfigSave(void)
     FSFILE* f;
     int rc;
 
-    g_wifi_info.status.flash_error = false;
     g_wifi_info.status.save_config = 0;
     
-    f = FSfopen(CONFIG_FILENAME, "rw");
+    f = FSfopen(CONFIG_FILENAME, FS_WRITE);
     if(f)
     {
-        rc = FSfwrite(&g_wifi_info.f, sizeof(g_wifi_info.f), 1, 1);
+        rc = FSfwrite(&g_wifi_info.f.config, sizeof(struct _config_), 1, f);
         FSfclose(f);
-        if(rc == sizeof(g_wifi_info.f))
+        if(rc == 1)
         {
             LogMessage("[ConfigSave] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
             LogMessage("[ConfigSave] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
@@ -131,7 +124,6 @@ void ConfigSave(void)
             return;
         }
     }
-    g_wifi_info.status.flash_error = true;
     LogMessage("[ConfigSave] Save Error.");
 }
 
