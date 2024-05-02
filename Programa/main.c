@@ -187,6 +187,8 @@ int main(void)
 
     LogMessage("[MAIN] Init Ok.");
     
+    FSremove("pgm.hex");
+    
     while(1)
     {
         WATCHDOG_TimerClear();

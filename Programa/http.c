@@ -240,7 +240,6 @@ int HTTPHeadResponse(const char *http_head)
 int HTTPFormResponse(const char *http_data)
 {
     char str[256];
-    char *p1;
     
     LogMessage("[HTTPFormResponse] %.15s", http_data); 
 
@@ -871,8 +870,6 @@ void HTTPTask( void )
  * ************************************************************************** */
 void HTTPTimer( void )
 {
-    int i;
-
     if(http_data_out_queue_read_idx != http_data_out_queue_write_idx)
     {
         if(http_data_out_queue[http_data_out_queue_read_idx].timeout)

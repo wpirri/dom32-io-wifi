@@ -283,16 +283,16 @@ int WifiCheckUnsol( void )
         id = 0;
         len = 0;
         
-        if(str_section(g_wifi_read_line_buffer, ',', 1, str))
+        if(str_section((char*)g_wifi_read_line_buffer, ',', 1, str))
         {
             id = atoi(str);
         }
-        if(str_section(g_wifi_read_line_buffer, ',', 2, str))
+        if(str_section((char*)g_wifi_read_line_buffer, ',', 2, str))
         {
             len = atoi(str);
         }
         /* dejo en el buffer solo el HTTP */
-        p = strchr(g_wifi_read_line_buffer, ':');
+        p = strchr((char*)g_wifi_read_line_buffer, ':');
         if(p)
         {
             p++;
@@ -359,7 +359,7 @@ int WifiCheckUnsol( void )
          * AT version:1.7.4.0(May 11 2020 19:13:04)
          */
         LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
-        strncpy(g_wifi_info.status.wifi_at, &g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
+        strncpy((char*)g_wifi_info.status.wifi_at, (const char*)&g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
         //if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
         //{
         //    LogMessage("WiFi: El firware necesita upgrade.");
@@ -369,7 +369,7 @@ int WifiCheckUnsol( void )
     else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
     {
         LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
-        strncpy(g_wifi_info.status.wifi_sdk, &g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
+        strncpy((char*)g_wifi_info.status.wifi_sdk, (const char*)&g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
     }
     else if( !memcmp(g_wifi_read_line_buffer, "compile time:", 13))
     {

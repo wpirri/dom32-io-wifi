@@ -27,7 +27,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=Programa
 
 # Active Configuration
-DEFAULTCONF=default
+DEFAULTCONF=App_Booteable
 CONF=${DEFAULTCONF}
 
 # All Configurations

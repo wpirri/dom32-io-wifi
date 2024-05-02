@@ -510,6 +510,21 @@ DWORD MDD_SDSPI_ReadCapacity(void)
   *********************************************************/
 void MDD_SDSPI_InitIO (void)
 {
+    // System Reg Unlock
+    SYSKEY = 0x00000000; 
+    SYSKEY = 0xAA996655; //write Key1 to SYSKEY
+    SYSKEY = 0x556699AA; //write Key2 to SYSKEY
+    // unlock PPS
+    RPCONbits.IOLOCK = 0;
+    // Mapeo de SPI */
+    RPOR1bits.RP6R = 0x0008;        //RB0->SPI2:SDO2
+    RPINR11bits.SDI2R = 0x0007;     //RB1->SPI2:SDI2
+    RPOR0bits.RP3R = 0x0009;        //RA2->SPI2:SCK2OUT
+    RPINR11bits.SCK2INR = 0x0003;   //RA2->SPI2:SCK2OUT
+    // lock   PPS
+    RPCONbits.IOLOCK = 1; 
+    // System Reg Lock
+    SYSKEY = 0x00000000; 
     // Turn off the card
 #ifdef SD_CD_TRIS
     SD_CD_TRIS = INPUT;            //Card Detect - input
@@ -1550,7 +1565,7 @@ BYTE MDD_SDSPI_WriteProtectState(void)
     time specified.  This shouldn't create a significant problem.
 *******************************************************************************/
 
-void Delayms(BYTE milliseconds)
+void __attribute__((optimize("-O0"))) Delayms(BYTE milliseconds)
 {
     BYTE    ms;
     DWORD   count;
@@ -1615,9 +1630,8 @@ void CloseSPIM (void)
 
 unsigned char WriteSPIM( unsigned char data_out )
 {
-    BYTE   clear;
     putcSPI((BYTE)data_out);
-    clear = getcSPI();
+    getcSPI();
     return ( 0 );                // return non-negative#
 }
 

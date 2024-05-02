@@ -109,17 +109,10 @@ void PIN_MANAGER_Initialize (void)
      ***************************************************************************/
     SYSTEM_RegUnlock(); // unlock PPS
     RPCONbits.IOLOCK = 0;
-
+#ifdef __SE_HACE_EN_LogInit
     RPOR0bits.RP4R = 0x0004;    //RA3->UART2:U2TX
     RPINR9bits.U2RXR = 0x0000;    //RA2->NADA - ( 0x0003 RA2->UART2:U2RX )
-    
-    /* Agregado para mapeo de SPI */
-    RPOR1bits.RP6R = 0x0008;        //RB0->SPI2:SDO2
-    RPINR11bits.SDI2R = 0x0007;     //RB1->SPI2:SDI2
-    RPOR0bits.RP3R = 0x0009;        //RA2->SPI2:SCK2OUT
-    RPINR11bits.SCK2INR = 0x0003;   //RA2->SPI2:SCK2OUT
-    /* Agregado para mapeo de SPI */
- 
+#endif
     RPCONbits.IOLOCK = 1; // lock   PPS
     SYSTEM_RegLock(); 
 
