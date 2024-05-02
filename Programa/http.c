@@ -23,7 +23,7 @@
 
 #include "control.h"
 #include "wifi.h"
-#include "dhtxx.h"
+/* DHT #include "dhtxx.h" */
 #include "config.h"
 #include "clog.h"
 
@@ -240,7 +240,6 @@ int HTTPHeadResponse(const char *http_head)
 int HTTPFormResponse(const char *http_data)
 {
     char str[256];
-    char *p1;
     
     LogMessage("[HTTPFormResponse] %.15s", http_data); 
 
@@ -369,7 +368,6 @@ void HttpReturnWiFiConfig(char *out, int max_len)
  * ************************************************************************** */
 int HTTPNotificarStatus(char *out, int max_len)
 {
-    int t1, t2, h1, h2;
     bool first_change;
     
     /* Parte fija con la MAC y las entradas y salidas */
@@ -464,6 +462,7 @@ int HTTPNotificarStatus(char *out, int max_len)
     }
     
     /* Agrego info de Temperatura y humedad si está configurado */
+    /* DHT
     if(h1 != 0)
     {
         DHTxxTemperatura(&t1,&t2);
@@ -471,7 +470,8 @@ int HTTPNotificarStatus(char *out, int max_len)
         snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
-
+    */
+    
     /* Version del stack AT del ESP-02 */
     if((MAX_HTTP_DATA - strlen(http_rqst_data) > sizeof(g_wifi_info.status.wifi_at)))
     {
@@ -611,8 +611,6 @@ void HttpReturnIOConfigForm(char *out, int max_len)
 
 void HttpReturnIOStatus(char *out, int max_len)
 {
-    int t1, t2, h1, h2;
-    
     snprintf(out, max_len,
         "%sID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         http_200,
@@ -629,6 +627,7 @@ void HttpReturnIOStatus(char *out, int max_len)
         (g_control_out.stat4)?1:0);
     
     /* Agrego info de Temperatura y humedad si está configurado */
+    /* DHT
     if(h1 != 0)
     {
         DHTxxTemperatura(&t1,&t2);
@@ -636,7 +635,7 @@ void HttpReturnIOStatus(char *out, int max_len)
         snprintf(&out[strlen(out)], max_len - strlen(out),
                 "&TEMP=%i.%i&HUM=%i.%i", t1, t2, h1, h2);
     }
-
+    */
     /* Version del stack AT del ESP-02 */
     if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_at)))
     {
@@ -871,8 +870,6 @@ void HTTPTask( void )
  * ************************************************************************** */
 void HTTPTimer( void )
 {
-    int i;
-
     if(http_data_out_queue_read_idx != http_data_out_queue_write_idx)
     {
         if(http_data_out_queue[http_data_out_queue_read_idx].timeout)

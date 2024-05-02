@@ -85,11 +85,10 @@
 #include "system.h"
 #include "interrupt_manager.h"
 #include "exceptions.h"
-#include "rtcc.h"
 #include "uart2.h"
 #include "uart1.h"
 #include "coretimer.h"
-#include "memory/flash.h"
+#include "rtcc.h"
 
 void SYSTEM_Initialize(void)
 {

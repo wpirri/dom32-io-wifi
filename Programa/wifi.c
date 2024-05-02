@@ -53,9 +53,25 @@ typedef enum
     ERROR
 } task_stm;
 
+const char *task_stm_label[] = {
+    "INVALID",
+    "RESET",
+    "START",
+    "CLEAN",
+    "INIT",
+    "UPGRADE",
+    "APMODE",
+    "STMODE",
+    "HTTP",
+    "LISTAP",
+    "LOOP",
+    "ERROR"};
+
 task_stm g_wifi_task_stm;
+task_stm g_wifi_task_stm_last;
 unsigned int g_wifi_timer_ap;
 unsigned int g_wifi_task_stm_step;
+unsigned int g_wifi_task_stm_step_last;
 unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
 unsigned int g_wifi_task_retry;
@@ -83,6 +99,7 @@ void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
     g_wifi_task_stm_delay = delay;
     g_wifi_task_stm_timeout = to;
     g_wifi_task_stm_step = 0;
+    g_wifi_task_stm_step_last = (-1);
 }
 
 void WifiWrite( const char *buffer )
@@ -266,16 +283,16 @@ int WifiCheckUnsol( void )
         id = 0;
         len = 0;
         
-        if(str_section(g_wifi_read_line_buffer, ',', 1, str))
+        if(str_section((char*)g_wifi_read_line_buffer, ',', 1, str))
         {
             id = atoi(str);
         }
-        if(str_section(g_wifi_read_line_buffer, ',', 2, str))
+        if(str_section((char*)g_wifi_read_line_buffer, ',', 2, str))
         {
             len = atoi(str);
         }
         /* dejo en el buffer solo el HTTP */
-        p = strchr(g_wifi_read_line_buffer, ':');
+        p = strchr((char*)g_wifi_read_line_buffer, ':');
         if(p)
         {
             p++;
@@ -342,7 +359,7 @@ int WifiCheckUnsol( void )
          * AT version:1.7.4.0(May 11 2020 19:13:04)
          */
         LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
-        strncpy(g_wifi_info.status.wifi_at, &g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
+        strncpy((char*)g_wifi_info.status.wifi_at, (const char*)&g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
         //if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
         //{
         //    LogMessage("WiFi: El firware necesita upgrade.");
@@ -352,7 +369,7 @@ int WifiCheckUnsol( void )
     else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
     {
         LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
-        strncpy(g_wifi_info.status.wifi_sdk, &g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
+        strncpy((char*)g_wifi_info.status.wifi_sdk, (const char*)&g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
     }
     else if( !memcmp(g_wifi_read_line_buffer, "compile time:", 13))
     {
@@ -378,6 +395,14 @@ void WifiSwitchHost( void )
 int WifiTaskInit( void )
 {
     int rc = 0;
+
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskInit] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
 
     switch(g_wifi_task_stm_step)
     {
@@ -474,6 +499,14 @@ int WifiTaskInit( void )
 int WifiTaskAPMode( void )
 {
     int rc = 0;
+
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskAPMode] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
 
     switch(g_wifi_task_stm_step)
     {
@@ -628,6 +661,14 @@ int WifiTaskSTMode( void )
 {
     int rc = 0;
     char *ap, *pass;
+
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskSTMode] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
 
     switch(g_wifi_task_stm_step)
     {
@@ -830,6 +871,14 @@ int WifiTaskUpgrade( void )
 {
     int rc = 0;
 
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskUpgrade] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
+
     switch(g_wifi_task_stm_step)
     {
         case 0:
@@ -865,6 +914,14 @@ int WifiTaskUpgrade( void )
 int WifiTaskHttp( void )
 {
     int rc = 0;
+
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskHttp] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
 
     switch(g_wifi_task_stm_step)
     {
@@ -1123,6 +1180,14 @@ int WifiTaskListAP( void )
 {
     int rc = 0;
 
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WifiTaskListAP] STM %i -> %i",
+                g_wifi_task_stm_step_last,
+                g_wifi_task_stm_step);
+        g_wifi_task_stm_step_last = g_wifi_task_stm_step;
+    }
+
     switch(g_wifi_task_stm_step)
     {
         case 0:
@@ -1161,6 +1226,7 @@ int WifiTaskListAP( void )
 void WiFiInit( void )
 {
     g_wifi_task_stm = RESET;
+    g_wifi_task_stm_last = INVALID;
     g_wifi_task_stm_delay = 0;
     g_wifi_need_upgrade = false;
     g_wifi_send_error_count = 0;
@@ -1180,11 +1246,19 @@ void WiFiTask( void )
     
     if(g_wifi_task_stm_delay) return;
     
+    if(g_wifi_task_stm != g_wifi_task_stm_last)
+    {
+        LogMessage("[WiFiTask] STM %s -> %s",
+                task_stm_label[g_wifi_task_stm_last],
+                task_stm_label[g_wifi_task_stm]);
+        g_wifi_task_stm_last = g_wifi_task_stm;
+    }
+
     switch(g_wifi_task_stm)
     {
         case INVALID:
         case RESET:
-			LogMessage("RESET\n");
+			LogMessage("[WiFiTask] RESET");
             WIFI_RESET_SetLow();
             g_wifi_task_stm_timeout = 0;
             g_wifi_task_stm_step = 0;
@@ -1206,7 +1280,6 @@ void WiFiTask( void )
             WifiTaskSTMSet(START, 50, 0);
             break;
         case START:
-			//LogMessage("START\n");
             WIFI_RESET_SetHigh();
             g_wifi_task_stm_delay = 10;
             WifiTaskSTMSet(CLEAN, 5, 50);

@@ -54,7 +54,7 @@
 #include "system.h"
 
 #include "../wiegand.h"
-#include "../dhtxx.h"
+/* DHT #include "../dhtxx.h" */
 
 /**
  Section: File specific functions
@@ -78,7 +78,7 @@ void PIN_MANAGER_Initialize (void)
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
     TRISA = 0x0004;
-    TRISB = 0x81BF;
+    TRISB = 0x81FF;
     TRISC = 0x0000;
 
     /****************************************************************************
@@ -109,10 +109,10 @@ void PIN_MANAGER_Initialize (void)
      ***************************************************************************/
     SYSTEM_RegUnlock(); // unlock PPS
     RPCONbits.IOLOCK = 0;
-
+#ifdef __SE_HACE_EN_LogInit
     RPOR0bits.RP4R = 0x0004;    //RA3->UART2:U2TX
     RPINR9bits.U2RXR = 0x0000;    //RA2->NADA - ( 0x0003 RA2->UART2:U2RX )
- 
+#endif
     RPCONbits.IOLOCK = 1; // lock   PPS
     SYSTEM_RegLock(); 
 

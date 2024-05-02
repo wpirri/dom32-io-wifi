@@ -600,6 +600,7 @@ void CTRLTimer( void )
             }
             else
             {
+                LogMessage("[CTRL] RESET.");
                 /* The following code illustrates a software Reset */
                 // assume interrupts are disabled
                 // assume the DMA controller is suspended
@@ -614,7 +615,7 @@ void CTRLTimer( void )
                 /* read RSWRST register to trigger reset */
                 unsigned int dummy; dummy = RSWRST;
                 /* prevent any unwanted code execution until reset occurs*/
-                while(1);
+                while(dummy | 1);
             }
         }
     }
@@ -623,7 +624,7 @@ void CTRLTimer( void )
 
 void CTRLSetIO(char* in)
 {
-    char tmp[10];
+    char tmp[64];
     struct tm tm_time;
     
     LogMessage("[CTRLSetIO] %s", in);
@@ -1066,7 +1067,6 @@ void CTRLConfIO(char* in)
     bool change = false;
     bool reset = false;
     struct tm tm_time;
-    int i;
     
     LogMessage("[CTRLConfIO] %s", in);
     if(HTTPGetFormData(in, "IO1", tmp))
@@ -1285,5 +1285,6 @@ void CTRLConfIO(char* in)
 void CTRLReset( void )
 {
     /* reset en 5 seg */
+    LogMessage("[CTRL] RESET solicitado.");
     g_ctrl_count_reset = 100;
 }

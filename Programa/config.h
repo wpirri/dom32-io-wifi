@@ -45,17 +45,13 @@ struct _config_ /* 2176 bits, 272 bytes */
     unsigned char enable_wiegand;
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
-    uint32_t flash_ok;
 };
-
-#define FLASH_ARRAY ((sizeof(struct _config_)/4) + 1)
 
 typedef struct
 {
     union
     {
         struct _config_ config;
-        uint32_t ui32[FLASH_ARRAY];
     } f;
     struct
     {
@@ -71,7 +67,6 @@ typedef struct
         bool wifi_ok;
         bool wifi_start_ap;
         bool wifi_ssl_capable;
-        bool flash_error;
     } status;
 } wifi_info;
 

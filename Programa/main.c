@@ -21,18 +21,18 @@
  * 1    MCLR / Vpp                      Programaci�n/Debug/Reset
  * 2    RA0                 out         Led Status
  * 3    RA1                 out         Led Modo
- * 4    RB0/PGED1                       Programacion/Debug
- * 5    RB1/PGEC1                       Programacion/Debug
+ * 4    RB0/PGED1                       SPI_SDO -> MOSI / Programacion/Debug
+ * 5    RB1/PGEC1                       SPI_SDI -> MISO / Programacion/Debug
  * 6    RB2/AN4             in          IO4
  * 7    RB3/AN11            in          IO3
  * 8    Vss                             Vss
- * 9    RA2/RP3/AN5         UART2       Rx/DHT22-DATA/Analog Input
+ * 9    RA2/RP3/AN5         out         SPI_SCK -> CLK (DHT22-DATA)
  * 10   RA3/RP4             UART2       Tx
  * 11   RB4/RP5             in          IO2
  * 12   RA4/RP6             out         Led Aux
  * 13   Vdd                             +3v3
  * 14   RB5                 in          IO1
- * 15   RB6                 out         Aux/DHT22-Power
+ * 15   RB6                 out         SPI_CS -> /CS (DHT22-Power)
  * 16   RB7                 in          IO5
  * 17   RB8/SCK1            in          IO6
  * 18   RB9/SDO1            out         OUT1
@@ -64,13 +64,16 @@
 #include "http.h"
 #include "wifi.h"
 #include "control.h"
+/* DHT #include "dhtxx.h" */
 #include "wiegand.h"
-#include "dhtxx.h"
 #include "clog.h"
 
+#include "sd/fsio.h"
+
 bool main_flag_core_timer;
-unsigned int main_flag_dhtxx_timer_count;
+/* DHT unsigned int main_flag_dhtxx_timer_count;*/
 unsigned int main_count_inactividad;
+
 
 
 void LedControl( void )
@@ -151,17 +154,23 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
-    main_flag_dhtxx_timer_count = 0;
+    /* DHT main_flag_dhtxx_timer_count = 0; */
     main_count_inactividad = 0;
 
     SYSTEM_Initialize();
     
     LogInit();
 
-    LogMessage("MAIN: Dom32-IO-WiFi.");
-    LogMessage("MAIN: Compilacion " __DATE__ " " __TIME__ ".");
-    LogMessage("MAIN: Compilador " __VERSION__ ".");
-    LogMessage("MAIN: Procesador PIC32MM256GPM028.");
+    LogMessage("[MAIN] Dom32-IO-WiFi.");
+    LogMessage("[MAIN] Compilacion " __DATE__ " " __TIME__ ".");
+    LogMessage("[MAIN] Compilador " __VERSION__ ".");
+    LogMessage("[MAIN] Procesador PIC32MM256GPM028.");
+
+    if( !FSInit())
+    {
+        LogMessage("[MAIN] Error de tarjeta SD.");
+        while(1);
+    }
     
     ConfigInit();
     ConfigLoad();
@@ -171,12 +180,14 @@ int main(void)
     WiFiInit();
     HTTPInit();
     WGND_Init();
-    DHTxxInit();
+    /* DHT DHTxxInit(); */
     
     strncpy(g_wifi_info.status.up_fw, __DATE__ " " __TIME__, 
             sizeof(g_wifi_info.status.up_fw)-1);
 
-    LogMessage("MAIN: Init Ok.");
+    LogMessage("[MAIN] Init Ok.");
+    
+    FSremove("pgm.hex");
     
     while(1)
     {
@@ -199,20 +210,22 @@ int main(void)
             CTRLTimer();
             if(g_wifi_info.f.config.enable_wiegand) WGND_Timer();
 
+            /* DHT
             main_flag_dhtxx_timer_count++;
             if(main_flag_dhtxx_timer_count > 300)
             {
                 main_flag_dhtxx_timer_count = 0;
                 DHTxxGetData();
             }
+            */
             
             main_count_inactividad++;
             if(main_count_inactividad == 36000)
             {
                 /* una hora */
+                LogMessage("[MAIN] RESET por inactividad.");
                 CTRLReset();
             }
-            
         }
     }
     return 1; 
