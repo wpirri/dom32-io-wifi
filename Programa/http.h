@@ -44,6 +44,6 @@ int HTTPAddINQueue(int id, const char* buffer);
 int HTTPHeadResponse(const char *http_head);
 int HTTPFormResponse(const char *http_data);
 
-
+int HTTPGetFile(const char* filename, const char* params);
 
 #endif /* _HTTP_H_ */

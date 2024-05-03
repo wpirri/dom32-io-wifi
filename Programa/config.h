@@ -64,6 +64,8 @@ typedef struct
         char wifi_at[65];
         char wifi_sdk[65];
         char up_fw[65];
+        char *wifi_host_select;
+        unsigned int wifi_port_select;
         bool wifi_ok;
         bool wifi_start_ap;
         bool wifi_ssl_capable;

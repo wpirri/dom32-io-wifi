@@ -215,7 +215,7 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
 
 int HTTPHeadResponse(const char *http_head)
 {
-    char str[256];
+    char str[4];
     char *p1;
     
     LogMessage("[HTTPHeadResponse] %.15s", http_head); 
@@ -239,7 +239,7 @@ int HTTPHeadResponse(const char *http_head)
 
 int HTTPFormResponse(const char *http_data)
 {
-    char str[256];
+    char str[16];
     
     LogMessage("[HTTPFormResponse] %.15s", http_data); 
 
@@ -513,7 +513,7 @@ int HTTPNotificarStatus(char *out, int max_len)
  */
     snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_post,
             http_rqst_uri,
-            g_wifi_info.f.config.wifi_host1,
+            g_wifi_info.status.wifi_host_select,
             strlen(http_rqst_data),
             http_rqst_data);
 
@@ -684,26 +684,26 @@ void HttpReturnIOConfig(char *out, int max_len)
 
 void HttpProcessWiFiFormConfig(char* in)
 {
-    char tmp[32];
+    char str[8];
     
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
     HTTPGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
     HTTPGetFormData(in, "ap2p", g_wifi_info.f.config.wifi_ap2_pass);
     HTTPGetFormData(in, "ce1", g_wifi_info.f.config.wifi_host1);
-    if(HTTPGetFormData(in, "ce1p", tmp))
+    if(HTTPGetFormData(in, "ce1p", str))
     {
-        g_wifi_info.f.config.wifi_host1_port = atoi(tmp);
+        g_wifi_info.f.config.wifi_host1_port = atoi(str);
     }
     HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
-    if(HTTPGetFormData(in, "ce2p", tmp))
+    if(HTTPGetFormData(in, "ce2p", str))
     {
-        g_wifi_info.f.config.wifi_host2_port = atoi(tmp);
+        g_wifi_info.f.config.wifi_host2_port = atoi(str);
     }
     HTTPGetFormData(in, "path", g_wifi_info.f.config.rqst_path);
-    if(HTTPGetFormData(in, "report", tmp))
+    if(HTTPGetFormData(in, "report", str))
     {
-        g_wifi_info.f.config.report = atoi(tmp) * 10;
+        g_wifi_info.f.config.report = atoi(str) * 10;
         if(g_wifi_info.f.config.report == 0)
         {
             g_wifi_info.f.config.report = 600;
@@ -1082,9 +1082,30 @@ int HTTPNotificarTarjeta( const char *crd)
  */
     snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_post,
             http_rqst_uri,
-            g_wifi_info.f.config.wifi_host1,
+            g_wifi_info.status.wifi_host_select,
             strlen(http_rqst_data),
             http_rqst_data);
+    if(HTTPAddOUTQueue(http_rqst) <= 0)
+    {
+        /* No fue posible enviar */
+        return 0;
+    }
+    return strlen(http_rqst);
+}
+
+int HTTPGetFile(const char* filename, const char* params)
+{
+    
+    snprintf(http_rqst_uri, MAX_HTTP_URI, "%s?%s", filename, params);
+    /*
+     * GET
+     * 1.- %s: URI
+     * 2.- %s: Host
+     */
+    snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_get,
+             http_rqst_uri,
+             g_wifi_info.status.wifi_host_select,
+             0, "");
     if(HTTPAddOUTQueue(http_rqst) <= 0)
     {
         /* No fue posible enviar */

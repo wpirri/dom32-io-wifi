@@ -79,17 +79,11 @@ int g_wifi_http_id;
 int g_wifi_http_response;
 unsigned char g_wifi_send_error_count;
 unsigned char g_wifi_recv_error_count;
-
 unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 unsigned int g_wifi_read_line_buffer_index;
 unsigned char g_wifi_read_line_buffer_timer;
 bool g_wifi_read_line_wait_crlf;
-
-char *g_wifi_host;
-unsigned int g_wifi_port;
-
 char g_wifi_cmd[256];
-
 bool g_wifi_need_upgrade;
 bool g_wifi_fast_start;
 
@@ -381,15 +375,15 @@ int WifiCheckUnsol( void )
 
 void WifiSwitchHost( void )
 {
-    if(g_wifi_host == &g_wifi_info.f.config.wifi_host1[0] && g_wifi_info.f.config.wifi_host2[0] != 0)
+    if(g_wifi_info.status.wifi_host_select == &g_wifi_info.f.config.wifi_host1[0] && g_wifi_info.f.config.wifi_host2[0] != 0)
     {
-        g_wifi_host = &g_wifi_info.f.config.wifi_host2[0];
-        g_wifi_port = g_wifi_info.f.config.wifi_host2_port;
+        g_wifi_info.status.wifi_host_select = &g_wifi_info.f.config.wifi_host2[0];
+        g_wifi_info.status.wifi_port_select = g_wifi_info.f.config.wifi_host2_port;
     }
     else
     {
-        g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
-        g_wifi_port = g_wifi_info.f.config.wifi_host1_port;
+        g_wifi_info.status.wifi_host_select = &g_wifi_info.f.config.wifi_host1[0];
+        g_wifi_info.status.wifi_port_select = g_wifi_info.f.config.wifi_host1_port;
     }
 }
 
@@ -942,23 +936,23 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_timeout = 0;
                 break;
             }
-            if(g_wifi_port == 0)
+            if(g_wifi_info.status.wifi_port_select == 0)
             {
                 if(g_wifi_info.f.config.enable_https)
                 {
-                    g_wifi_port = 443;
+                    g_wifi_info.status.wifi_port_select = 443;
                 }
                 else
                 {
-                    g_wifi_port = 80;
+                    g_wifi_info.status.wifi_port_select = 80;
                 }
             }
-            LogMessage("WifiTaskHttp -> Conectando %s:%i ...",  g_wifi_host, g_wifi_port);
+            LogMessage("WifiTaskHttp -> Conectando %s:%i ...",  g_wifi_info.status.wifi_host_select, g_wifi_info.status.wifi_port_select);
             sprintf(g_wifi_cmd, "AT+CIPSTART=%d,\"%s\",\"%s\",%d",
                     g_wifi_http_id,
                     (g_wifi_info.f.config.enable_https)?"SSL":"TCP",
-                    g_wifi_host,
-                    g_wifi_port);
+                    g_wifi_info.status.wifi_host_select,
+                    g_wifi_info.status.wifi_port_select);
             LogMessage("[WiFi CMD] %s", g_wifi_cmd);
             WifiWriteLine(g_wifi_cmd);
             g_wifi_task_stm_step++;
@@ -1236,8 +1230,8 @@ void WiFiInit( void )
     g_wifi_recv_error_count = 0;
     g_wifi_fast_start = false;
     
-    g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
-    g_wifi_port = g_wifi_info.f.config.wifi_host1_port;
+    g_wifi_info.status.wifi_host_select = &g_wifi_info.f.config.wifi_host1[0];
+    g_wifi_info.status.wifi_port_select = g_wifi_info.f.config.wifi_host1_port;
 }
 
 /* *****************************************************************************

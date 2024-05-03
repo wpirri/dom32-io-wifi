@@ -33,6 +33,8 @@
 
 unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
+unsigned int g_control_update_firmware;
+unsigned int g_ctrl_count_reset;
 
 unsigned int g_control_count_in1;
 unsigned int g_control_count_in2;
@@ -41,7 +43,6 @@ unsigned int g_control_count_in4;
 unsigned int g_control_count_in5;
 unsigned int g_control_count_in6;
 
-unsigned int g_ctrl_count_reset;
 
 void CTRLNotificarStatus( int time )
 {
@@ -62,6 +63,7 @@ void CTRLInit( void )
 {
     g_control_notificar = 0;
     g_control_init_complete = 0;
+    g_control_update_firmware = 0;
     
     /* Entrada 1 - RB5 */
     g_control_io.stat1 = false;
@@ -620,6 +622,15 @@ void CTRLTimer( void )
         }
     }
     
+    if(g_control_update_firmware)
+    {
+        g_control_update_firmware--;
+        if(g_control_update_firmware == 0)
+        {
+            HTTPGetFile("/download/pgm.hex", "");
+        }
+    }
+    
 }
 
 void CTRLSetIO(char* in)
@@ -796,6 +807,12 @@ void CTRLSetIO(char* in)
         {
             LogMessage("[CTRLSetIO] Error de formato para TIME");
         }
+    }
+    
+    if(HTTPGetFormData(in, "UPDATE-FW", tmp))
+    {
+        /* Actualizar firmware en 10 seg */
+        g_control_update_firmware = 100;
     }
 
 }
@@ -1284,7 +1301,7 @@ void CTRLConfIO(char* in)
 
 void CTRLReset( void )
 {
-    /* reset en 5 seg */
+    /* reset en 10 seg */
     LogMessage("[CTRL] RESET solicitado.");
     g_ctrl_count_reset = 100;
 }
