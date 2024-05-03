@@ -302,15 +302,16 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
     {
-        LogMessage("WiFi: Conectado al AP [%s].", 
+        LogMessage("[WIFI] Conectado al AP [%s].", 
                 ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2));
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
-        LogMessage("WiFi: Desconectado del AP.");
+        LogMessage("[WIFI] Desconectado del AP.");
         if(g_wifi_info.status.wifi_conectado)
         {
+            LogMessage("[WIFI] Reconectando...");
             g_wifi_info.status.wifi_conectado = 0;
             g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
             return STMODE;
@@ -318,13 +319,13 @@ int WifiCheckUnsol( void )
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
-        LogMessage("WiFi: Cliente conectado.");
+        LogMessage("[WIFI] Cliente conectado.");
         /* Cliente conectado al AP */
         g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
     {
-        LogMessage("WiFi: Cliente desconectado.");
+        LogMessage("[WIFI] Cliente desconectado.");
         /* Cliente desconectado al AP */
         g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
     }
@@ -336,7 +337,7 @@ int WifiCheckUnsol( void )
          */
         if( !memcmp(&g_wifi_read_line_buffer[7], "STAMAC", 6))
         {
-            LogMessage("WiFi: MAC %.17s", &g_wifi_read_line_buffer[15]);
+            LogMessage("[WIFI] MAC %.17s", &g_wifi_read_line_buffer[15]);
             g_wifi_info.status.hw_mac[0]  = g_wifi_read_line_buffer[15];
             g_wifi_info.status.hw_mac[1]  = g_wifi_read_line_buffer[16];
             g_wifi_info.status.hw_mac[2]  = g_wifi_read_line_buffer[18];
@@ -358,22 +359,22 @@ int WifiCheckUnsol( void )
          * AT version:1.6.2.0(Apr 13 2018 11:10:59)
          * AT version:1.7.4.0(May 11 2020 19:13:04)
          */
-        LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
+        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
         strncpy((char*)g_wifi_info.status.wifi_at, (const char*)&g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
         //if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
         //{
-        //    LogMessage("WiFi: El firware necesita upgrade.");
+        //    LogMessage("[WIFI] El firware necesita upgrade.");
         //    g_wifi_need_upgrade = true;
         //}
     }
     else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
     {
-        LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
+        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
         strncpy((char*)g_wifi_info.status.wifi_sdk, (const char*)&g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
     }
     else if( !memcmp(g_wifi_read_line_buffer, "compile time:", 13))
     {
-        LogMessage("WiFi: %s.", g_wifi_read_line_buffer);
+        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
     }
     return 0;
 }
@@ -407,7 +408,7 @@ int WifiTaskInit( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            LogMessage("WiFi: RESTORE factory defaults.");
+            LogMessage("[WIFI] RESTORE factory defaults.");
             /* Restore a fabrica y espero a que el modulo se reinicie */
             WifiWriteLine("AT+RESTORE");
             g_wifi_task_stm_step++;
@@ -474,7 +475,7 @@ int WifiTaskInit( void )
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_ssl_capable = true;
-                LogMessage("WiFi: Con soporte SSL");
+                LogMessage("[WIFI] Con soporte SSL");
                 // Puede faltar
                 // AT+CIPSSLSIZE=4096
             }
@@ -484,7 +485,7 @@ int WifiTaskInit( void )
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
                 g_wifi_info.status.wifi_ssl_capable = false;
-                LogMessage("WiFi: Sin soporte SSL");
+                LogMessage("[WIFI] Sin soporte SSL");
                 //g_wifi_need_upgrade = true;
             }
             break;
@@ -622,7 +623,7 @@ int WifiTaskAPMode( void )
             else if(g_wifi_task_stm_timeout == 0)
             {
                 /* Los módulos con firmware viejo no soportan este comando */
-                LogMessage("WiFi: AT+CIPSERVERMAXCONN no soportado.");
+                LogMessage("[WIFI] AT+CIPSERVERMAXCONN no soportado.");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -638,7 +639,7 @@ int WifiTaskAPMode( void )
         case 13:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                LogMessage("WiFi: Modo configuracion.");
+                LogMessage("[WIFI] Modo configuracion.");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -747,7 +748,7 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                LogMessage("WiFi: AT+CIPSERVERMAXCONN no soportado.");
+                LogMessage("[WIFI] AT+CIPSERVERMAXCONN no soportado.");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -814,6 +815,7 @@ int WifiTaskSTMode( void )
             pass = ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1_pass:g_wifi_info.f.config.wifi_ap2_pass);
             if(*ap)
             {
+                LogMessage("[WIFI] Conectando con AP %s (%s).", ap, pass);
                 /* Connect to AP */
                 if(*pass)
                 {
@@ -835,23 +837,22 @@ int WifiTaskSTMode( void )
             else
             {
                 /* No hay AP definido */
-                LogMessage("WiFi: No hay AP definido.");
+                LogMessage("[WIFI] No hay AP definido.");
                 rc = LOOP;
             }
             break;
         case 13:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                LogMessage("WiFi: Modo normal.");
+                LogMessage("[WIFI] Modo normal.");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-#ifdef DEBUG_WIFI
-                LogMessage("TIMEOUT esperando OK a AT+CWJAP");
-#endif
+                LogMessage("[WIFI] Error de conexion con AP.");
+                LogMessage("[WIFI] Reconectando...");
                 g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
                 //rc = (-1);
                 rc = STMODE;
@@ -882,7 +883,7 @@ int WifiTaskUpgrade( void )
     switch(g_wifi_task_stm_step)
     {
         case 0:
-            LogMessage("WiFi: Firmware Upgrade.\n");
+            LogMessage("[WIFI] Firmware Upgrade.\n");
             /* Bajo los servers */
             WifiWriteLine("AT+CIPUPDATE");
             g_wifi_task_stm_step = 1;
@@ -898,7 +899,7 @@ int WifiTaskUpgrade( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                LogMessage("WiFi: Upgrade TIMEOUT.");
+                LogMessage("[WIFI] Upgrade TIMEOUT.");
                 g_wifi_task_stm_step = 0;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -1156,10 +1157,12 @@ int WifiTaskLoop( void )
         g_wifi_info.status.wifi_start_ap = false;
         if(g_wifi_fast_start)
         {
+            LogMessage("[WIFI] Ir a modo ST.");
             return STMODE;
         }
         else
         {
+            LogMessage("[WIFI] Ir a modo AP.");
             return APMODE;
         }
     }
