@@ -627,7 +627,7 @@ void CTRLTimer( void )
         g_control_update_firmware--;
         if(g_control_update_firmware == 0)
         {
-            HTTPGetFile("/download/pgm.hex", "");
+            HTTPGetFile("/download/pgm.hex", NULL);
         }
     }
     

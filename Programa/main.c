@@ -161,6 +161,7 @@ int main(void)
     
     LogInit();
 
+    LogMessage("[MAIN] ****************************************");
     LogMessage("[MAIN] Dom32-IO-WiFi.");
     LogMessage("[MAIN] Compilacion " __DATE__ " " __TIME__ ".");
     LogMessage("[MAIN] Compilador " __VERSION__ ".");
@@ -185,7 +186,7 @@ int main(void)
     strncpy(g_wifi_info.status.up_fw, __DATE__ " " __TIME__, 
             sizeof(g_wifi_info.status.up_fw)-1);
 
-    LogMessage("[MAIN] Init Ok.");
+    LogMessage("[MAIN] ********** Init Ok **********");
     
     while(1)
     {

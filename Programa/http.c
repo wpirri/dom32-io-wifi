@@ -21,11 +21,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/watchdog.h"
 #include "control.h"
 #include "wifi.h"
 /* DHT #include "dhtxx.h" */
 #include "config.h"
 #include "clog.h"
+#include "sd/fsio.h"
+
+#define DOWNLOAD_TEMP_FILE_NAME "download.tmp"
 
 const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
                             "Content-Type: text/xml\r\n\r\n";
@@ -79,7 +85,8 @@ typedef struct
     int conn_id;
     int http_rc;
     int form_rc;
-    char timeout;
+    unsigned int timeout;
+    char filename[FILE_NAME_SIZE+1];
     char rqst[MAX_HTTP_URI];
     char data[MAX_HTTP_DATA];
 } http_data;
@@ -90,50 +97,14 @@ http_data http_data_in_queue[HTTP_DATA_IN_QUEUE_LEN];
 int http_data_out_queue_read_idx;
 int http_data_out_queue_write_idx;
 http_data http_data_out_queue[HTTP_DATA_OUT_QUEUE_LEN];
+unsigned int http_process_tmp_file;
+char http_process_tmp_file_to_name[FILE_NAME_SIZE+1];
 
 extern unsigned int main_count_inactividad;
 extern int g_wifi_http_response;
 
-int Convert2CharToHex(const char* h)
-{
-    int h1, h2;
-    
-    if( (*h) >= '0' && (*h) <= '9' )
-    {
-        h1 = ((*h)-'0');
-    }
-    else if( (*h) >= 'A' && (*h) <= 'F' )
-    {
-        h1 = ((*h)-'A'+10);
-    }
-    else if( (*h) >= 'a' && (*h) <= 'f' )
-    {
-        h1 = ((*h)-'a'+10);
-    }
-    else
-    {
-        h1 = 0;
-    }
-    h++;
-    if( (*h) >= '0' && (*h) <= '9' )
-    {
-        h2 = ((*h)-'0');
-    }
-    else if( (*h) >= 'A' && (*h) <= 'F' )
-    {
-        h2 = ((*h)-'A'+10);
-    }
-    else if( (*h) >= 'a' && (*h) <= 'f' )
-    {
-        h2 = ((*h)-'a'+10);
-    }
-    else
-    {
-        h2 = 0;
-    }
-
-    return ((h1*16)+h2);
-}
+int ReadLine(char *buffer, size_t max_len, FSFILE *fs);
+int Convert2CharToHex(const char* h);
 
 int HttpDecodeFormData(char* out, const char* in, unsigned int max_out)
 {
@@ -525,7 +496,7 @@ int HTTPNotificarStatus(char *out, int max_len)
         /* Poner en un buffer */
         strncpy(out, http_rqst, max_len);
     }
-    else if(HTTPAddOUTQueue(http_rqst) <= 0)
+    else if(HTTPAddOUTQueue(http_rqst_uri, http_rqst, 100) <= 0)
     {
         /* No fue posible enviar */
         return 0;
@@ -722,6 +693,7 @@ void HTTPInit( void )
     http_data_in_queue_write_idx = 0;
     http_data_out_queue_read_idx = 0;
     http_data_out_queue_write_idx = 0;
+    http_process_tmp_file = 0;
 }
 
 /* *****************************************************************************
@@ -884,13 +856,35 @@ void HTTPTimer( void )
             }
         }
     }
+    
+    if(http_process_tmp_file)
+    {
+        http_process_tmp_file--;
+        if(http_process_tmp_file == 0)
+        {
+            HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
+            FSremove(DOWNLOAD_TEMP_FILE_NAME);
+            if( !strcmp(http_process_tmp_file_to_name, "pgm.hex"))
+            {
+                CTRLReset();
+            }
+        }
+    }
 }
 
-int HTTPAddOUTQueue(const char* buffer)
+int HTTPAddOUTQueue(const char* filename, const char* buffer, unsigned int to_cs)
 {
     int next_i;
+    int i;
     
     LogMessage("[HTTPAddOUTQueue] %.40s", buffer);
+    
+    /* Avanzo hasta la última '/' para dejar el nombre sin path */
+    while(strchr(filename, '/'))
+    {
+        while(*filename != '/') filename++;
+        filename++;
+    }
     
     /* Punto de inserción */
     next_i = http_data_out_queue_write_idx + 1;
@@ -901,7 +895,21 @@ int HTTPAddOUTQueue(const char* buffer)
     /* Cargo los datos en la cola */
     http_data_out_queue[http_data_out_queue_write_idx].type = 'S';
     http_data_out_queue[http_data_out_queue_write_idx].conn_id = WIFI_HTTP_OUT_ID;
-    http_data_out_queue[http_data_out_queue_write_idx].timeout = 100;
+    http_data_out_queue[http_data_out_queue_write_idx].timeout = to_cs;
+    
+    /* copio solo caracteres validos */
+    for(i = 0; *filename; filename++)
+    {
+        if( (*filename >= '0' && *filename <= '9') ||
+            (*filename >= 'a' && *filename <= 'z') ||
+            (*filename >= 'A' && *filename <= 'Z') ||
+             *filename == '.' || *filename == '_' )
+        {
+            http_data_out_queue[http_data_out_queue_write_idx].filename[i++] = *filename;
+        }
+    }
+    http_data_out_queue[http_data_out_queue_write_idx].filename[i] = 0;
+    
     http_data_out_queue[http_data_out_queue_write_idx].rqst[0] = 0;
     http_data_out_queue[http_data_out_queue_write_idx].data[0] = 0;
     if(HttpDecodeFormData(http_data_out_queue[http_data_out_queue_write_idx].data, buffer, MAX_HTTP_DATA) <= 0)
@@ -1053,8 +1061,26 @@ char HTTPOutType(void)
  * ************************************************************************** */
 const char* HTTPOutData(void)
 {
-    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return (const char*) NULL;
     else return (const char*)(&http_data_out_queue[http_data_out_queue_read_idx].data[0]);
+}
+
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+unsigned int HTTPOutTimeOut(void)
+{
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return 0;
+    else return http_data_out_queue[http_data_out_queue_read_idx].timeout;
+}
+
+/* *****************************************************************************
+ * 
+ * ************************************************************************** */
+const char* HTTPOutFilename(void)
+{
+    if(http_data_out_queue_read_idx == http_data_out_queue_write_idx) return (const char*) NULL;
+    else return (const char*)(&http_data_out_queue[http_data_out_queue_read_idx].filename[0]);
 }
 
 /* *****************************************************************************
@@ -1085,7 +1111,7 @@ int HTTPNotificarTarjeta( const char *crd)
             g_wifi_info.status.wifi_host_select,
             strlen(http_rqst_data),
             http_rqst_data);
-    if(HTTPAddOUTQueue(http_rqst) <= 0)
+    if(HTTPAddOUTQueue(http_rqst_uri, http_rqst, 100) <= 0)
     {
         /* No fue posible enviar */
         return 0;
@@ -1095,8 +1121,18 @@ int HTTPNotificarTarjeta( const char *crd)
 
 int HTTPGetFile(const char* filename, const char* params)
 {
+    if( !filename ) return (-1);
+
+    LogMessage("[HTTPGetFile] Solicitando archivo %s.", filename);
     
-    snprintf(http_rqst_uri, MAX_HTTP_URI, "%s?%s", filename, params);
+    if(params)
+    {
+        snprintf(http_rqst_uri, MAX_HTTP_URI, "%s?%s", filename, params);
+    }
+    else
+    {
+        strncpy(http_rqst_uri, filename, MAX_HTTP_URI);
+    }
     /*
      * GET
      * 1.- %s: URI
@@ -1104,12 +1140,198 @@ int HTTPGetFile(const char* filename, const char* params)
      */
     snprintf(http_rqst, MAX_HTTP_DATA + MAX_HTTP_HEAD, http_get,
              http_rqst_uri,
-             g_wifi_info.status.wifi_host_select,
-             0, "");
-    if(HTTPAddOUTQueue(http_rqst) <= 0)
+             g_wifi_info.status.wifi_host_select);
+    if(HTTPAddOUTQueue(http_rqst_uri, http_rqst, 3000) <= 0)
     {
         /* No fue posible enviar */
         return 0;
     }
     return strlen(http_rqst);
+}
+
+int HTTPInitTmpFile(const char* buffer, int len)
+{
+    FSFILE* f;
+    int rc = (-1);
+
+    
+    //LogMessage("[HTTPInitTmpFile]");
+    f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_WRITE);
+    if(f)
+    {
+        rc = FSfwrite(buffer, 1, len, f);
+        FSfclose(f);
+    }
+    return rc;
+}
+
+int HTTPAddTmpFile(const char* buffer, int len)
+{
+    FSFILE* f;
+    int rc = (-1);
+
+    //LogMessage("[HTTPAddTmpFile] %i bytes -> TMP", len);
+    f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_APPEND);
+    if(f)
+    {
+        rc = FSfwrite(buffer, 1, len, f);
+        FSfclose(f);
+    }
+    return rc;
+}
+
+int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
+{
+    int rc = 0;
+
+    //LogMessage("[HTTPEndTmpFile] %i bytes -> TMP", len);
+    if(len)
+    {
+        rc = HTTPAddTmpFile(buffer, len);
+    }
+    /* Procesar archivo temporal */
+    g_wifi_http_response = 1;
+    http_process_tmp_file = 50;
+    strncpy(http_process_tmp_file_to_name, filename, FILE_NAME_SIZE);
+    return rc;
+}
+
+/*
+ Sirve solo para archivos de texto
+ */
+void HTTPProcessTmpFile(const char* tmpname, const char* filename)
+{
+    char buffer[80];
+    char*p;
+    char*p_ipd_len;
+    int len;
+    int ipd_len;
+    FSFILE* fi;
+    FSFILE* fo;
+    bool descartar;
+
+    LogMessage("[HTTPProcessTmpFile] %s -> %s", tmpname, filename);
+    fi = FSfopen(tmpname, FS_READ);
+    if(fi)
+    {
+        fo = FSfopen(filename, FS_WRITE);
+        if(fo)
+        {
+            ipd_len = 0;
+            descartar = TRUE;
+            while( (len = ReadLine(buffer, 80, fi)) > 0 )
+            {
+                WATCHDOG_TimerClear();
+                
+                buffer[len] = 0;
+                
+                if( len == 2 && buffer[0] == 0x0d && buffer[1] == 0x0a )
+                {
+                    /* Descarto todo hasta el final de la cabecera HTTP */
+                    descartar = FALSE;
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+                else if(ipd_len)
+                {
+                    if( !descartar)
+                    {
+                        p = &buffer[0];
+                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
+                    }
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+                else if( buffer[0] == '+' &&
+                         buffer[1] == 'I' &&
+                         buffer[2] == 'P' &&
+                         buffer[3] == 'D'  )
+                {
+                    /* Comienzo de in bloque +IPD,0,1460: */
+                    p = &buffer[0];
+                    /* Salteo la primer coma */
+                    while(*p != ',') { p++; len--; }
+                    p++; len--;
+                    /* Salteo la segunda coma coma */
+                    while(*p != ',') { p++; len--; }
+                    p++; len--;
+                    /*  */
+                    p_ipd_len = p;
+                    /* Voy hasta el fin de la cabecera +IPD */
+                    while(*p != ':') { p++; len--; }
+                    *p = 0;
+                    ipd_len = atoi(p_ipd_len);
+                    p++; len--;
+                    /*   Estoy aca: v
+                     *  +IPD,0,1460:___ */
+                    if( !descartar)
+                    {
+                        /* Escribo el resto de la linea */
+                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
+                    }
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+            }                
+            FSfclose(fo);
+        }
+        FSfclose(fi);
+    }        
+}
+
+int ReadLine(char *buffer, size_t max_len, FSFILE *fs)
+{
+    int len = 0;
+
+    while(FSfread(buffer, 1, 1, fs) && len < max_len)
+    {
+        len++;
+        if(*buffer == 0x0a) break;
+        buffer++;
+    }
+    return len;
+}
+
+int Convert2CharToHex(const char* h)
+{
+    int h1, h2;
+    
+    if( (*h) >= '0' && (*h) <= '9' )
+    {
+        h1 = ((*h)-'0');
+    }
+    else if( (*h) >= 'A' && (*h) <= 'F' )
+    {
+        h1 = ((*h)-'A'+10);
+    }
+    else if( (*h) >= 'a' && (*h) <= 'f' )
+    {
+        h1 = ((*h)-'a'+10);
+    }
+    else
+    {
+        h1 = 0;
+    }
+    h++;
+    if( (*h) >= '0' && (*h) <= '9' )
+    {
+        h2 = ((*h)-'0');
+    }
+    else if( (*h) >= 'A' && (*h) <= 'F' )
+    {
+        h2 = ((*h)-'A'+10);
+    }
+    else if( (*h) >= 'a' && (*h) <= 'f' )
+    {
+        h2 = ((*h)-'a'+10);
+    }
+    else
+    {
+        h2 = 0;
+    }
+
+    return ((h1*16)+h2);
 }

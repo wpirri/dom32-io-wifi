@@ -32,6 +32,7 @@
 #include "config.h"
 #include "clog.h"
 #include "delay.h"
+#include "sd/fsio.h"
 
 //#define DEBUG_WIFI
 #define WIFI_READ_LINE_BUFFER_LEN 1024
@@ -79,10 +80,12 @@ int g_wifi_http_id;
 int g_wifi_http_response;
 unsigned char g_wifi_send_error_count;
 unsigned char g_wifi_recv_error_count;
-unsigned char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
-unsigned int g_wifi_read_line_buffer_index;
+char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
+int g_wifi_read_line_buffer_index;
+char g_wifi_http_filename[FILE_NAME_SIZE+1];
 unsigned char g_wifi_read_line_buffer_timer;
 bool g_wifi_read_line_wait_crlf;
+bool g_wifi_wait_more_data;
 char g_wifi_cmd[256];
 bool g_wifi_need_upgrade;
 bool g_wifi_fast_start;
@@ -147,6 +150,8 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
     while(UART1_IsRxReady())
     {
         c = UART1_Read();
+        g_wifi_read_line_buffer_timer = 3;
+
         /* Si estoy esperando fin de linea ... */
         if(g_wifi_read_line_wait_crlf)
         {
@@ -163,7 +168,6 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
         /*voy agregando los datos al buffer */
         if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
         {
-            g_wifi_read_line_buffer_timer = 3;
             /* Se agrega el caracter a la l�nea */
             g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
             g_wifi_read_line_buffer_index++;
@@ -180,17 +184,38 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                     g_wifi_read_line_wait_crlf = false;
                 }
             }
+            /* Si el buffer está lleno, salgo */
+            if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN) break;
         }
     }   
-    
+
+    if(g_wifi_wait_more_data && ((g_wifi_read_line_buffer_timer == 0) || (g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)) )
+    {
+        if((g_wifi_read_line_buffer_timer == 0))
+        {
+            /* time-out esperando mas datos */
+            HTTPEndTmpFile(g_wifi_http_filename, 
+                    g_wifi_read_line_buffer, 
+                    g_wifi_read_line_buffer_index);
+            g_wifi_wait_more_data = false;
+            g_wifi_read_line_buffer_index = 0;
+        }
+        else if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
+        {
+            /* buffer lleno esperando mas datos */
+            HTTPAddTmpFile(g_wifi_read_line_buffer, g_wifi_read_line_buffer_index);
+            g_wifi_read_line_buffer_index = 0;
+        }
+    }
     /* Detecto el final de linea o time-out recibiendo datos */
-    if( (g_wifi_read_line_wait_crlf && (c == 0x0A || c == 0x0D)) || (g_wifi_read_line_buffer_timer == 0) )
+    else if( (g_wifi_read_line_wait_crlf && (c == 0x0A || c == 0x0D)) || (g_wifi_read_line_buffer_timer == 0) )
     {
         g_wifi_read_line_wait_crlf = true;
         g_wifi_read_line_buffer_timer = 0;
 
         if(g_wifi_read_line_buffer_index)
         {
+
             if(line1)
             {
 #ifdef DEBUG_WIFI
@@ -244,12 +269,26 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
             
             if(rc == 0)
             {
-                rc = WifiCheckUnsol();
+                rc = WifiCheckUnsol(g_wifi_read_line_buffer, g_wifi_read_line_buffer_index);
             }
             
             g_wifi_read_line_buffer_index = 0;
         }
     }
+    else if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
+    {
+        /*+IPD*/
+        if(g_wifi_read_line_buffer[0] == '+' &&
+           g_wifi_read_line_buffer[1] == 'I' &&
+           g_wifi_read_line_buffer[2] == 'P' &&
+           g_wifi_read_line_buffer[3] == 'D'  )
+        {
+            rc = WifiCheckUnsol(g_wifi_read_line_buffer, g_wifi_read_line_buffer_index);
+            g_wifi_wait_more_data = true;
+            g_wifi_read_line_buffer_index = 0;
+        }
+    }
+
     return rc;
 }
 
@@ -262,45 +301,52 @@ int WifiWaitPrompt(const char prompt)
     return 0;
 }
 
-int WifiCheckUnsol( void )
+int WifiCheckUnsol(const char* buffer, int buffer_len)
 {
     char str[16];
-    int id;
-    int len;
+    int conn_id;
+    int data_len;
     char *p;
 
-    if( !memcmp(g_wifi_read_line_buffer, "+IPD,", 5)) /* Datos socket */
+    if( !memcmp(buffer, "+IPD,", 5)) /* Datos socket */
     {
         /*
         +IPD,0,442:<datos>
         */
-        id = 0;
-        len = 0;
-        
-        if(str_section((char*)g_wifi_read_line_buffer, ',', 1, str))
+        conn_id = 0;
+        data_len = 0;
+
+        if(str_section((char*)buffer, ',', 1, str))
         {
-            id = atoi(str);
+            conn_id = atoi(str);
         }
-        if(str_section((char*)g_wifi_read_line_buffer, ',', 2, str))
+        if(str_section((char*)buffer, ',', 2, str))
         {
-            len = atoi(str);
+            data_len = atoi(str);
         }
         /* dejo en el buffer solo el HTTP */
-        p = strchr((char*)g_wifi_read_line_buffer, ':');
+        p = strchr((char*)buffer, ':');
         if(p)
         {
-            p++;
-            *(p+len) = 0;
-            HTTPAddINQueue(id, p);
+            if( buffer_len == WIFI_READ_LINE_BUFFER_LEN)
+            {
+                HTTPInitTmpFile(buffer, WIFI_READ_LINE_BUFFER_LEN);
+            }
+            else
+            {
+                p++;
+                *(p+data_len) = 0;
+                HTTPAddINQueue(conn_id, p);
+            }
         }
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "WIFI CONNECTED", 14))
+    else if( !memcmp(buffer, "WIFI CONNECTED", 14))
     {
         LogMessage("[WIFI] Conectado al AP [%s].", 
                 ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2));
         g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
+    else if( !memcmp(buffer, "WIFI DISCONNECTED", 17))
     {
         LogMessage("[WIFI] Desconectado del AP.");
         if(g_wifi_info.status.wifi_conectado)
@@ -311,64 +357,64 @@ int WifiCheckUnsol( void )
             return STMODE;
         }
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
+    else if( !memcmp(buffer, "+STA_CONNECTED", 8))
     {
         LogMessage("[WIFI] Cliente conectado.");
         /* Cliente conectado al AP */
         g_wifi_timer_ap = 0; // para que no salga de modo AP
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+STA_DISCONNECTED", 8))
+    else if( !memcmp(buffer, "+STA_DISCONNECTED", 8))
     {
         LogMessage("[WIFI] Cliente desconectado.");
         /* Cliente desconectado al AP */
         g_wifi_timer_ap = 50; // para que salga en seguida del modo AP
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "+CIFSR:", 7))
+    else if( !memcmp(buffer, "+CIFSR:", 7))
     {
         /* AT+CIFSR
          * +CIFSR:STAIP,"0.0.0.0"
          * +CIFSR:STAMAC,"80:7d:3a:62:03:60"
          */
-        if( !memcmp(&g_wifi_read_line_buffer[7], "STAMAC", 6))
+        if( !memcmp(&buffer[7], "STAMAC", 6))
         {
-            LogMessage("[WIFI] MAC %.17s", &g_wifi_read_line_buffer[15]);
-            g_wifi_info.status.hw_mac[0]  = g_wifi_read_line_buffer[15];
-            g_wifi_info.status.hw_mac[1]  = g_wifi_read_line_buffer[16];
-            g_wifi_info.status.hw_mac[2]  = g_wifi_read_line_buffer[18];
-            g_wifi_info.status.hw_mac[3]  = g_wifi_read_line_buffer[19];
-            g_wifi_info.status.hw_mac[4]  = g_wifi_read_line_buffer[21];
-            g_wifi_info.status.hw_mac[5]  = g_wifi_read_line_buffer[22];
-            g_wifi_info.status.hw_mac[6]  = g_wifi_read_line_buffer[24];
-            g_wifi_info.status.hw_mac[7]  = g_wifi_read_line_buffer[25];
-            g_wifi_info.status.hw_mac[8]  = g_wifi_read_line_buffer[27];
-            g_wifi_info.status.hw_mac[9]  = g_wifi_read_line_buffer[28];
-            g_wifi_info.status.hw_mac[10] = g_wifi_read_line_buffer[30];
-            g_wifi_info.status.hw_mac[11] = g_wifi_read_line_buffer[31];
+            LogMessage("[WIFI] MAC %.17s", &buffer[15]);
+            g_wifi_info.status.hw_mac[0]  = buffer[15];
+            g_wifi_info.status.hw_mac[1]  = buffer[16];
+            g_wifi_info.status.hw_mac[2]  = buffer[18];
+            g_wifi_info.status.hw_mac[3]  = buffer[19];
+            g_wifi_info.status.hw_mac[4]  = buffer[21];
+            g_wifi_info.status.hw_mac[5]  = buffer[22];
+            g_wifi_info.status.hw_mac[6]  = buffer[24];
+            g_wifi_info.status.hw_mac[7]  = buffer[25];
+            g_wifi_info.status.hw_mac[8]  = buffer[27];
+            g_wifi_info.status.hw_mac[9]  = buffer[28];
+            g_wifi_info.status.hw_mac[10] = buffer[30];
+            g_wifi_info.status.hw_mac[11] = buffer[31];
             g_wifi_info.status.hw_mac[12] = 0;
         }
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
+    else if( !memcmp(buffer, "AT version:", 11))
     {
         /*
          * AT version:1.6.2.0(Apr 13 2018 11:10:59)
          * AT version:1.7.4.0(May 11 2020 19:13:04)
          */
-        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
-        strncpy((char*)g_wifi_info.status.wifi_at, (const char*)&g_wifi_read_line_buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
-        //if(strstr(g_wifi_read_line_buffer, "1.6.2.0"))
+        LogMessage("[WIFI] %s.", buffer);
+        strncpy((char*)g_wifi_info.status.wifi_at, (const char*)&buffer[11], sizeof(g_wifi_info.status.wifi_at)-1);
+        //if(strstr(buffer, "1.6.2.0"))
         //{
         //    LogMessage("[WIFI] El firware necesita upgrade.");
         //    g_wifi_need_upgrade = true;
         //}
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "SDK version:", 12))
+    else if( !memcmp(buffer, "SDK version:", 12))
     {
-        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
-        strncpy((char*)g_wifi_info.status.wifi_sdk, (const char*)&g_wifi_read_line_buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
+        LogMessage("[WIFI] %s.", buffer);
+        strncpy((char*)g_wifi_info.status.wifi_sdk, (const char*)&buffer[12], sizeof(g_wifi_info.status.wifi_sdk)-1);
     }
-    else if( !memcmp(g_wifi_read_line_buffer, "compile time:", 13))
+    else if( !memcmp(buffer, "compile time:", 13))
     {
-        LogMessage("[WIFI] %s.", g_wifi_read_line_buffer);
+        LogMessage("[WIFI] %s.", buffer);
     }
     return 0;
 }
@@ -633,7 +679,7 @@ int WifiTaskAPMode( void )
         case 13:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                LogMessage("[WIFI] Modo configuracion.");
+                LogMessage("[WIFI] ********** Modo configuracion **********");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -838,7 +884,7 @@ int WifiTaskSTMode( void )
         case 13:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                LogMessage("[WIFI] Modo normal.");
+                LogMessage("[WIFI] ********** Modo normal **********");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -1018,7 +1064,8 @@ int WifiTaskHttp( void )
                     g_wifi_fast_start = true;
                     g_wifi_task_stm_step++;
                     g_wifi_task_stm_delay = 0;
-                    g_wifi_task_stm_timeout = 15;
+                    strncpy(g_wifi_http_filename, HTTPOutFilename(), FILE_NAME_SIZE);
+                    g_wifi_task_stm_timeout = HTTPOutTimeOut();
                 }
                 else
                 {
@@ -1262,6 +1309,7 @@ void WiFiTask( void )
             g_wifi_read_line_buffer_index = 0;
             g_wifi_read_line_buffer_timer = 0;
             g_wifi_read_line_wait_crlf = true;
+            g_wifi_wait_more_data = false;
             g_wifi_task_stm_delay = 30;
 
             g_wifi_send_error_count = 0;

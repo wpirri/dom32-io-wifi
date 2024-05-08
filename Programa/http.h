@@ -30,6 +30,8 @@ int HTTPOutPending(void);
 int HTTPOutConnId(void);
 char HTTPOutType(void);
 const char* HTTPOutData(void);
+unsigned int HTTPOutTimeOut(void);
+const char* HTTPOutFilename(void);
 void HTTPOutNext(void);
 
 int HTTPNotificarStatus(char *out, int max_len);
@@ -37,7 +39,7 @@ int HTTPNotificarTarjeta( const char *crd);
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
 
-int HTTPAddOUTQueue(const char* buffer);
+int HTTPAddOUTQueue(const char* filename, const char* buffer, unsigned int to_cs);
 int HTTPAddRespQueue(int id, const char* buffer);
 int HTTPAddINQueue(int id, const char* buffer);
 
@@ -45,5 +47,9 @@ int HTTPHeadResponse(const char *http_head);
 int HTTPFormResponse(const char *http_data);
 
 int HTTPGetFile(const char* filename, const char* params);
+int HTTPInitTmpFile(const char* buffer, int len);
+int HTTPAddTmpFile(const char* buffer, int len);
+int HTTPEndTmpFile(const char* filename, const char* buffer, int len);
+void HTTPProcessTmpFile(const char* tmpname, const char* filename);
 
 #endif /* _HTTP_H_ */

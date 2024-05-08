@@ -25,6 +25,6 @@ void WiFiInit( void );
 void WiFiTask( void );
 void WiFiTimer( void );
 
-int WifiCheckUnsol( void );
+int WifiCheckUnsol(const char* buffer, int len);
 
 #endif /* _WIFI_H_ */
