@@ -201,7 +201,7 @@ int main(void)
         {
             main_flag_core_timer = false;
             /* Timer 10 veces por segundo - 100ms */
-            LedControl();
+            if(main_count_inactividad & 0x02) LedControl();
             ConfigTimer();
             ADCTimer();
             WiFiTimer();

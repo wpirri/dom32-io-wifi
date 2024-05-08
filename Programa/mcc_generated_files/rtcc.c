@@ -168,9 +168,9 @@ void RTCC_TimeSet(struct tm *initialTime)
     
     if(diferencia != 0)
     {
-        LogMessage("[RTCC_TimeSet] Cambio de hora [%d/%02d/%02d %02d:%02d:%02d] -> [%d/%02d/%02d %02d:%02d:%02d].",
-                oldTime.tm_year, oldTime.tm_mon, oldTime.tm_mday, oldTime.tm_hour,
-                oldTime.tm_min, oldTime.tm_sec,initialTime->tm_year, initialTime->tm_mon,
+        LogMessage("[RTCC_TimeSet] Cambio de hora [%i/%02i/%02i %02i:%02i:%02i] -> [%i/%02i/%02i %02i:%02i:%02i].",
+                oldTime.tm_year+1900, oldTime.tm_mon, oldTime.tm_mday, oldTime.tm_hour,
+                oldTime.tm_min, oldTime.tm_sec,initialTime->tm_year+1900, initialTime->tm_mon,
                 initialTime->tm_mday, initialTime->tm_hour, initialTime->tm_min, initialTime->tm_sec);
         
         initialTime->tm_wday = WeekDay(initialTime->tm_year, 
