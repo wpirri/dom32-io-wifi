@@ -23,16 +23,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
+
+#include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/watchdog.h"
 
 #include "control.h"
 #include "clog.h"
 #include "sd/fsio.h"
+#include "flash/plib_nvm.h"
 
 #define CONFIG_FILENAME "D32WIFI.CFG"
 
+extern bool main_flag_sd_ok;
+uint32_t config_flash_save_start_address;
+uint32_t config_flash_end_address;
+
+bool ConfigIsValidFlash( void );
+void ConfigReadFromFlash( void );
+void ConfigWriteToFlash( void );
+void DumpConfig( void );
+
+
 void ConfigLoadDefault( void)
 {
-    memset(&g_wifi_info.f.config, 0, sizeof(struct _config_));
+    memset(&g_wifi_info.f.config, 0, sizeof(config_in_file));
+    g_wifi_info.f.config.flash_ok = FLASH_OK;
     g_wifi_info.f.config.io_config = 0xFF;
     g_wifi_info.f.config.an_config = 0x00;
     g_wifi_info.f.config.wifi_host1_port = 80;
@@ -50,41 +67,63 @@ void ConfigLoadDefault( void)
 void ConfigInit( void )
 {
     memset(&g_wifi_info, 0, sizeof(wifi_info));
+    config_flash_end_address = NVM_FLASH_START_ADDRESS + NVM_FLASH_SIZE;
+    config_flash_save_start_address = config_flash_end_address - NVM_FLASH_PAGESIZE;
 }
 
 void ConfigLoad( void )
 {
     FSFILE* f;
     int rc;
-    
-    f = FSfopen(CONFIG_FILENAME, FS_READ);
-    if(f)
-    {
-        rc = FSfread(&g_wifi_info.f.config, sizeof(struct _config_), 1, f);
-        FSfclose(f);
-        if(rc == 1)
-        {
-            LogMessage("[ConfigLoad] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
-            LogMessage("[ConfigLoad] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
-            LogMessage("[ConfigLoad] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
-            LogMessage("[ConfigLoad] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
-            LogMessage("[ConfigLoad] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
-            LogMessage("[ConfigLoad] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
-            LogMessage("[ConfigLoad] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
-            LogMessage("[ConfigLoad] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
-            LogMessage("[ConfigLoad] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
-            LogMessage("[ConfigLoad] io_config:        0x%02X", g_wifi_info.f.config.io_config);
-            LogMessage("[ConfigLoad] an_config:        0x%02X", g_wifi_info.f.config.an_config);
-            LogMessage("[ConfigLoad] report:           %d", g_wifi_info.f.config.report);
-            LogMessage("[ConfigLoad] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
-            LogMessage("[ConfigLoad] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
-            LogMessage("[ConfigLoad] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
 
-            LogMessage("[ConfigLoad] Load Ok.");
+    if(main_flag_sd_ok)
+    {
+        /* Lectura de configuración em tarjeta SD */
+        f = FSfopen(CONFIG_FILENAME, FS_READ);
+        if(f)
+        {
+            rc = FSfread(&g_wifi_info.f.config, sizeof(config_in_file), 1, f);
+            FSfclose(f);
+            if(rc == 1)
+            {
+                LogMessage("[ConfigLoad] Load Ok.");
+                DumpConfig();
+                /* Me fijo si la copia en flash está Ok */
+                if( !ConfigIsValidFlash())
+                {
+                    /* Hay que guardar la configuracion en flash */
+                    ConfigWriteToFlash();
+                }
+                return;
+            }
+            LogMessage("[ConfigLoad] Load Error.");
+
+            /* Me fijo si la copia en flash está Ok */
+            if(ConfigIsValidFlash())
+            {
+                /* Lectura alternativa de configuración en flash */
+                ConfigReadFromFlash();
+                DumpConfig();
+                return;
+            }
+        }
+    }
+    else
+    {
+        /* Me fijo si la copia en flash está Ok */
+        if(ConfigIsValidFlash())
+        {
+            /* Lectura alternativa de configuración en flash */
+            ConfigReadFromFlash();
+            DumpConfig();
             return;
         }
-        LogMessage("[ConfigSave] Load Error.");
+        else
+        {
+            LogMessage("[ConfigLoad] Copia en frash no valida.");
+        }
     }
+    
     LogMessage("[ConfigLoad] Load Defaults.");
     ConfigLoadDefault();
     ConfigSave();
@@ -97,34 +136,30 @@ void ConfigSave(void)
 
     g_wifi_info.status.save_config = 0;
     
-    f = FSfopen(CONFIG_FILENAME, FS_WRITE);
-    if(f)
+    if(main_flag_sd_ok)
     {
-        rc = FSfwrite(&g_wifi_info.f.config, sizeof(struct _config_), 1, f);
-        FSfclose(f);
-        if(rc == 1)
+        f = FSfopen(CONFIG_FILENAME, FS_WRITE);
+        if(f)
         {
-            LogMessage("[ConfigSave] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
-            LogMessage("[ConfigSave] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
-            LogMessage("[ConfigSave] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
-            LogMessage("[ConfigSave] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
-            LogMessage("[ConfigSave] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
-            LogMessage("[ConfigSave] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
-            LogMessage("[ConfigSave] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
-            LogMessage("[ConfigSave] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
-            LogMessage("[ConfigSave] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
-            LogMessage("[ConfigSave] io_config:        0x%02X", g_wifi_info.f.config.io_config);
-            LogMessage("[ConfigSave] an_config:        0x%02X", g_wifi_info.f.config.an_config);
-            LogMessage("[ConfigSave] report:           %d", g_wifi_info.f.config.report);
-            LogMessage("[ConfigSave] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
-            LogMessage("[ConfigSave] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
-            LogMessage("[ConfigSave] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
-
-            LogMessage("[ConfigSave] Save Ok.");
-            return;
+            rc = FSfwrite(&g_wifi_info.f.config, sizeof(config_in_file), 1, f);
+            FSfclose(f);
+            if(rc == 1)
+            {
+                LogMessage("[ConfigSave] Guardado en SD Ok.");
+                DumpConfig();
+            }
+            else
+            {
+                LogMessage("[ConfigSave] Error de escritura en SD.");
+            }
+        }
+        else
+        {
+            LogMessage("[ConfigSave] Error al abrir/crear el archivo "CONFIG_FILENAME" en SD.");
         }
     }
-    LogMessage("[ConfigSave] Save Error.");
+    /* Guardo una copia de la configuración en flash */
+    ConfigWriteToFlash();    
 }
 
 void ConfigTimer(void)
@@ -139,4 +174,93 @@ void ConfigTimer(void)
         }
     }
     
+}
+
+bool ConfigIsValidFlash( void )
+{
+    uint32_t i32;
+    
+    NVM_Read( &i32, sizeof(uint32_t), config_flash_save_start_address);
+    return ((i32 == FLASH_OK)?true:false);
+}
+
+void ConfigReadFromFlash( void )
+{
+    uint32_t *p_data;
+    uint32_t addr;
+    int len;
+    
+    LogMessage("[ConfigReadFromFlash] Leyendo configuracion de flash.");
+
+    addr = config_flash_save_start_address;
+    p_data = (uint32_t*)&g_wifi_info.f.config;
+    len = sizeof(config_in_file);
+
+    while(len > 0)
+    {
+        WATCHDOG_TimerClear();
+
+        NVM_Read( p_data, sizeof(uint32_t), addr);
+        
+        addr += 4;
+        p_data ++;
+        len -= sizeof(uint32_t);
+    }
+}
+
+void ConfigWriteToFlash( void )
+{
+    uint32_t *p_data;
+    uint32_t addr;
+    int len;
+    
+    LogMessage("[ConfigWriteToFlash] Guardando configuracion en flash.");
+
+    for( addr = config_flash_save_start_address;
+         addr < config_flash_end_address;
+         addr += NVM_FLASH_PAGESIZE )
+    {
+        WATCHDOG_TimerClear();
+        NVM_PageErase(addr);
+        while(NVM_IsBusy()) {}
+    }
+
+    addr = config_flash_save_start_address;
+    p_data = (uint32_t*)&g_wifi_info.f.config;
+    len = sizeof(config_in_file);
+    
+    while(len > 0)
+    {
+        WATCHDOG_TimerClear();
+
+        if( !NVM_DoubleWordWrite(p_data, addr))
+        {
+            LogMessage("[ConfigWriteToFlash] Error al escribir en flash.");
+            break;
+        }
+        addr += 8;
+        p_data += 2;
+        len -= 2 * sizeof(uint32_t);
+
+        while(NVM_IsBusy()) {}
+    }
+}
+
+void DumpConfig( void )
+{
+    LogMessage("[ConfigLoad] wifi_ap1:         %s", g_wifi_info.f.config.wifi_ap1);
+    LogMessage("[ConfigLoad] wifi_ap1_pass:    %s", g_wifi_info.f.config.wifi_ap1_pass);
+    LogMessage("[ConfigLoad] wifi_ap2:         %s", g_wifi_info.f.config.wifi_ap2);
+    LogMessage("[ConfigLoad] wifi_ap2_pass:    %s", g_wifi_info.f.config.wifi_ap2_pass);
+    LogMessage("[ConfigLoad] wifi_host1:       %s", g_wifi_info.f.config.wifi_host1);
+    LogMessage("[ConfigLoad] wifi_host1_port:  %d", g_wifi_info.f.config.wifi_host1_port);
+    LogMessage("[ConfigLoad] wifi_host2:       %s", g_wifi_info.f.config.wifi_host2);
+    LogMessage("[ConfigLoad] wifi_host2_port:  %d", g_wifi_info.f.config.wifi_host2_port);
+    LogMessage("[ConfigLoad] rqst_path:        %s", g_wifi_info.f.config.rqst_path);
+    LogMessage("[ConfigLoad] io_config:        0x%02X", g_wifi_info.f.config.io_config);
+    LogMessage("[ConfigLoad] an_config:        0x%02X", g_wifi_info.f.config.an_config);
+    LogMessage("[ConfigLoad] report:           %d", g_wifi_info.f.config.report);
+    LogMessage("[ConfigLoad] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
+    LogMessage("[ConfigLoad] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
+    LogMessage("[ConfigLoad] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
 }

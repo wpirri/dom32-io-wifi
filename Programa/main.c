@@ -69,8 +69,10 @@
 #include "clog.h"
 
 #include "sd/fsio.h"
+#include "flash/plib_nvm.h"
 
 bool main_flag_core_timer;
+bool main_flag_sd_ok;
 /* DHT unsigned int main_flag_dhtxx_timer_count;*/
 unsigned int main_count_inactividad;
 
@@ -154,6 +156,7 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
+    main_flag_sd_ok = false;
     /* DHT main_flag_dhtxx_timer_count = 0; */
     main_count_inactividad = 0;
 
@@ -167,10 +170,14 @@ int main(void)
     LogMessage("[MAIN] Compilador " __VERSION__ ".");
     LogMessage("[MAIN] Procesador PIC32MM256GPM028.");
 
+    NVM_Initialize();
     if( !FSInit())
     {
         LogMessage("[MAIN] Error de tarjeta SD.");
-        while(1);
+    }
+    else
+    {
+        main_flag_sd_ok = true;
     }
     
     ConfigInit();

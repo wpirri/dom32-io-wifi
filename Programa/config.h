@@ -27,8 +27,11 @@
 #define GetInstructionClock()	(GetSystemClock()/*/4*/)
 #define GetPeripheralClock()	(GetSystemClock()/*/4*/)
 
-struct _config_ /* 2176 bits, 272 bytes */
+#define FLASH_OK 0xa5a5a5a5
+
+typedef struct _config_in_file_ /*  */
 {
+    uint32_t flash_ok;
     char wifi_ap1[33];
     char wifi_ap1_pass[33];
     char wifi_ap2[33];
@@ -45,13 +48,13 @@ struct _config_ /* 2176 bits, 272 bytes */
     unsigned char enable_wiegand;
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
-};
+} config_in_file;
 
 typedef struct
 {
     union
     {
-        struct _config_ config;
+        config_in_file config;
     } f;
     struct
     {
