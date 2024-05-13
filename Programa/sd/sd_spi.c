@@ -115,7 +115,7 @@ const typMMC_CMD sdmmc_cmdtable[] =
 /******************************************************************************
  * Prototypes
  *****************************************************************************/
-extern void Delayms(BYTE milliseconds);
+void Delayms(BYTE milliseconds);
 BYTE MDD_SDSPI_ReadMedia(void);
 MEDIA_INFORMATION * MDD_SDSPI_MediaInitialize(void);
 MMC_RESPONSE SendMMCCmd(BYTE cmd, DWORD address);

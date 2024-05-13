@@ -72,11 +72,8 @@
 #include "flash/plib_nvm.h"
 
 bool main_flag_core_timer;
-bool main_flag_sd_ok;
+
 /* DHT unsigned int main_flag_dhtxx_timer_count;*/
-unsigned int main_count_inactividad;
-
-
 
 void LedControl( void )
 {
@@ -156,12 +153,12 @@ void LedControl( void )
 int main(void)
 {
     main_flag_core_timer = false;
-    main_flag_sd_ok = false;
+    g_wifi_info.status.flag_sd_ok = false;
     /* DHT main_flag_dhtxx_timer_count = 0; */
-    main_count_inactividad = 0;
+    g_wifi_info.status.count_inactividad = 0;
 
+    ConfigInit();
     SYSTEM_Initialize();
-    
     LogInit();
 
     LogMessage("[MAIN] ****************************************");
@@ -177,10 +174,10 @@ int main(void)
     }
     else
     {
-        main_flag_sd_ok = true;
+        LogMessage("[MAIN] Tarjeta SD Ok.");
+        g_wifi_info.status.flag_sd_ok = true;
     }
     
-    ConfigInit();
     ConfigLoad();
 
     ADCInit();
@@ -208,7 +205,7 @@ int main(void)
         {
             main_flag_core_timer = false;
             /* Timer 10 veces por segundo - 100ms */
-            if(main_count_inactividad & 0x02) LedControl();
+            if(g_wifi_info.status.count_inactividad & 0x02) LedControl();
             ConfigTimer();
             ADCTimer();
             WiFiTimer();
@@ -225,8 +222,8 @@ int main(void)
             }
             */
             
-            main_count_inactividad++;
-            if(main_count_inactividad == 36000)
+            g_wifi_info.status.count_inactividad++;
+            if(g_wifi_info.status.count_inactividad == 36000)
             {
                 /* una hora */
                 LogMessage("[MAIN] RESET por inactividad.");

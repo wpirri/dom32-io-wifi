@@ -100,9 +100,6 @@ http_data http_data_out_queue[HTTP_DATA_OUT_QUEUE_LEN];
 unsigned int http_process_tmp_file;
 char http_process_tmp_file_to_name[FILE_NAME_SIZE+1];
 
-extern unsigned int main_count_inactividad;
-extern int g_wifi_http_response;
-
 int ReadLine(char *buffer, size_t max_len, FSFILE *fs);
 int Convert2CharToHex(const char* h);
 
@@ -467,14 +464,19 @@ int HTTPNotificarStatus(char *out, int max_len)
         snprintf(&http_rqst_data[strlen(http_rqst_data)], MAX_HTTP_DATA - strlen(http_rqst_data), 
                 "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
     }
-    
     /* Agrego solicitud de configuración */
     if(g_wifi_info.f.config.io_config_default && (MAX_HTTP_DATA - strlen(http_rqst_data) > 10) )
     {
         strcat(http_rqst_data, "&GETCONF=1");
     }
+    /* Agrego si hay errores de HW */
+    if( !g_wifi_info.status.flag_sd_ok && (MAX_HTTP_DATA - strlen(http_rqst_data) > 10) )
+    {
+        strcat(http_rqst_data, "&HW_ERROR=SD");
+    }
+
     
-    
+    /* ********************************************************************* */
     snprintf(http_rqst_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 /* POST
  * 1.- %s: URI
@@ -815,15 +817,15 @@ void HTTPTask( void )
         if(http_data_in_queue[http_data_in_queue_read_idx].http_rc == 200 &&
            http_data_in_queue[http_data_in_queue_read_idx].form_rc == 0 )
         {
-            g_wifi_http_response = 1;
+            g_wifi_info.status.wifi_http_response = 1;
             /*CTRLCompareIO(http_data_in_queue[http_data_in_queue_read_idx].data);*/
             CTRLSetIO(http_data_in_queue[http_data_in_queue_read_idx].data);
         }
         else
         {
-            g_wifi_http_response = (-1);
+            g_wifi_info.status.wifi_http_response = (-1);
         }
-        main_count_inactividad = 0;
+        g_wifi_info.status.count_inactividad = 0;
     }
     else
     {
@@ -864,7 +866,7 @@ void HTTPTimer( void )
         {
             HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
             FSremove(DOWNLOAD_TEMP_FILE_NAME);
-            if( !strcmp(http_process_tmp_file_to_name, "pgm.hex"))
+            if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
             {
                 CTRLReset();
             }
@@ -1122,6 +1124,7 @@ int HTTPNotificarTarjeta( const char *crd)
 int HTTPGetFile(const char* filename, const char* params)
 {
     if( !filename ) return (-1);
+    if( !g_wifi_info.status.flag_sd_ok) return (-1);
 
     LogMessage("[HTTPGetFile] Solicitando archivo %s.", filename);
     
@@ -1154,7 +1157,6 @@ int HTTPInitTmpFile(const char* buffer, int len)
     FSFILE* f;
     int rc = (-1);
 
-    
     //LogMessage("[HTTPInitTmpFile]");
     f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_WRITE);
     if(f)
@@ -1190,7 +1192,7 @@ int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
         rc = HTTPAddTmpFile(buffer, len);
     }
     /* Procesar archivo temporal */
-    g_wifi_http_response = 1;
+    g_wifi_info.status.wifi_http_response = 1;
     http_process_tmp_file = 50;
     strncpy(http_process_tmp_file_to_name, filename, FILE_NAME_SIZE);
     return rc;

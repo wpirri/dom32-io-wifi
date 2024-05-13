@@ -1,0 +1,562 @@
+[main] PGM.HEX encontrado.
+[main] Verificando archivo PGM.HEX.
+[main] PGM.HEX verificado.
+[EraseFlash] Blanqueando area de programa.
+[main] Cargando programa.
+[main] Fin de carga de programa.
+[RestartForRun] Reiniciando...
+[main] La tarjeta SD no tiene PGM.HEX.
+[main] Iniciando programa previamente cargado.
+[JumpToApp] Iniciando....
+00:00:28-LOG Init.
+00:00:28-[MAIN] ****************************************
+00:00:28-[MAIN] Dom32-IO-WiFi.
+00:00:28-[MAIN] Compilacion May  7 2024 17:09:32.
+00:00:28-[MAIN] Compilador 8.3.1.
+00:00:28-[MAIN] Procesador PIC32MM256GPM028.
+00:00:28-[ConfigLoad] wifi_ap1:         872e
+00:00:28-[ConfigLoad] wifi_ap1_pass:    00464bab872e
+00:00:28-[ConfigLoad] wifi_ap2:         
+00:00:28-[ConfigLoad] wifi_ap2_pass:    
+00:00:28-[ConfigLoad] wifi_host1:       192.168.10.25
+00:00:28-[ConfigLoad] wifi_host1_port:  80
+00:00:28-[ConfigLoad] wifi_host2:       
+00:00:28-[ConfigLoad] wifi_host2_port:  80
+00:00:28-[ConfigLoad] rqst_path:        /cgi-bin
+00:00:28-[ConfigLoad] io_config:        0xFF
+00:00:28-[ConfigLoad] an_config:        0x00
+00:00:28-[ConfigLoad] report:           600
+00:00:28-[ConfigLoad] enable_https:     no
+00:00:28-[ConfigLoad] enable_wiegand:   no
+00:00:28-[ConfigLoad] rtcc_clk_div_adj: 479998
+00:00:28-[ConfigLoad] Load Ok.
+00:00:28-TRISB:   0x81BE
+00:00:28-CNPUB:   0x01BC
+00:00:28-HTTPS:   off
+00:00:28-WIEGAND: off
+00:00:28-Notificar en 10 segundos
+00:00:28-[MAIN] ********** Init Ok **********
+00:00:28-[WiFiTask] STM INVALID -> RESET
+00:00:28-[WiFiTask] RESET
+00:00:32-[WiFiTask] STM RESET -> START
+00:00:33-[WiFiTask] STM START -> CLEAN
+00:00:33-[WIFI] Conectado al AP [872e].
+00:00:37-[WiFiTask] STM CLEAN -> INIT
+00:00:37-[WIFI] RESTORE factory defaults.
+00:00:38-[WIFI] AT version:1.7.3.0(Mar 19 2020 18:15:04).
+00:00:38-[WIFI] SDK version:3.0.3(8427744).
+00:00:38-[WIFI] compile time:Mar 24 2020 16:16:12.
+00:00:38-[WIFI] Con soporte SSL
+00:00:38-[WiFiTask] STM INIT -> LOOP
+00:00:38-[WIFI] Ir a modo AP.
+00:00:38-[WiFiTask] STM LOOP -> APMODE
+00:00:39-[WIFI] MAC c8:c9:a3:4a:61:a0
+00:00:39-[WIFI] ********** Modo configuracion **********
+00:00:39-[WiFiTask] STM APMODE -> LOOP
+00:01:37-[WiFiTask] STM LOOP -> STMODE
+00:01:37-[WIFI] Conectando con AP 872e (00464bab872e).
+00:01:41-[WIFI] Conectado al AP [872e].
+00:01:42-[WIFI] ********** Modo normal **********
+00:01:42-[WiFiTask] STM STMODE -> LOOP
+00:01:50-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+00:01:50-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+00:01:50-HttpDecodeFormData
+00:01:50-[WiFiTask] STM LOOP -> HTTP
+00:01:50-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+00:01:50-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+00:01:51-WifiTaskHttp -> Enviando
+00:01:51-[WiFi CMD] AT+CIPSEND=0,394
+00:01:51-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+00:01:51-Notificar en 10 segundos
+00:01:51-WifiTaskHttp -> Envio Ok
+00:01:51-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+00:01:51-    respuesta.
+00:01:51-[HTTPHeadResponse] HTTP/1.1 200 OK
+00:01:51-      200 OK
+00:01:51-HttpDecodeFormData
+00:01:51-[HTTPFormResponse] TIME=2024/05/07
+00:01:51-Respuesta en formato de formulario
+00:01:51-RESP HTTP: 200 TIME=2024/05/07
+00:01:51-[CTRLSetIO] TIME=2024/05/07 17:13:41
+
+00:01:51-TIME: 2024/05/07 17:13:41
+
+00:01:51-[RTCC_AdjustClk] Diferencia -61910 (adelantar).
+00:01:51-[RTCC_AdjustClk] Ajuste fino de reloj: 479997.
+00:01:51-[RTCC_TimeSet] Cambio de hora [24/01/01 00:01:51] -> [124/05/07 17:13:41].
+17:13:41-WifiTaskHttp -> Respuesta recibida
+17:13:41-WifiTaskHttp -> Cerrando
+17:13:41-[WiFi CMD] AT+CIPCLOSE=0
+17:13:41-WifiTaskHttp -> Cerrado
+17:13:41-[WiFiTask] STM HTTP -> LOOP
+17:13:50-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:13:50-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:13:50-HttpDecodeFormData
+17:13:50-[WiFiTask] STM LOOP -> HTTP
+17:13:50-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:13:50-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:13:50-WifiTaskHttp -> Enviando
+17:13:50-[WiFi CMD] AT+CIPSEND=0,394
+17:13:50-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:13:50-WifiTaskHttp -> Envio Ok
+17:13:50-Notificar en 60 segundos
+17:13:50-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:13:50-    respuesta.
+17:13:50-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:13:50-      200 OK
+17:13:50-HttpDecodeFormData
+17:13:50-[HTTPFormResponse] TIME=2024/05/07
+17:13:50-Respuesta en formato de formulario
+17:13:50-RESP HTTP: 200 TIME=2024/05/07
+17:13:50-[CTRLSetIO] TIME=2024/05/07 17:13:51
+
+17:13:50-TIME: 2024/05/07 17:13:51
+
+17:13:50-[RTCC_AdjustClk] Diferencia -1 (adelantar).
+17:13:50-[RTCC_AdjustClk] Ajuste fino de reloj: 479996.
+17:13:50-[RTCC_TimeSet] Cambio de hora [124/05/07 17:13:50] -> [124/05/07 17:13:51].
+17:13:51-WifiTaskHttp -> Respuesta recibida
+17:13:51-WifiTaskHttp -> Cerrando
+17:13:51-[WiFi CMD] AT+CIPCLOSE=0
+17:13:51-WifiTaskHttp -> Cerrado
+17:13:51-[WiFiTask] STM HTTP -> LOOP
+17:14:48-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:14:48-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:14:48-HttpDecodeFormData
+17:14:48-[WiFiTask] STM LOOP -> HTTP
+17:14:48-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:14:48-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:14:48-WifiTaskHttp -> Enviando
+17:14:48-[WiFi CMD] AT+CIPSEND=0,394
+17:14:48-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:14:48-WifiTaskHttp -> Envio Ok
+17:14:48-Notificar en 60 segundos
+17:14:48-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:14:48-    respuesta.
+17:14:48-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:14:48-      200 OK
+17:14:48-HttpDecodeFormData
+17:14:48-[HTTPFormResponse] TIME=2024/05/07
+17:14:48-Respuesta en formato de formulario
+17:14:48-RESP HTTP: 200 TIME=2024/05/07
+17:14:48-[CTRLSetIO] TIME=2024/05/07 17:14:51&UPDATE-FW=1
+
+17:14:48-TIME: 2024/05/07 17:14:51
+17:14:48-[RTCC_AdjustClk] Diferencia -3 (adelantar).
+17:14:48-[RTCC_AdjustClk] Ajuste fino de reloj: 479995.
+17:14:49-[RTCC_TimeSet] Cambio de hora [124/05/07 17:14:48] -> [124/05/07 17:14:51].
+17:14:51-WifiTaskHttp -> Respuesta recibida
+17:14:51-WifiTaskHttp -> Cerrando
+17:14:51-[WiFi CMD] AT+CIPCLOSE=0
+17:14:51-WifiTaskHttp -> Cerrado
+17:14:51-[WiFiTask] STM HTTP -> LOOP
+17:15:00-[HTTPAddOUTQueue] GET /download/pgm.hex? HTTP/1.1
+Host: 1
+17:15:00-HttpDecodeFormData
+17:15:00-[WiFiTask] STM LOOP -> HTTP
+17:15:00-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:15:00-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:15:00-WifiTaskHttp -> Enviando
+17:15:00-[WiFi CMD] AT+CIPSEND=0,147
+17:15:00-[WiFi CMD] GET /download/pgm.hex? HTTP/1.1
+Host: 192.168.10.25
+Connection: close
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+
+
+17:15:00-WifiTaskHttp -> Envio Ok
+17:15:00-[HTTPInitTmpFile] 1024 bytes -> TMP
+17:15:00-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:00-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:01-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:02-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:03-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:04-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:05-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:06-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:07-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:08-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:09-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:10-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:11-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:12-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:13-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:14-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:15-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:16-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:17-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:17-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:17-[HTTPAddTmpFile] 1024 bytes -> TMP
+17:15:17-[HTTPEndTmpFile] 52 bytes -> TMP
+17:15:17-[HTTPAddTmpFile] 52 bytes -> TMP
+17:15:17-[HTTPEndTmpFile] Procesando TMP...
+17:15:17-WifiTaskHttp -> Respuesta recibida
+17:15:17-WifiTaskHttp -> Cerrando
+17:15:17-[WiFi CMD] AT+CIPCLOSE=0
+17:15:17-WifiTaskHttp -> Cerrado
+17:15:17-[WiFiTask] STM HTTP -> LOOP
+17:15:48-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:15:48-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:15:48-HttpDecodeFormData
+17:15:48-[WiFiTask] STM LOOP -> HTTP
+17:15:48-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:15:48-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:15:48-WifiTaskHttp -> Enviando
+17:15:48-[WiFi CMD] AT+CIPSEND=0,394
+17:15:48-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:15:49-WifiTaskHttp -> Envio Ok
+17:15:49-Notificar en 60 segundos
+17:15:49-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:15:49-    respuesta.
+17:15:49-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:15:49-      200 OK
+17:15:49-HttpDecodeFormData
+17:15:49-[HTTPFormResponse] TIME=2024/05/07
+17:15:49-Respuesta en formato de formulario
+17:15:49-RESP HTTP: 200 TIME=2024/05/07
+17:15:49-[CTRLSetIO] TIME=2024/05/07 17:15:51
+
+17:15:49-TIME: 2024/05/07 17:15:51
+
+17:15:49-[RTCC_AdjustClk] Diferencia -2 (adelantar).
+17:15:49-[RTCC_AdjustClk] Ajuste fino de reloj: 479994.
+17:15:49-[RTCC_TimeSet] Cambio de hora [124/05/07 17:15:49] -> [124/05/07 17:15:51].
+17:15:51-WifiTaskHttp -> Respuesta recibida
+17:15:51-WifiTaskHttp -> Cerrando
+17:15:51-[WiFi CMD] AT+CIPCLOSE=0
+17:15:51-WifiTaskHttp -> Cerrado
+17:15:51-[WiFiTask] STM HTTP -> LOOP
+17:16:48-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:16:48-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:16:48-HttpDecodeFormData
+17:16:48-[WiFiTask] STM LOOP -> HTTP
+17:16:48-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:16:48-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:16:48-WifiTaskHttp -> Enviando
+17:16:48-[WiFi CMD] AT+CIPSEND=0,394
+17:16:48-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:16:48-Notificar en 60 segundos
+17:16:48-WifiTaskHttp -> Envio Ok
+17:16:48-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:16:48-    respuesta.
+17:16:48-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:16:48-      200 OK
+17:16:48-HttpDecodeFormData
+17:16:48-[HTTPFormResponse] TIME=2024/05/07
+17:16:48-Respuesta en formato de formulario
+17:16:48-RESP HTTP: 200 TIME=2024/05/07
+17:16:48-[CTRLSetIO] TIME=2024/05/07 17:16:51
+
+17:16:48-TIME: 2024/05/07 17:16:51
+
+17:16:48-[RTCC_AdjustClk] Diferencia -3 (adelantar).
+17:16:48-[RTCC_AdjustClk] Ajuste fino de reloj: 479993.
+17:16:48-[RTCC_TimeSet] Cambio de hora [124/05/07 17:16:48] -> [124/05/07 17:16:51].
+17:16:51-WifiTaskHttp -> Respuesta recibida
+17:16:51-WifiTaskHttp -> Cerrando
+17:16:51-[WiFi CMD] AT+CIPCLOSE=0
+17:16:51-WifiTaskHttp -> Cerrado
+17:16:51-[WiFiTask] STM HTTP -> LOOP
+17:17:48-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:17:48-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:17:48-HttpDecodeFormData
+17:17:48-[WiFiTask] STM LOOP -> HTTP
+17:17:48-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:17:48-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:17:48-WifiTaskHttp -> Enviando
+17:17:48-[WiFi CMD] AT+CIPSEND=0,394
+17:17:48-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:17:48-WifiTaskHttp -> Envio Ok
+17:17:48-Notificar en 60 segundos
+17:17:49-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:17:49-    respuesta.
+17:17:49-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:17:49-      200 OK
+17:17:49-HttpDecodeFormData
+17:17:49-[HTTPFormResponse] TIME=2024/05/07
+17:17:49-Respuesta en formato de formulario
+17:17:49-RESP HTTP: 200 TIME=2024/05/07
+17:17:49-[CTRLSetIO] TIME=2024/05/07 17:17:50
+
+17:17:49-TIME: 2024/05/07 17:17:50
+
+17:17:49-[RTCC_AdjustClk] Diferencia -1 (adelantar).
+17:17:49-[RTCC_AdjustClk] Ajuste fino de reloj: 479992.
+17:17:49-[RTCC_TimeSet] Cambio de hora [124/05/07 17:17:49] -> [124/05/07 17:17:50].
+17:17:50-WifiTaskHttp -> Respuesta recibida
+17:17:50-WifiTaskHttp -> Cerrando
+17:17:50-[WiFi CMD] AT+CIPCLOSE=0
+17:17:50-WifiTaskHttp -> Cerrado
+17:17:50-[WiFiTask] STM HTTP -> LOOP
+17:18:47-HTTPNotificarStatus - [/cgi-bin/infoio.cgi] data-len: 394
+17:18:47-[HTTPAddOUTQueue] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host:
+17:18:47-HttpDecodeFormData
+17:18:47-[WiFiTask] STM LOOP -> HTTP
+17:18:47-WifiTaskHttp -> Conectando 192.168.10.25:80 ...
+17:18:47-[WiFi CMD] AT+CIPSTART=0,"TCP","192.168.10.25",80
+17:18:47-WifiTaskHttp -> Enviando
+17:18:47-[WiFi CMD] AT+CIPSEND=0,394
+17:18:47-[WiFi CMD] POST /cgi-bin/infoio.cgi HTTP/1.1
+Host: 192.168.10.25
+Connection: keep-alive
+Content-Length: 170
+User-Agent: Dom32io/1.00 (Microchip;PIC32)
+Accept: text/html,text/xml
+Content-Type: application/x-www-form-urlencoded
+
+ID=c8c9a34a61a0&TYP=IO&IO1=1&IO2=1&IO3=1&IO4=1&IO5=1&IO6=1&OUT1=0&OUT2=0&OUT3=0&OUT4=0&AT=1.7.3.0(Mar 19 2020 18:15:04)&SDK=3.0.3(8427744)&FW=May  7 2024 17:09:32&SSL=YES
+17:18:47-WifiTaskHttp -> Envio Ok
+17:18:47-Notificar en 60 segundos
+17:18:47-[HTTPAddINQueue] HTTP/1.1 200 OK
+Date: Tue, 07 May 2024 
+17:18:47-    respuesta.
+17:18:47-[HTTPHeadResponse] HTTP/1.1 200 OK
+17:18:47-      200 OK
+17:18:47-HttpDecodeFormData
+17:18:47-[HTTPFormResponse] TIME=2024/05/07
+17:18:47-Respuesta en formato de formulario
+17:18:47-RESP HTTP: 200 TIME=2024/05/07
+17:18:47-[CTRLSetIO] TIME=2024/05/07 17:18:50
+
+17:18:47-TIME: 2024/05/07 17:18:50
+
+17:18:47-[RTCC_AdjustClk] Diferencia -3 (adelantar).
+17:18:47-[RTCC_AdjustClk] Ajuste fino de reloj: 479991.
+17:18:47-[RTCC_TimeSet] Cambio de hora [124/05/07 17:18:47] -> [124/05/07 17:18:50].
+17:18:50-WifiTaskHttp -> Respuesta recibida
+17:18:50-WifiTaskHttp -> Cerrando
+17:18:50-[WiFi CMD] AT+CIPCLOSE=0
+17:18:50-WifiTaskHttp -> Cerrado
+17:18:50-[WiFiTask] STM HTTP -> LOOP

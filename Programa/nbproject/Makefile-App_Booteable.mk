@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c mcc_generated_files/rtcc.c sd/fsio.c sd/sd_spi.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c adc.c clog.c flash/plib_nvm.c
+SOURCEFILES_QUOTED_IF_SPACED=flash/plib_nvm.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c mcc_generated_files/rtcc.c sd/fsio.c sd/sd_spi.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c adc.c clog.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sd/fsio.o ${OBJECTDIR}/sd/sd_spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/clog.o ${OBJECTDIR}/flash/plib_nvm.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/coretimer.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/exceptions.o.d ${OBJECTDIR}/mcc_generated_files/uart1.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/uart2.o.d ${OBJECTDIR}/mcc_generated_files/rtcc.o.d ${OBJECTDIR}/sd/fsio.o.d ${OBJECTDIR}/sd/sd_spi.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/config.o.d ${OBJECTDIR}/control.o.d ${OBJECTDIR}/http.o.d ${OBJECTDIR}/strfunc.o.d ${OBJECTDIR}/wifi.o.d ${OBJECTDIR}/wiegand.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/clog.o.d ${OBJECTDIR}/flash/plib_nvm.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/flash/plib_nvm.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sd/fsio.o ${OBJECTDIR}/sd/sd_spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/clog.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/flash/plib_nvm.o.d ${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/coretimer.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/exceptions.o.d ${OBJECTDIR}/mcc_generated_files/uart1.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/uart2.o.d ${OBJECTDIR}/mcc_generated_files/rtcc.o.d ${OBJECTDIR}/sd/fsio.o.d ${OBJECTDIR}/sd/sd_spi.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/config.o.d ${OBJECTDIR}/control.o.d ${OBJECTDIR}/http.o.d ${OBJECTDIR}/strfunc.o.d ${OBJECTDIR}/wifi.o.d ${OBJECTDIR}/wiegand.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/clog.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sd/fsio.o ${OBJECTDIR}/sd/sd_spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/clog.o ${OBJECTDIR}/flash/plib_nvm.o
+OBJECTFILES=${OBJECTDIR}/flash/plib_nvm.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/coretimer.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/exceptions.o ${OBJECTDIR}/mcc_generated_files/uart1.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/uart2.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sd/fsio.o ${OBJECTDIR}/sd/sd_spi.o ${OBJECTDIR}/main.o ${OBJECTDIR}/config.o ${OBJECTDIR}/control.o ${OBJECTDIR}/http.o ${OBJECTDIR}/strfunc.o ${OBJECTDIR}/wifi.o ${OBJECTDIR}/wiegand.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/clog.o
 
 # Source Files
-SOURCEFILES=mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c mcc_generated_files/rtcc.c sd/fsio.c sd/sd_spi.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c adc.c clog.c flash/plib_nvm.c
+SOURCEFILES=flash/plib_nvm.c mcc_generated_files/system.c mcc_generated_files/pin_manager.c mcc_generated_files/interrupt_manager.c mcc_generated_files/coretimer.c mcc_generated_files/clock.c mcc_generated_files/exceptions.c mcc_generated_files/uart1.c mcc_generated_files/mcc.c mcc_generated_files/uart2.c mcc_generated_files/rtcc.c sd/fsio.c sd/sd_spi.c main.c config.c control.c http.c strfunc.c wifi.c wiegand.c delay.c adc.c clog.c
 
 
 
@@ -121,6 +121,12 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
+${OBJECTDIR}/flash/plib_nvm.o: flash/plib_nvm.c  .generated_files/flags/App_Booteable/d55806f2dec5f4314d781fc7adeb264ef7190f0a .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/flash" 
+	@${RM} ${OBJECTDIR}/flash/plib_nvm.o.d 
+	@${RM} ${OBJECTDIR}/flash/plib_nvm.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/flash/plib_nvm.o.d" -o ${OBJECTDIR}/flash/plib_nvm.o flash/plib_nvm.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 ${OBJECTDIR}/mcc_generated_files/system.o: mcc_generated_files/system.c  .generated_files/flags/App_Booteable/27456cc67bca12d9543c9fa131cdc09656c0b65f .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/mcc_generated_files" 
 	@${RM} ${OBJECTDIR}/mcc_generated_files/system.o.d 
@@ -253,13 +259,13 @@ ${OBJECTDIR}/clog.o: clog.c  .generated_files/flags/App_Booteable/1ad79a46973bb2
 	@${RM} ${OBJECTDIR}/clog.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/clog.o.d" -o ${OBJECTDIR}/clog.o clog.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/flash/plib_nvm.o: flash/plib_nvm.c  .generated_files/flags/App_Booteable/d55806f2dec5f4314d781fc7adeb264ef7190f0a .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
+else
+${OBJECTDIR}/flash/plib_nvm.o: flash/plib_nvm.c  .generated_files/flags/App_Booteable/27d72fb6068620fed0a03fc5f813112d1899cd54 .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/flash" 
 	@${RM} ${OBJECTDIR}/flash/plib_nvm.o.d 
 	@${RM} ${OBJECTDIR}/flash/plib_nvm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/flash/plib_nvm.o.d" -o ${OBJECTDIR}/flash/plib_nvm.o flash/plib_nvm.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/flash/plib_nvm.o.d" -o ${OBJECTDIR}/flash/plib_nvm.o flash/plib_nvm.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-else
 ${OBJECTDIR}/mcc_generated_files/system.o: mcc_generated_files/system.c  .generated_files/flags/App_Booteable/3a7e3cc0e6769214dad8e9e805a6e04314d0ad60 .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/mcc_generated_files" 
 	@${RM} ${OBJECTDIR}/mcc_generated_files/system.o.d 
@@ -391,12 +397,6 @@ ${OBJECTDIR}/clog.o: clog.c  .generated_files/flags/App_Booteable/680952f34aa862
 	@${RM} ${OBJECTDIR}/clog.o.d 
 	@${RM} ${OBJECTDIR}/clog.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/clog.o.d" -o ${OBJECTDIR}/clog.o clog.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
-${OBJECTDIR}/flash/plib_nvm.o: flash/plib_nvm.c  .generated_files/flags/App_Booteable/27d72fb6068620fed0a03fc5f813112d1899cd54 .generated_files/flags/App_Booteable/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/flash" 
-	@${RM} ${OBJECTDIR}/flash/plib_nvm.o.d 
-	@${RM} ${OBJECTDIR}/flash/plib_nvm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/flash/plib_nvm.o.d" -o ${OBJECTDIR}/flash/plib_nvm.o flash/plib_nvm.c    -DXPRJ_App_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

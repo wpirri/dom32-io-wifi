@@ -27,6 +27,8 @@
 #define GetInstructionClock()	(GetSystemClock()/*/4*/)
 #define GetPeripheralClock()	(GetSystemClock()/*/4*/)
 
+#define DOWNLOAD_PATH           "/download"
+#define FIRMWARE_FILENAME       "pgm.hex"
 #define FLASH_OK 0xa5a5a5a5
 
 typedef struct _config_in_file_ /*  */
@@ -54,24 +56,28 @@ typedef struct
 {
     union
     {
+        char dummy[ ((sizeof(config_in_file)/sizeof(uint32_t))+1)*sizeof(uint32_t) ];
         config_in_file config;
     } f;
     struct
     {
+        bool wifi_ok;
+        bool wifi_start_ap;
+        bool wifi_ssl_capable;
+        bool flag_sd_ok;
         unsigned char wifi_ap_select;
         unsigned char wifi_conectado;
         unsigned char host_conectado;
         unsigned char wifi_mode;
         unsigned char save_config;
+        unsigned int wifi_port_select;
+        unsigned int count_inactividad;
         char hw_mac[13];
         char wifi_at[65];
         char wifi_sdk[65];
         char up_fw[65];
         char *wifi_host_select;
-        unsigned int wifi_port_select;
-        bool wifi_ok;
-        bool wifi_start_ap;
-        bool wifi_ssl_capable;
+        int wifi_http_response;
     } status;
 } wifi_info;
 

@@ -77,7 +77,6 @@ unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
 unsigned int g_wifi_task_retry;
 int g_wifi_http_id;
-int g_wifi_http_response;
 unsigned char g_wifi_send_error_count;
 unsigned char g_wifi_recv_error_count;
 char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
@@ -1059,7 +1058,7 @@ int WifiTaskHttp( void )
                 if(HTTPOutType() == 'S')
                 {
                     /* Si es un requerimiento saliente espero respuesta */
-                    g_wifi_http_response = 0;
+                    g_wifi_info.status.wifi_http_response = 0;
                     g_wifi_send_error_count = 0;
                     g_wifi_fast_start = true;
                     g_wifi_task_stm_step++;
@@ -1093,10 +1092,10 @@ int WifiTaskHttp( void )
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
-            else if(g_wifi_http_response)
+            else if(g_wifi_info.status.wifi_http_response)
             {
                 LogMessage("WifiTaskHttp -> Respuesta recibida");
-                if(g_wifi_http_response > 0)
+                if(g_wifi_info.status.wifi_http_response > 0)
                 {
                     g_wifi_info.status.host_conectado = 1;
                 }

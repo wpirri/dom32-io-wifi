@@ -622,12 +622,12 @@ void CTRLTimer( void )
         }
     }
     
-    if(g_control_update_firmware)
+    if(g_control_update_firmware && g_wifi_info.status.flag_sd_ok)
     {
         g_control_update_firmware--;
         if(g_control_update_firmware == 0)
         {
-            HTTPGetFile("/download/pgm.hex", NULL);
+            HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL);
         }
     }
     
