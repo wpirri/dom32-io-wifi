@@ -1,34 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="11">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="7">
         <file>
             <url>wifi.c</url>
-            <bookmark id="11">
+            <bookmark id="7">
                 <name/>
-                <line>885</line>
+                <line>971</line>
+                <key/>
+            </bookmark>
+            <bookmark id="3">
+                <name/>
+                <line>976</line>
                 <key/>
             </bookmark>
         </file>
         <file>
             <url>http.c</url>
-            <bookmark id="10">
-                <name/>
-                <line>104</line>
-                <key/>
-            </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>750</line>
-                <key/>
-            </bookmark>
-            <bookmark id="9">
-                <name/>
-                <line>811</line>
-                <key/>
-            </bookmark>
-            <bookmark id="8">
-                <name/>
-                <line>938</line>
+                <line>393</line>
                 <key/>
             </bookmark>
         </file>

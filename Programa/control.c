@@ -43,21 +43,15 @@ unsigned int g_control_count_in4;
 unsigned int g_control_count_in5;
 unsigned int g_control_count_in6;
 
-
 void CTRLNotificarStatus( int time )
 {
-    if(g_wifi_info.status.host_conectado == 0 && time > 100)
-    {
-        time = 100;
-    }
+    if(time == 0) time = 1;
     if(time < g_control_notificar || g_control_notificar == 0)
     {
         LogMessage("Notificar en %i segundos", time/10);
         g_control_notificar = time;
     }
 }
-
-
 
 void CTRLInit( void )
 {
@@ -207,7 +201,6 @@ void CTRLInit( void )
     LogMessage("CNPUB:   0x%04X", CNPUB);
     LogMessage("HTTPS:   %s", (g_wifi_info.f.config.enable_https)?"on":"off");
     LogMessage("WIEGAND: %s", (g_wifi_info.f.config.enable_wiegand)?"on":"off");
-//    LogMessage("DHT2x:   %s", (IS_DHT2x_ENABLE)?"on":"off");
     
     g_control_count_in1 = 0;
     g_control_count_in2 = 0;
@@ -465,6 +458,11 @@ void CTRLTask( void )
 /* Se llama 10 veces por segundo - 100ms */
 void CTRLTimer( void )
 {
+    if(g_wifi_info.status.host_conectado == 0 && g_control_notificar > 100)
+    {
+        g_control_notificar = 100;
+    }
+
     if( g_control_notificar > 0 &&
         g_wifi_info.status.wifi_mode == 1 &&
         g_wifi_info.status.wifi_conectado != 0 )
@@ -475,10 +473,10 @@ void CTRLTimer( void )
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;
-            if(HTTPNotificarStatus(NULL, 0) <= 0 )
+            if( !HTTPNotificarStatus() )
             {
                 /* programo un reintento */
-                CTRLNotificarStatus(30);
+                CTRLNotificarStatus(10);
             }
         }
     }
@@ -627,7 +625,9 @@ void CTRLTimer( void )
         g_control_update_firmware--;
         if(g_control_update_firmware == 0)
         {
+            /*
             HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL);
+            */
         }
     }
     
@@ -636,7 +636,6 @@ void CTRLTimer( void )
 void CTRLSetIO(char* in)
 {
     char tmp[64];
-    struct tm tm_time;
     
     LogMessage("[CTRLSetIO] %s", in);
     if( !(g_wifi_info.f.config.io_config & 0x01))
@@ -776,45 +775,6 @@ void CTRLSetIO(char* in)
         g_control_out.stat4 = atoi(tmp);
         LogMessage("OUT4: %s", tmp);
     }
-    
-    if(HTTPGetFormData(in, "TIME", tmp))
-    {
-        LogMessage("TIME: %s", tmp);
-        /*             1111111111
-         *   01234567890123456789
-         tmp YYYY/MM/DD hh:mm:ss
-         */
-        if(tmp[4] == '/' && tmp[7] == '/' && tmp[10] == ' ' && 
-                tmp[13] == ':' && tmp[16] == ':')
-        {
-            tmp[4] = 0;
-            tmp[7] = 0;
-            tmp[10] = 0;
-            tmp[13] = 0;
-            tmp[16] = 0;
-            tmp[19] = 0;
-            
-            tm_time.tm_year = atoi(&tmp[0]) - 1900;
-            tm_time.tm_mon = atoi(&tmp[5]);
-            tm_time.tm_mday = atoi(&tmp[8]);
-            tm_time.tm_hour = atoi(&tmp[11]);
-            tm_time.tm_min = atoi(&tmp[14]);
-            tm_time.tm_sec = atoi(&tmp[17]);
-
-            RTCC_TimeSet(&tm_time);
-        }
-        else
-        {
-            LogMessage("[CTRLSetIO] Error de formato para TIME");
-        }
-    }
-    
-    if(HTTPGetFormData(in, "UPDATE-FW", tmp))
-    {
-        /* Actualizar firmware en 10 seg */
-        g_control_update_firmware = 100;
-    }
-
 }
 
 void CTRLCompareIO(char* in)
@@ -1074,18 +1034,15 @@ void CTRLSwitchIO(char* in)
             LogMessage("OUT4: %d", g_control_out.stat4);
         }
     }
-    
-        
 }
 
 void CTRLConfIO(char* in)
 {
-    char tmp[32];
+    char tmp[64];
     bool change = false;
-    bool reset = false;
-    struct tm tm_time;
     
     LogMessage("[CTRLConfIO] %s", in);
+
     if(HTTPGetFormData(in, "IO1", tmp))
     {
         change = true;
@@ -1192,6 +1149,30 @@ void CTRLConfIO(char* in)
         LogMessage("IO6: %s", tmp);
     }
 
+    if(change)
+    {
+        g_wifi_info.f.config.io_config_default = 0;
+        g_wifi_info.status.save_config = 150;
+    }
+}
+
+void CTRLConfSys(char* in)
+{
+    char tmp[64];
+    bool change = false;
+    bool reset = false;
+    struct tm tm_time;
+
+    LogMessage("[CTRLConfSys] %s", in);
+
+    if(HTTPGetFormData(in, "UPDATE-FW", tmp))
+    {
+        LogMessage("********** Actualizar Firmware **********");
+        /* Actualizar firmware en 30 seg */
+        change = true;
+        g_control_update_firmware = 300;
+    }
+    
     if(HTTPGetFormData(in, "WIEGAND", tmp))
     {
         change = true;
@@ -1210,6 +1191,17 @@ void CTRLConfIO(char* in)
     }
     
     if(HTTPGetFormData(in, "report", tmp))
+    {
+        change = true;
+        g_wifi_info.f.config.report = atoi(tmp) * 10;
+        if(g_wifi_info.f.config.report == 0)
+        {
+            g_wifi_info.f.config.report = 600;
+        }
+        LogMessage("Keep Alive: %is", g_wifi_info.f.config.report/10);
+    }
+    
+    if(HTTPGetFormData(in, "REPORT", tmp))
     {
         change = true;
         g_wifi_info.f.config.report = atoi(tmp) * 10;
@@ -1272,21 +1264,10 @@ void CTRLConfIO(char* in)
         }
         else
         {
-            LogMessage("[CTRLSetIO] Error de formato para TIME");
+            LogMessage("[CTRLConfSys] Error de formato para TIME");
         }
     }
     
-    /* Por si el HW no tiene configurado ninguna IO
-     * asi deja de pedir config */
-    /*
-    if( HTTPGetFormData(in, "OUT1", tmp) ||
-        HTTPGetFormData(in, "OUT2", tmp) ||
-        HTTPGetFormData(in, "OUT3", tmp) ||
-        HTTPGetFormData(in, "OUT4", tmp)  )
-    {
-        change = true;
-    }
-    */
     if(change)
     {
         g_wifi_info.f.config.io_config_default = 0;

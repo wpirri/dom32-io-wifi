@@ -74,8 +74,8 @@ static bool volatile rxOverflowed;
 
 */
 
-#define UART2_CONFIG_TX_BYTEQ_LENGTH (255+1)
-#define UART2_CONFIG_RX_BYTEQ_LENGTH (255+1)
+#define UART2_CONFIG_TX_BYTEQ_LENGTH 2047
+#define UART2_CONFIG_RX_BYTEQ_LENGTH 255
 
 /** UART Driver Queue
 
@@ -84,8 +84,8 @@ static bool volatile rxOverflowed;
 
 */
 
-static uint8_t txQueue[UART2_CONFIG_TX_BYTEQ_LENGTH] ;
-static uint8_t rxQueue[UART2_CONFIG_RX_BYTEQ_LENGTH] ;
+static uint8_t txQueue[UART2_CONFIG_TX_BYTEQ_LENGTH+1] ;
+static uint8_t rxQueue[UART2_CONFIG_RX_BYTEQ_LENGTH+1] ;
 
 /*
 void (*UART2_TxDefaultInterruptHandler)(void);

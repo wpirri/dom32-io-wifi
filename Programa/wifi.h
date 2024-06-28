@@ -18,13 +18,12 @@
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
-#define WIFI_CIP_MAX_CONS 2
 //#define ENABLE_SSL
 
 void WiFiInit( void );
 void WiFiTask( void );
 void WiFiTimer( void );
 
-int WifiCheckUnsol(const char* buffer, int len);
+int WifiCheckUnsol( void );
 
 #endif /* _WIFI_H_ */

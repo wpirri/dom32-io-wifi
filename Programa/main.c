@@ -26,13 +26,13 @@
  * 6    RB2/AN4             in          IO4
  * 7    RB3/AN11            in          IO3
  * 8    Vss                             Vss
- * 9    RA2/RP3/AN5         out         SPI_SCK -> CLK (DHT22-DATA)
+ * 9    RA2/RP3/AN5         out         SPI_SCK -> CLK
  * 10   RA3/RP4             UART2       Tx
  * 11   RB4/RP5             in          IO2
  * 12   RA4/RP6             out         Led Aux
  * 13   Vdd                             +3v3
  * 14   RB5                 in          IO1
- * 15   RB6                 out         SPI_CS -> /CS (DHT22-Power)
+ * 15   RB6                 out         SPI_CS -> /CS
  * 16   RB7                 in          IO5
  * 17   RB8/SCK1            in          IO6
  * 18   RB9/SDO1            out         OUT1
@@ -64,7 +64,6 @@
 #include "http.h"
 #include "wifi.h"
 #include "control.h"
-/* DHT #include "dhtxx.h" */
 #include "wiegand.h"
 #include "clog.h"
 
@@ -72,8 +71,6 @@
 #include "flash/plib_nvm.h"
 
 bool main_flag_core_timer;
-
-/* DHT unsigned int main_flag_dhtxx_timer_count;*/
 
 void LedControl( void )
 {
@@ -154,7 +151,6 @@ int main(void)
 {
     main_flag_core_timer = false;
     g_wifi_info.status.flag_sd_ok = false;
-    /* DHT main_flag_dhtxx_timer_count = 0; */
     g_wifi_info.status.count_inactividad = 0;
 
     ConfigInit();
@@ -185,7 +181,6 @@ int main(void)
     WiFiInit();
     HTTPInit();
     WGND_Init();
-    /* DHT DHTxxInit(); */
     
     strncpy(g_wifi_info.status.up_fw, __DATE__ " " __TIME__, 
             sizeof(g_wifi_info.status.up_fw)-1);
@@ -212,16 +207,6 @@ int main(void)
             HTTPTimer();
             CTRLTimer();
             if(g_wifi_info.f.config.enable_wiegand) WGND_Timer();
-
-            /* DHT
-            main_flag_dhtxx_timer_count++;
-            if(main_flag_dhtxx_timer_count > 300)
-            {
-                main_flag_dhtxx_timer_count = 0;
-                DHTxxGetData();
-            }
-            */
-            
             g_wifi_info.status.count_inactividad++;
             if(g_wifi_info.status.count_inactividad == 36000)
             {

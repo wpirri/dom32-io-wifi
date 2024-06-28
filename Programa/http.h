@@ -20,36 +20,40 @@
 
 #include <stdbool.h>
 
+#define MAX_HTTP_DATA 2047
+#define MAX_HTTP_URI  63
+
+typedef struct
+{
+    char type;
+    char timeout;
+    int id;
+    char uri[MAX_HTTP_URI + 1];
+    char data[MAX_HTTP_DATA + 1];
+} http_data;
+
+#ifdef _IN_HTTP_C_
+http_data http_buffer_input;
+http_data http_buffer_output;
+http_data http_buffer_response;
+#else
+extern http_data http_buffer_input;
+extern http_data http_buffer_output;
+extern http_data http_buffer_response;
+#endif
+
 void HTTPInit( void );
 
 void HTTPTask( void );
 
 void HTTPTimer( void );
 
-int HTTPOutPending(void);
-int HTTPOutConnId(void);
-char HTTPOutType(void);
-const char* HTTPOutData(void);
-unsigned int HTTPOutTimeOut(void);
-const char* HTTPOutFilename(void);
-void HTTPOutNext(void);
+int HTTPAddInput(int id, const char* buffer);
+int HTTPAddOutput(const char* buffer);
 
-int HTTPNotificarStatus(char *out, int max_len);
-int HTTPNotificarTarjeta( const char *crd);
+int HTTPNotificarStatus();
+int HTTPNotificarTarjeta( const char *crd );
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
-
-int HTTPAddOUTQueue(const char* filename, const char* buffer, unsigned int to_cs);
-int HTTPAddRespQueue(int id, const char* buffer);
-int HTTPAddINQueue(int id, const char* buffer);
-
-int HTTPHeadResponse(const char *http_head);
-int HTTPFormResponse(const char *http_data);
-
-int HTTPGetFile(const char* filename, const char* params);
-int HTTPInitTmpFile(const char* buffer, int len);
-int HTTPAddTmpFile(const char* buffer, int len);
-int HTTPEndTmpFile(const char* filename, const char* buffer, int len);
-void HTTPProcessTmpFile(const char* tmpname, const char* filename);
 
 #endif /* _HTTP_H_ */

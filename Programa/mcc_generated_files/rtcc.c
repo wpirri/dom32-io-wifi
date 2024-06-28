@@ -127,10 +127,12 @@ void RTCC_AdjustClk(int diferencia)
     else
     {
         LogMessage("[RTCC_AdjustClk] Ajuste fino de clock Ok.");
+        /*
         if(g_rtcc_diferencia_anterior != 0)
         {
             g_wifi_info.status.save_config = 10;
         }
+        */
     }
     g_rtcc_diferencia_anterior = diferencia;
 }

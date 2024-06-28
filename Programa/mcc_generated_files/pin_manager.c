@@ -54,7 +54,6 @@
 #include "system.h"
 
 #include "../wiegand.h"
-/* DHT #include "../dhtxx.h" */
 
 /**
  Section: File specific functions
