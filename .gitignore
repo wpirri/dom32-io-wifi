@@ -8,15 +8,17 @@
 *.pcapng
 *.zip
 Circuito/fp-info-cache
-Circuito/fp-info-cache
-/Programa/build/
-/Programa/dist/
-/Programa/.generated_files/
-/Programa_old/
-Circuito/fp-info-cache
+Circuito/DomIO32.html
+Circuito/DomIO32.wrl
+Circuito/DomIO32.xml
+Circuito/DomIO32.csv
 Circuito/DomIO32.kicad_pcb-bak
-Circuito/fp-info-cache
 Circuito/sym-lib-table
+Programa/build/
+Programa/dist/
+Programa/.generated_files/
+Programa_old/
+Programa-*
 Documento/bwb_minitekpwr4.2.pdf
 Documento/MOLEX-PS-5556-001.pdf
 Documento/Placa-LadoA.jpg
@@ -24,23 +26,13 @@ Documento/Placa-LadoB.jpg
 Documento/placa.png
 Documento/WiFi-UART-Log-20201105.txt
 Fabricacion/DOM32IOWIFI - Gerber Mayer - 20201015 - Error Esp02 PIN6.zip
-Circuito/DomIO32.html
-Circuito/DomIO32.wrl
-Circuito/DomIO32.xml
 Documento/Conpra DigiKey - 20201101.pdf
 Documento/Conpra DigiKey - 20201109.pdf
 Documento/Cotizacion Mayer - 20201014.pdf
 Documento/Compra DigiKey - 20201101.pdf
 Documento/Compra DigiKey - 20201109.pdf
-Gabinete/dom32-io-wifi-gabinete-base.stl
-Gabinete/dom32-io-wifi-gabinete-logo.stl
-Gabinete/dom32-io-wifi-gabinete-ojo-de-buey.stl
-Gabinete/dom32-io-wifi-gabinete-pulsador.stl
-Gabinete/dom32-io-wifi-gabinete-tapa-media.stl
-Gabinete/dom32-io-wifi-gabinete-tapa-superior.stl
-Gabinete/dom32-io-wifi-gabinete-serigrafia-tapa-media.stl
-Gabinete/dom32-io-wifi-tapa-media-con-serigrafia.3mf
-Circuito/DomIO32.csv
-QR/Thumbs.db
+Gabinete/*.stl
+Gabinete/*.3mf
+*/Thumbs.db
 QR/qr3B6696.png
 Programa/nbproject/private/private-THINKPAD-WGP.xml
