@@ -28,8 +28,11 @@ typedef struct
     char type;
     char timeout;
     int id;
+    int http_rc;
+    int form_rc;
     char uri[MAX_HTTP_URI + 1];
     char data[MAX_HTTP_DATA + 1];
+    char filename[13];
 } http_data;
 
 #ifdef _IN_HTTP_C_
@@ -49,11 +52,17 @@ void HTTPTask( void );
 void HTTPTimer( void );
 
 int HTTPAddInput(int id, const char* buffer);
-int HTTPAddOutput(const char* buffer);
+int HTTPAddOutput(const char* filename, const char* buffer, unsigned int to_cs);
 
 int HTTPNotificarStatus();
 int HTTPNotificarTarjeta( const char *crd );
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
+
+int HTTPGetFile(const char* filename, const char* params);
+int HTTPInitTmpFile(const char* buffer, int len);
+int HTTPAddTmpFile(const char* buffer, int len);
+int HTTPEndTmpFile(const char* filename, const char* buffer, int len);
+void HTTPProcessTmpFile(const char* tmpname, const char* filename);
 
 #endif /* _HTTP_H_ */

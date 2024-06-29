@@ -46,6 +46,7 @@ unsigned int g_control_count_in6;
 void CTRLNotificarStatus( int time )
 {
     if(time == 0) time = 1;
+    
     if(time < g_control_notificar || g_control_notificar == 0)
     {
         LogMessage("Notificar en %i segundos", time/10);
@@ -58,6 +59,7 @@ void CTRLInit( void )
     g_control_notificar = 0;
     g_control_init_complete = 0;
     g_control_update_firmware = 0;
+    g_ctrl_count_reset = 0;
     
     /* Entrada 1 - RB5 */
     g_control_io.stat1 = false;
@@ -594,29 +596,23 @@ void CTRLTimer( void )
         g_ctrl_count_reset--;
         if(g_ctrl_count_reset == 0)
         {
-            if(g_wifi_info.status.save_config)
-            {
-                g_ctrl_count_reset = g_wifi_info.status.save_config + 10;                
-            }
-            else
-            {
-                LogMessage("[CTRL] RESET.");
-                /* The following code illustrates a software Reset */
-                // assume interrupts are disabled
-                // assume the DMA controller is suspended
-                // assume the device is locked
-                /* perform a system unlock sequence */
-                // starting critical sequence
-                SYSKEY = 0x00000000; //write invalid key to force lock
-                SYSKEY = 0xAA996655; //write key1 to SYSKEY
-                SYSKEY = 0x556699AA; //write key2 to SYSKEY
-                /* set SWRST bit to arm reset */
-                RSWRSTSET = 1;
-                /* read RSWRST register to trigger reset */
-                unsigned int dummy; dummy = RSWRST;
-                /* prevent any unwanted code execution until reset occurs*/
-                while(dummy | 1);
-            }
+            ConfigSave();
+            LogMessage("[CTRL] RESET.");
+            /* The following code illustrates a software Reset */
+            // assume interrupts are disabled
+            // assume the DMA controller is suspended
+            // assume the device is locked
+            /* perform a system unlock sequence */
+            // starting critical sequence
+            SYSKEY = 0x00000000; //write invalid key to force lock
+            SYSKEY = 0xAA996655; //write key1 to SYSKEY
+            SYSKEY = 0x556699AA; //write key2 to SYSKEY
+            /* set SWRST bit to arm reset */
+            RSWRSTSET = 1;
+            /* read RSWRST register to trigger reset */
+            unsigned int dummy; dummy = RSWRST;
+            /* prevent any unwanted code execution until reset occurs*/
+            while(dummy | 1);
         }
     }
     
@@ -625,9 +621,7 @@ void CTRLTimer( void )
         g_control_update_firmware--;
         if(g_control_update_firmware == 0)
         {
-            /*
             HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL);
-            */
         }
     }
     
@@ -1169,7 +1163,6 @@ void CTRLConfSys(char* in)
     {
         LogMessage("********** Actualizar Firmware **********");
         /* Actualizar firmware en 30 seg */
-        change = true;
         g_control_update_firmware = 300;
     }
     

@@ -18,12 +18,19 @@
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
-//#define ENABLE_SSL
+#ifdef _IN_WIFI_C_
+    char *g_wifi_host;
+    unsigned int g_wifi_port;
+#else
+    extern char *g_wifi_host;
+    extern unsigned int g_wifi_port;
+#endif
 
 void WiFiInit( void );
 void WiFiTask( void );
 void WiFiTimer( void );
 
 int WifiCheckUnsol( void );
+void WifiSwitchHost( void );
 
 #endif /* _WIFI_H_ */

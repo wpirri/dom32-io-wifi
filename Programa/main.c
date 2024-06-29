@@ -87,7 +87,7 @@ void LedControl( void )
         }
     }
     
-    if(++led_count >= 50)
+    if(++led_count > 20)
     {
         LED_Status_SetLow();
         LED_Modo_SetLow();

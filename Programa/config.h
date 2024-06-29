@@ -76,8 +76,6 @@ typedef struct
         char wifi_at[65];
         char wifi_sdk[65];
         char up_fw[65];
-        char *wifi_host_select;
-        int wifi_http_response;
     } status;
 } wifi_info;
 

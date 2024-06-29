@@ -23,10 +23,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/watchdog.h"
+
 #include "control.h"
 #include "wifi.h"
 #include "config.h"
 #include "clog.h"
+#include "sd/fsio.h"
+
+#define DOWNLOAD_TEMP_FILE_NAME "download.tmp"
 
 const char xml_200[] =      "HTTP/1.1 200 OK\r\nConnection: close\r\n"
                             "Content-Type: text/xml\r\n\r\n";
@@ -60,6 +67,190 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
                             "Connection: close\r\n"
                             "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
                             "Accept: text/html,text/xml\r\n\r\n";
+
+unsigned int http_process_tmp_file;
+char http_process_tmp_file_to_name[FILE_NAME_SIZE+1];
+
+int ReadLine(char *buffer, size_t max_len, FSFILE *fs);
+
+int HTTPGetFile(const char* filename, const char* params)
+{
+    char tmp_uri[MAX_HTTP_URI+1];
+    char tmp_data[MAX_HTTP_DATA+1];
+    char tmp_rqst[MAX_HTTP_DATA+1];
+
+    if( !filename ) return (-1);
+    if( !g_wifi_info.status.flag_sd_ok) return (-1);
+
+    LogMessage("[HTTPGetFile] Solicitando archivo %s.", filename);
+    
+    if(params)
+    {
+        snprintf(tmp_uri, MAX_HTTP_URI, "%s?%s", filename, params);
+    }
+    else
+    {
+        strncpy(tmp_uri, filename, MAX_HTTP_URI);
+    }
+    /*
+     * GET
+     * 1.- %s: URI
+     * 2.- %s: Host
+     */
+    snprintf(tmp_rqst, MAX_HTTP_DATA, http_get,
+             tmp_uri,
+             g_wifi_host);
+    if(HTTPAddOutput(tmp_uri, tmp_rqst, 250) <= 0)
+    {
+        /* No fue posible enviar */
+        return 0;
+    }
+    return strlen(tmp_rqst);
+}
+
+int HTTPInitTmpFile(const char* buffer, int len)
+{
+    FSFILE* f;
+    int rc = (-1);
+
+    LogMessage("[HTTPInitTmpFile] %-.20s (%d)", buffer, len);
+    f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_WRITE);
+    if(f)
+    {
+        rc = FSfwrite(buffer, 1, len, f);
+        FSfclose(f);
+    }
+    return rc;
+}
+
+int HTTPAddTmpFile(const char* buffer, int len)
+{
+    FSFILE* f;
+    int rc = (-1);
+
+    //LogMessage("[HTTPAddTmpFile] %-.20s (%d)", buffer, len);
+    f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_APPEND);
+    if(f)
+    {
+        rc = FSfwrite(buffer, 1, len, f);
+        FSfclose(f);
+    }
+    return rc;
+}
+
+int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
+{
+    int rc = 0;
+
+    LogMessage("[HTTPEndTmpFile] %-.20s (%d) -> %s", buffer, len, filename);
+    if(len)
+    {
+        rc = HTTPAddTmpFile(buffer, len);
+    }
+    /* Procesar archivo temporal */
+    http_process_tmp_file = 50;
+    strncpy(http_process_tmp_file_to_name, filename, FILE_NAME_SIZE);
+    return rc;
+}
+
+/*
+ Sirve solo para archivos de texto
+ */
+void HTTPProcessTmpFile(const char* tmpname, const char* filename)
+{
+    char buffer[256];
+    char*p;
+    char*p_ipd_len;
+    int len;
+    int ipd_len;
+    FSFILE* fi;
+    FSFILE* fo;
+    bool descartar;
+
+    LogMessage("[HTTPProcessTmpFile] %s -> %s", tmpname, filename);
+    fi = FSfopen(tmpname, FS_READ);
+    if(fi)
+    {
+        fo = FSfopen(filename, FS_WRITE);
+        if(fo)
+        {
+            ipd_len = 0;
+            descartar = TRUE;
+            while( (len = ReadLine(buffer, 255, fi)) > 0 )
+            {
+                WATCHDOG_TimerClear();
+                
+                buffer[len] = 0;
+                
+                if( len == 2 && buffer[0] == 0x0d && buffer[1] == 0x0a )
+                {
+                    /* Descarto todo hasta el final de la cabecera HTTP */
+                    descartar = FALSE;
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+                else if(ipd_len)
+                {
+                    if( !descartar)
+                    {
+                        p = &buffer[0];
+                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
+                    }
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+                else if( buffer[0] == '+' &&
+                         buffer[1] == 'I' &&
+                         buffer[2] == 'P' &&
+                         buffer[3] == 'D'  )
+                {
+                    /* Comienzo de in bloque +IPD,0,1460: */
+                    p = &buffer[0];
+                    /* Salteo la primer coma */
+                    while(*p != ',') { p++; len--; }
+                    p++; len--;
+                    /* Salteo la segunda coma coma */
+                    while(*p != ',') { p++; len--; }
+                    p++; len--;
+                    /*  */
+                    p_ipd_len = p;
+                    /* Voy hasta el fin de la cabecera +IPD */
+                    while(*p != ':') { p++; len--; }
+                    *p = 0;
+                    ipd_len = atoi(p_ipd_len);
+                    p++; len--;
+                    /*   Estoy aca: v
+                     *  +IPD,0,1460:___ */
+                    if( !descartar)
+                    {
+                        /* Escribo el resto de la linea */
+                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
+                    }
+                    /* Descarto todo lo que esté fuera del bloque +IPD */
+                    if(ipd_len > len) ipd_len -= len;
+                    else ipd_len = 0;
+                }
+            }                
+            FSfclose(fo);
+        }
+        FSfclose(fi);
+    }        
+}
+
+int ReadLine(char *buffer, size_t max_len, FSFILE *fs)
+{
+    int len = 0;
+
+    while(FSfread(buffer, 1, 1, fs) && len < max_len)
+    {
+        len++;
+        if(*buffer == 0x0a) break;
+        buffer++;
+    }
+    return len;
+}
 
 int Convert2CharToHex(const char* h)
 {
@@ -179,6 +370,70 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
     
     return len;
 }
+
+int HTTPHeadResponse(const char *http_head)
+{
+    char str[4];
+    char *p1;
+    
+    LogMessage("[HTTPHeadResponse] %-.20s", http_head); 
+
+    if(http_head)
+    {
+        /* Busco el código de respuesta http en la cabecera
+         * "HTTP/1.1 200 OK\r\n" */
+        p1 = strchr(http_head, ' ');
+        if(p1)
+        {
+            str[0] = *(++p1);
+            str[1] = *(++p1);
+            str[2] = *(++p1);
+            str[3] = 0;
+            return atoi(str);
+        }
+    }
+    return 0;
+}
+
+int HTTPFormResponse(const char *http_data)
+{
+    char str[16];
+    
+    LogMessage("[HTTPFormResponse] %-.100s", http_data); 
+
+    if(http_data)
+    {
+        if( strchr(http_data, '{') && 
+            strchr(http_data, ':') && 
+            strchr(http_data, ',') && 
+            strchr(http_data, '}')  )
+        {
+            LogMessage("[HTTPFormResponse] Respuesta en formato JSON no esperada");
+            return 99;
+        }
+        else if( strchr(http_data, '=') )
+        {
+            LogMessage("[HTTPFormResponse] Respuesta en formato de formulario");
+            if(HTTPGetFormData((char*)http_data, "error", str))
+            {
+                LogMessage("[HTTPFormResponse] Respuesta con error: %s", str);
+                return atoi(str);
+            }
+            else
+            {
+                /* Si no encuentra la leyenda error no hay error */
+                return 0;
+            }
+        }
+        else
+        {
+            /* Si no dice nada asumo no error */
+            return 0;
+        }
+    }
+    return (-1);
+}
+
 /*<html>
 <head>
 <title>Dom32IO</title>
@@ -244,20 +499,20 @@ void HttpReturnWiFiFormConfig(char *out, int max_len)
 void HttpReturnWiFiConfig(char *out, int max_len)
 {
     snprintf(out, max_len,
-            "%sID=%s&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%ui&ce2=%s&ce2p=%ui&rqst=%s",
+            "%sID=%s&TYP=IO&ap1=%s&ap1p=%s&ap2=%s&ap2p=%s&ce1=%s&ce1p=%u&ce2=%s&ce2p=%u&report=%u&rqst=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
             g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port,
             g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port,
-            g_wifi_info.f.config.rqst_path);
+            g_wifi_info.f.config.report/10, g_wifi_info.f.config.rqst_path);
 }
 
 void HttpReturnIOStatus(char *out, int max_len)
 {
     snprintf(out, max_len,
-        "%sID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        "%sID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         http_200,
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
@@ -289,14 +544,31 @@ void HttpReturnIOStatus(char *out, int max_len)
         snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
                 "&FW=%s", g_wifi_info.status.up_fw);
     }
+    /* Capacidad SSL del módulo WIFI */
+    if((MAX_HTTP_DATA - strlen(out) > 10))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
+    }
     
     LogMessage("HttpReturnIOStatus - data-len: %d", strlen(out));
+}
+
+void HttpReturnResult(char *out, const char* result, int max_len)
+{
+    snprintf(out, max_len,
+        "%sID=%s&TYP=IO&RESULT=%s",
+        http_200,
+        g_wifi_info.status.hw_mac,
+        result);
+    
+    LogMessage("[HttpReturnResult] %s - data-len: %d", result, strlen(out));
 }
 
 void HttpReturnIOConfig(char *out, int max_len)
 {
     snprintf(out, max_len,
-            "%sID=%s&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
+            "%sID=%s&TYP=IO&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
             http_200,
             g_wifi_info.status.hw_mac,
             (g_wifi_info.f.config.io_config & 0x01)?((g_wifi_info.f.config.an_config & 0x01)?"ana":"in"):"out",
@@ -331,6 +603,7 @@ void HTTPInit( void )
     memset(&http_buffer_input, 0, sizeof(http_data));
     memset(&http_buffer_output, 0, sizeof(http_data));
     memset(&http_buffer_response, 0, sizeof(http_data));
+    http_process_tmp_file = 0;
 }
 
 /* *****************************************************************************
@@ -370,11 +643,15 @@ void HTTPTask( void )
         {
             HttpReturnIOConfig(http_buffer_response.data, MAX_HTTP_DATA);
         }
+        else if( !strcmp(http_buffer_input.uri, "/reset.htm"))
+        {
+            CTRLReset();
+            HttpReturnResult(http_buffer_response.data, "Ok", MAX_HTTP_DATA);
+        }
         else
         {
             strncpy(http_buffer_response.data, http_404, MAX_HTTP_DATA);
         }
-        http_buffer_input.type = 0;
         http_buffer_response.type = 'H';
         http_buffer_response.timeout = 100;
         LogMessage("[HTTPTask] Respondiendo: %s %u bytes",
@@ -414,7 +691,6 @@ void HTTPTask( void )
             strncpy(http_buffer_response.data, http_404, MAX_HTTP_DATA);
         }
         /* Completo la respuesta */
-        http_buffer_input.type = 0;
         http_buffer_response.type = 'H';
         http_buffer_response.timeout = 100;
         LogMessage("[HTTPTask] Respondiendo: %s %u bytes",
@@ -426,10 +702,28 @@ void HTTPTask( void )
         LogMessage("[HTTPTask] Respuesta: %s %u bytes",
                 http_buffer_input.uri, strlen(http_buffer_input.data));
         /* Se trata de una respuesta HTTP/1... */
-        http_buffer_input.type = 0;
-        CTRLSetIO(http_buffer_input.data);
-        CTRLConfSys(http_buffer_input.data);
+        if(http_buffer_input.http_rc == 200 &&
+           http_buffer_input.form_rc == 0 )
+        {
+            g_wifi_info.status.host_conectado = 1;
+            CTRLSetIO(http_buffer_input.data);
+            CTRLConfSys(http_buffer_input.data);
+        }
+        else
+        {
+            CTRLNotificarStatus(100);
+            WifiSwitchHost();
+        }
+        g_wifi_info.status.count_inactividad = 0;
     }
+    else if(http_buffer_input.type)
+    {
+        LogMessage("[HTTPTask] typ: %c DESCONOCIDO %-.100s",
+                http_buffer_input.type,
+                http_buffer_input.data);
+    }
+    http_buffer_input.type = 0;
+    
 }
 
 /* *****************************************************************************
@@ -445,7 +739,7 @@ void HTTPTimer( void )
         if(http_buffer_input.timeout == 0)
         {
             http_buffer_input.type = 0;
-            LogMessage("[HTTPTimer] De mensaje entrante");
+            LogMessage("[HTTPTimer] TIMEOUT de mensaje entrante");
         }
     }
 
@@ -455,7 +749,7 @@ void HTTPTimer( void )
         if(http_buffer_output.timeout == 0)
         {
             http_buffer_output.type = 0;
-            LogMessage("[HTTPTimer] De mensaje saliente");
+            LogMessage("[HTTPTimer] TIMEOUT de mensaje saliente");
         }
     }
 
@@ -468,6 +762,21 @@ void HTTPTimer( void )
             LogMessage("[HTTPTimer] De respuesta saliente");
         }
     }
+    
+    if(http_process_tmp_file)
+    {
+        http_process_tmp_file--;
+        if(http_process_tmp_file == 0)
+        {
+            HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
+            FSremove(DOWNLOAD_TEMP_FILE_NAME);
+            if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
+            {
+                CTRLReset();
+            }
+        }
+    }
+
 }
 
 /* *****************************************************************************
@@ -519,25 +828,42 @@ int HTTPAddInput(int id, const char* buffer)
     else if(*buffer == 'H')
     {
         /* Respuesta */
+        LogMessage("[HTTPAddInput] Respuesta");
         http_buffer_input.type = *buffer;
+        http_buffer_input.http_rc = HTTPHeadResponse(buffer);
         http_buffer_input.timeout = 50;
-        p = strstr(buffer, "\r\n\r\n");
-        if(p)
+        if(http_buffer_input.http_rc == 200)
         {
-            p += 4;
-            if(HttpDecodeFormData(http_buffer_input.data, p, MAX_HTTP_DATA) <= 0)
+            p = strstr(buffer, "\r\n\r\n");
+            if(p)
             {
-                LogMessage("[HTTPAddInput] FORM Overflow");
-                return (-1);
+                p += 4;
+                if(HttpDecodeFormData(http_buffer_input.data, p, MAX_HTTP_DATA) <= 0)
+                {
+                    LogMessage("[HTTPAddInput] FORM Overflow");
+                    return (-1);
+                }
+                http_buffer_input.form_rc = HTTPFormResponse(http_buffer_input.data);
+                if(http_buffer_input.form_rc != 0)
+                {
+                    LogMessage("[HTTPAddInput] FORM Error %i", http_buffer_input.form_rc);
+                }
             }
+            return 1;
         }
-        return 1;
+        else
+        {
+            LogMessage("[HTTPAddInput] HTTP Error %i", http_buffer_input.http_rc);
+            http_buffer_input.form_rc = 0;
+        }
     }
     return 0;
 }
     
-int HTTPAddOutput(const char* buffer)
+int HTTPAddOutput(const char* filename, const char* buffer, unsigned int to_cs)
 {
+    int i;
+    
     if(http_buffer_output.type)
     {
         LogMessage("[HTTPAddOutput] Buffer de salida ocupado");
@@ -546,7 +872,7 @@ int HTTPAddOutput(const char* buffer)
     
     LogMessage("[HTTPAddOutput] %-.100s...", buffer);
     
-    http_buffer_output.timeout = 100;
+    http_buffer_output.timeout = to_cs;
     http_buffer_output.type = *buffer;
     http_buffer_output.id = 0;
     if(HttpDecodeFormData(http_buffer_output.data, buffer, MAX_HTTP_DATA) <= 0)
@@ -554,6 +880,26 @@ int HTTPAddOutput(const char* buffer)
         LogMessage("[HTTPAddInput] FORM Overflow");
         return (-1);
     }
+    /* Avanzo hasta la última '/' para dejar el nombre sin path */
+    while(strchr(filename, '/'))
+    {
+        while(*filename != '/') filename++;
+        filename++;
+    }
+    
+    /* copio solo caracteres validos */
+    for(i = 0; *filename; filename++)
+    {
+        if( (*filename >= '0' && *filename <= '9') ||
+            (*filename >= 'a' && *filename <= 'z') ||
+            (*filename >= 'A' && *filename <= 'Z') ||
+             *filename == '.' || *filename == '_' )
+        {
+            http_buffer_output.filename[i++] = *filename;
+        }
+    }
+    http_buffer_output.filename[i] = 0;
+
     return 1;
 }
 
@@ -591,7 +937,7 @@ int HTTPNotificarStatus()
     
     /* Parte fija con la MAC y las entradas y salidas */
     snprintf(tmp_data, MAX_HTTP_DATA,
-        "ID=%s&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        "ID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
         g_wifi_info.status.hw_mac,
         g_control_io.stat1,
         g_control_io.stat2,
@@ -714,13 +1060,13 @@ int HTTPNotificarStatus()
      */
     snprintf(tmp_rqst, MAX_HTTP_DATA, http_post,
             tmp_uri,
-            g_wifi_info.f.config.wifi_host1,
+            g_wifi_host,
             strlen(tmp_data),
             tmp_data);
 
     LogMessage("[HTTPNotificarStatus] - data-len: %d", strlen(tmp_rqst));
 
-    if(HTTPAddOutput(tmp_rqst) <= 0)
+    if(HTTPAddOutput(tmp_uri, tmp_rqst, 250) <= 0)
     {
         /* No fue posible enviar */
         return 0;
@@ -749,7 +1095,7 @@ int HTTPNotificarTarjeta( const char *crd)
 
     LogMessage("[HTTPNotificarTarjeta] %s", crd);
 
-    snprintf(tmp_data, MAX_HTTP_DATA, "ID=%s&CARD=%s", g_wifi_info.status.hw_mac, crd);
+    snprintf(tmp_data, MAX_HTTP_DATA, "ID=%s&TYP=IO&CARD=%s", g_wifi_info.status.hw_mac, crd);
     snprintf(tmp_uri, MAX_HTTP_URI, "%s/infoio.cgi", g_wifi_info.f.config.rqst_path);
 
     /* POST
@@ -760,10 +1106,10 @@ int HTTPNotificarTarjeta( const char *crd)
      */
     snprintf(tmp_rqst, MAX_HTTP_DATA, http_post,
             tmp_uri,
-            g_wifi_info.f.config.wifi_host1,
+            g_wifi_host,
             strlen(tmp_data),
             tmp_data);
-    if(HTTPAddOutput(tmp_rqst) <= 0)
+    if(HTTPAddOutput(tmp_uri, tmp_rqst, 250) <= 0)
     {
         /* No fue posible enviar */
         return 0;
