@@ -1034,142 +1034,127 @@ void CTRLConfIO(char* in)
 {
     char tmp[64];
     bool change = false;
+    bool reset = false;
     
     LogMessage("[CTRLConfIO] %s", in);
 
     if(HTTPGetFormData(in, "IO1", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x01^0xFF);
             g_wifi_info.f.config.io_config |= 0x01;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x01^0xFF);
             g_wifi_info.f.config.io_config &= (0x01^0xFF);
+            change = true;
         }
         LogMessage("IO1: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO2", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x02^0xFF);
             g_wifi_info.f.config.io_config |= 0x02;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x02^0xFF);
             g_wifi_info.f.config.io_config &= (0x02^0xFF);
+            change = true;
         }
         LogMessage("IO2: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO3", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x04^0xFF);
             g_wifi_info.f.config.io_config |= 0x04;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x04^0xFF);
             g_wifi_info.f.config.io_config &= (0x04^0xFF);
+            change = true;
         }
         else if( !strcmp(tmp, "ana") )
         {
             g_wifi_info.f.config.an_config |= 0x04;
             g_wifi_info.f.config.io_config |= 0x04;
+            change = true;
         }
         LogMessage("IO3: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO4", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x08^0xFF);
             g_wifi_info.f.config.io_config |= 0x08;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x08^0xFF);
             g_wifi_info.f.config.io_config &= (0x08^0xFF);
+            change = true;
         }
         else if( !strcmp(tmp, "ana") )
         {
             g_wifi_info.f.config.an_config |= 0x08;
             g_wifi_info.f.config.io_config |= 0x08;
+            change = true;
         }
         LogMessage("IO4: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO5", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x10^0xFF);
             g_wifi_info.f.config.io_config |= 0x10;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x10^0xFF);
             g_wifi_info.f.config.io_config &= (0x10^0xFF);
+            change = true;
         }
         LogMessage("IO5: %s", tmp);
     }
     
     if(HTTPGetFormData(in, "IO6", tmp))
     {
-        change = true;
         if( !strcmp(tmp, "in") )
         {
             g_wifi_info.f.config.an_config &= (0x20^0xFF);
             g_wifi_info.f.config.io_config |= 0x20;
+            change = true;
         }
         else if( !strcmp(tmp, "out") )
         {
             g_wifi_info.f.config.an_config &= (0x20^0xFF);
             g_wifi_info.f.config.io_config &= (0x20^0xFF);
+            change = true;
         }
         LogMessage("IO6: %s", tmp);
     }
 
-    if(change)
-    {
-        g_wifi_info.f.config.io_config_default = 0;
-        g_wifi_info.status.save_config = 150;
-    }
-}
-
-void CTRLConfSys(char* in)
-{
-    char tmp[64];
-    bool change = false;
-    bool reset = false;
-    struct tm tm_time;
-
-    LogMessage("[CTRLConfSys] %s", in);
-
-    if(HTTPGetFormData(in, "UPDATE-FW", tmp))
-    {
-        LogMessage("********** Actualizar Firmware **********");
-        /* Actualizar firmware en 30 seg */
-        g_control_update_firmware = 300;
-    }
-    
     if(HTTPGetFormData(in, "WIEGAND", tmp))
     {
         change = true;
-        
         if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
         {
             if(g_wifi_info.f.config.enable_wiegand == 0) reset = true;
@@ -1181,6 +1166,57 @@ void CTRLConfSys(char* in)
             g_wifi_info.f.config.enable_wiegand = 0;
         }
         LogMessage("WIEGAND: %s", tmp);
+    }
+
+    if(HTTPGetFormData(in, "HTTPS", tmp))
+    {
+        if(g_wifi_info.status.wifi_ssl_capable)
+        {
+            change = true;
+            
+            if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
+            {
+                if(g_wifi_info.f.config.enable_https == 0) reset = true;
+                g_wifi_info.f.config.enable_https = 1;
+            }
+            else
+            {
+                if(g_wifi_info.f.config.enable_https == 1) reset = true;
+                g_wifi_info.f.config.enable_https = 0;
+            }
+            LogMessage("HTTPS: %s", tmp);
+        }
+        else
+        {
+            LogMessage("HTTPS no posible");
+        }
+    }
+    
+    if(change)
+    {
+        g_wifi_info.f.config.io_config_default = 0;
+        g_wifi_info.status.save_config = 150;
+    }
+
+    if(reset)
+    {
+        CTRLReset();
+    }
+}
+
+void CTRLConfSys(char* in)
+{
+    char tmp[64];
+    bool change = false;
+    struct tm tm_time;
+
+    LogMessage("[CTRLConfSys] %s", in);
+
+    if(HTTPGetFormData(in, "UPDATE-FW", tmp))
+    {
+        LogMessage("********** Actualizar Firmware **********");
+        /* Actualizar firmware en 30 seg */
+        g_control_update_firmware = 300;
     }
     
     if(HTTPGetFormData(in, "report", tmp))
@@ -1205,30 +1241,6 @@ void CTRLConfSys(char* in)
         LogMessage("Keep Alive: %is", g_wifi_info.f.config.report/10);
     }
     
-    if(HTTPGetFormData(in, "HTTPS", tmp))
-    {
-        if(g_wifi_info.status.wifi_ssl_capable)
-        {
-            change = true;
-            
-            if( !strcmp(tmp, "yes") || !strcmp(tmp, "1") )
-            {
-                if(g_wifi_info.f.config.enable_https == 0) reset = true;
-                g_wifi_info.f.config.enable_https = 1;
-            }
-            else
-            {
-                if(g_wifi_info.f.config.enable_https == 1) reset = true;
-                g_wifi_info.f.config.enable_https = 0;
-            }
-            LogMessage("HTTPS: %s", tmp);
-        }
-        else
-        {
-            LogMessage("HTTPS no posible");
-        }
-    }
-
     if(HTTPGetFormData(in, "TIME", tmp))
     {
         LogMessage("TIME: %s", tmp);
@@ -1265,11 +1277,6 @@ void CTRLConfSys(char* in)
     {
         g_wifi_info.f.config.io_config_default = 0;
         g_wifi_info.status.save_config = 150;
-    }
-    
-    if(reset)
-    {
-        CTRLReset();
     }
 }
 
