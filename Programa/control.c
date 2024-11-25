@@ -45,13 +45,15 @@ unsigned int g_control_count_in6;
 
 void CTRLNotificarStatus( int time )
 {
-    if(time == 0) time = 1;
-    
-    if(time < g_control_notificar || g_control_notificar == 0)
+    if(time == 0)
     {
-        LogMessage("Notificar en %i segundos", time/10);
+        g_control_notificar = g_wifi_info.f.config.report;
+    }
+    else if(time < g_control_notificar || g_control_notificar == 0)
+    {
         g_control_notificar = time;
     }
+    LogMessage("Notificar en %i segundos", g_control_notificar/10);
 }
 
 void CTRLInit( void )
@@ -247,7 +249,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse1 == 0)
                     {
                         g_control_io.change1 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -277,7 +279,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse2 == 0)
                     {
                         g_control_io.change2 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -308,7 +310,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse3 == 0)
                     {
                         g_control_io.change3 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -339,7 +341,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse4 == 0)
                     {
                         g_control_io.change4 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -370,7 +372,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse5 == 0)
                     {
                         g_control_io.change5 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -401,7 +403,7 @@ void CTRLTask( void )
                     if(g_control_init_complete && g_control_io.pulse6 == 0)
                     {
                         g_control_io.change6 = true;
-                        CTRLNotificarStatus(0);
+                        CTRLNotificarStatus(1);
                     }
                 }
             }
@@ -413,7 +415,7 @@ void CTRLTask( void )
                 if(g_control_init_complete && g_control_out.pulse1 == 0)
                 {
                     g_control_out.change1 = true;
-                    CTRLNotificarStatus(0);
+                    CTRLNotificarStatus(1);
                 }
             }
             break;
@@ -424,7 +426,7 @@ void CTRLTask( void )
                 if(g_control_init_complete && g_control_out.pulse2 == 0)
                 {
                     g_control_out.change2 = true;
-                    CTRLNotificarStatus(0);
+                    CTRLNotificarStatus(1);
                 }
             }
             break;
@@ -435,7 +437,7 @@ void CTRLTask( void )
                 if(g_control_init_complete && g_control_out.pulse3 == 0)
                 {
                     g_control_out.change3 = true;
-                    CTRLNotificarStatus(0);
+                    CTRLNotificarStatus(1);
                 }
             }
             break;
@@ -446,7 +448,7 @@ void CTRLTask( void )
                 if(g_control_init_complete && g_control_out.pulse4 == 0)
                 {
                     g_control_out.change4 = true;
-                    CTRLNotificarStatus(0);
+                    CTRLNotificarStatus(1);
                 }
             }
             break;
@@ -460,9 +462,9 @@ void CTRLTask( void )
 /* Se llama 10 veces por segundo - 100ms */
 void CTRLTimer( void )
 {
-    if(g_wifi_info.status.host_conectado == 0 && g_control_notificar > 100)
+    if(g_wifi_info.status.host_conectado == 0 && g_control_notificar > (g_wifi_info.f.config.report/10))
     {
-        g_control_notificar = 100;
+        g_control_notificar = (g_wifi_info.f.config.report/10);
     }
 
     if( g_control_notificar > 0 &&
@@ -475,17 +477,15 @@ void CTRLTimer( void )
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;
-            if( !HTTPNotificarStatus() )
-            {
-                /* programo un reintento */
-                CTRLNotificarStatus(10);
-            }
+            HTTPNotificarStatus();
+            /* programo un reintento, si hay respuesta Ok luego se extiende el tiempo */
+            g_control_notificar = (g_wifi_info.f.config.report/10);
         }
     }
     else if(g_control_notificar == 0)
     {
         /* notifico segun lo configurado */
-        CTRLNotificarStatus(g_wifi_info.f.config.report);
+        g_control_notificar = g_wifi_info.f.config.report;
     }
     
     /* Control de pulso */
@@ -621,7 +621,10 @@ void CTRLTimer( void )
         g_control_update_firmware--;
         if(g_control_update_firmware == 0)
         {
-            HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL);
+            if(HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL) <= 0 )
+            {
+                g_control_update_firmware = 10;
+            }
         }
     }
     
@@ -1215,8 +1218,8 @@ void CTRLConfSys(char* in)
     if(HTTPGetFormData(in, "UPDATE-FW", tmp))
     {
         LogMessage("********** Actualizar Firmware **********");
-        /* Actualizar firmware en 30 seg */
-        g_control_update_firmware = 300;
+        /* Actualizar firmware en 5 seg */
+        g_control_update_firmware = 50;
     }
     
     if(HTTPGetFormData(in, "report", tmp))

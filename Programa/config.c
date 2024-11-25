@@ -59,6 +59,7 @@ void ConfigLoadDefault( void)
     g_wifi_info.f.config.enable_wiegand = 0;
     g_wifi_info.f.config.io_config_default = 1;
     g_wifi_info.f.config.rtcc_clk_div_adj = 480000;
+    g_wifi_info.f.config.start_config_mode = true;
 
     g_wifi_info.status.save_config = 10;
 }

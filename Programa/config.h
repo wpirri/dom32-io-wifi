@@ -21,6 +21,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/* Activa el logueo a la UART */
+//#define DEBUG_ON
+/* Incrementa mensaje de logueo del modulo wifi */
+//#define DEBUG_WIFI
+/* Vuelca el log a tarjeta SD */
+//#define LOG_TO_FILE
+
 // Clock frequency values
 #define _XTAL_FREQ  24000000UL             // Hz
 #define GetSystemClock()		(_XTAL_FREQ)
@@ -50,6 +57,7 @@ typedef struct _config_in_file_ /*  */
     unsigned char enable_wiegand;
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
+    unsigned long start_config_mode;
 } config_in_file;
 
 typedef struct
@@ -63,6 +71,7 @@ typedef struct
     {
         bool wifi_ok;
         bool wifi_start_ap;
+        bool wifi_start_st;
         bool wifi_ssl_capable;
         bool flag_sd_ok;
         unsigned char wifi_ap_select;

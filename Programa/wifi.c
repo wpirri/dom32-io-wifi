@@ -15,13 +15,13 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
- 
+#include <xc.h>
  /*
  	TODO: Seleccion de host de destino
     TODO: Agregar soporte SSL
  	TODO: Modo de conexiones solo salientes
  */
- 
+
 #define _IN_WIFI_C_
 #include "wifi.h"
 #undef _IN_WIFI_C_
@@ -41,8 +41,6 @@
 #include "delay.h"
 #include "sd/fsio.h"
 
-//#define DEBUG_WIFI
-#define WIFI_READ_LINE_BUFFER_LEN 1023
 #define TIMER_AP_VALUE 600
 
 typedef enum
@@ -96,7 +94,6 @@ bool g_wifi_wait_more_data;
 char g_wifi_cmd[256];
 
 bool g_wifi_need_upgrade;
-bool g_wifi_fast_start;
 
 void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
@@ -189,7 +186,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
     
     if(g_wifi_wait_more_data && ((g_wifi_read_line_buffer_timer == 0) || (g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)) )
     {
-        if((g_wifi_read_line_buffer_timer == 0))
+        if(g_wifi_read_line_buffer_timer == 0)
         {
             /* time-out esperando mas datos */
             HTTPEndTmpFile(http_buffer_output.filename, 
@@ -197,6 +194,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                     g_wifi_read_line_buffer_index);
             g_wifi_wait_more_data = false;
             g_wifi_read_line_buffer_index = 0;
+            http_buffer_output.download = 0;
         }
         else if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
         {
@@ -317,7 +315,7 @@ int WifiCheckUnsol( void )
         /*
         +IPD,0,442:<datos>
         */
-        LogMessage("[WifiCheckUnsol] %-.100s", g_wifi_read_line_buffer);
+        LogMessage("[WifiCheckUnsol] %-.2000s", g_wifi_read_line_buffer);
 
         id = 0;
         len = 0;
@@ -334,9 +332,18 @@ int WifiCheckUnsol( void )
         p = strchr(g_wifi_read_line_buffer, ':');
         if(p)
         {
-            if( g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
+            if( g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN ||
+                ( http_buffer_output.download && 
+                  (strstr(g_wifi_read_line_buffer, "Content-Type: text/csv") ||
+                   strstr(g_wifi_read_line_buffer, "Content-Type: image/bmp"))) )
             {
-                HTTPInitTmpFile(g_wifi_read_line_buffer, WIFI_READ_LINE_BUFFER_LEN);
+                /* Si el buffer está lleno debe ser un download */
+                if(HTTPInitTmpFile(g_wifi_read_line_buffer, g_wifi_read_line_buffer_index) < 0)
+                {
+                    /* No había download pendiente */
+                    LogMessage("[WifiCheckUnsol] HTTP input overflow: %-.100s", g_wifi_read_line_buffer);
+                }
+                g_wifi_read_line_buffer_index = 0;
             }
             else
             {
@@ -380,7 +387,7 @@ int WifiCheckUnsol( void )
         {
             g_wifi_info.status.wifi_conectado = 0;
             g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
-            return STMODE;
+            g_wifi_info.status.wifi_start_st = true;
         }
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
@@ -754,7 +761,7 @@ int WifiTaskSTMode( void )
             WifiWriteLine("AT+CIPSERVER=0");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
-            g_wifi_task_stm_timeout = 100;
+            g_wifi_task_stm_timeout = 10;
             g_wifi_info.status.wifi_mode = 0;
             g_wifi_info.status.host_conectado = 0;
             break;
@@ -771,7 +778,7 @@ int WifiTaskSTMode( void )
             WifiWriteLine("AT+CWMODE=1");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
-            g_wifi_task_stm_timeout = 100;
+            g_wifi_task_stm_timeout = 25;
             break;
         case 3:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
@@ -779,6 +786,7 @@ int WifiTaskSTMode( void )
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.wifi_ok = true;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
@@ -829,13 +837,28 @@ int WifiTaskSTMode( void )
             }
             break;
         case 8:
+            /* MAC e IP */
+            WifiWriteLine("AT+CIFSR");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 9:
+            if(WifiWaitLine("OK", 0, 0, 0, 0) || g_wifi_task_stm_timeout == 0)
+            {
+                g_wifi_task_stm_step++;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 10/*8*/:
             /* Listen */
             WifiWriteLine("AT+CIPSERVER=1,80");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 9:
+        case 11/*9*/:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
                 g_wifi_task_stm_step++;
@@ -848,14 +871,14 @@ int WifiTaskSTMode( void )
                 rc = (-1);
             }
             break;
-        case 10:
+        case 12/*10*/:
             /* Reconnect */
             WifiWriteLine("AT+CWAUTOCONN=1");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 11:
+        case 13/*11*/:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
                 g_wifi_task_stm_step++;
@@ -869,7 +892,7 @@ int WifiTaskSTMode( void )
                 rc = (-1);
             }
             break;
-        case 12:
+        case 14/*12*/:
             /* Si el actual no existe cambio al que exista */
             if(g_wifi_info.status.wifi_ap_select == 1 &&
                g_wifi_info.f.config.wifi_ap1[0] == 0 &&
@@ -915,7 +938,7 @@ int WifiTaskSTMode( void )
                 rc = LOOP;
             }
             break;
-        case 13:
+        case 15/*13*/:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
                 LogMessage("[WifiTaskSTMode] ********** Modo normal **********");
@@ -928,8 +951,8 @@ int WifiTaskSTMode( void )
                 LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
                 LogMessage("[WifiTaskSTMode] Reconectando...");
                 g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
-                //rc = (-1);
-                rc = STMODE;
+                g_wifi_info.status.wifi_start_st = true;
+                rc = LOOP;
             }
             break;
             // Puede faltar                
@@ -1183,11 +1206,11 @@ int WifiTaskHttpReq( void )
             {
                 LogMessage("[WifiTaskHttpReq] SEND Ok");
                 /* Si es un requerimiento saliente espero respuesta */
-                g_wifi_fast_start = true;
                 g_wifi_send_error_count = 0;
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = http_buffer_output.timeout;
+                g_end_download = false;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
@@ -1200,7 +1223,7 @@ int WifiTaskHttpReq( void )
             break;
         case 7: /* Esperando CLOSE del server o datos */
             sprintf(g_wifi_cmd, "%d,CLOSED", http_buffer_output.id);
-            if(WifiWaitLine(g_wifi_cmd, "UNLINK", "OK", 0, 0))
+            if(WifiWaitLine(g_wifi_cmd, "UNLINK", "OK", 0, 0) || g_end_download)
             {
                 /* Libero el buffer */
                 http_buffer_output.type = 0;
@@ -1262,6 +1285,7 @@ int WifiTaskHttpReq( void )
                 g_wifi_task_stm_timeout = 0;
                 /* Libero el buffer */
                 http_buffer_output.type = 0;
+                http_buffer_output.download = false;
                 g_wifi_info.status.host_conectado = 0;
             }
             break;
@@ -1292,16 +1316,12 @@ int WifiTaskLoop( void )
     else if(g_wifi_info.status.wifi_start_ap)
     {
         g_wifi_info.status.wifi_start_ap = false;
-        if(g_wifi_fast_start)
-        {
-            LogMessage("[WifiTaskLoop] Ir a modo ST.");
-            return STMODE;
-        }
-        else
-        {
-            LogMessage("[WifiTaskLoop] Ir a modo AP.");
-            return APMODE;
-        }
+        return APMODE;
+    }
+    else if(g_wifi_info.status.wifi_start_st)
+    {
+        g_wifi_info.status.wifi_start_st = false;
+        return STMODE;
     }
     else if(http_buffer_response.type)
     {
@@ -1374,10 +1394,21 @@ void WiFiInit( void )
     g_wifi_need_upgrade = false;
     g_wifi_send_error_count = 0;
     g_wifi_recv_error_count = 0;
-    g_wifi_fast_start = false;
     
     g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
     g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:((g_wifi_info.f.config.enable_https)?443:80);
+    
+    if(g_wifi_info.f.config.start_config_mode)
+    {
+        g_wifi_info.status.wifi_start_ap = true;
+    }
+    else
+    {
+        g_wifi_info.status.wifi_start_st = true;
+        /* En el proximo arranque inicia en modo config */
+        g_wifi_info.f.config.start_config_mode = true;
+        ConfigSave();
+    }
 }
 
 /* *****************************************************************************
@@ -1403,36 +1434,30 @@ void WiFiTask( void )
         case RESET:
 			LogMessage("[WiFiTask] RESET");
             WIFI_RESET_SetLow();
-            g_wifi_task_stm_timeout = 0;
-            g_wifi_task_stm_step = 0;
             g_wifi_read_line_buffer_index = 0;
             g_wifi_read_line_buffer_timer = 0;
             g_wifi_read_line_wait_crlf = true;
             g_wifi_wait_more_data = false;
-            g_wifi_task_stm_delay = 30;
 
             g_wifi_send_error_count = 0;
             g_wifi_recv_error_count = 0;
 
             g_wifi_info.status.wifi_conectado = 0;
             g_wifi_info.status.wifi_ap_select = 1;
-            g_wifi_info.status.wifi_start_ap = true;
             g_wifi_timer_ap = 0;
             g_wifi_info.status.wifi_mode = 0;
             g_wifi_info.status.host_conectado = 0;
             
-            WifiTaskSTMSet(START, 50, 0);
+            WifiTaskSTMSet(START, 20, 0);
             break;
         case START:
 			//LogMessage("START\n");
             WIFI_RESET_SetHigh();
-            g_wifi_task_stm_delay = 10;
-            WifiTaskSTMSet(CLEAN, 5, 50);
+            WifiTaskSTMSet(CLEAN, 5, 20);
             break;
         case CLEAN:
             /* Me quedo recibiendo un rato la basura de la POST del ESP-02 */
             /* No es basura, pero se ve como basura porque esta a otra velocidad */
-            g_wifi_task_stm_delay = 0;
             WifiWaitLine(0, 0, 0, 0, 0);
             if(g_wifi_task_stm_timeout == 0)
             {
@@ -1499,7 +1524,7 @@ void WiFiTimer( void )
         if(g_wifi_timer_ap == 0)
         {
             /* Vuelvo al modo normal */
-            g_wifi_task_stm = STMODE;
+            g_wifi_info.status.wifi_start_st = true;
         }
     }
     

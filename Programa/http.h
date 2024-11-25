@@ -32,6 +32,7 @@ typedef struct
     int form_rc;
     char uri[MAX_HTTP_URI + 1];
     char data[MAX_HTTP_DATA + 1];
+    char download;
     char filename[13];
 } http_data;
 
@@ -39,10 +40,14 @@ typedef struct
 http_data http_buffer_input;
 http_data http_buffer_output;
 http_data http_buffer_response;
+char g_download_file_name[256];
+char g_download_file_params[256];
 #else
 extern http_data http_buffer_input;
 extern http_data http_buffer_output;
 extern http_data http_buffer_response;
+extern char g_download_file_name[256];
+extern char g_download_file_params[256];
 #endif
 
 void HTTPInit( void );
@@ -52,10 +57,12 @@ void HTTPTask( void );
 void HTTPTimer( void );
 
 int HTTPAddInput(int id, const char* buffer);
-int HTTPAddOutput(const char* filename, const char* buffer, unsigned int to_cs);
+int HTTPAddOutput(const char* filename, bool download, const char* buffer, unsigned int to_cs);
 
 int HTTPNotificarStatus();
 int HTTPNotificarTarjeta( const char *crd );
+int HTTPCommandSwitch( const char *obj_name );
+int HTTPCommandPulse( const char *obj_name );
 
 int HTTPGetFormData(char *buffer, const char *label, char *value);
 

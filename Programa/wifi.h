@@ -18,12 +18,18 @@
 #ifndef _WIFI_H_
 #define _WIFI_H_
 
+#include <stdbool.h>
+
+#define WIFI_READ_LINE_BUFFER_LEN 1023
+
 #ifdef _IN_WIFI_C_
     char *g_wifi_host;
     unsigned int g_wifi_port;
+    bool g_end_download;
 #else
     extern char *g_wifi_host;
     extern unsigned int g_wifi_port;
+    extern bool g_end_download;
 #endif
 
 void WiFiInit( void );
