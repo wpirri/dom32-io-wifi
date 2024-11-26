@@ -661,7 +661,7 @@ void HttpProcessCommand(char* in)
     if(HTTPGetFormData(in, "Command", cmd))
     {
         LogMessage("[HttpProcessCommand] Comando");
-        if( !strcmp(cmd, "Download"))
+        if( !strcmp(cmd, "download"))
         {
             LogMessage("[HttpProcessCommand] Comando Download");
             if(HTTPGetFormData(in, "Filename", g_download_file_name))
