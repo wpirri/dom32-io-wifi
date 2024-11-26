@@ -573,6 +573,11 @@ int WifiTaskInit( void )
             }
             break;
         case 8:
+            if( !g_wifi_info.status.wifi_start_ap &&
+                ! g_wifi_info.status.wifi_start_st )
+            {
+                g_wifi_info.status.wifi_start_st = true;
+            }
         default:
             rc = LOOP;
             break;
