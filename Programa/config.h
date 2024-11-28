@@ -81,6 +81,7 @@ typedef struct
         unsigned char save_config;
         unsigned int wifi_port_select;
         unsigned int count_inactividad;
+        unsigned int control_notificar;
         char hw_mac[13];
         char wifi_at[65];
         char wifi_sdk[65];

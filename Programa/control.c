@@ -31,7 +31,6 @@
 #include "adc.h"
 #include "clog.h"
 
-unsigned int g_control_notificar;
 unsigned int g_control_init_complete;
 unsigned int g_control_update_firmware;
 unsigned int g_ctrl_count_reset;
@@ -47,21 +46,21 @@ void CTRLNotificarStatus( int time )
 {
     if(time == 0)
     {
-        g_control_notificar = g_wifi_info.f.config.report;
+        g_wifi_info.status.control_notificar = g_wifi_info.f.config.report;
     }
-    else if(time < g_control_notificar || g_control_notificar == 0)
+    else if(time < g_wifi_info.status.control_notificar || g_wifi_info.status.control_notificar == 0)
     {
-        g_control_notificar = time;
+        g_wifi_info.status.control_notificar = time;
     }
-    LogMessage("Notificar en %i segundos", g_control_notificar/10);
+    LogMessage("Notificar en %i segundos", g_wifi_info.status.control_notificar/10);
 }
 
 void CTRLInit( void )
 {
-    g_control_notificar = 0;
+    g_wifi_info.status.control_notificar = 0;
     g_control_init_complete = 0;
-    g_control_update_firmware = 0;
     g_ctrl_count_reset = 0;
+    g_control_update_firmware = 0;
     
     /* Entrada 1 - RB5 */
     g_control_io.stat1 = false;
@@ -462,30 +461,30 @@ void CTRLTask( void )
 /* Se llama 10 veces por segundo - 100ms */
 void CTRLTimer( void )
 {
-    if(g_wifi_info.status.host_conectado == 0 && g_control_notificar > (g_wifi_info.f.config.report/10))
+    if(g_wifi_info.status.host_conectado == 0 && g_wifi_info.status.control_notificar > (g_wifi_info.f.config.report/10))
     {
-        g_control_notificar = (g_wifi_info.f.config.report/10);
+        g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
     }
 
-    if( g_control_notificar > 0 &&
+    if( g_wifi_info.status.control_notificar > 0 &&
         g_wifi_info.status.wifi_mode == 1 &&
         g_wifi_info.status.wifi_conectado != 0 )
     {
-        g_control_notificar--;
-        if(g_control_notificar == 0)
+        g_wifi_info.status.control_notificar--;
+        if(g_wifi_info.status.control_notificar == 0)
         {
             /* Levanto el flag para que
              * en adelante los cambios cuenten */
             g_control_init_complete = 1;
             HTTPNotificarStatus();
             /* programo un reintento, si hay respuesta Ok luego se extiende el tiempo */
-            g_control_notificar = (g_wifi_info.f.config.report/10);
+            g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
         }
     }
-    else if(g_control_notificar == 0)
+    else if(g_wifi_info.status.control_notificar == 0)
     {
         /* notifico segun lo configurado */
-        g_control_notificar = g_wifi_info.f.config.report;
+        g_wifi_info.status.control_notificar = g_wifi_info.f.config.report;
     }
     
     /* Control de pulso */
@@ -1287,5 +1286,5 @@ void CTRLReset( void )
 {
     /* reset en 10 seg */
     LogMessage("[CTRL] RESET solicitado.");
-    g_ctrl_count_reset = 100;
+    g_ctrl_count_reset = 30;
 }

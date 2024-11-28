@@ -163,7 +163,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
         /*voy agregando los datos al buffer */
         if(g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN)
         {
-            /* Se agrega el caracter a la l�nea */
+            /* Se agrega el caracter a la linea */
             g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = c;
             g_wifi_read_line_buffer_index++;
             g_wifi_read_line_buffer[g_wifi_read_line_buffer_index] = 0;
@@ -219,7 +219,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                 if( !memcmp(line1, g_wifi_read_line_buffer, strlen(line1)))
                 {
                     LogMessage("[WifiWaitLine] Encontrado: %s", line1);
-                    rc = 1;  /* Se recibi� lo que se esperaba */
+                    rc = 1;  /* Se recibio lo que se esperaba */
                 }
             }
             if(rc == 0 && line2)
@@ -230,7 +230,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                 if( !memcmp(line2, g_wifi_read_line_buffer, strlen(line2)))
                 {
                     LogMessage("[WifiWaitLine] Encontrado: %s", line2);
-                    rc = 2;  /* Se recibi� lo que se esperaba */
+                    rc = 2;  /* Se recibio lo que se esperaba */
                 }
             }
             if(rc == 0 && line3)
@@ -241,7 +241,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                 if( !memcmp(line3, g_wifi_read_line_buffer, strlen(line3)))
                 {
                     LogMessage("[WifiWaitLine] Encontrado: %s", line3);
-                    rc = 3;  /* Se recibi� lo que se esperaba */
+                    rc = 3;  /* Se recibio lo que se esperaba */
                 }
             }
             if(rc == 0 && line4)
@@ -252,7 +252,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                 if( !memcmp(line4, g_wifi_read_line_buffer, strlen(line4)))
                 {
                     LogMessage("[WifiWaitLine] Encontrado: %s", line4);
-                    rc = 4;  /* Se recibi� lo que se esperaba */
+                    rc = 4;  /* Se recibio lo que se esperaba */
                 }
             }
             if(rc == 0 && line5)
@@ -263,7 +263,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
                 if( !memcmp(line5, g_wifi_read_line_buffer, strlen(line5)))
                 {
                     LogMessage("[WifiWaitLine] Encontrado: %s", line5);
-                    rc = 5;  /* Se recibi� lo que se esperaba */
+                    rc = 5;  /* Se recibio lo que se esperaba */
                 }
             }
             
@@ -950,6 +950,7 @@ int WifiTaskSTMode( void )
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
+                g_wifi_info.status.control_notificar = 1;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {

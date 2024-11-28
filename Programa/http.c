@@ -650,6 +650,7 @@ void HttpProcessGeneralConfig(char* in)
         g_wifi_info.f.config.report = atoi(s) * 10;
     }
 
+
     g_wifi_info.status.save_config = 50;
 }
 
@@ -702,7 +703,7 @@ void HTTPTask( void )
             }
             else
             {
-                HttpReturnIOStatus(http_buffer_response.data, MAX_HTTP_DATA);
+                strncpy(http_buffer_response.data, http_404, MAX_HTTP_DATA);
             }
         }
         else if( !strcmp(http_buffer_input.uri, "/status.htm"))
@@ -793,9 +794,9 @@ void HTTPTask( void )
         {
             /* Ok */
             g_wifi_info.status.host_conectado = 1;
+            CTRLNotificarStatus(0);
             CTRLSetIO(http_buffer_input.data);
             CTRLConfSys(http_buffer_input.data);
-            CTRLNotificarStatus(0);
             
             /* En el proximo arranque inicia en modo normal */
             if(g_wifi_info.f.config.start_config_mode)
@@ -806,6 +807,7 @@ void HTTPTask( void )
         }
         else
         {
+            /* Error */
             WifiSwitchHost();
         }
         g_wifi_info.status.count_inactividad = 0;
