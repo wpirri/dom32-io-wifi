@@ -83,11 +83,18 @@ void ConfigLoad( void )
         f = FSfopen(CONFIG_FILENAME, FS_READ);
         if(f)
         {
-            rc = FSfread(&g_wifi_info.f.config, sizeof(config_in_file), 1, f);
+            rc = FSfread(&g_wifi_info.f.config, 1, sizeof(config_in_file), f);
             FSfclose(f);
-            if(rc == 1)
+            if(rc >= 245)
             {
                 LogMessage("[ConfigLoad] Lectura de %s Ok.", CONFIG_FILENAME);
+                if(rc < sizeof(config_in_file))
+                {
+                    LogMessage("[ConfigLoad] Ajustando registro de configuracion de %d a %d bytes.",
+                            rc, sizeof(config_in_file));
+                    memset(&g_wifi_info.f.dummy[rc], 0, (sizeof(config_in_file)-rc));
+                }
+                
                 DumpConfig();
                 /* Me fijo si la copia en flash está Ok */
                 if( !ConfigIsValidFlash())
