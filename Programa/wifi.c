@@ -33,11 +33,11 @@
 
 #include "mcc_generated_files/uart1.h"
 #include "mcc_generated_files/pin_manager.h"
+#include "clog.h"
 #include "strfunc.h"
 #include "control.h"
 #include "http.h"
 #include "config.h"
-#include "clog.h"
 #include "delay.h"
 #include "sd/fsio.h"
 

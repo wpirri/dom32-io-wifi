@@ -541,50 +541,6 @@ void HttpReturnWiFiConfig(char *out, int max_len)
             g_wifi_info.f.config.report/10, g_wifi_info.f.config.rqst_path);
 }
 
-void HttpReturnIOStatus(char *out, int max_len)
-{
-    snprintf(out, max_len,
-        "%sID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
-        http_200,
-        g_wifi_info.status.hw_mac,
-        g_control_io.stat1,
-        g_control_io.stat2,
-        g_control_io.stat3,
-        g_control_io.stat4,
-        g_control_io.stat5,
-        g_control_io.stat6,
-        (g_control_out.stat1)?1:0,
-        (g_control_out.stat2)?1:0,
-        (g_control_out.stat3)?1:0,
-        (g_control_out.stat4)?1:0);
-    
-    /* Version del stack AT del ESP-02 */
-    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_at)))
-    {
-        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
-                "&AT=%s", g_wifi_info.status.wifi_at);
-    }
-    /* Version del SDK del ESP-02 */
-    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_sdk)))
-    {
-        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
-                "&SDK=%s", g_wifi_info.status.wifi_sdk);
-    }
-    /* Compilacion del firmware */
-    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.up_fw)))
-    {
-        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
-                "&FW=%s", g_wifi_info.status.up_fw);
-    }
-    /* Capacidad SSL del módulo WIFI */
-    if((MAX_HTTP_DATA - strlen(out) > 10))
-    {
-        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
-                "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
-    }
-    
-    LogMessage("HttpReturnIOStatus - data-len: %d", strlen(out));
-}
 
 void HttpReturnResult(char *out, const char* result, int max_len)
 {
@@ -595,24 +551,6 @@ void HttpReturnResult(char *out, const char* result, int max_len)
         result);
     
     LogMessage("[HttpReturnResult] %s - data-len: %d", result, strlen(out));
-}
-
-void HttpReturnIOConfig(char *out, int max_len)
-{
-    snprintf(out, max_len,
-            "%sID=%s&TYP=IO&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
-            http_200,
-            g_wifi_info.status.hw_mac,
-            (g_wifi_info.f.config.io_config & 0x01)?((g_wifi_info.f.config.an_config & 0x01)?"ana":"in"):"out",
-            (g_wifi_info.f.config.io_config & 0x02)?((g_wifi_info.f.config.an_config & 0x02)?"ana":"in"):"out",
-            (g_wifi_info.f.config.io_config & 0x04)?((g_wifi_info.f.config.an_config & 0x04)?"ana":"in"):"out",
-            (g_wifi_info.f.config.io_config & 0x08)?((g_wifi_info.f.config.an_config & 0x08)?"ana":"in"):"out",
-            (g_wifi_info.f.config.io_config & 0x10)?((g_wifi_info.f.config.an_config & 0x10)?"ana":"in"):"out",
-            (g_wifi_info.f.config.io_config & 0x20)?((g_wifi_info.f.config.an_config & 0x20)?"ana":"in"):"out");
-    if(g_wifi_info.f.config.io_config_default && (strlen(out)+10) < max_len)
-    {
-        strcat(out, "&GETCONF=1");
-    }
 }
 
 void HttpProcessWiFiFormConfig(char* in)
@@ -672,6 +610,70 @@ void HttpProcessCommand(char* in)
         }
     }
 }
+
+void HttpReturnIOStatus(char *out, int max_len)
+{
+    snprintf(out, max_len,
+        "%sID=%s&TYP=IO&IO1=%u&IO2=%u&IO3=%u&IO4=%u&IO5=%u&IO6=%u&OUT1=%u&OUT2=%u&OUT3=%u&OUT4=%u",
+        http_200,
+        g_wifi_info.status.hw_mac,
+        g_control_io.stat1,
+        g_control_io.stat2,
+        g_control_io.stat3,
+        g_control_io.stat4,
+        g_control_io.stat5,
+        g_control_io.stat6,
+        (g_control_out.stat1)?1:0,
+        (g_control_out.stat2)?1:0,
+        (g_control_out.stat3)?1:0,
+        (g_control_out.stat4)?1:0);
+    
+    /* Version del stack AT del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_at)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&AT=%s", g_wifi_info.status.wifi_at);
+    }
+    /* Version del SDK del ESP-02 */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.wifi_sdk)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&SDK=%s", g_wifi_info.status.wifi_sdk);
+    }
+    /* Compilacion del firmware */
+    if((MAX_HTTP_DATA - strlen(out) > sizeof(g_wifi_info.status.up_fw)))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&FW=%s", g_wifi_info.status.up_fw);
+    }
+    /* Capacidad SSL del módulo WIFI */
+    if((MAX_HTTP_DATA - strlen(out) > 10))
+    {
+        snprintf(&out[strlen(out)], MAX_HTTP_DATA - strlen(out), 
+                "&SSL=%s", (g_wifi_info.status.wifi_ssl_capable)?"YES":"NO");
+    }
+    
+    LogMessage("HttpReturnIOStatus - data-len: %d", strlen(out));
+}
+
+void HttpReturnIOConfig(char *out, int max_len)
+{
+    snprintf(out, max_len,
+            "%sID=%s&TYP=IO&IO1=%s&IO2=%s&IO3=%s&IO4=%s&IO5=%s&IO6=%s",
+            http_200,
+            g_wifi_info.status.hw_mac,
+            (g_wifi_info.f.config.io_config & 0x01)?((g_wifi_info.f.config.an_config & 0x01)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x02)?((g_wifi_info.f.config.an_config & 0x02)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x04)?((g_wifi_info.f.config.an_config & 0x04)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x08)?((g_wifi_info.f.config.an_config & 0x08)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x10)?((g_wifi_info.f.config.an_config & 0x10)?"ana":"in"):"out",
+            (g_wifi_info.f.config.io_config & 0x20)?((g_wifi_info.f.config.an_config & 0x20)?"ana":"in"):"out");
+    if(g_wifi_info.f.config.io_config_default && (strlen(out)+10) < max_len)
+    {
+        strcat(out, "&GETCONF=1");
+    }
+}
+
 /* *****************************************************************************
  * Inicializacion, llamar al inicio
  * ************************************************************************** */
