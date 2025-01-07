@@ -48,7 +48,6 @@ void DumpConfig( void );
 void ConfigLoadDefault( void)
 {
     memset(&g_wifi_info.f.config, 0, sizeof(config_in_file));
-    g_wifi_info.f.config.flash_ok = FLASH_OK;
     g_wifi_info.f.config.io_config = 0xFF;
     g_wifi_info.f.config.an_config = 0x00;
     g_wifi_info.f.config.wifi_host1_port = 80;
@@ -78,6 +77,8 @@ void ConfigLoad( void )
 
     if(g_wifi_info.status.flag_sd_ok)
     {
+    	
+    	
         LogMessage("[ConfigLoad] Leyendo configuracion de %s.", CONFIG_FILENAME);
         /* Lectura de configuración em tarjeta SD */
         f = FSfopen(CONFIG_FILENAME, FS_READ);
@@ -85,7 +86,8 @@ void ConfigLoad( void )
         {
             rc = FSfread(&g_wifi_info.f.config, 1, sizeof(config_in_file), f);
             FSfclose(f);
-            if(rc >= 245)
+            LogMessage("[ConfigLoad] Leidos %i bytes de %s.", rc, CONFIG_FILENAME);
+            if(rc >= 236)
             {
                 LogMessage("[ConfigLoad] Lectura de %s Ok.", CONFIG_FILENAME);
                 if(rc < sizeof(config_in_file))

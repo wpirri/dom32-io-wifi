@@ -71,8 +71,6 @@ const char http_get[] =     "GET %s HTTP/1.1\r\n"
 unsigned int http_process_tmp_file;
 char http_process_tmp_file_to_name[FILE_NAME_SIZE+1];
 
-int ReadLine(char *buffer, size_t max_len, FSFILE *fs);
-
 unsigned int g_download_file_count;
 
 int HTTPGetFile(const char* filename, const char* params)
@@ -92,7 +90,7 @@ int HTTPGetFile(const char* filename, const char* params)
     }
 
     LogMessage("[HTTPGetFile] Solicitando archivo %s.", filename);
-    
+    g_wifi_info.status.control_notificar = 0;
     if(params)
     {
         snprintf(tmp_uri, MAX_HTTP_URI, "%s?%s", filename, params);
@@ -128,7 +126,11 @@ int HTTPInitTmpFile(const char* buffer, int len)
         return (-1);
     }
 
-    LogMessage("[HTTPInitTmpFile] %-.20s (%d)", buffer, len);
+    LogMessage("[HTTPInitTmpFile] (%d bytes) -> %s", len, DOWNLOAD_TEMP_FILE_NAME);
+    g_wifi_info.status.control_notificar = 0;
+    http_buffer_input.download = true;
+    strcpy(http_buffer_input.filename, http_buffer_output.filename);
+    
     f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_WRITE);
     if(f)
     {
@@ -141,9 +143,13 @@ int HTTPInitTmpFile(const char* buffer, int len)
         /* Es un archivo chico */
         /* Procesar archivo temporal */
         http_process_tmp_file = 50;
-        strncpy(http_process_tmp_file_to_name, http_buffer_output.filename, FILE_NAME_SIZE);
+        strncpy(http_process_tmp_file_to_name, http_buffer_input.filename, FILE_NAME_SIZE);
         g_end_download = true;
+        
+        http_buffer_input.download = false;
     }
+    
+    http_buffer_output.download = false;
     
     return rc;
 }
@@ -154,12 +160,14 @@ int HTTPAddTmpFile(const char* buffer, int len)
     int rc = (-1);
 
     //LogMessage("[HTTPAddTmpFile] %-.20s (%d)", buffer, len);
-    if( !http_buffer_output.download)
+    if( !http_buffer_input.download)
     {
         LogMessage("[HTTPAddTmpFile] ERROR: Download no iniciado");
         return (-1);
     }
     
+    LogMessage("[HTTPAddTmpFile] (%d bytes) -> %s", len, DOWNLOAD_TEMP_FILE_NAME);
+    g_wifi_info.status.control_notificar = 0;
     f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_APPEND);
     if(f)
     {
@@ -173,11 +181,17 @@ int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
 {
     int rc = 0;
 
-    LogMessage("[HTTPEndTmpFile] %-.20s (%d) -> %s", buffer, len, filename);
+    if( !http_buffer_input.download)
+    {
+        LogMessage("[HTTPEndTmpFile] ERROR: Download no iniciado");
+        return (-1);
+    }
+
     if(len)
     {
         rc = HTTPAddTmpFile(buffer, len);
     }
+    LogMessage("[HTTPEndTmpFile] %s", DOWNLOAD_TEMP_FILE_NAME);
     /* Procesar archivo temporal */
     http_process_tmp_file = 50;
     strncpy(http_process_tmp_file_to_name, filename, FILE_NAME_SIZE);
@@ -185,19 +199,83 @@ int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
     return rc;
 }
 
-/*
- Sirve solo para archivos de texto
- */
+int ReadIPD(FSFILE *fs)
+{
+    char buffer[32];
+    char *p;
+    int buffer_len = 0;;
+    int read_len;
+    char*p_ipd_len;
+    int ipd_len = 0;
+
+    p = &buffer[0];
+    while( (read_len = FSfread(p, 1, 1, fs) > 0) && (buffer_len < 32) )
+    {
+        buffer_len += 1;
+        if(*p == ':')
+        {
+            /* Fin cabecera IPD */
+            p += 1;
+            break;
+        }
+        p += 1;
+    }
+    *p = 0;
+    if(read_len <= 0) return (-1);
+
+    p = &buffer[0];
+
+    if( buffer[0] != '+' ||
+        buffer[1] != 'I' ||
+        buffer[2] != 'P' ||
+        buffer[3] != 'D'  )  return (-1);
+
+    /* Salteo la primer coma */
+    while(*p != ',') { p++; buffer_len--; }
+    p++; buffer_len--;
+    /* Salteo la segunda coma coma */
+    while(*p != ',') { p++; buffer_len--; }
+    p++; buffer_len--;
+    /*  */
+    p_ipd_len = p;
+    /* Voy hasta el fin de la cabecera +IPD */
+    while(*p != ':') { p++; buffer_len--; }
+    *p = 0;
+    /* Tamaño de datos */
+    ipd_len = atoi(p_ipd_len);
+
+    return ipd_len;
+}
+
+int HttpHeadEnd(FSFILE *fs)
+{
+    char buffer[4];
+    int read_len;
+    int head_len;
+
+    read_len = FSfread(buffer, 1, 4, fs);
+    if(read_len != 4) return 0;
+    head_len = 4;
+    while(buffer[0] != 0x0d || buffer[1] != 0x0a || buffer[2] != 0x0d || buffer[3] != 0x0a)
+    {
+        buffer[0] = buffer[1];
+        buffer[1] = buffer[2];
+        buffer[2] = buffer[3];
+        read_len = FSfread(&buffer[3], 1, 1, fs);
+        head_len++;
+        if(read_len != 1) return 0;
+    }
+    return head_len;
+}
+
 void HTTPProcessTmpFile(const char* tmpname, const char* filename)
 {
     char buffer[256];
-    char*p;
-    char*p_ipd_len;
     int len;
     int ipd_len;
+    int head_len;
     FSFILE* fi;
     FSFILE* fo;
-    bool descartar;
 
     LogMessage("[HTTPProcessTmpFile] %s -> %s", tmpname, filename);
     fi = FSfopen(tmpname, FS_READ);
@@ -206,82 +284,43 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename)
         fo = FSfopen(filename, FS_WRITE);
         if(fo)
         {
-            ipd_len = 0;
-            descartar = TRUE;
-            while( (len = ReadLine(buffer, 255, fi)) > 0 )
+            ipd_len = ReadIPD(fi);
+            if( ipd_len > 0 )
             {
-                WATCHDOG_TimerClear();
-                
-                buffer[len] = 0;
-                
-                if( len == 2 && buffer[0] == 0x0d && buffer[1] == 0x0a )
+                head_len = HttpHeadEnd(fi);
+                if(head_len)
                 {
-                    /* Descarto todo hasta el final de la cabecera HTTP */
-                    descartar = FALSE;
-                    /* Descarto todo lo que esté fuera del bloque +IPD */
-                    if(ipd_len > len) ipd_len -= len;
-                    else ipd_len = 0;
-                }
-                else if(ipd_len)
-                {
-                    if( !descartar)
+                    ipd_len -= head_len;
+                    while(ipd_len > 0)
                     {
-                        p = &buffer[0];
-                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
+                        WATCHDOG_TimerClear();
+                        len = FSfread(buffer, 1, (ipd_len>255)?255:ipd_len, fi);
+                        if(len == 0) break;
+                        FSfwrite(buffer, len, 1, fo);
+                        ipd_len -= len;
+                        if(ipd_len == 0)
+                        {
+                            /* Leo el CR/LF del final */
+                            FSfread(buffer, 1, 2, fi);
+                            /* Parseo el proximo IPD */
+                            ipd_len = ReadIPD(fi);
+                        }
                     }
-                    /* Descarto todo lo que esté fuera del bloque +IPD */
-                    if(ipd_len > len) ipd_len -= len;
-                    else ipd_len = 0;
                 }
-                else if( buffer[0] == '+' &&
-                         buffer[1] == 'I' &&
-                         buffer[2] == 'P' &&
-                         buffer[3] == 'D'  )
-                {
-                    /* Comienzo de in bloque +IPD,0,1460: */
-                    p = &buffer[0];
-                    /* Salteo la primer coma */
-                    while(*p != ',') { p++; len--; }
-                    p++; len--;
-                    /* Salteo la segunda coma coma */
-                    while(*p != ',') { p++; len--; }
-                    p++; len--;
-                    /*  */
-                    p_ipd_len = p;
-                    /* Voy hasta el fin de la cabecera +IPD */
-                    while(*p != ':') { p++; len--; }
-                    *p = 0;
-                    ipd_len = atoi(p_ipd_len);
-                    p++; len--;
-                    /*   Estoy aca: v
-                     *  +IPD,0,1460:___ */
-                    if( !descartar)
-                    {
-                        /* Escribo el resto de la linea */
-                        FSfwrite(p, 1, (ipd_len > len)?len:ipd_len, fo);
-                    }
-                    /* Descarto todo lo que esté fuera del bloque +IPD */
-                    if(ipd_len > len) ipd_len -= len;
-                    else ipd_len = 0;
-                }
-            }                
+            }
             FSfclose(fo);
+            LogMessage("[HTTPProcessTmpFile] %s recibido Ok", filename);
+        }
+        else
+        {
+            LogMessage("[HTTPProcessTmpFile] Error abriendo archivo final %s", filename);        
         }
         FSfclose(fi);
-    }        
-}
-
-int ReadLine(char *buffer, size_t max_len, FSFILE *fs)
-{
-    int len = 0;
-
-    while(FSfread(buffer, 1, 1, fs) && len < max_len)
-    {
-        len++;
-        if(*buffer == 0x0a) break;
-        buffer++;
     }
-    return len;
+    else
+    {
+        LogMessage("[HTTPProcessTmpFile] Error abriendo archivo temporal %s", tmpname);        
+    }
 }
 
 int Convert2CharToHex(const char* h)
@@ -810,6 +849,7 @@ void HTTPTask( void )
         else
         {
             /* Error */
+            g_wifi_info.status.host_conectado = 0;
             WifiSwitchHost();
         }
         g_wifi_info.status.count_inactividad = 0;
@@ -821,6 +861,7 @@ void HTTPTask( void )
                 http_buffer_input.data);
     }
     http_buffer_input.type = 0;
+    http_buffer_input.timeout = 0;
 }
 
 /* *****************************************************************************
@@ -834,6 +875,7 @@ void HTTPTimer( void )
         if(http_buffer_input.timeout == 0)
         {
             http_buffer_input.type = 0;
+            http_buffer_input.download = false;
             LogMessage("[HTTPTimer] TIMEOUT de mensaje entrante");
         }
     }
@@ -843,9 +885,9 @@ void HTTPTimer( void )
         http_buffer_output.timeout--;
         if(http_buffer_output.timeout == 0)
         {
+            LogMessage("[HTTPTimer] TIMEOUT de mensaje saliente");
             http_buffer_output.type = 0;
             http_buffer_output.download = false;
-            LogMessage("[HTTPTimer] TIMEOUT de mensaje saliente");
         }
     }
 
@@ -865,7 +907,7 @@ void HTTPTimer( void )
         if(http_process_tmp_file == 0)
         {
             HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
-            FSremove(DOWNLOAD_TEMP_FILE_NAME);
+            //FSremove(DOWNLOAD_TEMP_FILE_NAME);
             if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
             {
                 CTRLReset();
@@ -975,7 +1017,7 @@ int HTTPAddInput(int id, const char* buffer)
         {
             LogMessage("[HTTPAddInput] HTTP Error %i", http_buffer_input.http_rc);
             http_buffer_input.form_rc = 0;
-            http_buffer_output.download = false;
+            http_buffer_input.download = false;
         }
     }
     return 0;

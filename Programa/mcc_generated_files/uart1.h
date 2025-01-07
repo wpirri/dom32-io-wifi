@@ -164,6 +164,7 @@ void UART1_SetRxInterruptHandler(void* handler);
 void UART1_Receive_ISR(void);
 
 
+bool UART1_Overflow();
 
 
 

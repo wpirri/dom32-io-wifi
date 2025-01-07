@@ -40,17 +40,17 @@
 
 typedef struct _config_in_file_ /*  */
 {
-    uint32_t flash_ok;
-    char wifi_ap1[33];
-    char wifi_ap1_pass[33];
-    char wifi_ap2[33];
-    char wifi_ap2_pass[33];
-    char wifi_host1[33];
-    char wifi_host2[33];
-    char rqst_path[33];
-    uint16_t wifi_host1_port;
-    uint16_t wifi_host2_port;
-    uint16_t report;
+    uint32_t dummy1;
+    char wifi_ap1[33];                  /* ap1 */
+    char wifi_ap1_pass[33];             /* ap1p */
+    char wifi_ap2[33];                  /* ap2 */
+    char wifi_ap2_pass[33];             /* ap2p */
+    char wifi_host1[33];                /* ce1 */
+    char wifi_host2[33];                /* ce2 */
+    char rqst_path[33];                 /* path */
+    unsigned int wifi_host1_port;       /* ce1p */
+    unsigned int wifi_host2_port;       /* ce2p */
+    unsigned int report;                /* report */
     unsigned char io_config;
     unsigned char an_config;
     unsigned char enable_https;

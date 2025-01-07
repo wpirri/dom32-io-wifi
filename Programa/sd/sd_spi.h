@@ -37,6 +37,8 @@
 #ifndef SDMMC_H
 #define SDMMC_H
 
+#include <xc.h>
+
 #include "fsconfig.h"
 #include "fsdefs.h"
 

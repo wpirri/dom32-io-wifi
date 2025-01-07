@@ -296,6 +296,21 @@ bool UART1_IsTxDone(void)
     return false;
 }
 
+bool UART1_Overflow()
+{
+    unsigned char c;
+    
+    if(rxOverflowed)
+    {
+        rxHead = rxQueue;
+        rxTail = rxQueue;
+        while((U1STAbits.URXDA == 1)) { c = U3RXREG; }
+        rxOverflowed = false;
+        return true;
+    }
+    return false;
+}
+
 #ifdef __DEPRECATED__
 /* !!! Deprecated API - This function may not be supported in a future release !!! */
 static uint8_t UART1_RxDataAvailable(void)
