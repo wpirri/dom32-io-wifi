@@ -7,10 +7,10 @@
 
 #ifndef DELAY_H
 #define	DELAY_H
-#include <GenericTypeDefs.h>
+//#include <GenericTypeDefs.h>
 
-void __delay_ms(DWORD ms);
-void __delay_us(DWORD us);
+void __delay_ms(unsigned long ms);
+void __delay_us(unsigned long us);
 
 #endif	/* DELAY_H */
 

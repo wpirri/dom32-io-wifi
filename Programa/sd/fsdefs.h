@@ -35,7 +35,30 @@
 #ifndef  _FSDEF__H
 #define  _FSDEF__H
 
-#include <GenericTypeDefs.h>
+//#include <GenericTypeDefs.h>
+#include <stddef.h>
+
+typedef enum _BOOL { FALSE = 0, TRUE } BOOL;    /* Undefined size */
+typedef enum _BIT { CLEAR = 0, SET } BIT;
+/* INT is processor specific in length may vary in size */
+typedef signed int          INT;
+typedef signed char         INT8;
+typedef signed short int    INT16;
+typedef signed long int     INT32;
+/* UINT is processor specific in length may vary in size */
+typedef unsigned int        UINT;
+typedef unsigned char       UINT8;
+typedef unsigned short int  UINT16;
+typedef unsigned long int   UINT32;     /* other name for 32-bit integer */
+/* Alternate definitions */
+typedef void                    VOID;
+
+typedef char                    CHAR8;
+typedef unsigned char           UCHAR8;
+
+typedef unsigned char           BYTE;                           /* 8-bit unsigned  */
+typedef unsigned short int      WORD;                           /* 16-bit unsigned */
+typedef unsigned long           DWORD;                          /* 32-bit unsigned */
 
 // Summary: An enumeration used for various error codes.
 // Description: The CETYPE enumeration is used to indicate different error conditions during device operation.

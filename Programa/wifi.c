@@ -95,6 +95,8 @@ char g_wifi_cmd[256];
 
 bool g_wifi_need_upgrade;
 
+void WifiCheckUnsol( void );
+
 void WifiTaskSTMSet(task_stm st, unsigned int delay, unsigned int to)
 {
     g_wifi_task_stm = st;
@@ -221,12 +223,12 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
         if(g_wifi_read_line_buffer_timer == 0)
         {
             LogMessage("[WifiWaitLine] fin de datos por time-out");
+            LogMessage("[WifiWaitLine] g_wifi_read_line_buffer_index: %i", g_wifi_read_line_buffer_index);
+            LogMessage("[WifiWaitLine] g_wifi_read_line_wait_crlf:    %s", (g_wifi_read_line_wait_crlf)?"true":"false");
+            LogMessage("[WifiWaitLine] g_wifi_wait_more_data:         %s", (g_wifi_wait_more_data)?"true":"false");
         }
         
-        g_wifi_read_line_wait_crlf = true;
-        g_wifi_read_line_buffer_timer = 0;
-
-        while(g_wifi_read_line_buffer_index)
+        if(g_wifi_read_line_buffer_index)
         {
             if(line1)
             {
@@ -286,13 +288,13 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
             
             if(rc == 0)
             {
-                rc = WifiCheckUnsol();
+                WifiCheckUnsol();
             }
-            else
-            {
-                g_wifi_read_line_buffer_index = 0;
-            }
+            g_wifi_read_line_buffer_index = 0;
         }
+        g_wifi_read_line_wait_crlf = true;
+        g_wifi_wait_more_data = false;
+        g_wifi_read_line_buffer_timer = 0;
     }
     else if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
     {
@@ -302,7 +304,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
            g_wifi_read_line_buffer[2] == 'P' &&
            g_wifi_read_line_buffer[3] == 'D'  )
         {
-            rc = WifiCheckUnsol();
+            WifiCheckUnsol();
             g_wifi_wait_more_data = true;
             g_wifi_read_line_buffer_index = 0;
         }
@@ -319,7 +321,7 @@ int WifiWaitPrompt(const char prompt)
     return 0;
 }
 
-int WifiCheckUnsol( void )
+void WifiCheckUnsol( void )
 {
     char str[16];
     int id;
@@ -476,7 +478,6 @@ int WifiCheckUnsol( void )
     {
         g_wifi_read_line_buffer_index = 0;
     }
-    return 0;
 }
 
 void WifiSwitchHost( void )
@@ -1161,6 +1162,12 @@ int WifiTaskHttpReq( void )
         g_wifi_task_stm_step_last = g_wifi_task_stm_step;
     }
 
+    if(http_buffer_output.type == 0)
+    {
+        LogMessage("[WifiTaskHttpReq] Nada para procesar");
+        return LOOP;
+    }
+    
     switch(g_wifi_task_stm_step)
     {
         case 0: /* Conectando */

@@ -991,6 +991,9 @@ int HTTPAddInput(int id, const char* buffer)
     {
         /* Respuesta */
         LogMessage("[HTTPAddInput] Respuesta");
+        
+        http_buffer_output.type = 0;
+        
         http_buffer_input.type = *buffer;
         http_buffer_input.http_rc = HTTPHeadResponse(buffer);
         http_buffer_input.timeout = 50;

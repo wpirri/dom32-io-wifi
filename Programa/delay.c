@@ -9,19 +9,19 @@
 #include "delay.h"
 #include "config.h"
 
-void __attribute__((optimize("-O0"))) __delay_ms(DWORD ms)
+void __attribute__((optimize("-O0"))) __delay_ms(unsigned long ms)
 {
-    DWORD   count;
+    unsigned long   count;
 
     while (ms--)
     {
-        count = ((GetInstructionClock()/(WORD)8/(WORD)1000) - (WORD)5);
+        count = ((GetInstructionClock()/(unsigned long)8/(unsigned long)1000) - (unsigned long)5);
         while (count--);
     }
     _nop();
 }
 
-void __attribute__((optimize("-O0"))) __delay_us(DWORD us)
+void __attribute__((optimize("-O0"))) __delay_us(unsigned long us)
 {   
     /* Para clock de 8MHz */
     us += (us * 17 / 100);
