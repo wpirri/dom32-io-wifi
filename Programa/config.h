@@ -48,9 +48,9 @@ typedef struct _config_in_file_ /*  */
     char wifi_host1[33];                /* ce1 */
     char wifi_host2[33];                /* ce2 */
     char rqst_path[33];                 /* path */
-    unsigned int wifi_host1_port;       /* ce1p */
-    unsigned int wifi_host2_port;       /* ce2p */
-    unsigned int report;                /* report */
+    uint16_t wifi_host1_port;           /* ce1p */
+    uint16_t wifi_host2_port;           /* ce2p */
+    uint16_t report;                    /* report */
     unsigned char io_config;
     unsigned char an_config;
     unsigned char enable_https;
