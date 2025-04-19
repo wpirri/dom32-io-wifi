@@ -98,9 +98,9 @@ void LedControl( void )
     {
         if(led_count > 10)
         {
-            if(g_wifi_info.status.wifi_conectado)
+            if(g_wifi_info.status.wifi_conectado_ap)
             {
-                if((led_count-10) <= (g_wifi_info.status.wifi_conectado*2))
+                if((led_count-10) <= (g_wifi_info.status.wifi_conectado_ap*2))
                 {
                     LED_Status_SetValue(led_count & 0x01);
                 }

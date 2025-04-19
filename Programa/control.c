@@ -468,7 +468,7 @@ void CTRLTimer( void )
 
     if( g_wifi_info.status.control_notificar > 0 &&
         g_wifi_info.status.wifi_mode == 1 &&
-        g_wifi_info.status.wifi_conectado != 0 )
+        g_wifi_info.status.wifi_conectado_ok )
     {
         g_wifi_info.status.control_notificar--;
         if(g_wifi_info.status.control_notificar == 0)
@@ -480,11 +480,6 @@ void CTRLTimer( void )
             /* programo un reintento, si hay respuesta Ok luego se extiende el tiempo */
             g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
         }
-    }
-    else if(g_wifi_info.status.control_notificar == 0)
-    {
-        /* notifico segun lo configurado */
-        g_wifi_info.status.control_notificar = g_wifi_info.f.config.report;
     }
     
     /* Control de pulso */

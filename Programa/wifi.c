@@ -15,6 +15,11 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
+/*
+ AT+CIPSTA_CUR="192.168.6.100","192.168.6.1","255.255.255.0"
+ AT+CIFSR
+ 
+ */
 #include <xc.h>
  /*
  	TODO: Seleccion de host de destino
@@ -42,6 +47,7 @@
 #include "sd/fsio.h"
 
 #define TIMER_AP_VALUE 600
+#define STM_CASE_ERROR 9999
 
 typedef enum
 {
@@ -396,18 +402,20 @@ void WifiCheckUnsol( void )
         g_wifi_read_line_buffer_index = 0;
         LogMessage("[WIFI] Conectado al AP [%s].", 
                 ((g_wifi_info.status.wifi_ap_select == 1)?g_wifi_info.f.config.wifi_ap1:g_wifi_info.f.config.wifi_ap2));
-        g_wifi_info.status.wifi_conectado = g_wifi_info.status.wifi_ap_select;
+        g_wifi_info.status.wifi_conectado_ap = g_wifi_info.status.wifi_ap_select;
+        g_wifi_info.status.wifi_conectado_ok = false;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "WIFI DISCONNECTED", 17))
     {
         g_wifi_read_line_buffer_index = 0;
         LogMessage("[WiFi] Deconectado del AP.");
-        if(g_wifi_info.status.wifi_conectado)
+        if(g_wifi_info.status.wifi_conectado_ap)
         {
-            g_wifi_info.status.wifi_conectado = 0;
+            g_wifi_info.status.wifi_conectado_ap = 0;
             g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
             g_wifi_info.status.wifi_start_st = true;
         }
+        g_wifi_info.status.wifi_conectado_ok = false;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
@@ -446,6 +454,21 @@ void WifiCheckUnsol( void )
             g_wifi_info.status.hw_mac[10] = g_wifi_read_line_buffer[30];
             g_wifi_info.status.hw_mac[11] = g_wifi_read_line_buffer[31];
             g_wifi_info.status.hw_mac[12] = 0;
+        }
+        else if( !memcmp(&g_wifi_read_line_buffer[7], "STAIP", 5))
+        {
+            if( g_wifi_info.f.config.wifi_sta_last_ip[0] == 0 ||
+                memcmp(g_wifi_info.f.config.wifi_sta_last_ip, &g_wifi_read_line_buffer[14], strlen(g_wifi_info.f.config.wifi_sta_last_ip)) )
+            {
+                strcpy(g_wifi_info.f.config.wifi_sta_last_ip, &g_wifi_read_line_buffer[14]);
+                g_wifi_info.f.config.wifi_sta_last_ip[strlen(g_wifi_info.f.config.wifi_sta_last_ip)-1] = 0;
+                g_wifi_info.status.save_config = 50;
+            }
+            if(strlen(g_wifi_info.f.config.wifi_sta_last_ip))
+            {
+                LogMessage("[WiFi] IP %s", g_wifi_info.f.config.wifi_sta_last_ip);
+                g_wifi_info.status.wifi_conectado_ok = true;
+            }
         }
     }
     else if( !memcmp(g_wifi_read_line_buffer, "AT version:", 11))
@@ -786,6 +809,8 @@ int WifiTaskSTMode( void )
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.wifi_conectado_ap = 0;
+            g_wifi_info.status.wifi_conectado_ok = false;
             g_wifi_info.status.host_conectado = 0;
             break;
         case 1:
@@ -860,28 +885,13 @@ int WifiTaskSTMode( void )
             }
             break;
         case 8:
-            /* MAC e IP */
-            WifiWriteLine("AT+CIFSR");
-            g_wifi_task_stm_step++;
-            g_wifi_task_stm_delay = 0;
-            g_wifi_task_stm_timeout = 25;
-            break;
-        case 9:
-            if(WifiWaitLine("OK", 0, 0, 0, 0) || g_wifi_task_stm_timeout == 0)
-            {
-                g_wifi_task_stm_step++;
-                g_wifi_task_stm_delay = 0;
-                g_wifi_task_stm_timeout = 0;
-            }
-            break;
-        case 10/*8*/:
             /* Listen */
             WifiWriteLine("AT+CIPSERVER=1,80");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 11/*9*/:
+        case 9:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
                 g_wifi_task_stm_step++;
@@ -894,14 +904,14 @@ int WifiTaskSTMode( void )
                 rc = (-1);
             }
             break;
-        case 12/*10*/:
+        case 10:
             /* Reconnect */
             WifiWriteLine("AT+CWAUTOCONN=1");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
             break;
-        case 13/*11*/:
+        case 11:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
                 g_wifi_task_stm_step++;
@@ -915,7 +925,7 @@ int WifiTaskSTMode( void )
                 rc = (-1);
             }
             break;
-        case 14/*12*/:
+        case 12:
             /* Si el actual no existe cambio al que exista */
             if(g_wifi_info.status.wifi_ap_select == 1 &&
                g_wifi_info.f.config.wifi_ap1[0] == 0 &&
@@ -950,9 +960,7 @@ int WifiTaskSTMode( void )
                 WifiWriteLine(g_wifi_cmd);
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
-                g_wifi_task_stm_timeout = 300;
-                g_wifi_info.status.wifi_conectado = 0;
-                g_wifi_info.status.host_conectado = 0;
+                g_wifi_task_stm_timeout = 100;
             }
             else
             {
@@ -961,28 +969,76 @@ int WifiTaskSTMode( void )
                 rc = LOOP;
             }
             break;
-        case 15/*13*/:
+        case 13:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                LogMessage("[WifiTaskSTMode] ********** Modo normal **********");
                 g_wifi_task_stm_step++;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
-                g_wifi_info.status.control_notificar = 1;
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
+                if(g_wifi_info.status.wifi_conectado_ap)
+                {
+                    LogMessage("[WifiTaskSTMode] Error opteniendo IP.");
+                }
+                else
+                {
+                    LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
+                }
                 LogMessage("[WifiTaskSTMode] Reconectando...");
-                g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
-                g_wifi_info.status.wifi_start_st = true;
-                rc = LOOP;
+                g_wifi_task_stm_step = STM_CASE_ERROR;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
             }
             break;
+        case 14:
+            /* MAC e IP */
+            WifiWriteLine("AT+CIFSR");
+            g_wifi_task_stm_step++;
+            g_wifi_task_stm_delay = 0;
+            g_wifi_task_stm_timeout = 25;
+            break;
+        case 15:
+            if(WifiWaitLine("OK", 0, 0, 0, 0))
+            {
+                if(g_wifi_info.status.wifi_conectado_ap && g_wifi_info.status.wifi_conectado_ok)
+                {
+                    g_wifi_task_stm_step++;
+                    g_wifi_task_stm_delay = 0;
+                    g_wifi_task_stm_timeout = 0;
+                }
+                else
+                {
+                    LogMessage("[WifiTaskSTMode] Error opteniendo IP.");
+                    LogMessage("[WifiTaskSTMode] Reconectando...");
+                    g_wifi_task_stm_step = STM_CASE_ERROR;
+                    g_wifi_task_stm_delay = 0;
+                    g_wifi_task_stm_timeout = 0;
+                }
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                LogMessage("[WifiTaskSTMode] Time-Out opteniendo IP.");
+                LogMessage("[WifiTaskSTMode] Reconectando...");
+                g_wifi_task_stm_step = STM_CASE_ERROR;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case 16:
+            /* Fin Ok */
+            LogMessage("[WifiTaskSTMode] ********** Modo normal **********");
+            g_wifi_info.status.control_notificar = 1;
+            rc = LOOP;
             // Puede faltar                
             // AT+CIPSNTPCFG=1,8	 // set SNTP timezone
             // AT+CIPSNTPTIME? // get SNTP time
+            break;
+        case STM_CASE_ERROR:
         default:
+            g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
+            g_wifi_info.status.wifi_start_st = true;
             rc = LOOP;
             break;
     }
@@ -1361,7 +1417,7 @@ int WifiTaskLoop( void )
     {
         return HTTP_REQ;
     }
-    else if(g_wifi_need_upgrade && g_wifi_info.status.wifi_conectado)
+    else if(g_wifi_need_upgrade && g_wifi_info.status.wifi_conectado_ok)
     {
         return UPGRADE;
     }
@@ -1439,6 +1495,8 @@ void WiFiInit( void )
         g_wifi_info.f.config.start_config_mode = true;
         ConfigSave();
     }
+    
+    g_wifi_info.status.wifi_ap_select = 1;
 }
 
 /* *****************************************************************************
@@ -1472,10 +1530,9 @@ void WiFiTask( void )
             g_wifi_send_error_count = 0;
             g_wifi_recv_error_count = 0;
 
-            g_wifi_info.status.wifi_conectado = 0;
-            g_wifi_info.status.wifi_ap_select = 1;
             g_wifi_timer_ap = 0;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.wifi_conectado_ok = false;
             g_wifi_info.status.host_conectado = 0;
             
             WifiTaskSTMSet(START, 20, 0);

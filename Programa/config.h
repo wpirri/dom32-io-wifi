@@ -58,6 +58,7 @@ typedef struct _config_in_file_ /*  */
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
     unsigned long start_config_mode;
+    char wifi_sta_last_ip[16];
 } config_in_file;
 
 typedef struct
@@ -74,8 +75,9 @@ typedef struct
         bool wifi_start_st;
         bool wifi_ssl_capable;
         bool flag_sd_ok;
+        bool wifi_conectado_ok;
         unsigned char wifi_ap_select;
-        unsigned char wifi_conectado;
+        unsigned char wifi_conectado_ap;
         unsigned char host_conectado;
         unsigned char wifi_mode;
         unsigned char save_config;
