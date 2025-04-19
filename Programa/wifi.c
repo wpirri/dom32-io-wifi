@@ -47,6 +47,7 @@
 #include "sd/fsio.h"
 
 #define TIMER_AP_VALUE 600
+#define STM_CASE_OK    9998
 #define STM_CASE_ERROR 9999
 
 typedef enum
@@ -978,18 +979,24 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                if(g_wifi_info.status.wifi_conectado_ap)
+                if(g_wifi_info.status.wifi_conectado_ap && strlen(g_wifi_info.f.config.wifi_sta_last_ip))
                 {
                     LogMessage("[WifiTaskSTMode] Error opteniendo IP.");
+                    LogMessage("[WifiTaskSTMode] Itentando con %s", g_wifi_info.f.config.wifi_sta_last_ip);
+                    sprintf(g_wifi_cmd, "AT+CIPSTA_CUR=\"%s\"", g_wifi_info.f.config.wifi_sta_last_ip);
+                    WifiWriteLine(g_wifi_cmd);
+                    g_wifi_task_stm_step = 16;
+                    g_wifi_task_stm_delay = 0;
+                    g_wifi_task_stm_timeout = 100;
                 }
                 else
                 {
                     LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
+                    LogMessage("[WifiTaskSTMode] Reconectando...");
+                    g_wifi_task_stm_step = STM_CASE_ERROR;
+                    g_wifi_task_stm_delay = 0;
+                    g_wifi_task_stm_timeout = 0;
                 }
-                LogMessage("[WifiTaskSTMode] Reconectando...");
-                g_wifi_task_stm_step = STM_CASE_ERROR;
-                g_wifi_task_stm_delay = 0;
-                g_wifi_task_stm_timeout = 0;
             }
             break;
         case 14:
@@ -1004,7 +1011,7 @@ int WifiTaskSTMode( void )
             {
                 if(g_wifi_info.status.wifi_conectado_ap && g_wifi_info.status.wifi_conectado_ok)
                 {
-                    g_wifi_task_stm_step++;
+                    g_wifi_task_stm_step = STM_CASE_OK;
                     g_wifi_task_stm_delay = 0;
                     g_wifi_task_stm_timeout = 0;
                 }
@@ -1027,6 +1034,24 @@ int WifiTaskSTMode( void )
             }
             break;
         case 16:
+            /* Viene de: AT+CIPSTA_CUR */
+            if(WifiWaitLine("OK", 0, 0, 0, 0))
+            {
+                /* obtengo MAC */
+                g_wifi_task_stm_step = 14;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            else if(g_wifi_task_stm_timeout == 0)
+            {
+                LogMessage("[WifiTaskSTMode] Error forzando IP.");
+                LogMessage("[WifiTaskSTMode] Reconectando...");
+                g_wifi_task_stm_step = STM_CASE_ERROR;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
+            }
+            break;
+        case STM_CASE_OK:
             /* Fin Ok */
             LogMessage("[WifiTaskSTMode] ********** Modo normal **********");
             g_wifi_info.status.control_notificar = 1;
