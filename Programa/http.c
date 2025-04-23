@@ -166,7 +166,7 @@ int HTTPAddTmpFile(const char* buffer, int len)
         return (-1);
     }
     
-    LogMessage("[HTTPAddTmpFile] (%d bytes) -> %s", len, DOWNLOAD_TEMP_FILE_NAME);
+    //LogMessage("[HTTPAddTmpFile] (%d bytes) -> %s", len, DOWNLOAD_TEMP_FILE_NAME);
     g_wifi_info.status.control_notificar = 0;
     f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_APPEND);
     if(f)

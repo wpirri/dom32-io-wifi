@@ -15,11 +15,6 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
-/*
- AT+CIPSTA_CUR="192.168.6.100","192.168.6.1","255.255.255.0"
- AT+CIFSR
- 
- */
 #include <xc.h>
  /*
  	TODO: Seleccion de host de destino
@@ -45,6 +40,11 @@
 #include "config.h"
 #include "delay.h"
 #include "sd/fsio.h"
+
+#define UART_WRITE      UART1_Write
+#define UART_OVERFLOW   UART1_Overflow
+#define UART_ISRXREADY  UART1_IsRxReady
+#define UART_READ       UART1_Read
 
 #define TIMER_AP_VALUE 600
 #define STM_CASE_OK    9998
@@ -120,7 +120,7 @@ void WifiWrite( const char *buffer )
         LogMessage("[WifiWrite] %-.100s", buffer);
         while(*buffer)
         {
-            UART1_Write((uint8_t)*buffer);
+            UART_WRITE((uint8_t)*buffer);
             buffer++;
         }
     }
@@ -133,17 +133,17 @@ void WifiWriteLine( const char *line )
         LogMessage("[WifiWriteLine] %-.100s", line);
         while(*line)
         {
-            UART1_Write((uint8_t)*line);
+            UART_WRITE((uint8_t)*line);
             line++;
         }
     }
-    UART1_Write('\r');
-    UART1_Write('\n');
+    UART_WRITE('\r');
+    UART_WRITE('\n');
 }
 
 /*
-    Return: = 0 - No se recibi� lo que se esperaba y ninguna acci�n no solicitada
-            > 0 - Se recibi� algo no solicitado rc = nuevo estado
+    Return: = 0 - No se recibio lo que se esperaba y ninguna accion no solicitada
+            > 0 - Se recibio algo no solicitado rc = nuevo estado
             < 0 - Se recibio lo que se esperaba
 */
 int WifiWaitLine(const char *line1, const char *line2, const char *line3, const char *line4, const char *line5)
@@ -152,7 +152,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
     unsigned char c = 0;
 
     /* Ante un overflow booro lo que haya sin procesar */
-    if(UART1_Overflow())
+    if(UART_OVERFLOW())
     {
         LogMessage("[WifiWaitLine] UART buffer overflow");
         g_wifi_read_line_buffer_timer = 0;
@@ -160,10 +160,10 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
         return 0;
     }
     
-    while( UART1_IsRxReady() &&
+    while( UART_ISRXREADY() &&
             g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN )
     {
-        c = UART1_Read();
+        c = UART_READ();
         g_wifi_read_line_buffer_timer = 5;
 
         /* Si estoy esperando fin de linea ... */
@@ -321,9 +321,9 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
 
 int WifiWaitPrompt(const char prompt)
 {
-    while(UART1_IsRxReady())
+    while(UART_ISRXREADY())
     {
-        if(UART1_Read() == prompt) return 1;
+        if(UART_READ() == prompt) return 1;
     }
     return 0;
 }
@@ -500,6 +500,10 @@ void WifiCheckUnsol( void )
     }
     else
     {
+        if(g_wifi_read_line_buffer_index)
+        {
+            //LogMessage("[WiFi] Recibido: [%s]", g_wifi_read_line_buffer);
+        }
         g_wifi_read_line_buffer_index = 0;
     }
 }
@@ -907,7 +911,7 @@ int WifiTaskSTMode( void )
             break;
         case 10:
             /* Reconnect */
-            WifiWriteLine("AT+CWAUTOCONN=1");
+            WifiWriteLine("AT+CWAUTOCONN=0");
             g_wifi_task_stm_step++;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 25;
@@ -979,24 +983,11 @@ int WifiTaskSTMode( void )
             }
             else if(g_wifi_task_stm_timeout == 0)
             {
-                if(g_wifi_info.status.wifi_conectado_ap && strlen(g_wifi_info.f.config.wifi_sta_last_ip))
-                {
-                    LogMessage("[WifiTaskSTMode] Error opteniendo IP.");
-                    LogMessage("[WifiTaskSTMode] Itentando con %s", g_wifi_info.f.config.wifi_sta_last_ip);
-                    sprintf(g_wifi_cmd, "AT+CIPSTA_CUR=\"%s\"", g_wifi_info.f.config.wifi_sta_last_ip);
-                    WifiWriteLine(g_wifi_cmd);
-                    g_wifi_task_stm_step = 16;
-                    g_wifi_task_stm_delay = 0;
-                    g_wifi_task_stm_timeout = 100;
-                }
-                else
-                {
-                    LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
-                    LogMessage("[WifiTaskSTMode] Reconectando...");
-                    g_wifi_task_stm_step = STM_CASE_ERROR;
-                    g_wifi_task_stm_delay = 0;
-                    g_wifi_task_stm_timeout = 0;
-                }
+                LogMessage("[WifiTaskSTMode] Error de conexion con AP.");
+                LogMessage("[WifiTaskSTMode] Reconectando...");
+                g_wifi_task_stm_step = STM_CASE_ERROR;
+                g_wifi_task_stm_delay = 0;
+                g_wifi_task_stm_timeout = 0;
             }
             break;
         case 14:
@@ -1027,24 +1018,6 @@ int WifiTaskSTMode( void )
             else if(g_wifi_task_stm_timeout == 0)
             {
                 LogMessage("[WifiTaskSTMode] Time-Out opteniendo IP.");
-                LogMessage("[WifiTaskSTMode] Reconectando...");
-                g_wifi_task_stm_step = STM_CASE_ERROR;
-                g_wifi_task_stm_delay = 0;
-                g_wifi_task_stm_timeout = 0;
-            }
-            break;
-        case 16:
-            /* Viene de: AT+CIPSTA_CUR */
-            if(WifiWaitLine("OK", 0, 0, 0, 0))
-            {
-                /* obtengo MAC */
-                g_wifi_task_stm_step = 14;
-                g_wifi_task_stm_delay = 0;
-                g_wifi_task_stm_timeout = 0;
-            }
-            else if(g_wifi_task_stm_timeout == 0)
-            {
-                LogMessage("[WifiTaskSTMode] Error forzando IP.");
                 LogMessage("[WifiTaskSTMode] Reconectando...");
                 g_wifi_task_stm_step = STM_CASE_ERROR;
                 g_wifi_task_stm_delay = 0;
@@ -1360,7 +1333,7 @@ int WifiTaskHttpReq( void )
             break;
         case 9: /* Listo */
             sprintf(g_wifi_cmd, "%d,CLOSED", http_buffer_output.id);
-            if(WifiWaitLine(g_wifi_cmd, "UNLINK", "OK", 0, 0))
+            if(WifiWaitLine(g_wifi_cmd, "UNLINK", "OK", 0, 0) || g_end_download)
             {
                 LogMessage("[WifiTaskHttpReq] Cerrado");
                 rc = LOOP;
