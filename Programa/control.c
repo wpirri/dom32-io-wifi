@@ -635,6 +635,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat1 = 1;
             g_control_io.pulse1 = atoi(tmp)*10;
+            if(g_control_io.pulse1 < 10) g_control_io.pulse1 = 10;
             LogMessage("IO1: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO1", tmp))
@@ -650,6 +651,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat2 = 1;
             g_control_io.pulse2 = atoi(tmp)*10;
+            if(g_control_io.pulse2 < 10) g_control_io.pulse2 = 10;
             LogMessage("IO2: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO2", tmp))
@@ -665,6 +667,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat3 = 1;
             g_control_io.pulse3 = atoi(tmp)*10;
+            if(g_control_io.pulse3 < 10) g_control_io.pulse3 = 10;
             LogMessage("IO3: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO3", tmp))
@@ -680,6 +683,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat4 = 1;
             g_control_io.pulse4 = atoi(tmp)*10;
+            if(g_control_io.pulse4 < 10) g_control_io.pulse4 = 10;
             LogMessage("IO4: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO4", tmp))
@@ -695,6 +699,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat5 = 1;
             g_control_io.pulse5 = atoi(tmp)*10;
+            if(g_control_io.pulse5 < 10) g_control_io.pulse5 = 10;
             LogMessage("IO5: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO5", tmp))
@@ -710,6 +715,7 @@ void CTRLSetIO(char* in)
         {
             g_control_io.stat6 = 1;
             g_control_io.pulse6 = atoi(tmp)*10;
+            if(g_control_io.pulse6 < 10) g_control_io.pulse6 = 10;
             LogMessage("IO6: Pulso %s s", tmp);
         }
         else if(HTTPGetFormData(in, "IO6", tmp))
@@ -723,6 +729,7 @@ void CTRLSetIO(char* in)
     {
         g_control_out.stat1 = 1;
         g_control_out.pulse1 = atoi(tmp)*10;
+        if(g_control_out.pulse1 < 10) g_control_out.pulse1 = 10;
         LogMessage("OUT1: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT1", tmp))
@@ -735,6 +742,7 @@ void CTRLSetIO(char* in)
     {
         g_control_out.stat2 = 1;
         g_control_out.pulse2 = atoi(tmp)*10;
+        if(g_control_out.pulse2 < 10) g_control_out.pulse2 = 10;
         LogMessage("OUT2: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT2", tmp))
@@ -747,6 +755,7 @@ void CTRLSetIO(char* in)
     {
         g_control_out.stat3 = 1;
         g_control_out.pulse3 = atoi(tmp)*10;
+        if(g_control_out.pulse3 < 10) g_control_out.pulse3 = 10;
         LogMessage("OUT3: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT3", tmp))
@@ -759,6 +768,7 @@ void CTRLSetIO(char* in)
     {
         g_control_out.stat4 = 1;
         g_control_out.pulse4 = atoi(tmp)*10;
+        if(g_control_out.pulse4 < 10) g_control_out.pulse4 = 10;
         LogMessage("OUT4: Pulso %s s", tmp);
     }
     else if(HTTPGetFormData(in, "OUT4", tmp))
