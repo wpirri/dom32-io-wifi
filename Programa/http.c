@@ -1219,19 +1219,19 @@ int HTTPNotificarStatus()
     }
     
     /* Version del stack AT del ESP-02 */
-    if((MAX_HTTP_DATA - strlen(tmp_data) > sizeof(g_wifi_info.status.wifi_at)))
+    if((MAX_HTTP_DATA - strlen(tmp_data) > strlen(g_wifi_info.status.wifi_at)))
     {
         snprintf(&tmp_data[strlen(tmp_data)], MAX_HTTP_DATA - strlen(tmp_data), 
                 "&AT=%s", g_wifi_info.status.wifi_at);
     }
     /* Version del SDK del ESP-02 */
-    if((MAX_HTTP_DATA - strlen(tmp_data) > sizeof(g_wifi_info.status.wifi_sdk)))
+    if((MAX_HTTP_DATA - strlen(tmp_data) > strlen(g_wifi_info.status.wifi_sdk)))
     {
         snprintf(&tmp_data[strlen(tmp_data)], MAX_HTTP_DATA - strlen(tmp_data), 
                 "&SDK=%s", g_wifi_info.status.wifi_sdk);
     }
     /* Compilacion del firmware */
-    if((MAX_HTTP_DATA - strlen(tmp_data) > sizeof(g_wifi_info.status.up_fw)))
+    if((MAX_HTTP_DATA - strlen(tmp_data) > strlen(g_wifi_info.status.up_fw)))
     {
         snprintf(&tmp_data[strlen(tmp_data)], MAX_HTTP_DATA - strlen(tmp_data), 
                 "&FW=%s", g_wifi_info.status.up_fw);
