@@ -617,7 +617,7 @@ void CTRLTimer( void )
         {
             if(HTTPGetFile(DOWNLOAD_PATH"/"FIRMWARE_FILENAME, NULL) <= 0 )
             {
-                g_control_update_firmware = 10;
+                UpdateFirmware();
             }
         }
     }
@@ -1223,7 +1223,7 @@ void CTRLConfSys(char* in)
     {
         LogMessage("********** Actualizar Firmware **********");
         /* Actualizar firmware en 5 seg */
-        g_control_update_firmware = 50;
+        UpdateFirmware();
     }
     
     if(HTTPGetFormData(in, "report", tmp))
@@ -1292,4 +1292,10 @@ void CTRLReset( void )
     /* reset en 10 seg */
     LogMessage("[CTRL] RESET solicitado.");
     g_ctrl_count_reset = 30;
+}
+
+void UpdateFirmware( void )
+{
+    /* Actualizar firmware en 5 seg */
+    g_control_update_firmware = 50;
 }

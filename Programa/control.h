@@ -81,4 +81,6 @@ void CTRLConfSys(char* in);
 void CTRLReset( void );
 void CTRLNotificarStatus( int time );
 
+void UpdateFirmware( void );
+
 #endif /* _CONTROL_H_ */

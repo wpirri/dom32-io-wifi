@@ -626,6 +626,17 @@ void HttpProcessGeneralConfig(char* in)
     {
         g_wifi_info.f.config.report = atoi(s) * 10;
     }
+    if(HTTPGetFormData(in, "reset", s))
+    {
+        CTRLReset();
+    }
+    if(HTTPGetFormData(in, "update", s))
+    {
+        if( !strcmp(s, "firmware"))
+        {
+            UpdateFirmware();
+        }
+    }
 
 
     g_wifi_info.status.save_config = 50;
@@ -1195,6 +1206,16 @@ int HTTPNotificarStatus()
             first_change = false;
             strcat(tmp_data, "OUT4");
         }
+    }
+    
+    /* Agrego una marca para que la base sepa si estuve offline */
+    if(g_wifi_info.status.host_conectado)
+    {
+        strcat(tmp_data, "&ONLINE=1");
+    }
+    else
+    {
+        strcat(tmp_data, "&ONLINE=0");
     }
     
     /* Version del stack AT del ESP-02 */
