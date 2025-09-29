@@ -75,9 +75,9 @@ typedef struct
         bool wifi_start_st;
         bool wifi_ssl_capable;
         bool flag_sd_ok;
-        bool wifi_conectado_ok;
         unsigned char wifi_ap_select;
-        unsigned char wifi_conectado_ap;
+        unsigned char wifi_conectado_ap;   /* a què AP se conectò */
+        unsigned char wifi_conectado_ip;    /* cuando obtiene IP */
         unsigned char host_conectado;
         unsigned char wifi_mode;
         unsigned char save_config;

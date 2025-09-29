@@ -461,24 +461,32 @@ void CTRLTask( void )
 /* Se llama 10 veces por segundo - 100ms */
 void CTRLTimer( void )
 {
-    if(g_wifi_info.status.host_conectado == 0 && g_wifi_info.status.control_notificar > (g_wifi_info.f.config.report/10))
+    /* Veo si estoy en condiciones de enviar notificaciones */
+    if(g_wifi_info.status.wifi_mode == 1 && g_wifi_info.status.wifi_conectado_ip)
     {
-        g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
-    }
-
-    if( g_wifi_info.status.control_notificar > 0 &&
-        g_wifi_info.status.wifi_mode == 1 &&
-        g_wifi_info.status.wifi_conectado_ok )
-    {
-        g_wifi_info.status.control_notificar--;
+        /* notifico segun lo configurado */
         if(g_wifi_info.status.control_notificar == 0)
         {
-            /* Levanto el flag para que
-             * en adelante los cambios cuenten */
-            g_control_init_complete = 1;
-            HTTPNotificarStatus();
-            /* programo un reintento, si hay respuesta Ok luego se extiende el tiempo */
+            g_wifi_info.status.control_notificar = g_wifi_info.f.config.report;
+        }
+        /* Si estoy offline notifico con mayor frecuencia */
+        if(g_wifi_info.status.host_conectado == 0 && g_wifi_info.status.control_notificar > (g_wifi_info.f.config.report/10))
+        {
             g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
+        }
+        /* Período de notificación */
+        if( g_wifi_info.status.control_notificar > 0 )
+        {
+            g_wifi_info.status.control_notificar--;
+            if(g_wifi_info.status.control_notificar == 0)
+            {
+                /* Levanto el flag para que
+                 * en adelante los cambios cuenten */
+                g_control_init_complete = 1;
+                HTTPNotificarStatus();
+                /* programo un reintento, si hay respuesta Ok luego se extiende el tiempo */
+                g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
+            }
         }
     }
     

@@ -293,7 +293,6 @@ void DumpConfig( void )
     LogMessage("[DumpConfig] io_config:        0x%02X", g_wifi_info.f.config.io_config);
     LogMessage("[DumpConfig] an_config:        0x%02X", g_wifi_info.f.config.an_config);
     LogMessage("[DumpConfig] report:           %d", g_wifi_info.f.config.report);
-    LogMessage("[DumpConfig] IP Local:         %s", g_wifi_info.f.config.wifi_sta_last_ip);
     LogMessage("[DumpConfig] enable_https:     %s", (g_wifi_info.f.config.enable_https)?"si":"no");
     LogMessage("[DumpConfig] enable_wiegand:   %s", (g_wifi_info.f.config.enable_wiegand)?"si":"no");
     LogMessage("[DumpConfig] rtcc_clk_div_adj: %li", g_wifi_info.f.config.rtcc_clk_div_adj);
