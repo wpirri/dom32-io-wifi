@@ -462,7 +462,7 @@ void CTRLTask( void )
 void CTRLTimer( void )
 {
     /* Veo si estoy en condiciones de enviar notificaciones */
-    if(g_wifi_info.status.wifi_mode == 1 && g_wifi_info.status.wifi_conectado_ip)
+    if(g_wifi_info.status.wifi_mode == 1 && g_wifi_info.status.wifi_conectado_ok)
     {
         /* notifico segun lo configurado */
         if(g_wifi_info.status.control_notificar == 0)
@@ -474,7 +474,7 @@ void CTRLTimer( void )
         {
             g_wifi_info.status.control_notificar = (g_wifi_info.f.config.report/10);
         }
-        /* Período de notificación */
+        /* Periodo de notificacion */
         if( g_wifi_info.status.control_notificar > 0 )
         {
             g_wifi_info.status.control_notificar--;

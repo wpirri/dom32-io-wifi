@@ -294,14 +294,11 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
             {
                 WifiCheckUnsol();
             }
-            else
-            {
-                g_wifi_read_line_buffer_index = 0;
-            }
+            g_wifi_read_line_buffer_index = 0;
         }
         g_wifi_read_line_wait_crlf = true;
         g_wifi_wait_more_data = false;
-        g_wifi_read_line_buffer_timer = 0;        
+        g_wifi_read_line_buffer_timer = 0;
     }
     else if(g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN)
     {
@@ -411,12 +408,11 @@ void WifiCheckUnsol( void )
         LogMessage("[WiFi] Desconectado del AP.");
         if(g_wifi_info.status.wifi_conectado_ap)
         {
+            g_wifi_info.status.wifi_conectado_ap = 0;
             g_wifi_info.status.wifi_ap_select = (g_wifi_info.status.wifi_ap_select == 1)?2:1;
             g_wifi_info.status.wifi_start_st = true;
         }
-        g_wifi_info.status.wifi_conectado_ap = 0;
-        g_wifi_info.status.wifi_conectado_ip = 0;
-        g_wifi_info.status.host_conectado = 0;
+        g_wifi_info.status.wifi_conectado_ok = false;
     }
     else if( !memcmp(g_wifi_read_line_buffer, "+STA_CONNECTED", 8))
     {
@@ -458,17 +454,11 @@ void WifiCheckUnsol( void )
         }
         else if( !memcmp(&g_wifi_read_line_buffer[7], "STAIP", 5))
         {
-            if( g_wifi_info.f.config.wifi_sta_last_ip[0] == 0 ||
-                memcmp(g_wifi_info.f.config.wifi_sta_last_ip, &g_wifi_read_line_buffer[14], strlen(g_wifi_info.f.config.wifi_sta_last_ip)) )
+            if(strlen(&g_wifi_read_line_buffer[14]))
             {
-                strcpy(g_wifi_info.f.config.wifi_sta_last_ip, &g_wifi_read_line_buffer[14]);
-                g_wifi_info.f.config.wifi_sta_last_ip[strlen(g_wifi_info.f.config.wifi_sta_last_ip)-1] = 0;
-                g_wifi_info.status.save_config = 50;
-            }
-            if(strlen(g_wifi_info.f.config.wifi_sta_last_ip))
-            {
-                LogMessage("[WiFi] IP %s", g_wifi_info.f.config.wifi_sta_last_ip);
-                g_wifi_info.status.wifi_conectado_ip = 1;
+                g_wifi_read_line_buffer[strlen(&g_wifi_read_line_buffer[14])+14-1] = 0;
+                LogMessage("[WiFi] IP %s", &g_wifi_read_line_buffer[14]);
+                g_wifi_info.status.wifi_conectado_ok = true;
             }
         }
     }
@@ -810,6 +800,8 @@ int WifiTaskSTMode( void )
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 10;
             g_wifi_info.status.wifi_mode = 0;
+            g_wifi_info.status.wifi_conectado_ap = 0;
+            g_wifi_info.status.wifi_conectado_ok = false;
             g_wifi_info.status.host_conectado = 0;
             break;
         case 1:
@@ -995,7 +987,7 @@ int WifiTaskSTMode( void )
         case 15:
             if(WifiWaitLine("OK", 0, 0, 0, 0))
             {
-                if(g_wifi_info.status.wifi_conectado_ip)
+                if(g_wifi_info.status.wifi_conectado_ap && g_wifi_info.status.wifi_conectado_ok)
                 {
                     g_wifi_task_stm_step = STM_CASE_OK;
                     g_wifi_task_stm_delay = 0;
@@ -1211,6 +1203,12 @@ int WifiTaskHttpReq( void )
         g_wifi_task_stm_step_last = g_wifi_task_stm_step;
     }
 
+    if(http_buffer_output.type == 0)
+    {
+        LogMessage("[WifiTaskHttpReq] Nada para procesar");
+        return LOOP;
+    }
+    
     switch(g_wifi_task_stm_step)
     {
         case 0: /* Conectando */
@@ -1404,7 +1402,7 @@ int WifiTaskLoop( void )
     {
         return HTTP_REQ;
     }
-    else if(g_wifi_need_upgrade && g_wifi_info.status.wifi_conectado_ip)
+    else if(g_wifi_need_upgrade && g_wifi_info.status.wifi_conectado_ok)
     {
         return UPGRADE;
     }
@@ -1520,7 +1518,7 @@ void WiFiTask( void )
             g_wifi_timer_ap = 0;
             g_wifi_info.status.wifi_mode = 0;
             g_wifi_info.status.wifi_conectado_ap = 0;
-            g_wifi_info.status.wifi_conectado_ip = 0;
+            g_wifi_info.status.wifi_conectado_ok = false;
             g_wifi_info.status.host_conectado = 0;
             
             WifiTaskSTMSet(START, 20, 0);
