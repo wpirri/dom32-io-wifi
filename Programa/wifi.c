@@ -355,10 +355,14 @@ void WifiCheckUnsol( void )
         p = strchr(g_wifi_read_line_buffer, ':');
         if(p)
         {
+            /*
             if( g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN ||
                 ( http_buffer_output.download && 
                   (strstr(g_wifi_read_line_buffer, "Content-Type: text/csv") ||
                    strstr(g_wifi_read_line_buffer, "Content-Type: image/bmp"))) )
+            */
+                
+            if( g_wifi_read_line_buffer_index == WIFI_READ_LINE_BUFFER_LEN ||  http_buffer_output.download )
             {
                 /* Si el buffer está lleno debe ser un download */
                 if(HTTPInitTmpFile(g_wifi_read_line_buffer, g_wifi_read_line_buffer_index) < 0)
