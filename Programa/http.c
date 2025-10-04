@@ -606,7 +606,7 @@ void HttpProcessWiFiFormConfig(char* in)
 
 void HttpProcessGeneralConfig(char* in)
 {
-    char s[16];
+    char s[32];
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
     HTTPGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
@@ -628,7 +628,7 @@ void HttpProcessGeneralConfig(char* in)
     }
     if(HTTPGetFormData(in, "reset", s))
     {
-        CTRLReset();
+        CTRLReset(atoi(s));
     }
     if(HTTPGetFormData(in, "update", s))
     {
@@ -776,7 +776,7 @@ void HTTPTask( void )
         }
         else if( !strcmp(http_buffer_input.uri, "/reset.htm"))
         {
-            CTRLReset();
+            CTRLReset(0);
             HttpReturnResult(http_buffer_response.data, "Ok", MAX_HTTP_DATA);
         }
         else
@@ -918,10 +918,10 @@ void HTTPTimer( void )
         if(http_process_tmp_file == 0)
         {
             HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
-            //FSremove(DOWNLOAD_TEMP_FILE_NAME);
+            FSremove(DOWNLOAD_TEMP_FILE_NAME);
             if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
             {
-                CTRLReset();
+                CTRLReset(0);
             }
         }
     }

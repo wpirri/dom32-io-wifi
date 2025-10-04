@@ -1215,7 +1215,7 @@ void CTRLConfIO(char* in)
 
     if(reset)
     {
-        CTRLReset();
+        CTRLReset(0);
     }
 }
 
@@ -1295,11 +1295,12 @@ void CTRLConfSys(char* in)
     }
 }
 
-void CTRLReset( void )
+void CTRLReset( int seg )
 {
     /* reset en 10 seg */
     LogMessage("[CTRL] RESET solicitado.");
-    g_ctrl_count_reset = 30;
+    if(seg == 0) seg = 3;
+    g_ctrl_count_reset = seg * 10;
 }
 
 void UpdateFirmware( void )

@@ -164,7 +164,7 @@ int WifiWaitLine(const char *line1, const char *line2, const char *line3, const 
             g_wifi_read_line_buffer_index < WIFI_READ_LINE_BUFFER_LEN )
     {
         c = UART_READ();
-        g_wifi_read_line_buffer_timer = 5;
+        g_wifi_read_line_buffer_timer = 10;
 
         /* Si estoy esperando fin de linea ... */
         if(g_wifi_read_line_wait_crlf)

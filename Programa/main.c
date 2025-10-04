@@ -212,7 +212,7 @@ int main(void)
             {
                 /* una hora */
                 LogMessage("[MAIN] RESET por inactividad.");
-                CTRLReset();
+                CTRLReset(0);
             }
         }
     }

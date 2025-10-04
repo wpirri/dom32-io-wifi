@@ -78,7 +78,7 @@ void CTRLConfIO(char* in);
 void CTRLCompareIO(char* in);
 void CTRLConfSys(char* in);
 
-void CTRLReset( void );
+void CTRLReset( int seg );
 void CTRLNotificarStatus( int time );
 
 void UpdateFirmware( void );
