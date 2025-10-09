@@ -19,6 +19,6 @@
 #define _STRFUNC_H_
 
 int str_section(char *in, char sep, unsigned int count, char *out);
-
+int url_encode(char *in, char* out);
 
 #endif /* _STRFUNC_H_ */

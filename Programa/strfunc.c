@@ -37,16 +37,45 @@ int str_section(char *in, char sep, unsigned int count, char *out)
     }
     if(*p == 0 || count) return 0;
     /* p apunta al inicio del campo, copio hasta el final */
-    while(*p && ( (*p >= '0' && *p <= '9') || 
-                  (*p >= 'a' && *p <= 'z') || 
-                  (*p >= 'A' && *p <= 'Z')  ) && *p != sep )
+    while(*p && (*p >= 32 && *p <= 126) && *p != sep )
     {
-        *out = *p;
-        p++;
-        out++;
+        *out++ = *p++;
         len++;
     }
     *out = 0;
     return len;
 }
 
+int url_encode(char *in, char* out)
+{
+    char str[1024];
+    char *p;
+    
+    if(in == NULL || out == NULL) return (-1);
+    
+    p = &str[0];
+    while(*in)
+    {
+        if(*in == ' ')
+        {
+            *p++ = '%';
+            *p++ = '2';
+            *p++ = '0';
+        }
+        else
+        {
+            *p++ = *in;
+        }
+        in++;
+    }
+    *p = 0;
+    
+    p = &str[0];
+    while(*p)
+    {
+        *out++ = *p++;
+    }
+    *out = 0;
+    
+    return (int)(p - &str[0]);
+}

@@ -35,6 +35,7 @@ typedef struct
     char uri[MAX_HTTP_URI + 1];
     char data[MAX_HTTP_DATA + 1];
     char download;
+    unsigned long download_length;
     char filename[FILE_NAME_SIZE+1];
 } http_data;
 
@@ -66,12 +67,13 @@ int HTTPNotificarTarjeta( const char *crd );
 int HTTPCommandSwitch( const char *obj_name );
 int HTTPCommandPulse( const char *obj_name );
 
-int HTTPGetFormData(char *buffer, const char *label, char *value);
+int HTTPGetFormData(const char *buffer, const char *label, char *value);
+int HTTPGetHeadData(const char *buffer, const char *label, char *value);
 
 int HTTPGetFile(const char* filename, const char* params);
 int HTTPInitTmpFile(const char* buffer, int len);
 int HTTPAddTmpFile(const char* buffer, int len);
 int HTTPEndTmpFile(const char* filename, const char* buffer, int len);
-void HTTPProcessTmpFile(const char* tmpname, const char* filename);
+void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength);
 
 #endif /* _HTTP_H_ */

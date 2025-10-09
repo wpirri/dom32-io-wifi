@@ -119,16 +119,33 @@ int HTTPInitTmpFile(const char* buffer, int len)
 {
     FSFILE* f;
     int rc = (-1);
+    char s_content_length[16];
 
     if( !http_buffer_output.download)
     {
         LogMessage("[HTTPInitTmpFile] Download no iniciado.");
         return (-1);
     }
+    
+    if( !strstr(buffer, "200 OK"))
+    {
+        LogMessage("[HTTPInitTmpFile] Error en Download. Inicio No Ok.");
+        http_buffer_output.download = 0;
+        return (-1);
+    }
+    
+    if(HTTPGetHeadData(buffer, "Content-Length", s_content_length))
+    {
+        http_buffer_input.download_length = atol(s_content_length);
+    }
+    else
+    {
+        http_buffer_input.download_length = 0;
+    }
 
     LogMessage("[HTTPInitTmpFile] (%d bytes) -> %s", len, DOWNLOAD_TEMP_FILE_NAME);
     g_wifi_info.status.control_notificar = 0;
-    http_buffer_input.download = true;
+    http_buffer_input.download = 1;
     strcpy(http_buffer_input.filename, http_buffer_output.filename);
     
     f = FSfopen(DOWNLOAD_TEMP_FILE_NAME, FS_WRITE);
@@ -146,10 +163,10 @@ int HTTPInitTmpFile(const char* buffer, int len)
         strncpy(http_process_tmp_file_to_name, http_buffer_input.filename, FILE_NAME_SIZE);
         g_end_download = true;
         
-        http_buffer_input.download = false;
+        http_buffer_input.download = 0;
     }
     
-    http_buffer_output.download = false;
+    http_buffer_output.download = 0;
     
     return rc;
 }
@@ -160,7 +177,7 @@ int HTTPAddTmpFile(const char* buffer, int len)
     int rc = (-1);
 
     //LogMessage("[HTTPAddTmpFile] %-.20s (%d)", buffer, len);
-    if( !http_buffer_input.download)
+    if( http_buffer_input.download == 0 )
     {
         LogMessage("[HTTPAddTmpFile] ERROR: Download no iniciado");
         return (-1);
@@ -181,7 +198,7 @@ int HTTPEndTmpFile(const char* filename, const char* buffer, int len)
 {
     int rc = 0;
 
-    if( !http_buffer_input.download)
+    if( http_buffer_input.download == 0 )
     {
         LogMessage("[HTTPEndTmpFile] ERROR: Download no iniciado");
         return (-1);
@@ -268,7 +285,7 @@ int HttpHeadEnd(FSFILE *fs)
     return head_len;
 }
 
-void HTTPProcessTmpFile(const char* tmpname, const char* filename)
+void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength)
 {
     char buffer[256];
     int len;
@@ -276,6 +293,7 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename)
     int head_len;
     FSFILE* fi;
     FSFILE* fo;
+    unsigned long total_escrito = 0;
 
     LogMessage("[HTTPProcessTmpFile] %s -> %s", tmpname, filename);
     fi = FSfopen(tmpname, FS_READ);
@@ -298,6 +316,7 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename)
                         if(len == 0) break;
                         FSfwrite(buffer, len, 1, fo);
                         ipd_len -= len;
+                        total_escrito += len;
                         if(ipd_len == 0)
                         {
                             /* Leo el CR/LF del final */
@@ -309,7 +328,15 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename)
                 }
             }
             FSfclose(fo);
-            LogMessage("[HTTPProcessTmpFile] %s recibido Ok", filename);
+            if(filelength != total_escrito)
+            {
+                LogMessage("[HTTPProcessTmpFile] %s recibido con Error", filename);
+                FSremove(filename);
+            }
+            else
+            {
+                LogMessage("[HTTPProcessTmpFile] %s recibido Ok", filename);
+            }
         }
         else
         {
@@ -412,9 +439,9 @@ int HttpGetRequest(const char *buffer, char *request, int max_len)
 	return (rc < max_len)?rc:(-1);
 }
 
-int HTTPGetFormData(char *buffer, const char *label, char *value)
+int HTTPGetFormData(const char *buffer, const char *label, char *value)
 {
-    char *p;
+    const char *p;
     int len = 0;
     
     p = buffer;
@@ -423,6 +450,7 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
         p = strstr(p, label);
         if(p)
         {
+            len = 0;
             p += strlen(label);
             if(*p == '=')
             {
@@ -439,6 +467,32 @@ int HTTPGetFormData(char *buffer, const char *label, char *value)
         }
     } while(p);
     
+    return len;
+}
+
+int HTTPGetHeadData(const char *buffer, const char *label, char *value)
+{
+    const char *p;
+    int len = 0;
+    
+    p = strstr(buffer, label);
+    if(p)
+    {
+        p += strlen(label);
+        if(*p == ':')
+        {
+            p++;
+            while(*p == ' ') p++;
+            while(*p && *p != ' ' && *p != '\r' && *p != '\n')
+            {
+                *value = *p;
+                p++;
+                value++;
+                len++;
+            }
+            *value = 0;
+        }
+    }
     return len;
 }
 
@@ -637,7 +691,6 @@ void HttpProcessGeneralConfig(char* in)
             UpdateFirmware();
         }
     }
-
 
     g_wifi_info.status.save_config = 50;
 }
@@ -886,7 +939,7 @@ void HTTPTimer( void )
         if(http_buffer_input.timeout == 0)
         {
             http_buffer_input.type = 0;
-            http_buffer_input.download = false;
+            http_buffer_input.download = 0;
             LogMessage("[HTTPTimer] TIMEOUT de mensaje entrante");
         }
     }
@@ -917,7 +970,9 @@ void HTTPTimer( void )
         http_process_tmp_file--;
         if(http_process_tmp_file == 0)
         {
-            HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, http_process_tmp_file_to_name);
+            HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, 
+                    http_process_tmp_file_to_name, 
+                    http_buffer_input.download_length);
             FSremove(DOWNLOAD_TEMP_FILE_NAME);
             if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
             {
@@ -1031,7 +1086,7 @@ int HTTPAddInput(int id, const char* buffer)
         {
             LogMessage("[HTTPAddInput] HTTP Error %i", http_buffer_input.http_rc);
             http_buffer_input.form_rc = 0;
-            http_buffer_input.download = false;
+            http_buffer_input.download = 0;
         }
     }
     return 0;
