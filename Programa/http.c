@@ -72,6 +72,7 @@ unsigned int http_process_tmp_file;
 char http_process_tmp_file_to_name[FILE_NAME_SIZE+1];
 
 unsigned int g_download_file_count;
+unsigned int g_download_timer_count;
 
 int HTTPGetFile(const char* filename, const char* params)
 {
@@ -99,6 +100,9 @@ int HTTPGetFile(const char* filename, const char* params)
     {
         strncpy(tmp_uri, filename, MAX_HTTP_URI);
     }
+    
+    g_download_timer_count = 600;
+    
     /*
      * GET
      * 1.- %s: URI
@@ -285,7 +289,7 @@ int HttpHeadEnd(FSFILE *fs)
     return head_len;
 }
 
-void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength)
+int HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength)
 {
     char buffer[256];
     int len;
@@ -294,6 +298,7 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long
     FSFILE* fi;
     FSFILE* fo;
     unsigned long total_escrito = 0;
+    int rc = (-1);
 
     LogMessage("[HTTPProcessTmpFile] %s -> %s", tmpname, filename);
     fi = FSfopen(tmpname, FS_READ);
@@ -331,23 +336,27 @@ void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long
             if(filelength != total_escrito)
             {
                 LogMessage("[HTTPProcessTmpFile] %s recibido con Error", filename);
-                FSremove(filename);
+                rc = (-2);
             }
             else
             {
                 LogMessage("[HTTPProcessTmpFile] %s recibido Ok", filename);
+                rc = 0;
             }
         }
         else
         {
-            LogMessage("[HTTPProcessTmpFile] Error abriendo archivo final %s", filename);        
+            LogMessage("[HTTPProcessTmpFile] Error abriendo archivo final %s", filename);
+            rc = (-3);
         }
         FSfclose(fi);
     }
     else
     {
-        LogMessage("[HTTPProcessTmpFile] Error abriendo archivo temporal %s", tmpname);        
+        LogMessage("[HTTPProcessTmpFile] Error abriendo archivo temporal %s", tmpname);
+        rc = (-4);
     }
+    return rc;
 }
 
 int Convert2CharToHex(const char* h)
@@ -584,6 +593,27 @@ body{background-color:grey;font-size:24pt;}
 */
 void HttpReturnWiFiFormConfig(char *out, int max_len)
 {
+    char wifi_host1[64];
+    char wifi_host2[64];
+    
+    if(g_wifi_info.f.config.wifi_host1_port > 0)
+    {
+        sprintf(wifi_host1, "%s:%i", g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port);
+    }
+    else
+    {
+        strcpy(wifi_host1, g_wifi_info.f.config.wifi_host1);
+    }
+
+    if(g_wifi_info.f.config.wifi_host2_port > 0)
+    {
+        sprintf(wifi_host2, "%s:%i", g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port);
+    }
+    else
+    {
+        strcpy(wifi_host2, g_wifi_info.f.config.wifi_host2);
+    }
+    
     snprintf(out, max_len, 
             "%s"
             "<html>\n"
@@ -617,7 +647,7 @@ void HttpReturnWiFiFormConfig(char *out, int max_len)
             g_wifi_info.status.hw_mac,
             g_wifi_info.f.config.wifi_ap1, g_wifi_info.f.config.wifi_ap1_pass,
             g_wifi_info.f.config.wifi_ap2, g_wifi_info.f.config.wifi_ap2_pass,
-            g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host2,
+            wifi_host1, wifi_host2,
             g_wifi_info.f.config.rqst_path);
 }
 
@@ -648,6 +678,8 @@ void HttpReturnResult(char *out, const char* result, int max_len)
 
 void HttpProcessWiFiFormConfig(char* in)
 {
+    char *p;
+    
     HTTPGetFormData(in, "ap1", g_wifi_info.f.config.wifi_ap1);
     HTTPGetFormData(in, "ap1p", g_wifi_info.f.config.wifi_ap1_pass);
     HTTPGetFormData(in, "ap2", g_wifi_info.f.config.wifi_ap2);
@@ -655,6 +687,22 @@ void HttpProcessWiFiFormConfig(char* in)
     HTTPGetFormData(in, "ce1", g_wifi_info.f.config.wifi_host1);
     HTTPGetFormData(in, "ce2", g_wifi_info.f.config.wifi_host2);
     HTTPGetFormData(in, "path", g_wifi_info.f.config.rqst_path);
+    
+    /* Separo el port si viene informado */
+    p = strchr(g_wifi_info.f.config.wifi_host1, ':');
+    if(p)
+    {
+        g_wifi_info.f.config.wifi_host1_port = atoi(p+1);
+        *p = 0;
+    }
+
+    p = strchr(g_wifi_info.f.config.wifi_host2, ':');
+    if(p)
+    {
+        g_wifi_info.f.config.wifi_host2_port = atoi(p+1);
+        *p = 0;
+    }
+    
     g_wifi_info.status.save_config = 50;
 }
 
@@ -788,6 +836,7 @@ void HTTPInit( void )
     g_download_file_name[0] = 0;
     http_process_tmp_file = 0;
     g_download_file_count = 0;
+    g_download_timer_count = 0;
 }
 
 /* *****************************************************************************
@@ -970,14 +1019,25 @@ void HTTPTimer( void )
         http_process_tmp_file--;
         if(http_process_tmp_file == 0)
         {
-            HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, 
+            if(HTTPProcessTmpFile(DOWNLOAD_TEMP_FILE_NAME, 
                     http_process_tmp_file_to_name, 
-                    http_buffer_input.download_length);
-            FSremove(DOWNLOAD_TEMP_FILE_NAME);
-            if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
+                    http_buffer_input.download_length) == 0)
             {
-                CTRLReset(0);
+                /* Finalizado Ok */
+                g_download_timer_count = 0;
+                if( !strcmp(http_process_tmp_file_to_name, FIRMWARE_FILENAME))
+                {
+                    CTRLReset(0);
+                }
+                http_process_tmp_file_to_name[0] = 0;
             }
+            else
+            {
+                /* Download Error */
+                FSremove(http_process_tmp_file_to_name);
+            }
+            /* Borro el archivo temporal */
+            FSremove(DOWNLOAD_TEMP_FILE_NAME);
         }
     }
     
@@ -1004,6 +1064,23 @@ void HTTPTimer( void )
         }
     }
 
+    if(g_download_timer_count > 0)
+    {
+        g_download_timer_count--;
+        if(g_download_timer_count == 0)
+        {
+            /* time-out de download */
+            http_buffer_output.download = 0;
+            http_buffer_input.download = 0;
+
+
+            FSremove(DOWNLOAD_TEMP_FILE_NAME);
+            /* Reintento el download */
+            
+            
+            
+        }
+    }
 
 }
 

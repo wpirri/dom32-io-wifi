@@ -91,7 +91,7 @@ unsigned int g_wifi_task_stm_delay;
 unsigned int g_wifi_task_stm_timeout;
 unsigned int g_wifi_task_retry;
 unsigned char g_wifi_send_error_count;
-unsigned char g_wifi_recv_error_count;
+//unsigned char g_wifi_recv_error_count;
 char g_wifi_read_line_buffer[WIFI_READ_LINE_BUFFER_LEN+1];
 int g_wifi_read_line_buffer_index;
 char g_wifi_http_filename[FILE_NAME_SIZE+1];
@@ -1111,7 +1111,7 @@ int WifiTaskHttpResp( void )
             if(WifiWaitPrompt('>'))
             {
                 g_wifi_task_stm_step++;
-                g_wifi_recv_error_count = 0;
+                //g_wifi_recv_error_count = 0;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -1135,7 +1135,7 @@ int WifiTaskHttpResp( void )
                 /* Si es una respuesta saliente sigue un close */
                 LogMessage("[WifiTaskHttpResp] SEND Ok");
                 g_wifi_task_stm_step ++;
-                g_wifi_recv_error_count = 0;
+                //g_wifi_recv_error_count = 0;
                 g_wifi_task_stm_delay = 5;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -1162,7 +1162,7 @@ int WifiTaskHttpResp( void )
             {
                 LogMessage("[WifiTaskHttpResp] CLOSE Ok");
                 g_wifi_task_stm_step+=2;
-                g_wifi_recv_error_count = 0;
+                //g_wifi_recv_error_count = 0;
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
             }
@@ -1184,7 +1184,7 @@ int WifiTaskHttpResp( void )
         case 8: /* Borro el mensaje de respuesta */
             http_buffer_response.type = 0;
             g_wifi_task_stm_step++;
-            g_wifi_recv_error_count = 0;
+            //g_wifi_recv_error_count = 0;
             g_wifi_task_stm_delay = 0;
             g_wifi_task_stm_timeout = 0;
             break;
@@ -1290,7 +1290,7 @@ int WifiTaskHttpReq( void )
             else if(g_wifi_task_stm_timeout == 0)
             {
                 LogMessage("[WifiTaskHttpReq] TIME-OUT: Esperando Ok de SEND");
-                g_wifi_send_error_count = 0;
+                //g_wifi_send_error_count = 0;
                 g_wifi_task_stm_step = 10; /* Send Error */
                 g_wifi_task_stm_delay = 0;
                 g_wifi_task_stm_timeout = 0;
@@ -1379,10 +1379,10 @@ int WifiTaskLoop( void )
     {
         return (-1);
     }
-    else if(g_wifi_recv_error_count >= 5)
-    {
-        return (-1);
-    }
+    //else if(g_wifi_recv_error_count >= 5)
+    //{
+    //    return (-1);
+    //}
     /* Espero no solicitados */
     else if((rc = WifiWaitLine(0, 0, 0, 0, 0)) > 0)
     {
@@ -1468,7 +1468,7 @@ void WiFiInit( void )
     g_wifi_task_stm_delay = 0;
     g_wifi_need_upgrade = false;
     g_wifi_send_error_count = 0;
-    g_wifi_recv_error_count = 0;
+    //g_wifi_recv_error_count = 0;
     
     g_wifi_host = &g_wifi_info.f.config.wifi_host1[0];
     g_wifi_port = (g_wifi_info.f.config.wifi_host1_port)?g_wifi_info.f.config.wifi_host1_port:((g_wifi_info.f.config.enable_https)?443:80);
@@ -1517,7 +1517,7 @@ void WiFiTask( void )
             g_wifi_wait_more_data = false;
 
             g_wifi_send_error_count = 0;
-            g_wifi_recv_error_count = 0;
+            //g_wifi_recv_error_count = 0;
 
             g_wifi_timer_ap = 0;
             g_wifi_info.status.wifi_mode = 0;

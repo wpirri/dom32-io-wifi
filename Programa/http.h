@@ -74,6 +74,6 @@ int HTTPGetFile(const char* filename, const char* params);
 int HTTPInitTmpFile(const char* buffer, int len);
 int HTTPAddTmpFile(const char* buffer, int len);
 int HTTPEndTmpFile(const char* filename, const char* buffer, int len);
-void HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength);
+int HTTPProcessTmpFile(const char* tmpname, const char* filename, unsigned long filelength);
 
 #endif /* _HTTP_H_ */
