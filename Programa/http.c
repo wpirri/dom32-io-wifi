@@ -596,22 +596,36 @@ void HttpReturnWiFiFormConfig(char *out, int max_len)
     char wifi_host1[64];
     char wifi_host2[64];
     
-    if(g_wifi_info.f.config.wifi_host1_port > 0)
+    if(g_wifi_info.f.config.wifi_host1[0])
     {
-        sprintf(wifi_host1, "%s:%i", g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port);
+        if(g_wifi_info.f.config.wifi_host1_port > 0)
+        {
+            sprintf(wifi_host1, "%s:%i", g_wifi_info.f.config.wifi_host1, g_wifi_info.f.config.wifi_host1_port);
+        }
+        else
+        {
+            strcpy(wifi_host1, g_wifi_info.f.config.wifi_host1);
+        }
     }
     else
     {
-        strcpy(wifi_host1, g_wifi_info.f.config.wifi_host1);
+        wifi_host1[0] = 0;
     }
 
-    if(g_wifi_info.f.config.wifi_host2_port > 0)
+    if(g_wifi_info.f.config.wifi_host2[0])
     {
-        sprintf(wifi_host2, "%s:%i", g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port);
+        if(g_wifi_info.f.config.wifi_host2_port > 0)
+        {
+            sprintf(wifi_host2, "%s:%i", g_wifi_info.f.config.wifi_host2, g_wifi_info.f.config.wifi_host2_port);
+        }
+        else
+        {
+            strcpy(wifi_host2, g_wifi_info.f.config.wifi_host2);
+        }
     }
     else
     {
-        strcpy(wifi_host2, g_wifi_info.f.config.wifi_host2);
+        wifi_host2[0] = 0;
     }
     
     snprintf(out, max_len, 

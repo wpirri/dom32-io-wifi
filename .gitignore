@@ -18,7 +18,6 @@ Programa/build/
 Programa/dist/
 Programa/.generated_files/
 Programa_old/
-Programa-*
 Documento/bwb_minitekpwr4.2.pdf
 Documento/MOLEX-PS-5556-001.pdf
 Documento/Placa-LadoA.jpg
@@ -39,3 +38,4 @@ Programa/nbproject/private/private-THINKPAD-WGP.xml
 Programa/nbproject/configurations-DESKTOP-K2QOH7P.xml
 Programa/nbproject/private/private-DESKTOP-K2QOH7P.xml
 Programa/pgm-DESKTOP-K2QOH7P.hex
+/Programa-2/.generated_files
