@@ -221,8 +221,11 @@ void ControlHostKeepAlive(void)
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema Ok");
                     HttpConexionOk();
                     keep_alive_timer_count = 6000;
-                    g_wifi_config.u.config.start_config_mode = 0;
-                    save_config_timer_count = 1;
+                    if(g_wifi_config.u.config.start_config_mode)
+                    {
+                        g_wifi_config.u.config.start_config_mode = 0;
+                        save_config_timer_count = 1;
+                    }
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
                     return;

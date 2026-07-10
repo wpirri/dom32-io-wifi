@@ -662,8 +662,8 @@ int HttpReturnWiFiFormConfig(char *out, int max_len)
             "<input type=\"text\" name=\"ce1\" value=\"%s\"> <input type=\"text\" name=\"ce2\" value=\"%s\"><br>\n"
             "<label>Path</label>\n"
             "<input type=\"text\" name=\"path\" value=\"%s\">\n"
-            "<label>Saver</label>\n"
-            "<input type=\"text\" name=\"sct\" value=\"%d\">\n"
+
+
             "<label>Report</label>\n"
             "<input type=\"text\" name=\"rep\" value=\"%d\">\n"
             "<hr />\n"
