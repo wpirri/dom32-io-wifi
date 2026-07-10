@@ -9,8 +9,6 @@
         <itemPath>src/misc/delay.h</itemPath>
         <itemPath>src/misc/strfunc.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="f4" displayName="New Folder 4" projectFiles="true">
-      </logicalFolder>
       <logicalFolder name="f2" displayName="sd" projectFiles="true">
         <itemPath>src/sd/fsconfig.h</itemPath>
         <itemPath>src/sd/fsdefs.h</itemPath>
@@ -360,6 +358,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

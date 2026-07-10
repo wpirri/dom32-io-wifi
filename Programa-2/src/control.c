@@ -112,12 +112,10 @@ void ControlTimer( void )
 {
     /* Para las cosas que necesitan el timer pero no pueden estar dentro de una int */
     assinc_timer_flag = true;
-
-        
+    
     if(control_wifi_stm_delay) control_wifi_stm_delay--;
     if(wifi_config_timer_count) wifi_config_timer_count--;
     if(WiFiConectado() && keep_alive_timer_count) keep_alive_timer_count--;
-
     if(control_file_flags) control_file_flags--;
     if(reset_timer_count)
     {
@@ -220,14 +218,14 @@ void ControlHostKeepAlive(void)
                 {
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema Ok");
                     HttpConexionOk();
+                    /* Busco configuraciones, comandos, etc */
+                    ProcessGeneralConfig(data);
+                    keep_alive_timer_count = g_wifi_config.u.config.report;
                     if(g_wifi_config.u.config.start_config_mode)
                     {
                         g_wifi_config.u.config.start_config_mode = 0;
                         save_config_timer_count = 1;
                     }
-                    /* Busco configuraciones, comandos, etc */
-                    ProcessGeneralConfig(data);
-                    keep_alive_timer_count = g_wifi_config.u.config.report;
                     return;
                 }
                 else
