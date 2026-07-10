@@ -220,7 +220,6 @@ void ControlHostKeepAlive(void)
                 {
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema Ok");
                     HttpConexionOk();
-                    keep_alive_timer_count = 6000;
                     if(g_wifi_config.u.config.start_config_mode)
                     {
                         g_wifi_config.u.config.start_config_mode = 0;
@@ -228,6 +227,7 @@ void ControlHostKeepAlive(void)
                     }
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
+                    keep_alive_timer_count = g_wifi_config.u.config.report;
                     return;
                 }
                 else
@@ -242,7 +242,8 @@ void ControlHostKeepAlive(void)
         LogMessage("[ControlHostKeepAlive] HTTP Req No Ok [%i]", rc);
     }
     HttpConexionError();
-    keep_alive_timer_count = 500;
+    
+    keep_alive_timer_count = (g_wifi_config.u.config.report > 500)?500:g_wifi_config.u.config.report;
 }
 
 void ProcessGeneralConfig(char* in)
@@ -309,10 +310,10 @@ void ProcessGeneralConfig(char* in)
     }
     if(HTTPGetFormData(in, "rep", s))
     {
-        g_wifi_config.u.config.report = atoi(s) * 10;
+        g_wifi_config.u.config.report = atoi(s) * 100;
         if(g_wifi_config.u.config.report == 0)
         {
-            g_wifi_config.u.config.report = 600;
+            g_wifi_config.u.config.report = 500;
         }
         save_config_timer_count = 500;
     }

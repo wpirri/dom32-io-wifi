@@ -678,7 +678,7 @@ int HttpReturnWiFiFormConfig(char *out, int max_len)
             wifi_host1, wifi_host2,
             g_wifi_config.u.config.rqst_path,
 
-            g_wifi_config.u.config.report/10);
+            g_wifi_config.u.config.report/100);
     
     return strlen(out);
 }

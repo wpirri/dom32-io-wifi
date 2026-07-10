@@ -36,7 +36,7 @@ void ConfigLoadDefault( void)
     g_wifi_config.u.config.wifi_host1_port = 80;
     g_wifi_config.u.config.wifi_host2_port = 80;
     strcpy(g_wifi_config.u.config.rqst_path, "/cgi-bin");
-    g_wifi_config.u.config.report = 600;
+    g_wifi_config.u.config.report = 6000;
     g_wifi_config.u.config.enable_https = 0;
     g_wifi_config.u.config.io_config_default = 1;
     g_wifi_config.u.config.rtcc_clk_div_adj = 480000;
