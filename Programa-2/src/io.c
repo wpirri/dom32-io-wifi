@@ -26,11 +26,12 @@
 #include <stdbool.h>
 
 #include "defines.h"
+#include "wifi/wifi.h"
+#include "http.h"
+
 
 void IOInit( void )
 {
-
-
     /****************************************************************************
      * Interrupt On Change: negative
      ***************************************************************************/
@@ -53,7 +54,9 @@ void IOInit( void )
     IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
     IEC0bits.CNBIE = 1; //Enable CNBI interrupt
     
-    
+    LED_Azul_SetDigitalOutput();
+    LED_Verde_SetDigitalOutput();
+    LED_Ambar_SetDigitalOutput();
     
     IOConfig();
    
@@ -233,76 +236,36 @@ void IOConfig( void )
 
 void IOLedControl( void )
 {
-#ifdef ___REVISAR___
-
-    static char led_count = 0;
-    static char led_aux_count = 0;
+    static int io_led_control_count = 0;
     
-    if(led_aux_count)
+    if(--io_led_control_count > 0) return;
+    io_led_control_count = 20;
+    
+    LED_Verde_Toggle();
+
+    if(HttpOnLine())
     {
-        LED_Aux_SetHigh();
-        led_aux_count--;
-        if(led_aux_count == 0)
-        {
-            LED_Aux_SetLow();
-        }
+        LED_Ambar_SetHigh();
     }
-    
-    if(++led_count > 20)
+    else if(WiFiConectado()) 
     {
-        LED_Status_SetLow();
-        LED_Modo_SetLow();
-        led_count = 0;
-    }
-    
-    if(g_wifi_info.status.wifi_ok)
-    {
-        if(led_count > 10)
-        {
-            if(g_wifi_info.status.wifi_conectado_ap)
-            {
-                if((led_count-10) <= (g_wifi_info.status.wifi_conectado_ap*2))
-                {
-                    LED_Status_SetValue(led_count & 0x01);
-                }
-            }
-            else
-            {
-                LED_Status_SetLow();
-            }
-        }
-        else
-        {
-            LED_Status_SetLow();
-        }
-
-        if(g_wifi_info.status.wifi_mode)
-        {
-            if(led_count <= (g_wifi_info.status.wifi_mode*2))
-            {
-                LED_Modo_SetValue(led_count & 0x01);
-            }
-        }
-        else
-        {
-            LED_Modo_SetLow();
-        }
-
-        if(g_wifi_info.status.host_conectado)
-        {
-            LED_Aux_SetValue(led_count & 0x02);
-        }
-        else
-        {
-            LED_Aux_SetLow();
-        }
+        LED_Ambar_Toggle();
     }
     else
     {
-        LED_Status_SetValue((led_count) & 0x04);
-        LED_Modo_SetValue((led_count+1) & 0x04);
-        LED_Aux_SetValue((led_count+2) & 0x04);
+        LED_Ambar_SetLow();
     }
-#endif /* ___REVISAR___ */
     
+    if(WiFiStaConectado())
+    {
+        LED_Azul_SetHigh();
+    }
+    else if(WiFiMode() == WIFI_MODE_AP)
+    {
+        LED_Azul_Toggle();
+    }
+    else
+    {
+        LED_Azul_SetLow();
+    }
 }

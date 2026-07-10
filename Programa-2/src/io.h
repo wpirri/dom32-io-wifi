@@ -26,57 +26,57 @@ void IOInit( void );
 void IOConfig( void );
 void IOLedControl( void );
 
-#define LED_Status_SetHigh()          ( LATASET = (1 << 0) )
-#define LED_Status_SetLow()           ( LATACLR = (1 << 0) )
-inline static void LED_Status_SetValue(bool value)
+#define LED_Azul_SetHigh()          ( LATASET = (1 << 0) )
+#define LED_Azul_SetLow()           ( LATACLR = (1 << 0) )
+inline static void LED_Azul_SetValue(bool value)
 {
   if(value)
   {
-    LED_Status_SetHigh();
+    LED_Azul_SetHigh();
   }
   else
   {
-    LED_Status_SetLow();
+    LED_Azul_SetLow();
   }
 }
-#define LED_Status_Toggle()           ( LATAINV = (1 << 0) )
-#define LED_Status_GetValue()         PORTAbits.RA0
-#define LED_Status_SetDigitalInput()   ( TRISASET = (1 << 0) )
-#define LED_Status_SetDigitalOutput()   ( TRISACLR = (1 << 0) )
-#define LED_Modo_SetHigh()          ( LATASET = (1 << 1) )
-#define LED_Modo_SetLow()           ( LATACLR = (1 << 1) )
-inline static void LED_Modo_SetValue(bool value)
+#define LED_Azul_Toggle()           ( LATAINV = (1 << 0) )
+#define LED_Azul_GetValue()         PORTAbits.RA0
+#define LED_Azul_SetDigitalInput()   ( TRISASET = (1 << 0) )
+#define LED_Azul_SetDigitalOutput()   ( TRISACLR = (1 << 0) )
+#define LED_Verde_SetHigh()          ( LATASET = (1 << 1) )
+#define LED_Verde_SetLow()           ( LATACLR = (1 << 1) )
+inline static void LED_Verde_SetValue(bool value)
 {
   if(value)
   {
-    LED_Modo_SetHigh();
+    LED_Verde_SetHigh();
   }
   else
   {
-    LED_Modo_SetLow();
+    LED_Verde_SetLow();
   }
 }
-#define LED_Modo_Toggle()           ( LATAINV = (1 << 1) )
-#define LED_Modo_GetValue()         PORTAbits.RA1
-#define LED_Modo_SetDigitalInput()   ( TRISASET = (1 << 1) )
-#define LED_Modo_SetDigitalOutput()   ( TRISACLR = (1 << 1) )
-#define LED_Aux_SetHigh()          ( LATASET = (1 << 4) )
-#define LED_Aux_SetLow()           ( LATACLR = (1 << 4) )
-inline static void LED_Aux_SetValue(bool value)
+#define LED_Verde_Toggle()           ( LATAINV = (1 << 1) )
+#define LED_Verde_GetValue()         PORTAbits.RA1
+#define LED_Verde_SetDigitalInput()   ( TRISASET = (1 << 1) )
+#define LED_Verde_SetDigitalOutput()   ( TRISACLR = (1 << 1) )
+#define LED_Ambar_SetHigh()          ( LATASET = (1 << 4) )
+#define LED_Ambar_SetLow()           ( LATACLR = (1 << 4) )
+inline static void LED_Ambar_SetValue(bool value)
 {
   if(value)
   {
-    LED_Aux_SetHigh();
+    LED_Ambar_SetHigh();
   }
   else
   {
-    LED_Aux_SetLow();
+    LED_Ambar_SetLow();
   }
 }
-#define LED_Aux_Toggle()           ( LATAINV = (1 << 4) )
-#define LED_Aux_GetValue()         PORTAbits.RA4
-#define LED_Aux_SetDigitalInput()   ( TRISASET = (1 << 4) )
-#define LED_Aux_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
+#define LED_Ambar_Toggle()           ( LATAINV = (1 << 4) )
+#define LED_Ambar_GetValue()         PORTAbits.RA4
+#define LED_Ambar_SetDigitalInput()   ( TRISASET = (1 << 4) )
+#define LED_Ambar_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
 
 #define WIFI_RESET_SetHigh()          ( LATBSET = (1 << 13) )
 #define WIFI_RESET_SetLow()           ( LATBCLR = (1 << 13) )

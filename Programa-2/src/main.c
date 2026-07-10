@@ -136,7 +136,7 @@ int main(void)
     {
         CLRWDT();
         ControlTask();
-
+        
         Control_WiFi_Task();
     }
     return 0;

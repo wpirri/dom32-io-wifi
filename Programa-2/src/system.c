@@ -17,6 +17,9 @@
  ***************************************************************************/
 #include "system.h"
 
+#include "wifi/wifi.h"
+#include "control.h"
+#include "io.h"
 #include "log.h"
 
 /* ************************************************************************* */
@@ -132,7 +135,7 @@ void __attribute__ ((vector(_CORE_TIMER_VECTOR), interrupt(IPL1SOFT))) _CORE_TIM
     /* ********************************************************************* */
     WiFiTimer();
     ControlTimer();
-
+    IOLedControl();
 }
 
 void __attribute__ ( ( vector(_TIMER_1_VECTOR) , interrupt(IPL7SOFT) ) ) _TIMER1_IRS ( void )
