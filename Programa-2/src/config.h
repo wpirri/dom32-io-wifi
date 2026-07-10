@@ -36,11 +36,7 @@ typedef struct _config_in_file_ /*  */
     unsigned char enable_https;
     unsigned char io_config_default;
     unsigned long rtcc_clk_div_adj;
-
-    unsigned char debug;
-    char wifi_sta_last_ip[16];
-
-    char download_path[33];                 /* /download */
+    unsigned char start_config_mode;
 } config_in_file;
 
 typedef struct

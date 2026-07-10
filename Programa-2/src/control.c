@@ -62,6 +62,7 @@ unsigned int control_wifi_stm_delay;
 /* **** Control ************************************************************ */
 bool status_sd_ok;
 bool assinc_timer_flag;
+bool start_in_ap_mode;
 unsigned int wifi_config_timer_count;
 unsigned int keep_alive_timer_count;
 unsigned int reset_timer_count;
@@ -92,7 +93,19 @@ void ControlInit( bool sd_ok )
     control_wifi_stm = WIFI_INIT;
     control_wifi_stm_delay = 500;
     wifi_config_timer_count = 0;
+    
+    start_in_ap_mode = false;
+    if(g_wifi_config.u.config.wifi_ap1[0] == 0 && g_wifi_config.u.config.wifi_ap2[0] == 0)
+    {
+        g_wifi_config.u.config.start_config_mode = 1;
+    }
+    if(g_wifi_config.u.config.start_config_mode)
+    {
+        start_in_ap_mode = true;
+    }
+    g_wifi_config.u.config.start_config_mode = 1;
 
+    save_config_timer_count = 1;
 }
 
 void ControlTimer( void )
@@ -208,6 +221,8 @@ void ControlHostKeepAlive(void)
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema Ok");
                     HttpConexionOk();
                     keep_alive_timer_count = 6000;
+                    g_wifi_config.u.config.start_config_mode = 0;
+                    save_config_timer_count = 1;
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
                     return;
@@ -314,12 +329,6 @@ void ProcessGeneralConfig(char* in)
             /* TODO: Actualizar la configuración de I/O */
             
         }
-    }
-
-    if(HTTPGetFormData(in, "debug", s))
-    {
-        g_wifi_config.u.config.debug = atoi(s);
-        save_config_timer_count = 500;
     }
 
     if(HTTPGetFormData(in, "time", s))
@@ -442,8 +451,14 @@ void Control_WiFi_Task(void)
             if(WiFiStart() == 0)
             {
                 /* Modo inicial del dispositivo */
-                //control_wifi_stm = WIFI_MODO_AP;
-                control_wifi_stm = WIFI_MODO_ST;
+                if(start_in_ap_mode)
+                {
+                    control_wifi_stm = WIFI_MODO_AP;
+                }
+                else
+                {
+                    control_wifi_stm = WIFI_MODO_ST;
+                }
             }
             else
             {
@@ -454,6 +469,7 @@ void Control_WiFi_Task(void)
             if(WiFiSetMode(WIFI_MODE_AP) == 0)
             {
                 control_wifi_stm++;
+                wifi_config_timer_count = 6000;
             }
             else
             {
@@ -461,6 +477,14 @@ void Control_WiFi_Task(void)
             }
             break;
         case WIFI_MODO_AP_OK:
+            if(wifi_config_timer_count == 0)
+            {
+                control_wifi_stm = WIFI_MODO_ST;
+            }
+            if(WiFiStaConectado())
+            {
+                wifi_config_timer_count = 250;
+            }
             break;
         case WIFI_MODO_ST:
             if(WiFiSetMode(WIFI_MODE_ST) == 0)
