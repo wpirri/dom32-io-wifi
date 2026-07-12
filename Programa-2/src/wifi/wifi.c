@@ -30,6 +30,7 @@
 #include "../misc/strfunc.h"
 #include "../sd/fsio.h"
 #include "../http.h"
+#include "../io.h"
 
 #define WIFI_RESET_SetHigh()    (LATBSET=(1<<10))
 #define WIFI_RESET_SetLow()     (LATBCLR=(1<<10))
@@ -476,12 +477,13 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
         LogMessage("[WIFI] WiFiQueryHost: WiFi no conectado");
         return (-1);
     }
-    
+    LED_Verde_SetHigh();
     /* Conexión */
     sprintf(cmd, "AT+CIPSTART=0,\"%s\",\"%s\",%i",
             (g_wifi_config.u.config.enable_https)?"SSL":"TCP", host, port);
     if(WiFiCommand(cmd, "OK", 1000) < 0)
     {
+        LED_Verde_SetLow();
         LogMessage("[WIFI] WiFiQueryHost: time-Out intentando conectar con %s:%i", host, port);
         return (-1);
     }
@@ -491,12 +493,14 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
     /* Espero el prompt para enviar los datos */
     if(WifiReadAt(NULL, 9999, '>', 1000) < 0)
     {
+        LED_Verde_SetLow();
         LogMessage("[WIFI] WiFiQueryHost: Time-Out esperando enviar datos");
         WiFiCommand("AT+CIPCLOSE=0", "OK", 100);
         return (-1);
     }
     if(WiFiCommand(send_msg, "SEND OK", 1000) < 0)
     {
+        LED_Verde_SetLow();
         LogMessage("[WIFI] WiFiQueryHost: Time-Out esperando SEND OK");
         WiFiCommand("AT+CIPCLOSE=0", "OK", 100);
         return (-1);
@@ -586,14 +590,14 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
 
     LogMessage("[WIFI] WiFiQueryHost: Esperando Cierre de conexion");
     /* Espero el cierre de conexión */
-    while(WifiReadAt(cmd, 256, '\n', 150) >= 0)
+    while(WifiReadAt(cmd, 256, '\n', 10) >= 0)
     {
         if( !memcmp(cmd, "0,CLOSED", 8))
         {
             break;
         }
     }
-    
+    LED_Verde_SetLow();    
     /* Me aseguro el Close */
     WiFiCommand("AT+CIPCLOSE=0", "OK", 100);
 

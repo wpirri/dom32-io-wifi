@@ -241,7 +241,10 @@ void IOLedControl( void )
     if(--io_led_control_count > 0) return;
     io_led_control_count = 20;
     
-    LED_Verde_Toggle();
+    if(WiFiConectado() == 0)
+    {
+        LED_Verde_Toggle();
+    }
 
     if(HttpOnLine())
     {

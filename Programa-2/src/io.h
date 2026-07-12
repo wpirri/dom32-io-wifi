@@ -78,24 +78,6 @@ inline static void LED_Ambar_SetValue(bool value)
 #define LED_Ambar_SetDigitalInput()   ( TRISASET = (1 << 4) )
 #define LED_Ambar_SetDigitalOutput()   ( TRISACLR = (1 << 4) )
 
-#define WIFI_RESET_SetHigh()          ( LATBSET = (1 << 13) )
-#define WIFI_RESET_SetLow()           ( LATBCLR = (1 << 13) )
-inline static void WIFI_RESET_SetValue(bool value)
-{
-  if(value)
-  {
-    WIFI_RESET_SetHigh();
-  }
-  else
-  {
-    WIFI_RESET_SetLow();
-  }
-}
-#define WIFI_RESET_Toggle()           ( LATBINV = (1 << 13) )
-#define WIFI_RESET_GetValue()         PORTBbits.RB13
-#define WIFI_RESET_SetDigitalInput()   ( TRISBSET = (1 << 13) )
-#define WIFI_RESET_SetDigitalOutput()   ( TRISBCLR = (1 << 13) )
-
 #define IO1_SetHigh()          ( LATBSET = (1 << 5) )
 #define IO1_SetLow()           ( LATBCLR = (1 << 5) )
 inline static void IO1_SetValue(bool value)
