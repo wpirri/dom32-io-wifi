@@ -194,7 +194,7 @@ void ControlHostKeepAlive(void)
     int i;
     
     sprintf(url, "%s/infoio.cgi", g_wifi_config.u.config.rqst_path);
-    sprintf(data, "ID=%s&TYP=TOUCH", WiFiMAC());
+    sprintf(data, "ID=%s&TYP=IO", WiFiMAC());
     rc = HttpQueryHost(url, data, NULL, data);
     if(rc == 200)
     {

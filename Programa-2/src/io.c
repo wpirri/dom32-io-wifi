@@ -26,6 +26,7 @@
 #include <stdbool.h>
 
 #include "defines.h"
+#include "config.h"
 #include "wifi/wifi.h"
 #include "http.h"
 
@@ -89,149 +90,119 @@ void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHA
 
 void IOConfig( void )
 {
-
-#ifdef ___REVISAR___
-    
     /* Entrada 1 - RB5 */
-    g_control_io.stat1 = false;
-    g_control_io.change1 = false;
-    if(g_wifi_info.f.config.io_config & 0x01)
+    if(g_wifi_config.u.config.io_config_values[0] == 'i')
     {
+
         TRISBbits.TRISB5 = 1;
         CNPUBbits.CNPUB5 = 1;
     }
-    else
+    else if(g_wifi_config.u.config.io_config_values[0] == 'o')
     {
         TRISBbits.TRISB5 = 0;
         CNPUBbits.CNPUB5 = 0;
     }
+
     /* Entrada 2 - RB4 */
-    g_control_io.stat2 = false;
-    g_control_io.change2 = false;
-    if(g_wifi_info.f.config.io_config & 0x02)
+    if(g_wifi_config.u.config.io_config_values[1] == 'i')
     {
         TRISBbits.TRISB4 = 1;
         CNPUBbits.CNPUB4 = 1;
     }
-    else
+    else if(g_wifi_config.u.config.io_config_values[1] == 'o')
     {
         TRISBbits.TRISB4 = 0;
         CNPUBbits.CNPUB4 = 0;
     }
+
     /* Entrada 3 - RB3 / AN11 */
-    g_control_io.stat3 = false;
-    g_control_io.change3 = false;
-    if(g_wifi_info.f.config.io_config & 0x04)
+    if(g_wifi_config.u.config.io_config_values[2] == 'i')
     {
         TRISBbits.TRISB3 = 1;
-        if(g_wifi_info.f.config.an_config & 0x04)
-        {
-            ANSELBbits.ANSB3 = 1;   // AN11
-            CNPUBbits.CNPUB3 = 0;
-        }
-        else
-        {
-            ANSELBbits.ANSB3 = 0;   // AN11
-            CNPUBbits.CNPUB3 = 1;
-        }
+        ANSELBbits.ANSB3 = 0;   // AN11
+        CNPUBbits.CNPUB3 = 1;
     }
-    else
+    else if(g_wifi_config.u.config.io_config_values[2] == 'o')
     {
         TRISBbits.TRISB3 = 0;
+        ANSELBbits.ANSB3 = 0;   // AN11
         CNPUBbits.CNPUB3 = 0;
     }
-    /* Entrada 4 - RB2 */
-    g_control_io.stat4 = false;
-    g_control_io.change4 = false;
-    if(g_wifi_info.f.config.io_config & 0x08)
+    else if(g_wifi_config.u.config.io_config_values[2] == 'a')
+    {
+        TRISBbits.TRISB3 = 1;
+        ANSELBbits.ANSB3 = 1;   // AN11
+        CNPUBbits.CNPUB3 = 0;
+    }
+
+    /* Entrada 4 - RB2 / AN4*/
+    if(g_wifi_config.u.config.io_config_values[3] == 'i')
     {
         TRISBbits.TRISB2 = 1;
-        if(g_wifi_info.f.config.an_config & 0x08)
-        {
-            ANSELBbits.ANSB2 = 1;   // AN4
-            CNPUBbits.CNPUB2 = 0;
-        }
-        else
-        {
-            ANSELBbits.ANSB2 = 0;   // AN4
-            CNPUBbits.CNPUB2 = 1;
-        }
+        ANSELBbits.ANSB2 = 0;   // AN4
+        CNPUBbits.CNPUB2 = 1;
     }
-    else
+    else if(g_wifi_config.u.config.io_config_values[3] == 'o')
     {
         TRISBbits.TRISB2 = 0;
+        ANSELBbits.ANSB2 = 0;   // AN4
+        CNPUBbits.CNPUB2 = 0;
+    }
+    else if(g_wifi_config.u.config.io_config_values[3] == 'a')
+    {
+        TRISBbits.TRISB2 = 1;
+        ANSELBbits.ANSB2 = 1;   // AN4
         CNPUBbits.CNPUB2 = 0;
     }
 
-    if(g_wifi_info.f.config.enable_wiegand)
+    if(g_wifi_config.u.config.enable_wiegand == 1)
     {
         /* Entrada 5 - RB7 */
-        g_wifi_info.f.config.an_config &= (0x10^0xFF);
-        g_wifi_info.f.config.io_config |= 0x10;
-        g_control_io.stat5 = false;
-        g_control_io.change5 = false;
         TRISBbits.TRISB7 = 1;
         CNPUBbits.CNPUB7 = 1;
         /* Entrada 6 - RB8 */
-        g_wifi_info.f.config.an_config &= (0x20^0xFF);
-        g_wifi_info.f.config.io_config |= 0x20;
-        g_control_io.stat6 = false;
-        g_control_io.change6 = false;
         TRISBbits.TRISB8 = 1;
         CNPUBbits.CNPUB8 = 1;
-
-        /* Traido de interrupt_manager.c --> */
+        /* Control de interrupcion */
         //    CNBI: PORT B Change Notification
         //    Priority: 1
         IPC2bits.CNBIP = 1;
         //    Sub Priority: 0
         IPC2bits.CNBIS = 0;
-        /* <-- Traido de interrupt_manager.c */
-        /* Traido de pin_manager.c --> */
-        /****************************************************************************
-         * Interrupt On Change: Interrupt Enable
-         ***************************************************************************/
-        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
-        IEC0bits.CNBIE = 1; //Enable CNBI interrupt
-        /* <-- Traido de pin_manager.c */
+        //Clear CNBI interrupt flag
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION;
+        //Enable CNBI interrupt
+        IEC0bits.CNBIE = 1;
     }
     else
     {
+        //Disable CNBI interrupt
+        IEC0bits.CNBIE = 0;
+
         /* Entrada 5 - RB7 */
-        g_control_io.stat5 = false;
-        g_control_io.change5 = false;
-        if(g_wifi_info.f.config.io_config & 0x10)
+        if(g_wifi_config.u.config.io_config_values[4] == 'i')
         {
             TRISBbits.TRISB7 = 1;
             CNPUBbits.CNPUB7 = 1;
         }
-        else
+        else if(g_wifi_config.u.config.io_config_values[4] == 'o')
         {
             TRISBbits.TRISB7 = 0;
             CNPUBbits.CNPUB7 = 0;
         }
+        
         /* Entrada 6 - RB8 */
-        g_control_io.stat6 = false;
-        g_control_io.change6 = false;
-        if(g_wifi_info.f.config.io_config & 0x20)
+        if(g_wifi_config.u.config.io_config_values[5] == 'i')
         {
             TRISBbits.TRISB8 = 1;
             CNPUBbits.CNPUB8 = 1;
         }
-        else
+        else if(g_wifi_config.u.config.io_config_values[5] == 'o')
         {
             TRISBbits.TRISB8 = 0;
             CNPUBbits.CNPUB8 = 0;
         }
-        
-        //Disable CNBI interrupt
-        IEC0bits.CNBIE = 0;
     }
-    
-    ADCConfig();
-    
-#endif /* ___REVISAR___ */
-    
 }
 
 void IOLedControl( void )
