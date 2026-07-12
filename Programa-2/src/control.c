@@ -32,7 +32,7 @@
 
 
 #include "wifi/wifi.h"
-
+#include "io.h"
 #include "misc/strfunc.h"
 
 #include "misc/beep.h"
@@ -368,6 +368,243 @@ void ProcessGeneralConfig(char* in)
     {
         strcpy(filename_to_download, s);
     }
+    
+    /* **** Control de I/O ************************************************* */
+    /* **** Config **** */
+    if(HTTPGetFormData(in, "wiegand", s))
+    {
+        if(s[0] == '1')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            save_config_timer_count = 500;
+            g_wifi_config.u.config.enable_wiegand = 1;
+            /* Entrada 5 - RB7 */
+            TRISBbits.TRISB7 = 1;
+            CNPUBbits.CNPUB7 = 1;
+            /* Entrada 6 - RB8 */
+            TRISBbits.TRISB8 = 1;
+            CNPUBbits.CNPUB8 = 1;
+            /* Control de interrupcion */
+            //    CNBI: PORT B Change Notification
+            //    Priority: 1
+            IPC2bits.CNBIP = 1;
+            //    Sub Priority: 0
+            IPC2bits.CNBIS = 0;
+            //Clear CNBI interrupt flag
+            IFS0CLR= 1 << _IFS0_CNBIF_POSITION;
+            //Enable CNBI interrupt
+            IEC0bits.CNBIE = 1;
+        }
+        else
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            save_config_timer_count = 500;
+            g_wifi_config.u.config.enable_wiegand = 0;
+            
+            //Disable CNBI interrupt
+            IEC0bits.CNBIE = 0;
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO1", s))
+    {
+        /* Entrada 1 - RB5 */
+        if(s[0] == 'i')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[0] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB5 = 1;
+            CNPUBbits.CNPUB5 = 1;
+        }
+        else if(s[0] == 'o')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[0] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB5 = 0;
+            CNPUBbits.CNPUB5 = 0;
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO2", s))
+    {
+        /* Entrada 2 - RB4 */
+        if(s[0] == 'i')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[1] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB4 = 1;
+            CNPUBbits.CNPUB4 = 1;
+        }
+        else if(s[0] == 'o')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[1] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB4 = 0;
+            CNPUBbits.CNPUB4 = 0;
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO3", s))
+    {
+        /* Entrada 3 - RB3 / AN11 */
+        if(s[0] == 'i')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[2] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB3 = 1;
+            ANSELBbits.ANSB3 = 0;   // AN11
+            CNPUBbits.CNPUB3 = 1;
+        }
+        else if(s[0] == 'o')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[2] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB3 = 0;
+            ANSELBbits.ANSB3 = 0;   // AN11
+            CNPUBbits.CNPUB3 = 0;
+        }
+        else if(s[0] == 'a')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[2] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB3 = 1;
+            ANSELBbits.ANSB3 = 1;   // AN11
+            CNPUBbits.CNPUB3 = 0;
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO4", s))
+    {
+        /* Entrada 4 - RB2 / AN4*/
+        if(s[0] == 'i')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[3] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB2 = 1;
+            ANSELBbits.ANSB2 = 0;   // AN4
+            CNPUBbits.CNPUB2 = 1;
+        }
+        else if(s[0] == 'o')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[3] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB2 = 0;
+            ANSELBbits.ANSB2 = 0;   // AN4
+            CNPUBbits.CNPUB2 = 0;
+        }
+        else if(s[0] == 'a')
+        {
+            g_wifi_config.u.config.io_config_default = 0;
+            g_wifi_config.u.config.io_config_values[3] = s[0];
+            save_config_timer_count = 500;
+            TRISBbits.TRISB2 = 1;
+            ANSELBbits.ANSB2 = 1;   // AN4
+            CNPUBbits.CNPUB2 = 0;
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO5", s))
+    {
+        /* Entrada 5 - RB7 */
+        if(g_wifi_config.u.config.enable_wiegand == 0)
+        {
+            if(s[0] == 'i')
+            {
+                g_wifi_config.u.config.io_config_default = 0;
+                g_wifi_config.u.config.io_config_values[4] = s[0];
+                save_config_timer_count = 500;
+                TRISBbits.TRISB7 = 1;
+                CNPUBbits.CNPUB7 = 1;
+            }
+            else if(s[0] == 'o')
+            {
+                g_wifi_config.u.config.io_config_default = 0;
+                g_wifi_config.u.config.io_config_values[4] = s[0];
+                save_config_timer_count = 500;
+                TRISBbits.TRISB7 = 0;
+                CNPUBbits.CNPUB7 = 0;
+            }
+        }
+    }
+    if(HTTPGetFormData(in, "Config_IO6", s))
+    {
+        /* Entrada 6 - RB8 */
+        if(g_wifi_config.u.config.enable_wiegand == 0)
+        {
+            if(s[0] == 'i')
+            {
+                g_wifi_config.u.config.io_config_default = 0;
+                g_wifi_config.u.config.io_config_values[5] = s[0];
+                save_config_timer_count = 500;
+                TRISBbits.TRISB8 = 1;
+                CNPUBbits.CNPUB8 = 1;
+            }
+            else if(s[0] == 'o')
+            {
+                g_wifi_config.u.config.io_config_default = 0;
+                g_wifi_config.u.config.io_config_values[5] = s[0];
+                save_config_timer_count = 500;
+                TRISBbits.TRISB8 = 0;
+                CNPUBbits.CNPUB8 = 0;
+            }
+        }
+    }
+    /* **** Set **** */
+    if(HTTPGetFormData(in, "IO1", s))
+    {
+        if(s[0] == '1') IO1_SetHigh();
+        else            IO1_SetLow();
+    }
+    if(HTTPGetFormData(in, "IO2", s))
+    {
+        if(s[0] == '1') IO2_SetHigh();
+        else            IO2_SetLow();
+    }
+    if(HTTPGetFormData(in, "IO3", s))
+    {
+        if(s[0] == '1') IO3_SetHigh();
+        else            IO3_SetLow();
+    }
+    if(HTTPGetFormData(in, "IO4", s))
+    {
+        if(s[0] == '1') IO4_SetHigh();
+        else            IO4_SetLow();
+    }
+    if(HTTPGetFormData(in, "IO5", s))
+    {
+        if(s[0] == '1') IO5_SetHigh();
+        else            IO5_SetLow();
+    }
+    if(HTTPGetFormData(in, "IO6", s))
+    {
+        if(s[0] == '1') IO6_SetHigh();
+        else            IO6_SetLow();
+    }
+    if(HTTPGetFormData(in, "OUT1", s))
+    {
+        if(s[0] == '1') OUT1_SetHigh();
+        else            OUT1_SetLow();
+    }
+    if(HTTPGetFormData(in, "OUT2", s))
+    {
+        if(s[0] == '1') OUT2_SetHigh();
+        else            OUT2_SetLow();
+    }
+    if(HTTPGetFormData(in, "OUT3", s))
+    {
+        if(s[0] == '1') OUT3_SetHigh();
+        else            OUT3_SetLow();
+    }
+    if(HTTPGetFormData(in, "OUT4", s))
+    {
+        if(s[0] == '1') OUT4_SetHigh();
+        else            OUT4_SetLow();
+    }
+    /* **** Control de I/O ************************************************* */
 }
 
 void ControlFileFlags( void )

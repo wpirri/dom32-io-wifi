@@ -41,6 +41,15 @@ void ConfigLoadDefault( void)
     g_wifi_config.u.config.io_config_default = 1;
     g_wifi_config.u.config.rtcc_clk_div_adj = 480000;
     g_wifi_config.u.config.start_config_mode = 1;
+    g_wifi_config.u.config.io_config_values[0] = 'i';
+    g_wifi_config.u.config.io_config_values[1] = 'i';
+    g_wifi_config.u.config.io_config_values[2] = 'i';
+    g_wifi_config.u.config.io_config_values[3] = 'i';
+    g_wifi_config.u.config.io_config_values[4] = 'i';
+    g_wifi_config.u.config.io_config_values[5] = 'i';
+    g_wifi_config.u.config.io_config_values[6] = ' ';
+    g_wifi_config.u.config.io_config_values[7] = ' ';
+    g_wifi_config.u.config.enable_wiegand = 0;
 }
 
 /*****************************************************************************/
