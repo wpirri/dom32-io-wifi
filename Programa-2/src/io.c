@@ -59,8 +59,12 @@ void IOInit( void )
     LED_Verde_SetDigitalOutput();
     LED_Ambar_SetDigitalOutput();
     
+    OUT1_SetDigitalOutput();
+    OUT2_SetDigitalOutput();
+    OUT3_SetDigitalOutput();
+    OUT4_SetDigitalOutput();
+    
     IOConfig();
-   
 }
 
 /* Interrupt service routine for the CNBI interrupt. */

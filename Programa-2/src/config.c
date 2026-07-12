@@ -132,4 +132,6 @@ void DumpConfig( void )
     LogMessage("[CONFIG] report:           %d", g_wifi_config.u.config.report);
     LogMessage("[CONFIG] enable_https:     %s", (g_wifi_config.u.config.enable_https)?"si":"no");
     LogMessage("[CONFIG] rtcc_clk_div_adj: %li", g_wifi_config.u.config.rtcc_clk_div_adj);
+    LogMessage("[CONFIG] enable_wiegand:   %s", (g_wifi_config.u.config.enable_wiegand)?"si":"no");
+    LogMessage("[CONFIG] i/o:              [%8.8s]", g_wifi_config.u.config.io_config_values);
 }
