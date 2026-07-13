@@ -34,7 +34,7 @@
 // 0x124F80 = 100ms
 #define CORE_TIMER_COMPARE_VAL 0x1D4C0
 
-#define FIRMWARE_FILENAME       "domtouch.hex"
+#define FIRMWARE_FILENAME       "pgm.hex"
 #define TMP_FILENAME            "download.tmp"
 #define CONFIG_FILENAME         "d32wifi.cfg"
 #define DOWNLOAD_LIST_FILENAME  "download.lst"
