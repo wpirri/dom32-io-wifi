@@ -330,7 +330,7 @@ int HttpQueryHost(const char* url, const char* msg_send, char* resp_header, char
 
     if(WiFiConectado() == 0)
     {
-        LogMessage("[HTTP] HttpQueryHost: WiFi no conectado");
+        LogMessage("[HttpQueryHost] ERROR: WiFi no conectado");
         return (-1);
     }
     
@@ -400,10 +400,13 @@ int HttpQueryHost(const char* url, const char* msg_send, char* resp_header, char
      */
     sprintf(http_buffer, http_c_http_post, 
             url, host, strlen(msg_send), msg_send);
+    
+    LogMessage("[HttpQueryHost] POST URL: [%s] Host: [%s] [%s]", url, host, msg_send);
+    
     recv_len = WiFiQueryHost(host, port, http_buffer, http_buffer);
     if(recv_len < 0)
     {
-        LogMessage("[HTTP] HttpQueryHost: Error en WiFiQueryHost");
+        LogMessage("[HttpQueryHost] ERROR en WiFiQueryHost");
         return (-1);
     }
 

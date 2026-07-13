@@ -23,7 +23,9 @@
 
 void IOInit( void );
 
-void IOConfig( void );
+const char* IOGetStatus( void );
+int IOSetConfig( const char* msg );
+void IOSetStatus( const char* msg );
 void IOLedControl( void );
 
 #define LED_Azul_SetHigh()          ( LATASET = (1 << 0) )

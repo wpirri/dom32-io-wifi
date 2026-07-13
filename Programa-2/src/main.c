@@ -112,6 +112,7 @@ int main(void)
 
     LogMessage("[MAIN] I/O");
     IOInit();
+    IOSetConfig(NULL);
     
     LogMessage("[MAIN] Init WiFi");
     WiFiInit();
