@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=src/misc/beep.c src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c
+SOURCEFILES_QUOTED_IF_SPACED=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/src/misc/beep.o ${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/src/misc/beep.o.d ${OBJECTDIR}/src/misc/delay.o.d ${OBJECTDIR}/src/misc/strfunc.o.d ${OBJECTDIR}/src/sd/fsio.o.d ${OBJECTDIR}/src/sd/sd_spi.o.d ${OBJECTDIR}/src/wifi/wifi.o.d ${OBJECTDIR}/src/wifi/uart1.o.d ${OBJECTDIR}/src/config.o.d ${OBJECTDIR}/src/control.o.d ${OBJECTDIR}/src/http.o.d ${OBJECTDIR}/src/log.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/rtcc.o.d ${OBJECTDIR}/src/system.o.d ${OBJECTDIR}/src/io.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/src/misc/delay.o.d ${OBJECTDIR}/src/misc/strfunc.o.d ${OBJECTDIR}/src/sd/fsio.o.d ${OBJECTDIR}/src/sd/sd_spi.o.d ${OBJECTDIR}/src/wifi/wifi.o.d ${OBJECTDIR}/src/wifi/uart1.o.d ${OBJECTDIR}/src/config.o.d ${OBJECTDIR}/src/control.o.d ${OBJECTDIR}/src/http.o.d ${OBJECTDIR}/src/log.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/rtcc.o.d ${OBJECTDIR}/src/system.o.d ${OBJECTDIR}/src/io.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/src/misc/beep.o ${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o
+OBJECTFILES=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o
 
 # Source Files
-SOURCEFILES=src/misc/beep.c src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c
+SOURCEFILES=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c
 
 
 
@@ -107,12 +107,6 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/src/misc/beep.o: src/misc/beep.c  .generated_files/flags/default/6aa2b32b77013fbecfd4fa685e990377b3efaed7 .generated_files/flags/default/89084a3481147dd80e2344e29edcb351eeeb0ca
-	@${MKDIR} "${OBJECTDIR}/src/misc" 
-	@${RM} ${OBJECTDIR}/src/misc/beep.o.d 
-	@${RM} ${OBJECTDIR}/src/misc/beep.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/src/misc/beep.o.d" -o ${OBJECTDIR}/src/misc/beep.o src/misc/beep.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/src/misc/delay.o: src/misc/delay.c  .generated_files/flags/default/e536fe17b0e5d116bd3ae4797165beb8059037df .generated_files/flags/default/89084a3481147dd80e2344e29edcb351eeeb0ca
 	@${MKDIR} "${OBJECTDIR}/src/misc" 
 	@${RM} ${OBJECTDIR}/src/misc/delay.o.d 
@@ -198,12 +192,6 @@ ${OBJECTDIR}/src/io.o: src/io.c  .generated_files/flags/default/af17ce6d38262e8d
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/src/io.o.d" -o ${OBJECTDIR}/src/io.o src/io.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 else
-${OBJECTDIR}/src/misc/beep.o: src/misc/beep.c  .generated_files/flags/default/a4ca6f609abe70db36d5435f7641415448123a56 .generated_files/flags/default/89084a3481147dd80e2344e29edcb351eeeb0ca
-	@${MKDIR} "${OBJECTDIR}/src/misc" 
-	@${RM} ${OBJECTDIR}/src/misc/beep.o.d 
-	@${RM} ${OBJECTDIR}/src/misc/beep.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/src/misc/beep.o.d" -o ${OBJECTDIR}/src/misc/beep.o src/misc/beep.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/src/misc/delay.o: src/misc/delay.c  .generated_files/flags/default/6f70de7c9f516112706ee2bacc800639f45bbd42 .generated_files/flags/default/89084a3481147dd80e2344e29edcb351eeeb0ca
 	@${MKDIR} "${OBJECTDIR}/src/misc" 
 	@${RM} ${OBJECTDIR}/src/misc/delay.o.d 

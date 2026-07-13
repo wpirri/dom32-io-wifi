@@ -41,12 +41,9 @@ void UART1_Init(void)
     /* ********************************************************************* */
     /* Configuracion de los pines */
     // Tx
-    TRISBbits.TRISB8 = 0;
+    TRISBbits.TRISB14 = 0;
     // Rx
-    TRISBbits.TRISB9 = 1;
-    // Reset
-    TRISBbits.TRISB10 = 0;
-    ODCBbits.ODCB10 = 1;
+    TRISBbits.TRISB15 = 1;
     /* ********************************************************************* */
     /* Configuracion de interrupcion */
     //    UERI: UART 1 Error

@@ -3,9 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/wifi/wifi.c</file>
             <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/io.h</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/wifi/wifi.c</file>
             <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/io.c</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/config.c</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/main.c</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/control.c</file>
+            <file>file:/C:/Users/walte/OneDrive/Documentos/Git/dom32-io-wifi/Programa-2/src/system.c</file>
         </group>
     </open-files>
 </project-private>

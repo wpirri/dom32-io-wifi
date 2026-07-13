@@ -32,8 +32,9 @@
 #include "../http.h"
 #include "../io.h"
 
-#define WIFI_RESET_SetHigh()    (LATBSET=(1<<10))
-#define WIFI_RESET_SetLow()     (LATBCLR=(1<<10))
+#define WIFI_RESET_SetHigh()    (LATBSET=(1<<13))
+#define WIFI_RESET_SetLow()     (LATBCLR=(1<<13))
+#define UART_INIT				UART1_Init
 #define UART_WRITE              UART1_Write
 #define UART_OVERFLOW           UART1_Overflow
 #define UART_ISRXREADY          UART1_IsRxReady
@@ -65,7 +66,11 @@ void WiFiInit( void )
     g_wifi_c_go_mode = 0;
     g_wifi_c_sta_conectado = 0;
 
-    UART1_Init();
+    // Reset
+    TRISBbits.TRISB13 = 0;
+    ODCBbits.ODCB13 = 1;
+
+    UART_INIT();
 }
 
 void WiFiTimer( void )

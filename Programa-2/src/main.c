@@ -29,9 +29,9 @@
  * 
  *      Port        Funcionalidad       Conectado a
  * ----------------------------------------------------------------------------
- * 1    MCLR / Vpp                      Programaci�n/Debug/Reset
- * 2    RA0                 out         Led Status
- * 3    RA1                 out         Led Modo
+ * 1    MCLR / Vpp                      Programacion/Debug/Reset
+ * 2    RA0                 out         Led Azul
+ * 3    RA1                 out         Led Verde
  * 4    RB0/PGED1                       SPI_SDO -> MOSI / Programacion/Debug
  * 5    RB1/PGEC1                       SPI_SDI -> MISO / Programacion/Debug
  * 6    RB2/AN4             in          IO4
@@ -40,7 +40,7 @@
  * 9    RA2/RP3/AN5         out         SPI_SCK -> CLK
  * 10   RA3/RP4             UART2       Tx
  * 11   RB4/RP5             in          IO2
- * 12   RA4/RP6             out         Led Aux
+ * 12   RA4/RP6             out         Led Ambar
  * 13   Vdd                             +3v3
  * 14   RB5                 in          IO1
  * 15   RB6                 out         SPI_CS -> /CS

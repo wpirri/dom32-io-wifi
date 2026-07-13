@@ -39,6 +39,7 @@ typedef struct _config_in_file_ /*  */
     unsigned char start_config_mode;
     unsigned char io_config_values[8];
     unsigned char enable_wiegand;
+    unsigned char debug;
 } config_in_file;
 
 typedef struct

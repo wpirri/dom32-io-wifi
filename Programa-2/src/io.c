@@ -56,14 +56,21 @@ void IOInit( void )
     IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
     IEC0bits.CNBIE = 1; //Enable CNBI interrupt
     
-    LED_Azul_SetDigitalOutput();
-    LED_Verde_SetDigitalOutput();
-    LED_Ambar_SetDigitalOutput();
+    /* LED_Azul - A0 */
+    TRISACLR = (1 << 0);
+    /* LED_Verde - A1 */
+    TRISACLR = (1 << 1);
+    /* LED_Ambar - A4 */
+    TRISACLR = (1 << 4);
     
-    OUT1_SetDigitalOutput();
-    OUT2_SetDigitalOutput();
-    OUT3_SetDigitalOutput();
-    OUT4_SetDigitalOutput();
+    /* OUT1 - B9 */
+    TRISBCLR = (1 << 9);
+    /* OUT2 - C9 */
+    TRISCCLR = (1 << 9);
+    /* OUT3 - B10 */
+    TRISBCLR = (1 << 10);
+    /* OUT4 */
+    TRISBCLR = (1 << 11);
     
     IOConfig();
 }
@@ -208,6 +215,7 @@ void IOConfig( void )
             CNPUBbits.CNPUB8 = 0;
         }
     }
+    /*
     LogMessage("[IOConfig] TRISA:   0x%04X", TRISA);
     LogMessage("[IOConfig] TRISB:   0x%04X", TRISB);
     LogMessage("[IOConfig] TRISC:   0x%04X", TRISC);
@@ -218,6 +226,7 @@ void IOConfig( void )
     LogMessage("[IOConfig] ANSELB:  0x%04X", ANSELB);
     LogMessage("[IOConfig] CNPUA:   0x%04X", CNPUA);
     LogMessage("[IOConfig] CNPUB:   0x%04X", CNPUB);
+    */
 }
 
 void IOLedControl( void )

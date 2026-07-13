@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f3" displayName="misc" projectFiles="true">
-        <itemPath>src/misc/beep.h</itemPath>
         <itemPath>src/misc/delay.h</itemPath>
         <itemPath>src/misc/strfunc.h</itemPath>
       </logicalFolder>
@@ -36,7 +35,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f3" displayName="misc" projectFiles="true">
-        <itemPath>src/misc/beep.c</itemPath>
         <itemPath>src/misc/delay.c</itemPath>
         <itemPath>src/misc/strfunc.c</itemPath>
       </logicalFolder>
