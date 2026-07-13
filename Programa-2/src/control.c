@@ -605,6 +605,16 @@ void ProcessGeneralConfig(char* in)
         else            OUT4_SetLow();
     }
     /* **** Control de I/O ************************************************* */
+    LogMessage("[IOConfig] TRISA:   0x%04X", TRISA);
+    LogMessage("[IOConfig] TRISB:   0x%04X", TRISB);
+    LogMessage("[IOConfig] TRISC:   0x%04X", TRISC);
+    LogMessage("[IOConfig] PORTA:   0x%04X", PORTA);
+    LogMessage("[IOConfig] PORTB:   0x%04X", PORTB);
+    LogMessage("[IOConfig] PORTC:   0x%04X", PORTC);
+    LogMessage("[IOConfig] ANSELA:  0x%04X", ANSELA);
+    LogMessage("[IOConfig] ANSELB:  0x%04X", ANSELB);
+    LogMessage("[IOConfig] CNPUA:   0x%04X", CNPUA);
+    LogMessage("[IOConfig] CNPUB:   0x%04X", CNPUB);
 }
 
 void ControlFileFlags( void )

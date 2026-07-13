@@ -36,7 +36,7 @@
 
 #define FIRMWARE_FILENAME       "domtouch.hex"
 #define TMP_FILENAME            "download.tmp"
-#define CONFIG_FILENAME         "d32touch.cfg"
+#define CONFIG_FILENAME         "d32wifi.cfg"
 #define DOWNLOAD_LIST_FILENAME  "download.lst"
 
 #define TOUCH_DELAY 10

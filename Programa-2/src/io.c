@@ -26,6 +26,7 @@
 #include <stdbool.h>
 
 #include "defines.h"
+#include "log.h"
 #include "config.h"
 #include "wifi/wifi.h"
 #include "http.h"
@@ -207,6 +208,16 @@ void IOConfig( void )
             CNPUBbits.CNPUB8 = 0;
         }
     }
+    LogMessage("[IOConfig] TRISA:   0x%04X", TRISA);
+    LogMessage("[IOConfig] TRISB:   0x%04X", TRISB);
+    LogMessage("[IOConfig] TRISC:   0x%04X", TRISC);
+    LogMessage("[IOConfig] PORTA:   0x%04X", PORTA);
+    LogMessage("[IOConfig] PORTB:   0x%04X", PORTB);
+    LogMessage("[IOConfig] PORTC:   0x%04X", PORTC);
+    LogMessage("[IOConfig] ANSELA:  0x%04X", ANSELA);
+    LogMessage("[IOConfig] ANSELB:  0x%04X", ANSELB);
+    LogMessage("[IOConfig] CNPUA:   0x%04X", CNPUA);
+    LogMessage("[IOConfig] CNPUB:   0x%04X", CNPUB);
 }
 
 void IOLedControl( void )
