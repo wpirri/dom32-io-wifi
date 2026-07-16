@@ -71,6 +71,8 @@ unsigned int save_config_timer_count;
 unsigned int control_file_flags;
 char filename_to_download[256];
 unsigned int download_list_count;
+const char fecha_compilacion[] = __DATE__ " " __TIME__;
+const char version_compilador[] = __VERSION__;
 
 void DownloadFile(const char* filename);
 void ControlHostKeepAlive(void);
@@ -106,6 +108,16 @@ void ControlInit( bool sd_ok )
     g_wifi_config.u.config.start_config_mode = 1;
 
     save_config_timer_count = 1;
+}
+
+const char* ControlVersion( void )
+{
+    return (const char*)&fecha_compilacion[0];
+}
+
+const char* ControlCompilador( void )
+{
+    return (const char*)&version_compilador[0];
 }
 
 void ControlTimer( void )
@@ -194,7 +206,10 @@ void ControlHostKeepAlive(void)
     int i;
     
     sprintf(url, "%s/infoio.cgi", g_wifi_config.u.config.rqst_path);
-    sprintf(data, "ID=%s&TYP=IO%s", WiFiMAC(), IOGetStatus());
+    sprintf(data, "ID=%s&TYP=IO&VER=%s&COMP=%s%s", 
+            WiFiMAC(), fecha_compilacion, version_compilador,
+            IOGetStatus());
+    
     rc = HttpQueryHost(url, data, NULL, data);
     if(rc == 200)
     {

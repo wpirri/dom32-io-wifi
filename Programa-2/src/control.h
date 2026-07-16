@@ -21,6 +21,8 @@
 #include <stdbool.h>
 
 void ControlInit(bool sd_ok);
+const char* ControlVersion( void );
+const char* ControlCompilador( void );
 void ControlTimer(void);
 void ControlTask(void);
 
