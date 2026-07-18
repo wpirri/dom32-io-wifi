@@ -464,6 +464,7 @@ int HttpDownload(const char* filename)
      * 2.- %s: Host
      */
     snprintf(rqst, 250, http_c_http_get, url, HttpCurrentHost());
+    LogMessage("[HttpDownload] Descargar archivo [%s]", filename);
     return WiFiQueryHostToFile(HttpCurrentHost(), HttpCurrentPort(), rqst, file);
 }
 

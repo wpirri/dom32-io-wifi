@@ -62,7 +62,7 @@ unsigned int control_wifi_stm_delay;
 /* **** Control ************************************************************ */
 bool status_sd_ok;
 bool assinc_timer_flag;
-bool start_in_ap_mode;
+bool start_in_ap_mode;	/* Solo para I/O */
 unsigned int wifi_config_timer_count;
 unsigned int keep_alive_timer_count;
 unsigned int reset_timer_count;
@@ -96,6 +96,7 @@ void ControlInit( bool sd_ok )
     control_wifi_stm_delay = 500;
     wifi_config_timer_count = 0;
     
+    /* **** I/O ************************************************************ */
     start_in_ap_mode = false;
     if(g_wifi_config.u.config.wifi_ap1[0] == 0 && g_wifi_config.u.config.wifi_ap2[0] == 0)
     {
@@ -106,6 +107,7 @@ void ControlInit( bool sd_ok )
         start_in_ap_mode = true;
     }
     g_wifi_config.u.config.start_config_mode = 1;
+    /* **** I/O ************************************************************ */
 
     save_config_timer_count = 1;
 }
@@ -175,6 +177,7 @@ void ControlTask(void)
             update_firmware_timer_count--;
             if(update_firmware_timer_count == 0)
             {
+            	
                 DownloadFile("/download/"FIRMWARE_FILENAME);
             }
         }
@@ -186,7 +189,6 @@ void ControlTask(void)
         LogMessage("[ControlTask] Download: [%s]", filename_to_download);
 
         DownloadFile(filename_to_download);
-
         filename_to_download[0] = 0;
     }
 }
@@ -203,11 +205,12 @@ void ControlHostKeepAlive(void)
     int rc;
     char resp_err_code[16];
     char resp_err_msg[256];
+    char typ[]="IO";
     int i;
     
     sprintf(url, "%s/infoio.cgi", g_wifi_config.u.config.rqst_path);
-    sprintf(data, "ID=%s&TYP=IO&VER=%s&COMP=%s%s", 
-            WiFiMAC(), fecha_compilacion, version_compilador,
+    sprintf(data, "ID=%s&TYP=%s&FW=%s&AT=%s&SDK=%s%s", 
+            WiFiMAC(), typ, ControlVersion(), WiFiAT(), WiFiSDK(),
             IOGetStatus());
     
     rc = HttpQueryHost(url, data, NULL, data);
@@ -236,11 +239,13 @@ void ControlHostKeepAlive(void)
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
                     keep_alive_timer_count = g_wifi_config.u.config.report;
+                    /* **** I/O **** */
                     if(g_wifi_config.u.config.start_config_mode)
                     {
                         g_wifi_config.u.config.start_config_mode = 0;
                         save_config_timer_count = 1;
                     }
+                    /* **** I/O **** */
                     return;
                 }
                 else

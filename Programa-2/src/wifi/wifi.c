@@ -32,7 +32,7 @@
 #include "../http.h"
 #include "../io.h"
 
-#define __DEBUG_WIFI__
+#define __NO__DEBUG_WIFI__
 
 #define WIFI_RESET_SetHigh()    (LATBSET=(1<<13))
 #define WIFI_RESET_SetLow()     (LATBCLR=(1<<13))
@@ -50,6 +50,8 @@ int g_wifi_c_go_ap_conectado;
 int g_wifi_c_sta_conectado;
 char g_wifi_c_hw_mac[13];
 unsigned char g_wifi_soporte_ssl;
+char g_at_version[256];
+char g_sdk[256];
 
 void WifiWrite( const char *buffer );
 void WifiWriteLine( const char *line );
@@ -268,6 +270,16 @@ const char* WiFiMAC( void )
     return ((const char*)(&g_wifi_c_hw_mac[0]));
 }
 
+const char* WiFiAT( void )
+{
+    return ((const char*)(&g_at_version[0]));
+}
+
+const char* WiFiSDK( void )
+{
+    return ((const char*)(&g_sdk[0]));
+}
+
 void WifiWrite( const char *buffer )
 {
     if(buffer)
@@ -305,8 +317,16 @@ int WifiReadAt( char *data, unsigned int max_data, char at, int to )
     unsigned int read_len = 0;
     char ch = at+1;
     
-    if(UART_OVERFLOW()) return (-1);
+    if(UART_OVERFLOW())
+    {
+        LogMessage("[WifiReadAt] UART OVERFLOW!!!");
+        return (-1);
+    }
 
+#ifdef __DEBUG_WIFI__
+    LogMessage("[WifiReadAt] Leyendo hasta 0x%02X por %i cent", at, to);
+#endif
+    
     g_wifi_c_timer_count = to;
     do {
         CLRWDT();
@@ -336,7 +356,15 @@ int WifiReadCount( char *data, unsigned int count, int to )
     unsigned int read_count = 0;
     char ch;
     
-    if(UART_OVERFLOW()) return (-1);
+    if(UART_OVERFLOW())
+    {
+        LogMessage("[WifiReadCount] UART OVERFLOW!!!");
+        return (-1);
+    }
+
+#ifdef __DEBUG_WIFI__
+    LogMessage("[WifiReadCount] Leyendo %i bytes por %i cent", count, to);
+#endif
 
     g_wifi_c_timer_count = to;
     do {
@@ -429,12 +457,11 @@ int WiFiCheckUnsolMsg(const char* msg)
     }
     else if( !memcmp(msg, "AT version:", 11))
     {
+        strcpy(g_at_version, &msg[11]);
     }
     else if( !memcmp(msg, "SDK version:", 12))
     {
-    }
-    else if( !memcmp(msg, "compile time:", 13))
-    {
+        strcpy(g_sdk, &msg[12]);
     }
     else if( !memcmp(msg, "+IPD", 4))
     {
@@ -447,6 +474,10 @@ int WiFiCheckUnsolMsg(const char* msg)
 int WiFiCommand(const char* cmd, const char* wait, int to)
 {
     char buffer[256];
+
+#ifdef __DEBUG_WIFI__
+    LogMessage("[WiFiCommand] Cmd: [%s] Wait: [%s] To: %i cent", cmd, wait, to);
+#endif
     
     WifiWriteLine(cmd);
     do
@@ -493,7 +524,9 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
     int rc;
     char* p;
 
+#ifdef __DEBUG_WIFI__
     LogMessage("[WiFiQueryHost] Enviando %i bytes a %s:%i", strlen(send_msg), host, port);
+#endif
     
     if(WiFiConectado() == 0)
     {
@@ -647,7 +680,9 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
 
     real_filename[0] = 0;
     
+#ifdef __DEBUG_WIFI__
     LogMessage("[WiFiQueryHostToFile] Descargando archivo [%s]", filename);
+#endif
     
     if(WiFiConectado() == 0)
     {
@@ -777,7 +812,7 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
 
     /* Se terminó de recibir la cabecera HTTP */
 #ifdef __DEBUG_WIFI__
-    LogMessage("[WiFiQueryHostToFile] Recibiendo archivo de %i bytes", content_length);
+    LogMessage("[WiFiQueryHostToFile] Fin cabecera. Recibiendo archivo de %i bytes", content_length);
 #endif
     f = FSfopen(TMP_FILENAME, FS_WRITE);
     if( !f )
@@ -801,6 +836,9 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
             cmd[rc] = 0;
             recv_len += rc;
             
+#ifdef __DEBUG_WIFI__
+            LogMessage("[WiFiQueryHostToFile] Recibidos %i bytes [%-40.40s]...", rc, cmd);
+#endif
             /* Escribir cmd x rc bytes al archivo */
             FSfwrite(cmd, rc, 1, f);
             total_escrito += rc;
@@ -809,6 +847,9 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
         if(rc > 0)
         {
             cmd[rc] = 0;
+#ifdef __DEBUG_WIFI__
+            LogMessage("[WiFiQueryHostToFile] Recibidos %i bytes [%-40.40s]...", rc, cmd);
+#endif
             p_ipd = strstr(cmd, "+IPD");
             if(p_ipd)
             {
@@ -843,8 +884,8 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
         strcpy(real_filename, filename);
     }
     
-    LogMessage("[WiFiQueryHostToFile] Archivo [%s] %lu/%lu bytes",
-                real_filename, content_length, total_escrito);
+    LogMessage("[WiFiQueryHostToFile] Archivo [%s] Recibido %lu de %lu bytes",
+                real_filename, total_escrito, content_length);
     
     if(http_200_ok && content_length == total_escrito)
     {
