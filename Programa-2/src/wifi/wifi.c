@@ -150,7 +150,7 @@ int WiFiSetMode(int mode)
 
     LogMessage("[WIFI] SetMode %i", mode);    
     
-    if(mode <  1 || mode > 3 ) return (-1);
+    if(mode != WIFI_MODE_AP && mode != WIFI_MODE_ST ) return (-1);
 
     g_wifi_c_ap_conectado = 0;
     g_wifi_c_mode = 0;
@@ -166,9 +166,9 @@ int WiFiSetMode(int mode)
     if(WiFiCommand("AT+CIPMUX=1", "OK", 150) < 0) return (-1);
 
     /* Solo para AP */
-    if(mode == WIFI_MODE_AP || mode == WIFI_MODE_AP_ST)
+    if(mode == WIFI_MODE_AP)
     {
-        sprintf(cmd, "AT+CWSAP=\"Dom32touch-%s\",\"\",1,0,4,0", &g_wifi_c_hw_mac[6]);
+        sprintf(cmd, "AT+CWSAP=\"WiFi-%s-%s\",\"\",1,0,4,0", WIFI_HW_Name, &g_wifi_c_hw_mac[6]);
         if(WiFiCommand(cmd, "OK", 150) < 0) return (-1);
         /* Max conexiones */
         if(WiFiCommand("AT+CIPSERVERMAXCONN=1", "OK", 150) < 0) return (-1);
@@ -177,7 +177,7 @@ int WiFiSetMode(int mode)
     }
 
     /* Solo para ST */
-    if(mode == WIFI_MODE_ST || mode == WIFI_MODE_AP_ST)
+    if(mode == WIFI_MODE_ST)
     {
         /* Reconexión automática */
         if(WiFiCommand("AT+CWAUTOCONN=1", "OK", 150) < 0) return (-1);
@@ -187,16 +187,7 @@ int WiFiSetMode(int mode)
         if(g_wifi_config.u.config.wifi_ap1[0] == 0 && g_wifi_config.u.config.wifi_ap2[0] == 0)
         {
             LogMessage("[WIFI] No hay AP definido");
-            if(mode == WIFI_MODE_AP_ST)
-            {
-                /* Si es combinado AT+ST */
-                g_wifi_c_mode = mode;
-                return 0;
-            }
-            else
-            {
-                return (-1);
-            }
+            return (-1);
         }
         /* Si el seleccionado no está configurado me paso al otro */
         if(g_wifi_c_go_ap_conectado == 1 && g_wifi_config.u.config.wifi_ap1[0] == 0)

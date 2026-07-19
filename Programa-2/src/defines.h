@@ -52,4 +52,6 @@
 #define DOWNLOAD_SCREEN_BMP "download.bmp"
 #define WIFI_SCREEN_BMP     "wifi.bmp"
 
+#define WIFI_HW_Name            "IO"
+
 #endif /* _DEFINES_H_ */
