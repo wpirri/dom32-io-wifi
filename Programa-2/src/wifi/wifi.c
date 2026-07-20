@@ -922,6 +922,8 @@ void WiFiReadUnsolIPD(const char* msg)
     strcpy(read_buffer, msg);
     rc = strlen(msg);
     
+    p = NULL;
+    strcpy(request, "NONE");
     do
     {
         read_buffer[rc] = 0;
@@ -936,18 +938,19 @@ void WiFiReadUnsolIPD(const char* msg)
             {
                 p = ((char*)(strchr(read_buffer, ':')+1));
             }
-            /* De esta primera parte saco algunos datos */
-            if( !memcmp(p, "GET ", 4))
+            if(p)
             {
-                strcpy(request, "GET");
+                /* De esta primera parte saco algunos datos */
+                if( !memcmp(p, "GET ", 4))
+                {
+                    strcpy(request, "GET");
+                }
+                else if( !memcmp(p, "POST ", 5))
+                {
+                    strcpy(request, "POST");
+                }
+                HttpGetRequest(p, uri, 255);
             }
-            else if( !memcmp(p, "POST ", 5))
-            {
-                strcpy(request, "POST");
-            }
-            HttpGetRequest(p, uri, 255);
-            
-            
         }
         else if( read_buffer[0] == '\r' && read_buffer[1] == '\n' && data_len )
         {
