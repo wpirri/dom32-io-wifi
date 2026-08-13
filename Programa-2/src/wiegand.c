@@ -21,9 +21,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "http.h"
+#include "control.h"
 #include "config.h"
-#include "clog.h"
+#include "log.h"
 
 typedef struct _wgnd_data
 {
@@ -43,6 +43,13 @@ typedef struct _wgnd_data
 volatile unsigned char gWGND_TimerCount;
 volatile unsigned char gWGND_BitCount;
 wgnd_data gWGND_Data;
+
+void WGND_Ack( void )
+{
+    /* Reseteo todo para una nueva recepci�n */
+    gWGND_BitCount = 0;
+    gWGND_Data.udata.ldata = 0l;
+}
 
 void WGND_Init( void )
 {
@@ -81,18 +88,11 @@ void WGND_Timer( void )
                         gWGND_Data.udata.bytes.c,
                         gWGND_Data.udata.bytes.d);
                 LogMessage("[WIEGAND] CRD: %s", cardHexa);
-                HTTPNotificarTarjeta(cardHexa);
+                ControlNotificarTarjeta(cardHexa);
             }
             WGND_Ack();
         }
     }
-}
-
-void WGND_Ack( void )
-{
-    /* Reseteo todo para una nueva recepci�n */
-    gWGND_BitCount = 0;
-    gWGND_Data.udata.ldata = 0l;
 }
 
 /*  WGND_IntData

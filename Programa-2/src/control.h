@@ -31,4 +31,5 @@ void Control_WiFi_Task(void);
 
 void ProcessGeneralConfig(char* in);
 
+void ControlNotificarTarjeta(const char* code);
 #endif /* _CONTROL_H_ */

@@ -30,9 +30,12 @@
 #include "config.h"
 #include "wifi/wifi.h"
 #include "http.h"
+#include "wiegand.h"
 
 int g_io_status[6];
+int g_io_pulse_count[6];
 int g_out_status[4];
+int g_out_pulse_count[4];
 char g_buffer_io_status[1024];
 
 void IOInit( void )
@@ -81,19 +84,29 @@ void IOInit( void )
     g_io_status[3] = (-1);
     g_io_status[4] = (-1);
     g_io_status[5] = (-1);
+    
+    g_io_pulse_count[0] = 0;
+    g_io_pulse_count[1] = 0;
+    g_io_pulse_count[2] = 0;
+    g_io_pulse_count[3] = 0;
+    g_io_pulse_count[4] = 0;
+    g_io_pulse_count[5] = 0;
 
     g_out_status[0] = (-1);
     g_out_status[1] = (-1);
     g_out_status[2] = (-1);
     g_out_status[3] = (-1);
     
+    g_out_pulse_count[0] = 0;
+    g_out_pulse_count[1] = 0;
+    g_out_pulse_count[2] = 0;
+    g_out_pulse_count[3] = 0;
+    
 }
 
 /* Interrupt service routine for the CNBI interrupt. */
 void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_B( void )
 {
-#ifdef ___REVISAR___
-    
     if(IFS0bits.CNBIF == 1)
     {
         WGND_IntData( CNFBbits.CNFB8, CNFBbits.CNFB7 );
@@ -101,17 +114,13 @@ void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHA
         {
             CNFBCLR = 0x100;  //Clear CNFBbits.CNFB8
         }
-        
         if(CNFBbits.CNFB7 == 1)
         {
             CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
         }
-        
         // Clear the flag
         IFS0CLR= 1 << _IFS0_CNBIF_POSITION; // Clear IFS0bits.CNBIF
     }
-    
-#endif /* ___REVISAR___ */
 }
 
 const char* IOGetStatus( void )
@@ -348,7 +357,7 @@ int IOSetConfig( const char* msg )
 
     if(msg)
     {
-        if(HTTPGetFormData(msg, "Config_IO1", s))
+        if(HTTPGetFormData(msg, "cfgIO1", s))
         {
             /* Entrada 1 - RB5 */
             if(s[0] == 'i')
@@ -368,7 +377,7 @@ int IOSetConfig( const char* msg )
                 CNPUBbits.CNPUB5 = 0;
             }
         }
-        if(HTTPGetFormData(msg, "Config_IO2", s))
+        if(HTTPGetFormData(msg, "cfgIO2", s))
         {
             /* Entrada 2 - RB4 */
             if(s[0] == 'i')
@@ -388,7 +397,7 @@ int IOSetConfig( const char* msg )
                 CNPUBbits.CNPUB4 = 0;
             }
         }
-        if(HTTPGetFormData(msg, "Config_IO3", s))
+        if(HTTPGetFormData(msg, "cfgIO3", s))
         {
             /* Entrada 3 - RB3 / AN11 */
             if(s[0] == 'i')
@@ -419,7 +428,7 @@ int IOSetConfig( const char* msg )
                 CNPUBbits.CNPUB3 = 0;
             }
         }
-        if(HTTPGetFormData(msg, "Config_IO4", s))
+        if(HTTPGetFormData(msg, "cfgIO4", s))
         {
             /* Entrada 4 - RB2 / AN4*/
             if(s[0] == 'i')
@@ -450,7 +459,7 @@ int IOSetConfig( const char* msg )
                 CNPUBbits.CNPUB2 = 0;
             }
         }
-        if(HTTPGetFormData(msg, "Config_IO5", s))
+        if(HTTPGetFormData(msg, "cfgIO5", s))
         {
             /* Entrada 5 - RB7 */
             if(g_wifi_config.u.config.enable_wiegand == 0)
@@ -473,7 +482,7 @@ int IOSetConfig( const char* msg )
                 }
             }
         }
-        if(HTTPGetFormData(msg, "Config_IO6", s))
+        if(HTTPGetFormData(msg, "cfgIO6", s))
         {
             /* Entrada 6 - RB8 */
             if(g_wifi_config.u.config.enable_wiegand == 0)
@@ -623,58 +632,158 @@ void IOSetStatus( const char* msg )
     if(HTTPGetFormData(msg, "IO1", s) && 
             g_wifi_config.u.config.io_config_values[0] == 'o')
     {
-        if(s[0] == '1') IO1_SetHigh();
-        else            IO1_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[0] = (atoi(s)-1)*100;
+            IO1_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO1_SetHigh();
+        }
+        else
+        {
+            IO1_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "IO2", s) && 
             g_wifi_config.u.config.io_config_values[1] == 'o')
     {
-        if(s[0] == '1') IO2_SetHigh();
-        else            IO2_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[1] = (atoi(s)-1)*100;
+            IO2_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO2_SetHigh();
+        }
+        else
+        {
+            IO2_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "IO3", s) && 
             g_wifi_config.u.config.io_config_values[2] == 'o')
     {
-        if(s[0] == '1') IO3_SetHigh();
-        else            IO3_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[2] = (atoi(s)-1)*100;
+            IO3_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO3_SetHigh();
+        }
+        else
+        {
+            IO3_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "IO4", s) && 
             g_wifi_config.u.config.io_config_values[3] == 'o')
     {
-        if(s[0] == '1') IO4_SetHigh();
-        else            IO4_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[3] = (atoi(s)-1)*100;
+            IO4_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO4_SetHigh();
+        }
+        else
+        {
+            IO4_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "IO5", s) && 
             g_wifi_config.u.config.io_config_values[4] == 'o')
     {
-        if(s[0] == '1') IO5_SetHigh();
-        else            IO5_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[4] = (atoi(s)-1)*100;
+            IO5_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO5_SetHigh();
+        }
+        else
+        {
+            IO5_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "IO6", s) && 
             g_wifi_config.u.config.io_config_values[5] == 'o')
     {
-        if(s[0] == '1') IO6_SetHigh();
-        else            IO6_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_io_pulse_count[5] = (atoi(s)-1)*100;
+            IO6_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            IO6_SetHigh();
+        }
+        else
+        {
+            IO6_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "OUT1", s))
     {
-        if(s[0] == '1') OUT1_SetHigh();
-        else            OUT1_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_out_pulse_count[0] = (atoi(s)-1)*100;
+            OUT1_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            OUT1_SetHigh();
+        }
+        else
+        {
+            OUT1_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "OUT2", s))
     {
-        if(s[0] == '1') OUT2_SetHigh();
-        else            OUT2_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_out_pulse_count[1] = (atoi(s)-1)*100;
+            OUT2_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            OUT2_SetHigh();
+        }
+        else
+        {
+            OUT2_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "OUT3", s))
     {
-        if(s[0] == '1') OUT3_SetHigh();
-        else            OUT3_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_out_pulse_count[2] = (atoi(s)-1)*100;
+            OUT3_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            OUT3_SetHigh();
+        }
+        else
+        {
+            OUT3_SetLow();
+        }
     }
     if(HTTPGetFormData(msg, "OUT4", s))
     {
-        if(s[0] == '1') OUT4_SetHigh();
-        else            OUT4_SetLow();
+        if(atoi(s) > 1)
+        {
+            g_out_pulse_count[3] = (atoi(s)-1)*100;
+            OUT4_SetHigh();
+        } else if(atoi(s) == 1)
+        {
+            OUT4_SetHigh();
+        }
+        else
+        {
+            OUT4_SetLow();
+        }
     }
 }
 
@@ -715,4 +824,90 @@ void IOLedControl( void )
     {
         LED_Azul_SetLow();
     }
+}
+
+void IOTimer( void )
+{
+    /* Manejo el apagado de los pulsos */
+    if(g_io_pulse_count[0] > 0)
+    {
+        g_io_pulse_count[0]--;
+        if(g_io_pulse_count[0] == 0)
+        {
+            IO1_SetLow();
+        }
+    }
+    if(g_io_pulse_count[1] > 0)
+    {
+        g_io_pulse_count[1]--;
+        if(g_io_pulse_count[1] == 0)
+        {
+            IO2_SetLow();
+        }
+    }
+    if(g_io_pulse_count[2] > 0)
+    {
+        g_io_pulse_count[2]--;
+        if(g_io_pulse_count[2] == 0)
+        {
+            IO3_SetLow();
+        }
+    }
+    if(g_io_pulse_count[3] > 0)
+    {
+        g_io_pulse_count[3]--;
+        if(g_io_pulse_count[3] == 0)
+        {
+            IO4_SetLow();
+        }
+    }
+    if(g_io_pulse_count[4] > 0)
+    {
+        g_io_pulse_count[4]--;
+        if(g_io_pulse_count[4] == 0)
+        {
+            IO5_SetLow();
+        }
+    }
+    if(g_io_pulse_count[5] > 0)
+    {
+        g_io_pulse_count[5]--;
+        if(g_io_pulse_count[5] == 0)
+        {
+            IO6_SetLow();
+        }
+    }
+    if(g_out_pulse_count[0] > 0)
+    {
+        g_out_pulse_count[0]--;
+        if(g_out_pulse_count[0] == 0)
+        {
+            OUT1_SetLow();
+        }
+    }
+    if(g_out_pulse_count[1]  > 0)
+    {
+        g_out_pulse_count[1]--;
+        if(g_out_pulse_count[1] == 0)
+        {
+            OUT2_SetLow();
+        }
+    }
+    if(g_out_pulse_count[2] > 0)
+    {
+        g_out_pulse_count[2]--;
+        if(g_out_pulse_count[2] == 0)
+        {
+            OUT3_SetLow();
+        }
+    }
+    if(g_out_pulse_count[3] > 0)
+    {
+        g_out_pulse_count[3]--;
+        if(g_out_pulse_count[3] == 0)
+        {
+            OUT4_SetLow();
+        }
+    }
+
 }

@@ -39,6 +39,7 @@
 #include "http.h"
 #include "system.h"
 #include "rtcc.h"
+#include "wiegand.h"
 
 /* **** WiFi *************************************************************** */
 typedef enum
@@ -58,6 +59,7 @@ typedef enum
 
 enum_control_wifi_stm control_wifi_stm;
 unsigned int control_wifi_stm_delay;
+char g_control_c_wiegand_card_code[16];
 
 /* **** Control ************************************************************ */
 bool status_sd_ok;
@@ -182,6 +184,10 @@ void ControlTask(void)
             }
         }
         
+        IOTimer();
+        
+        if(g_wifi_config.u.config.enable_wiegand) WGND_Timer();
+        
     }
     
     if(filename_to_download[0])
@@ -212,6 +218,13 @@ void ControlHostKeepAlive(void)
             WiFiMAC(), WIFI_HW_Name, ControlVersion(), WiFiAT(), WiFiSDK(),
             IOGetStatus());
     
+    /* Agrego la tarjeta */
+    if(strlen(g_control_c_wiegand_card_code))
+    {
+        strcat(data, "&card=");
+        strcat(data, g_control_c_wiegand_card_code);
+    }
+    
     rc = HttpQueryHost(url, data, NULL, data);
     if(rc == 200)
     {
@@ -238,13 +251,17 @@ void ControlHostKeepAlive(void)
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
                     keep_alive_timer_count = g_wifi_config.u.config.report;
+                    
                     /* **** I/O **** */
                     if(g_wifi_config.u.config.start_config_mode)
                     {
                         g_wifi_config.u.config.start_config_mode = 0;
                         save_config_timer_count = 1;
                     }
+                    /* Borro la tarjeta si había */
+                    g_control_c_wiegand_card_code[0] = 0;
                     /* **** I/O **** */
+                    
                     return;
                 }
                 else
@@ -594,4 +611,9 @@ void Control_WiFi_Task(void)
         default:
             break;
     }    
+}
+
+void ControlNotificarTarjeta(const char* code)
+{
+    strcpy(g_control_c_wiegand_card_code, code);
 }

@@ -78,6 +78,7 @@
 #include "wifi/wifi.h"
 #include "control.h"
 #include "http.h"
+#include "wiegand.h"
 
 int main(void)
 {
@@ -122,6 +123,9 @@ int main(void)
     
     LogMessage("[MAIN] Init STM");
     ControlInit(status_sd_ok);
+    
+    LogMessage("[MAIN] Init Wiegand");
+    WGND_Init();
     /* Reset POR y BOR 
        Se hace a lo último así las distintas inicializaciones pueden verificar
        si vengo de un Power On */

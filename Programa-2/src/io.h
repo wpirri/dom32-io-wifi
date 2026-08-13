@@ -22,6 +22,7 @@
 #include <stdbool.h>
 
 void IOInit( void );
+void IOTimer( void );
 
 const char* IOGetStatus( void );
 int IOSetConfig( const char* msg );

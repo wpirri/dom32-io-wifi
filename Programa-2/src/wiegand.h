@@ -18,10 +18,11 @@
 #ifndef _WIEGAND_H_
 #define	_WIEGAND_H_
 
+/* Ejecutar en el main, al final de la inicialización */
 void WGND_Init( void );
+/* Llamar 10 veces por segundo desenganchado de la interrupción */
 void WGND_Timer( void );
-void WGND_Ack( void );
+/* Se llama desde CNBI interrupt */
 void WGND_IntData( unsigned char d0, unsigned char d1 );
-void WGND_Callback(const char* crd);
 
 #endif /* _WIEGAND_H_ */
