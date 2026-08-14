@@ -199,6 +199,16 @@ void ControlTask(void)
     }
 }
 
+void ControlSaveConfig(int t)
+{
+    save_config_timer_count = t;
+}
+
+void ControlSystemReset(int t)
+{
+    reset_timer_count = t;
+}
+
 void DownloadFile(const char* filename)
 {
     HttpDownload(filename);
@@ -290,19 +300,19 @@ void ProcessGeneralConfig(char* in)
     
     if(HTTPGetFormData(in, "ap1", g_wifi_config.u.config.wifi_ap1))
     {
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ap1p", g_wifi_config.u.config.wifi_ap1_pass))
     {
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ap2", g_wifi_config.u.config.wifi_ap2))
     {
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ap2p", g_wifi_config.u.config.wifi_ap2_pass))
     {
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ce1", g_wifi_config.u.config.wifi_host1))
     {
@@ -314,7 +324,7 @@ void ProcessGeneralConfig(char* in)
             /* viene con el port */
             g_wifi_config.u.config.wifi_host1_port = atoi(p);
         }
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ce2", g_wifi_config.u.config.wifi_host2))
     {
@@ -326,21 +336,21 @@ void ProcessGeneralConfig(char* in)
             /* viene con el port */
             g_wifi_config.u.config.wifi_host2_port = atoi(p);
         }
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "path", g_wifi_config.u.config.rqst_path))
     {
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ce1p", s))
     {
         g_wifi_config.u.config.wifi_host1_port = atoi(s);
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "ce2p", s))
     {
         g_wifi_config.u.config.wifi_host2_port = atoi(s);
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
     if(HTTPGetFormData(in, "rep", s))
     {
@@ -349,23 +359,18 @@ void ProcessGeneralConfig(char* in)
         {
             g_wifi_config.u.config.report = 500;
         }
-        save_config_timer_count = 500;
+        save_config_timer_count = 100;
     }
 
     if(HTTPGetFormData(in, "reset", s))
     {
-        reset_timer_count = 1000;
+        reset_timer_count = 300;
     }
     if(HTTPGetFormData(in, "update", s))
     {
         if( !strcmp(s, "firmware"))
         {
-            update_firmware_timer_count = 300;
-        }
-        else if( !strcmp(s, "config"))
-        {
-            /* TODO: Actualizar la configuración de I/O */
-            
+            update_firmware_timer_count = 100;
         }
     }
 
@@ -406,54 +411,10 @@ void ProcessGeneralConfig(char* in)
     }
     
     /* **** Control de I/O ************************************************* */
-
-    if(HTTPGetFormData(in, "wiegand", s))
-    {
-        if(s[0] == '1')
-        {
-            g_wifi_config.u.config.io_config_default = 0;
-            save_config_timer_count = 500;
-            g_wifi_config.u.config.enable_wiegand = 1;
-            /* Entrada 5 - RB7 */
-            TRISBbits.TRISB7 = 1;
-            CNPUBbits.CNPUB7 = 1;
-            /* Entrada 6 - RB8 */
-            TRISBbits.TRISB8 = 1;
-            CNPUBbits.CNPUB8 = 1;
-            /* Control de interrupcion */
-            //    CNBI: PORT B Change Notification
-            //    Priority: 1
-            IPC2bits.CNBIP = 1;
-            //    Sub Priority: 0
-            IPC2bits.CNBIS = 0;
-            //Clear CNBI interrupt flag
-            IFS0CLR= 1 << _IFS0_CNBIF_POSITION;
-            //Enable CNBI interrupt
-            IEC0bits.CNBIE = 1;
-        }
-        else
-        {
-            g_wifi_config.u.config.io_config_default = 0;
-            save_config_timer_count = 500;
-            g_wifi_config.u.config.enable_wiegand = 0;
-            
-            //Disable CNBI interrupt
-            IEC0bits.CNBIE = 0;
-        }
-    }
-
-    /* **** Config **** */
-    
-    if(IOSetConfig(in))
-    {
-        save_config_timer_count = 500;
-    }
-    
-    /* **** Set **** */
-    
+    IOSetConfig(in);
     IOSetStatus(in);
-    
     /* **** Control de I/O ************************************************* */
+    
 }
 
 void ControlFileFlags( void )

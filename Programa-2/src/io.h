@@ -25,7 +25,7 @@ void IOInit( void );
 void IOTimer( void );
 
 const char* IOGetStatus( void );
-int IOSetConfig( const char* msg );
+void IOSetConfig( const char* msg );
 void IOSetStatus( const char* msg );
 void IOLedControl( void );
 

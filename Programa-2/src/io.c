@@ -28,6 +28,7 @@
 #include "defines.h"
 #include "log.h"
 #include "config.h"
+#include "control.h"
 #include "wifi/wifi.h"
 #include "http.h"
 #include "wiegand.h"
@@ -40,28 +41,6 @@ char g_buffer_io_status[1024];
 
 void IOInit( void )
 {
-    /****************************************************************************
-     * Interrupt On Change: negative
-     ***************************************************************************/
-    CNEN1Bbits.CNIE1B7 = 1;    //Pin : RB7
-    CNEN1Bbits.CNIE1B8 = 1;    //Pin : RB8
-    /****************************************************************************
-     * Interrupt On Change: flag
-     ***************************************************************************/
-    CNFBbits.CNFB7 = 0;    //Pin : RB7
-    CNFBbits.CNFB8 = 0;    //Pin : RB8
-    /****************************************************************************
-     * Interrupt On Change: config
-     ***************************************************************************/
-    CNCONBbits.CNSTYLE = 1;    //Config for PORTB
-    CNCONBbits.ON = 1;    //Config for PORTB
-
-    /****************************************************************************
-     * Interrupt On Change: Interrupt Enable
-     ***************************************************************************/
-    IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
-    IEC0bits.CNBIE = 1; //Enable CNBI interrupt
-    
     /* LED_Azul - A0 */
     TRISACLR = (1 << 0);
     /* LED_Verde - A1 */
@@ -102,25 +81,6 @@ void IOInit( void )
     g_out_pulse_count[2] = 0;
     g_out_pulse_count[3] = 0;
     
-}
-
-/* Interrupt service routine for the CNBI interrupt. */
-void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_B( void )
-{
-    if(IFS0bits.CNBIF == 1)
-    {
-        WGND_IntData( CNFBbits.CNFB8, CNFBbits.CNFB7 );
-        if(CNFBbits.CNFB8 == 1)
-        {
-            CNFBCLR = 0x100;  //Clear CNFBbits.CNFB8
-        }
-        if(CNFBbits.CNFB7 == 1)
-        {
-            CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
-        }
-        // Clear the flag
-        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; // Clear IFS0bits.CNBIF
-    }
 }
 
 const char* IOGetStatus( void )
@@ -174,6 +134,9 @@ const char* IOGetStatus( void )
         }
     }
 
+    /*
+     IO3 - Digital o Analogica
+     */
     if(g_wifi_config.u.config.io_config_values[2] == 'i' || g_wifi_config.u.config.io_config_values[2] == 'o')
     {
         if(IO3_GetValue())
@@ -195,7 +158,14 @@ const char* IOGetStatus( void )
             }
         }
     }
+    else if(g_wifi_config.u.config.io_config_values[2] == 'a')
+    {
+        
+    }
     
+    /*
+     IO4 - Digital o Analogica
+     */
     if(g_wifi_config.u.config.io_config_values[3] == 'i' || g_wifi_config.u.config.io_config_values[3] == 'o')
     {
         if(IO4_GetValue())
@@ -217,47 +187,57 @@ const char* IOGetStatus( void )
             }
         }
     }
-
-    if(g_wifi_config.u.config.io_config_values[4] == 'i' || g_wifi_config.u.config.io_config_values[4] == 'o')
+    else if(g_wifi_config.u.config.io_config_values[3] == 'a')
     {
-        if(IO5_GetValue())
-        {
-            strcat(g_buffer_io_status, "&IO5=1");
-            if( g_io_status[4] != 1 )
-            {
-                if(g_io_status[4] != (-1)) strcat(change, "IO5,");
-                g_io_status[4] = 1;
-            }
-        }
-        else
-        {
-            strcat(g_buffer_io_status, "&IO5=0");
-            if( g_io_status[4] != 0 )
-            {
-                if(g_io_status[5] != (-1)) strcat(change, "IO5,");
-                g_io_status[4] = 0;
-            }
-        }
+        
     }
 
-    if(g_wifi_config.u.config.io_config_values[5] == 'i' || g_wifi_config.u.config.io_config_values[5] == 'o')
+    /*
+     IO5 - IO6 - Los salté si tengo wiegand configurado
+     */
+    if(g_wifi_config.u.config.enable_wiegand == 0)
     {
-        if(IO6_GetValue())
+        if(g_wifi_config.u.config.io_config_values[4] == 'i' || g_wifi_config.u.config.io_config_values[4] == 'o')
         {
-            strcat(g_buffer_io_status, "&IO6=1");
-            if( g_io_status[5] != 1 )
+            if(IO5_GetValue())
             {
-                if(g_io_status[5] != (-1)) strcat(change, "IO6,");
-                g_io_status[5] = 1;
+                strcat(g_buffer_io_status, "&IO5=1");
+                if( g_io_status[4] != 1 )
+                {
+                    if(g_io_status[4] != (-1)) strcat(change, "IO5,");
+                    g_io_status[4] = 1;
+                }
+            }
+            else
+            {
+                strcat(g_buffer_io_status, "&IO5=0");
+                if( g_io_status[4] != 0 )
+                {
+                    if(g_io_status[5] != (-1)) strcat(change, "IO5,");
+                    g_io_status[4] = 0;
+                }
             }
         }
-        else
+
+        if(g_wifi_config.u.config.io_config_values[5] == 'i' || g_wifi_config.u.config.io_config_values[5] == 'o')
         {
-            strcat(g_buffer_io_status, "&IO6=0");
-            if( g_io_status[5] != 0 )
+            if(IO6_GetValue())
             {
-                if(g_io_status[5] != (-1)) strcat(change, "IO6,");
-                g_io_status[5] = 0;
+                strcat(g_buffer_io_status, "&IO6=1");
+                if( g_io_status[5] != 1 )
+                {
+                    if(g_io_status[5] != (-1)) strcat(change, "IO6,");
+                    g_io_status[5] = 1;
+                }
+            }
+            else
+            {
+                strcat(g_buffer_io_status, "&IO6=0");
+                if( g_io_status[5] != 0 )
+                {
+                    if(g_io_status[5] != (-1)) strcat(change, "IO6,");
+                    g_io_status[5] = 0;
+                }
             }
         }
     }
@@ -350,159 +330,160 @@ const char* IOGetStatus( void )
     return (const char*)(&g_buffer_io_status[0]);
 }
 
-int IOSetConfig( const char* msg )
+void IOSetConfig( const char* msg )
 {
     char s[256];
     int save_config = 0;
+    int reset_system = 0;
 
     if(msg)
     {
+        if(HTTPGetFormData(msg, "wiegand", s))
+        {
+            if(s[0] == '1')
+            {
+                if(g_wifi_config.u.config.enable_wiegand == 0)
+                {
+                    g_wifi_config.u.config.io_config_values[4] = 'i';
+                    g_wifi_config.u.config.io_config_values[5] = 'i';
+                    save_config = 1;
+                    reset_system = 1;
+                }
+                g_wifi_config.u.config.enable_wiegand = 1;
+            }
+            else
+            {
+                if(g_wifi_config.u.config.enable_wiegand == 1)
+                {
+                    save_config = 1;
+                    reset_system = 1;
+                }
+                g_wifi_config.u.config.enable_wiegand = 0;
+            }
+        }
+
         if(HTTPGetFormData(msg, "cfgIO1", s))
         {
             /* Entrada 1 - RB5 */
             if(s[0] == 'i')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[0] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB5 = 1;
                 CNPUBbits.CNPUB5 = 1;
             }
             else if(s[0] == 'o')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[0] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB5 = 0;
                 CNPUBbits.CNPUB5 = 0;
             }
+            save_config = 1;
         }
         if(HTTPGetFormData(msg, "cfgIO2", s))
         {
             /* Entrada 2 - RB4 */
             if(s[0] == 'i')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[1] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB4 = 1;
                 CNPUBbits.CNPUB4 = 1;
             }
             else if(s[0] == 'o')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[1] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB4 = 0;
                 CNPUBbits.CNPUB4 = 0;
             }
+            save_config = 1;
         }
         if(HTTPGetFormData(msg, "cfgIO3", s))
         {
             /* Entrada 3 - RB3 / AN11 */
             if(s[0] == 'i')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[2] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB3 = 1;
                 ANSELBbits.ANSB3 = 0;   // AN11
                 CNPUBbits.CNPUB3 = 1;
             }
             else if(s[0] == 'o')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[2] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB3 = 0;
                 ANSELBbits.ANSB3 = 0;   // AN11
                 CNPUBbits.CNPUB3 = 0;
             }
             else if(s[0] == 'a')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[2] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB3 = 1;
                 ANSELBbits.ANSB3 = 1;   // AN11
                 CNPUBbits.CNPUB3 = 0;
             }
+            save_config = 1;
         }
         if(HTTPGetFormData(msg, "cfgIO4", s))
         {
             /* Entrada 4 - RB2 / AN4*/
             if(s[0] == 'i')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[3] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB2 = 1;
                 ANSELBbits.ANSB2 = 0;   // AN4
                 CNPUBbits.CNPUB2 = 1;
             }
             else if(s[0] == 'o')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[3] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB2 = 0;
                 ANSELBbits.ANSB2 = 0;   // AN4
                 CNPUBbits.CNPUB2 = 0;
             }
             else if(s[0] == 'a')
             {
-                g_wifi_config.u.config.io_config_default = 0;
                 g_wifi_config.u.config.io_config_values[3] = s[0];
-                save_config = 1;
                 TRISBbits.TRISB2 = 1;
                 ANSELBbits.ANSB2 = 1;   // AN4
                 CNPUBbits.CNPUB2 = 0;
             }
+            save_config = 1;
         }
-        if(HTTPGetFormData(msg, "cfgIO5", s))
+
+        if(g_wifi_config.u.config.enable_wiegand == 0)
         {
-            /* Entrada 5 - RB7 */
-            if(g_wifi_config.u.config.enable_wiegand == 0)
+            if(HTTPGetFormData(msg, "cfgIO5", s))
             {
+                /* Entrada 5 - RB7 */
                 if(s[0] == 'i')
                 {
-                    g_wifi_config.u.config.io_config_default = 0;
                     g_wifi_config.u.config.io_config_values[4] = s[0];
-                    save_config = 1;
                     TRISBbits.TRISB7 = 1;
                     CNPUBbits.CNPUB7 = 1;
                 }
                 else if(s[0] == 'o')
                 {
-                    g_wifi_config.u.config.io_config_default = 0;
                     g_wifi_config.u.config.io_config_values[4] = s[0];
-                    save_config = 1;
                     TRISBbits.TRISB7 = 0;
                     CNPUBbits.CNPUB7 = 0;
                 }
+                save_config = 1;
             }
-        }
-        if(HTTPGetFormData(msg, "cfgIO6", s))
-        {
-            /* Entrada 6 - RB8 */
-            if(g_wifi_config.u.config.enable_wiegand == 0)
+            if(HTTPGetFormData(msg, "cfgIO6", s))
             {
+                /* Entrada 6 - RB8 */
                 if(s[0] == 'i')
                 {
-                    g_wifi_config.u.config.io_config_default = 0;
                     g_wifi_config.u.config.io_config_values[5] = s[0];
-                    save_config = 1;
                     TRISBbits.TRISB8 = 1;
                     CNPUBbits.CNPUB8 = 1;
                 }
                 else if(s[0] == 'o')
                 {
-                    g_wifi_config.u.config.io_config_default = 0;
                     g_wifi_config.u.config.io_config_values[5] = s[0];
-                    save_config = 1;
                     TRISBbits.TRISB8 = 0;
                     CNPUBbits.CNPUB8 = 0;
                 }
+                save_config = 1;
             }
         }
     }
@@ -573,26 +554,7 @@ int IOSetConfig( const char* msg )
             CNPUBbits.CNPUB2 = 0;
         }
 
-        if(g_wifi_config.u.config.enable_wiegand == 1)
-        {
-            /* Entrada 5 - RB7 */
-            TRISBbits.TRISB7 = 1;
-            CNPUBbits.CNPUB7 = 1;
-            /* Entrada 6 - RB8 */
-            TRISBbits.TRISB8 = 1;
-            CNPUBbits.CNPUB8 = 1;
-            /* Control de interrupcion */
-            //    CNBI: PORT B Change Notification
-            //    Priority: 1
-            IPC2bits.CNBIP = 1;
-            //    Sub Priority: 0
-            IPC2bits.CNBIS = 0;
-            //Clear CNBI interrupt flag
-            IFS0CLR= 1 << _IFS0_CNBIF_POSITION;
-            //Enable CNBI interrupt
-            IEC0bits.CNBIE = 1;
-        }
-        else
+        if(g_wifi_config.u.config.enable_wiegand == 0)
         {
             //Disable CNBI interrupt
             IEC0bits.CNBIE = 0;
@@ -622,7 +584,18 @@ int IOSetConfig( const char* msg )
             }
         }
     }
-    return save_config;
+    
+    if(save_config)
+    {
+        g_wifi_config.u.config.io_config_default = 0;
+        ControlSaveConfig(100);
+    }
+    
+    if(reset_system)
+    {
+        ControlSystemReset(150);
+    }
+    
 }
 
 void IOSetStatus( const char* msg )
@@ -693,36 +666,42 @@ void IOSetStatus( const char* msg )
             IO4_SetLow();
         }
     }
-    if(HTTPGetFormData(msg, "IO5", s) && 
-            g_wifi_config.u.config.io_config_values[4] == 'o')
+    /*
+     IO5 - IO6 - Excluidas si tengo configurado wiegand
+     */
+    if(g_wifi_config.u.config.enable_wiegand == 0)
     {
-        if(atoi(s) > 1)
+        if(HTTPGetFormData(msg, "IO5", s) && 
+                g_wifi_config.u.config.io_config_values[4] == 'o')
         {
-            g_io_pulse_count[4] = (atoi(s)-1)*100;
-            IO5_SetHigh();
-        } else if(atoi(s) == 1)
-        {
-            IO5_SetHigh();
+            if(atoi(s) > 1)
+            {
+                g_io_pulse_count[4] = (atoi(s)-1)*100;
+                IO5_SetHigh();
+            } else if(atoi(s) == 1)
+            {
+                IO5_SetHigh();
+            }
+            else
+            {
+                IO5_SetLow();
+            }
         }
-        else
+        if(HTTPGetFormData(msg, "IO6", s) && 
+                g_wifi_config.u.config.io_config_values[5] == 'o')
         {
-            IO5_SetLow();
-        }
-    }
-    if(HTTPGetFormData(msg, "IO6", s) && 
-            g_wifi_config.u.config.io_config_values[5] == 'o')
-    {
-        if(atoi(s) > 1)
-        {
-            g_io_pulse_count[5] = (atoi(s)-1)*100;
-            IO6_SetHigh();
-        } else if(atoi(s) == 1)
-        {
-            IO6_SetHigh();
-        }
-        else
-        {
-            IO6_SetLow();
+            if(atoi(s) > 1)
+            {
+                g_io_pulse_count[5] = (atoi(s)-1)*100;
+                IO6_SetHigh();
+            } else if(atoi(s) == 1)
+            {
+                IO6_SetHigh();
+            }
+            else
+            {
+                IO6_SetLow();
+            }
         }
     }
     if(HTTPGetFormData(msg, "OUT1", s))

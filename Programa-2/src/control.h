@@ -25,6 +25,8 @@ const char* ControlVersion( void );
 const char* ControlCompilador( void );
 void ControlTimer(void);
 void ControlTask(void);
+void ControlSaveConfig(int t);
+void ControlSystemReset(int t);
 
 void Control_Screen_Task(void);
 void Control_WiFi_Task(void);

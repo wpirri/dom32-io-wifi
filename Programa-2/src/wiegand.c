@@ -57,9 +57,52 @@ void WGND_Init( void )
     gWGND_BitCount = 0;
     gWGND_Data.udata.ldata = 0l;
 
-//    TRISAbits.TRISA6 = 1;
-//    TRISAbits.TRISA7 = 1;
+    if(g_wifi_config.u.config.enable_wiegand == 1)
+    {
+        /****************************************************************************
+         * Interrupt On Change: negative
+         ***************************************************************************/
+        CNEN1Bbits.CNIE1B7 = 1;    //Pin : RB7
+        CNEN1Bbits.CNIE1B8 = 1;    //Pin : RB8
+        /****************************************************************************
+         * Interrupt On Change: flag
+         ***************************************************************************/
+        CNFBbits.CNFB7 = 0;    //Pin : RB7
+        CNFBbits.CNFB8 = 0;    //Pin : RB8
+        /****************************************************************************
+         * Interrupt On Change: config
+         ***************************************************************************/
+        CNCONBbits.CNSTYLE = 1;    //Config for PORTB
+        CNCONBbits.ON = 1;    //Config for PORTB
 
+        /****************************************************************************
+         * Interrupt On Change: Interrupt Enable
+         ***************************************************************************/
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; //Clear CNBI interrupt flag
+        IEC0bits.CNBIE = 1; //Enable CNBI interrupt
+
+        /* Entrada 5 - RB7 */
+        TRISBbits.TRISB7 = 1;
+        CNPUBbits.CNPUB7 = 1;
+        /* Entrada 6 - RB8 */
+        TRISBbits.TRISB8 = 1;
+        CNPUBbits.CNPUB8 = 1;
+        /* Control de interrupcion */
+        //    CNBI: PORT B Change Notification
+        //    Priority: 1
+        IPC2bits.CNBIP = 1;
+        //    Sub Priority: 0
+        IPC2bits.CNBIS = 0;
+        //Clear CNBI interrupt flag
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION;
+        //Enable CNBI interrupt
+        IEC0bits.CNBIE = 1;
+    }
+    else
+    {
+        //Disable CNBI interrupt
+        IEC0bits.CNBIE = 0;
+    }
 }
 
 /*  WGND_Timer
@@ -68,6 +111,8 @@ void WGND_Init( void )
 void WGND_Timer( void )
 {
     char cardHexa[9];
+    
+    if(g_wifi_config.u.config.enable_wiegand == 0) return;
     
     if(gWGND_TimerCount)
     {
@@ -100,6 +145,7 @@ void WGND_Timer( void )
  */
 void WGND_IntData( unsigned char d0, unsigned char d1 )
 {
+    if(g_wifi_config.u.config.enable_wiegand == 0) return;
     if(d0 == d1) return;
 
     gWGND_Data.udata.ldata >>= 1;
@@ -109,4 +155,26 @@ void WGND_IntData( unsigned char d0, unsigned char d1 )
 
     gWGND_BitCount++;
     gWGND_TimerCount = 5;
+}
+
+/* Interrupt service routine for the CNBI interrupt. */
+void __attribute__ ((vector(_CHANGE_NOTICE_B_VECTOR), interrupt(IPL1SOFT))) _CHANGE_NOTICE_B( void )
+{
+    if(IFS0bits.CNBIF == 1)
+    {
+        if(g_wifi_config.u.config.enable_wiegand == 1)
+        {
+            WGND_IntData( CNFBbits.CNFB8, CNFBbits.CNFB7 );
+        }
+        if(CNFBbits.CNFB8 == 1)
+        {
+            CNFBCLR = 0x100;  //Clear CNFBbits.CNFB8
+        }
+        if(CNFBbits.CNFB7 == 1)
+        {
+            CNFBCLR = 0x80;  //Clear CNFBbits.CNFB7
+        }
+        // Clear the flag
+        IFS0CLR= 1 << _IFS0_CNBIF_POSITION; // Clear IFS0bits.CNBIF
+    }
 }
