@@ -25,6 +25,8 @@
 #include "config.h"
 #include "log.h"
 
+#define DEBUG_WIEGAND
+
 typedef struct _wgnd_data
 {
     union
@@ -106,7 +108,7 @@ void WGND_Init( void )
 }
 
 /*  WGND_Timer
- *      Se lo llama 10 veces por segundo
+ *      Se lo llama 100 veces por segundo
  */
 void WGND_Timer( void )
 {
@@ -119,7 +121,9 @@ void WGND_Timer( void )
         gWGND_TimerCount--;
         if( !gWGND_TimerCount)
         {
+#ifdef DEBUG_WIEGAND            
             LogMessage("[WIEGAND] bit-count: %d", gWGND_BitCount);
+#endif
             if(gWGND_BitCount == 26)
             {
                 /* desplazo los bits para alinearlos a 32 */
@@ -154,7 +158,7 @@ void WGND_IntData( unsigned char d0, unsigned char d1 )
     else    gWGND_Data.udata.ldata &= 0x7FFFFFFF;
 
     gWGND_BitCount++;
-    gWGND_TimerCount = 5;
+    gWGND_TimerCount = 2;
 }
 
 /* Interrupt service routine for the CNBI interrupt. */

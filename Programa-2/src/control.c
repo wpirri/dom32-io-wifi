@@ -41,6 +41,8 @@
 #include "rtcc.h"
 #include "wiegand.h"
 
+#define _DEBUG_MSG
+
 /* **** WiFi *************************************************************** */
 typedef enum
 {
@@ -124,6 +126,9 @@ const char* ControlCompilador( void )
     return (const char*)&version_compilador[0];
 }
 
+/*
+    Se llama 100 veces por segundo
+ */
 void ControlTimer( void )
 {
     /* Para las cosas que necesitan el timer pero no pueden estar dentro de una int */
@@ -133,14 +138,6 @@ void ControlTimer( void )
     if(wifi_config_timer_count) wifi_config_timer_count--;
     if(WiFiConectado() && keep_alive_timer_count) keep_alive_timer_count--;
     if(control_file_flags) control_file_flags--;
-    if(reset_timer_count)
-    {
-        reset_timer_count--;
-        if(reset_timer_count == 0)
-        {
-            SystemReset();
-        }
-    }
 }
 
 void ControlTask(void)
@@ -181,6 +178,22 @@ void ControlTask(void)
             {
             	
                 DownloadFile("/download/"FIRMWARE_FILENAME);
+            }
+        }
+
+        if(reset_timer_count)
+        {
+            reset_timer_count--;
+            if(reset_timer_count == 0)
+            {
+                if(save_config_timer_count)
+                {
+                    reset_timer_count = save_config_timer_count * 2;
+                }
+                else
+                {
+                    SystemReset();
+                }
             }
         }
         
@@ -231,15 +244,16 @@ void ControlHostKeepAlive(void)
     /* Agrego la tarjeta */
     if(strlen(g_control_c_wiegand_card_code))
     {
-        strcat(data, "&card=");
+        strcat(data, "&CARD=");
         strcat(data, g_control_c_wiegand_card_code);
     }
     
     rc = HttpQueryHost(url, data, NULL, data);
     if(rc == 200)
     {
+#ifdef DEBUG_MSG
         LogMessage("[ControlHostKeepAlive] HTTP Req Ok");
-
+#endif
         /* Si la respuesta vino entre [""] le hago limpieza */
         if(data[0] == '[' && data[1] == '\"')
         {
@@ -256,7 +270,9 @@ void ControlHostKeepAlive(void)
             {
                 if(atoi(resp_err_code) == 0)
                 {
+#ifdef DEBUG_MSG
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema Ok");
+#endif
                     HttpConexionOk();
                     /* Busco configuraciones, comandos, etc */
                     ProcessGeneralConfig(data);
@@ -274,17 +290,21 @@ void ControlHostKeepAlive(void)
                     
                     return;
                 }
+#ifdef DEBUG_MSG
                 else
                 {
                     LogMessage("[ControlHostKeepAlive] Respuesta del sistema [error = %s message = %s]", resp_err_code, resp_err_msg );
                 }
+#endif
             }
         }
     }
+#ifdef DEBUG_MSG
     else
     {
         LogMessage("[ControlHostKeepAlive] HTTP Req No Ok [%i]", rc);
     }
+#endif
     HttpConexionError();
     
     keep_alive_timer_count = (g_wifi_config.u.config.report > 500)?500:g_wifi_config.u.config.report;
@@ -296,7 +316,9 @@ void ProcessGeneralConfig(char* in)
     struct tm tm_time;
     char *p;
     
+#ifdef DEBUG_MSG
     LogMessage("[ProcessGeneralConfig] [%s]", in);
+#endif
     
     if(HTTPGetFormData(in, "ap1", g_wifi_config.u.config.wifi_ap1))
     {

@@ -58,7 +58,7 @@ void WifiWriteLine( const char *line );
 int WifiReadAt( char *data, unsigned int max_data, char at, int to );
 int WifiReadCount( char *data, unsigned int count, int to );
 void WiFiWait(int t);
-int WiFiCheckUnsolMsg(const char* msg);
+int WiFiCheckUnsolMsg(char* msg);
 int WiFiCommand(const char* cmd, const char* wait, int to);
 void WiFiReadUnsolIPD(const char* msg);
 
@@ -389,7 +389,7 @@ void WiFiWait(int t)
     }
 }
 
-int WiFiCheckUnsolMsg(const char* msg)
+int WiFiCheckUnsolMsg(char* msg)
 {
 #ifdef __DEBUG_WIFI__
     LogMessage("[WIFI] Unsol [%s]", msg);
@@ -421,9 +421,9 @@ int WiFiCheckUnsolMsg(const char* msg)
     }
     else if( !memcmp(msg, "+CIFSR:", 7))
     {
-        if( !memcmp((const char*)(msg+7), "STAMAC", 6))
+        if( !memcmp((char*)(msg+7), "STAMAC", 6))
         {
-            LogMessage("[WiFi] MAC %.17s", (const char*)(msg+15));
+            LogMessage("[WiFi] MAC %.17s", (char*)(msg+15));
             g_wifi_c_hw_mac[0]  = *(msg+15);
             g_wifi_c_hw_mac[1]  = *(msg+16);
             g_wifi_c_hw_mac[2]  = *(msg+18);
@@ -438,11 +438,16 @@ int WiFiCheckUnsolMsg(const char* msg)
             g_wifi_c_hw_mac[11] = *(msg+31);
             g_wifi_c_hw_mac[12] = 0;
         }
-        else if( !memcmp((const char*)(msg+7), "STAIP", 5))
+        else if( !memcmp((char*)(msg+7), "STAIP", 5))
         {
-            if(strlen((const char*)(msg+14)))
+            if(strlen((char*)(msg+14)))
             {
-                LogMessage("[WiFi] IP %s", (const char*)(msg+14) );
+                if(strchr(((char*)(msg+14)), '\"'))
+                {
+                    *((char*)strchr(((char*)(msg+14)), '\"')) = 0;
+                }                    
+                   
+                LogMessage("[WiFi] IP %s", (char*)(msg+14) );
             }
         }
     }
