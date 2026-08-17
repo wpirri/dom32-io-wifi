@@ -177,11 +177,11 @@ void ControlTask(void)
             update_firmware_timer_count--;
             if(update_firmware_timer_count == 0)
             {
-            	
+
                 DownloadFile("/download/"FIRMWARE_FILENAME);
             }
         }
-
+        
         if(reset_timer_count)
         {
             reset_timer_count--;
@@ -209,6 +209,7 @@ void ControlTask(void)
     if(filename_to_download[0])
     {
         LogMessage("[ControlTask] Download: [%s]", filename_to_download);
+
 
         DownloadFile(filename_to_download);
         filename_to_download[0] = 0;
