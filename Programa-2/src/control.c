@@ -32,6 +32,7 @@
 
 
 #include "wifi/wifi.h"
+#include "adc.h"
 #include "io.h"
 #include "misc/strfunc.h"
 
@@ -149,7 +150,7 @@ void ControlTask(void)
     
     if(control_file_flags == 0)
     {
-        control_file_flags = 6000;
+        control_file_flags = 1000;
         if(HttpOnLine())
         {
             ControlFileFlags();
@@ -188,7 +189,8 @@ void ControlTask(void)
             {
                 if(save_config_timer_count)
                 {
-                    reset_timer_count = save_config_timer_count * 2;
+                    LogMessage("[ControlTask] Graban configuracion pendiente, se reprograma el RESET");
+                    ControlSystemReset(save_config_timer_count * 2);
                 }
                 else
                 {
@@ -201,6 +203,7 @@ void ControlTask(void)
         
         if(g_wifi_config.u.config.enable_wiegand) WGND_Timer();
         
+        ADCTimer();
     }
     
     if(filename_to_download[0])
@@ -210,6 +213,7 @@ void ControlTask(void)
         DownloadFile(filename_to_download);
         filename_to_download[0] = 0;
     }
+    
 }
 
 void ControlSaveConfig(int t)
@@ -220,6 +224,7 @@ void ControlSaveConfig(int t)
 void ControlSystemReset(int t)
 {
     reset_timer_count = t;
+    LogMessage("[ControlSystemReset] RESET en %i segundos", reset_timer_count/100);
 }
 
 void DownloadFile(const char* filename)
@@ -246,6 +251,12 @@ void ControlHostKeepAlive(void)
     {
         strcat(data, "&CARD=");
         strcat(data, g_control_c_wiegand_card_code);
+    }
+    
+    /* Agrego mi estado */
+    if(HttpOnLine() == 0)
+    {
+        strcat(data, "&OFFLINE=1");
     }
     
     rc = HttpQueryHost(url, data, NULL, data);
@@ -386,7 +397,7 @@ void ProcessGeneralConfig(char* in)
 
     if(HTTPGetFormData(in, "reset", s))
     {
-        reset_timer_count = 300;
+        ControlSystemReset(300);
     }
     if(HTTPGetFormData(in, "update", s))
     {
@@ -447,7 +458,8 @@ void ControlFileFlags( void )
     if(f)
     {
         FSfclose(f);
-        reset_timer_count = 300;
+        LogMessage("[ControlFileFlags] Se encontro un nuevo firmware");
+        ControlSystemReset(300);
         return;
     }
     

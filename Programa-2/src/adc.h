@@ -20,10 +20,12 @@
 
 void ADCInit(void);
 
-void ADCConfig(void);
-
 void ADCTask(void);
 void ADCTimer(void);
+
+// Channel 1: RB3/AN11 (IO3)
+// Channel 2: RB2/AN4 (IO4)
+int ADCGet(int ch);
 
 #endif	/* _ADC_H_ */
 

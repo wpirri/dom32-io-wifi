@@ -74,6 +74,7 @@
 #include "rtcc.h"
 
 
+#include "adc.h"
 #include "io.h"
 #include "wifi/wifi.h"
 #include "control.h"
@@ -113,6 +114,7 @@ int main(void)
 
     LogMessage("[MAIN] I/O");
     IOInit();
+    ADCInit();
     IOSetConfig(NULL);
     
     LogMessage("[MAIN] Init WiFi");
@@ -120,12 +122,13 @@ int main(void)
 
     LogMessage("[MAIN] Init Http");
     HttpInit();
-    
+
+    LogMessage("[MAIN] Init Wiegand");
+    WGND_Init();
+
     LogMessage("[MAIN] Init STM");
     ControlInit(status_sd_ok);
     
-    LogMessage("[MAIN] Init Wiegand");
-    WGND_Init();
     /* Reset POR y BOR 
        Se hace a lo último así las distintas inicializaciones pueden verificar
        si vengo de un Power On */
@@ -141,7 +144,7 @@ int main(void)
     {
         CLRWDT();
         ControlTask();
-        
+        ADCTask();
         Control_WiFi_Task();
     }
     return 0;

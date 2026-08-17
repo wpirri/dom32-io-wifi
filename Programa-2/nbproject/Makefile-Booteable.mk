@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c src/wiegand.c
+SOURCEFILES_QUOTED_IF_SPACED=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c src/wiegand.c src/adc.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o ${OBJECTDIR}/src/wiegand.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/src/misc/delay.o.d ${OBJECTDIR}/src/misc/strfunc.o.d ${OBJECTDIR}/src/sd/fsio.o.d ${OBJECTDIR}/src/sd/sd_spi.o.d ${OBJECTDIR}/src/wifi/wifi.o.d ${OBJECTDIR}/src/wifi/uart1.o.d ${OBJECTDIR}/src/config.o.d ${OBJECTDIR}/src/control.o.d ${OBJECTDIR}/src/http.o.d ${OBJECTDIR}/src/log.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/rtcc.o.d ${OBJECTDIR}/src/system.o.d ${OBJECTDIR}/src/io.o.d ${OBJECTDIR}/src/wiegand.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o ${OBJECTDIR}/src/wiegand.o ${OBJECTDIR}/src/adc.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/src/misc/delay.o.d ${OBJECTDIR}/src/misc/strfunc.o.d ${OBJECTDIR}/src/sd/fsio.o.d ${OBJECTDIR}/src/sd/sd_spi.o.d ${OBJECTDIR}/src/wifi/wifi.o.d ${OBJECTDIR}/src/wifi/uart1.o.d ${OBJECTDIR}/src/config.o.d ${OBJECTDIR}/src/control.o.d ${OBJECTDIR}/src/http.o.d ${OBJECTDIR}/src/log.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/rtcc.o.d ${OBJECTDIR}/src/system.o.d ${OBJECTDIR}/src/io.o.d ${OBJECTDIR}/src/wiegand.o.d ${OBJECTDIR}/src/adc.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o ${OBJECTDIR}/src/wiegand.o
+OBJECTFILES=${OBJECTDIR}/src/misc/delay.o ${OBJECTDIR}/src/misc/strfunc.o ${OBJECTDIR}/src/sd/fsio.o ${OBJECTDIR}/src/sd/sd_spi.o ${OBJECTDIR}/src/wifi/wifi.o ${OBJECTDIR}/src/wifi/uart1.o ${OBJECTDIR}/src/config.o ${OBJECTDIR}/src/control.o ${OBJECTDIR}/src/http.o ${OBJECTDIR}/src/log.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/rtcc.o ${OBJECTDIR}/src/system.o ${OBJECTDIR}/src/io.o ${OBJECTDIR}/src/wiegand.o ${OBJECTDIR}/src/adc.o
 
 # Source Files
-SOURCEFILES=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c src/wiegand.c
+SOURCEFILES=src/misc/delay.c src/misc/strfunc.c src/sd/fsio.c src/sd/sd_spi.c src/wifi/wifi.c src/wifi/uart1.c src/config.c src/control.c src/http.c src/log.c src/main.c src/rtcc.c src/system.c src/io.c src/wiegand.c src/adc.c
 
 
 
@@ -217,6 +217,12 @@ ${OBJECTDIR}/src/wiegand.o: src/wiegand.c  .generated_files/flags/Booteable/bd54
 	@${RM} ${OBJECTDIR}/src/wiegand.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Os -fno-common -MP -MMD -MF "${OBJECTDIR}/src/wiegand.o.d" -o ${OBJECTDIR}/src/wiegand.o src/wiegand.c    -DXPRJ_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/src/adc.o: src/adc.c  .generated_files/flags/Booteable/682e7e048ed90e54e136ce6ba6b7dac0213b994c .generated_files/flags/Booteable/89084a3481147dd80e2344e29edcb351eeeb0ca
+	@${MKDIR} "${OBJECTDIR}/src" 
+	@${RM} ${OBJECTDIR}/src/adc.o.d 
+	@${RM} ${OBJECTDIR}/src/adc.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Os -fno-common -MP -MMD -MF "${OBJECTDIR}/src/adc.o.d" -o ${OBJECTDIR}/src/adc.o src/adc.c    -DXPRJ_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/src/misc/delay.o: src/misc/delay.c  .generated_files/flags/Booteable/eb45aaefe52141357aec861bcef8f6433bd9e96e .generated_files/flags/Booteable/89084a3481147dd80e2344e29edcb351eeeb0ca
 	@${MKDIR} "${OBJECTDIR}/src/misc" 
@@ -307,6 +313,12 @@ ${OBJECTDIR}/src/wiegand.o: src/wiegand.c  .generated_files/flags/Booteable/368d
 	@${RM} ${OBJECTDIR}/src/wiegand.o.d 
 	@${RM} ${OBJECTDIR}/src/wiegand.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Os -fno-common -MP -MMD -MF "${OBJECTDIR}/src/wiegand.o.d" -o ${OBJECTDIR}/src/wiegand.o src/wiegand.c    -DXPRJ_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/src/adc.o: src/adc.c  .generated_files/flags/Booteable/6af09e7c5cde0bd0d1fe82e20dd71fddccf04256 .generated_files/flags/Booteable/89084a3481147dd80e2344e29edcb351eeeb0ca
+	@${MKDIR} "${OBJECTDIR}/src" 
+	@${RM} ${OBJECTDIR}/src/adc.o.d 
+	@${RM} ${OBJECTDIR}/src/adc.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Os -fno-common -MP -MMD -MF "${OBJECTDIR}/src/adc.o.d" -o ${OBJECTDIR}/src/adc.o src/adc.c    -DXPRJ_Booteable=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

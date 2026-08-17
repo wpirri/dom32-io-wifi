@@ -29,6 +29,7 @@
 #include "log.h"
 #include "config.h"
 #include "control.h"
+#include "adc.h"
 #include "wifi/wifi.h"
 #include "http.h"
 #include "wiegand.h"
@@ -160,7 +161,7 @@ const char* IOGetStatus( void )
     }
     else if(g_wifi_config.u.config.io_config_values[2] == 'a')
     {
-        
+        sprintf(&g_buffer_io_status[strlen(g_buffer_io_status)], "&IO3=%i", ADCGet(1));
     }
     
     /*
@@ -189,7 +190,7 @@ const char* IOGetStatus( void )
     }
     else if(g_wifi_config.u.config.io_config_values[3] == 'a')
     {
-        
+        sprintf(&g_buffer_io_status[strlen(g_buffer_io_status)], "&IO4=%i", ADCGet(2));
     }
 
     /*
@@ -584,7 +585,7 @@ void IOSetConfig( const char* msg )
             }
         }
     }
-    
+
     if(save_config)
     {
         g_wifi_config.u.config.io_config_default = 0;

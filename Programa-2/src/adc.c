@@ -23,23 +23,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "defines.h"
 #include "config.h"
 #include "control.h"
-#include "clog.h"
+#include "log.h"
+
+#define _DEBUG_ADC
 
 typedef enum
 {
     ADC_STM_NONE,
-    ADC_STM_WAIT,
+    ADC_STM_INIT,
+    ADC_STM_SELECT,
     ADC_STM_START_SAMPLE,
     ADC_STM_WAIT_SAMPLE,
     ADC_STM_WAIT_CONV,
     ADC_STM_END_CONV,
 } ADC_STM;
 
-ADC_STM ADC_count_stm;
-unsigned char ADC_count_channel;
+ADC_STM ADC_stm;
+unsigned char ADC_channel;
 unsigned char ADC_count_time;
+
+int ADC_input1_value;
+int ADC_input2_value;
 
 void ADCInit(void)
 {
@@ -50,119 +57,148 @@ void ADCInit(void)
     AD1CON1bits.FORM = 0b00;
     AD1CON2bits.SMPI = 0;
     
-    ADC_count_stm = 0;
-    ADC_count_channel = 0;
+    ADC_stm = ADC_STM_NONE;
     ADC_count_time = 0;
-}
-
-
-void ADCConfig(void)
-{
-    if(ANSELBbits.ANSB3 ||
-       ANSELBbits.ANSB2 ||
-       ANSELAbits.ANSA2  )
-    {
-        AD1CON1bits.ON = 1;
-    }
-    else
-    {
-        AD1CON1bits.ON = 0;
-    }
-    ADC_count_time = 100;
+    ADC_channel = 0;
 }
 
 void ADCTask(void)
 {
-    if(ANSELBbits.ANSB3 == 0 &&
-       ANSELBbits.ANSB2 == 0 &&
-       ANSELAbits.ANSA2 == 0  ) return;
-
     if(ADC_count_time) return;
 
-    if(ADC_count_channel == 0)
-        ADC_count_channel++;
-
-    switch(ADC_count_stm)
+    switch(ADC_stm)
     {
         case ADC_STM_NONE:
-            switch(ADC_count_channel)
+            if(ANSELBbits.ANSB3 || ANSELBbits.ANSB2 )
             {
-                case 1:
-                    if(ANSELBbits.ANSB3) ADC_count_stm++;
-                    else ADC_count_channel++;
-                    break;
-                case 2:
-                    if(ANSELBbits.ANSB2) ADC_count_stm++;
-                    else ADC_count_channel++;
-                    break;
-                case 3:
-                    if(ANSELAbits.ANSA2) ADC_count_stm++;
-                    else ADC_count_channel++;
-                    break;
-                default:
-                    ADC_count_channel = 0;
+                /* Necesito el módulo ADC */
+                if(AD1CON1bits.ON) ADC_stm = ADC_STM_SELECT;
+                else ADC_stm = ADC_STM_INIT;
+            }
+            else
+            {
+                /* No necesito el módulo ADC */
+                if(AD1CON1bits.ON)
+                {
+#ifdef DEBUG_ADC
+                    LogMessage("[ADCTask] ADC no necesario. Desactivando.");
+#endif
+                    AD1CON1bits.ON = 0;
                     ADC_count_time = 100;
-                    break;
+                }
             }
             break;
-        case ADC_STM_WAIT:
-            switch(ADC_count_channel)
+        case ADC_STM_INIT:
+#ifdef DEBUG_ADC            
+            LogMessage("[ADCTask] ADC necesario. Activando.");
+#endif
+            AD1CON1bits.ON = 1;
+            ADC_count_time = 100;
+            ADC_stm++;
+            break;
+        case ADC_STM_SELECT:
+            // Channel 1: RB3/AN11 (IO3)
+            // Channel 2: RB2/AN4 (IO4)
+            if(ADC_channel == 1)
             {
-                case 1:
-                    // Select RB3/AN11 input
-                    AD1CHSbits.CH0SA = 11;
-                    break;
-                case 2:
-                    // Select RB2/AN4 input
+                if(ANSELBbits.ANSB2)    /* Channel 2 habilitado? */
+                {
+                    /* Si channel 2 está habilitado paso al channel 2, sino sigo en el 1 */
+#ifdef DEBUG_ADC                    
+                    LogMessage("[ADCTask] Channel 2 AN4 (IO4) Seleccionado");
+#endif
                     AD1CHSbits.CH0SA = 4;
-                    break;
-                case 3:
-                    // Select RA2/AN5 input
-                    AD1CHSbits.CH0SA = 5;
-                    break;
+                    ADC_channel = 2;
+                }
+                else
+                {
+#ifdef DEBUG_ADC                    
+                    LogMessage("[ADCTask] Channel 1 AN11 (IO3) Seleccionado");
+#endif
+                    AD1CHSbits.CH0SA = 11;
+                }
             }
-            ADC_count_stm++;
+            else
+            {
+                if(ANSELBbits.ANSB3)    /* Channel 1 habilitado? */
+                {
+                    /* Si channel 1 está habilitado paso al channel 1, sino sigo en el 2 */
+#ifdef DEBUG_ADC                    
+                    LogMessage("[ADCTask] Channel 1 AN11 (IO3) Seleccionado");
+#endif
+                    AD1CHSbits.CH0SA = 11;
+                    ADC_channel = 1;
+                }
+                else
+                {
+#ifdef DEBUG_ADC                    
+                    LogMessage("[ADCTask] Channel 2 AN4 (IO4) Seleccionado");
+#endif
+                    AD1CHSbits.CH0SA = 4;
+                }
+            }             
+            ADC_count_time = 10;
+            ADC_stm++;
             break;
         case ADC_STM_START_SAMPLE:
+#ifdef DEBUG_ADC            
+            LogMessage("[ADCTask] Start SAMPLE");
+#endif
             AD1CON1bits.SAMP = 1;
-            ADC_count_time = 5;
-            ADC_count_stm++;
+            ADC_count_time = 50;
+            ADC_stm++;
             break;
         case ADC_STM_WAIT_SAMPLE:
             // Reset ADC interrupt flag
+#ifdef DEBUG_ADC            
+            LogMessage("[ADCTask] RESET INT flag");
+#endif
             IFS1CLR = _IFS1_AD1IF_MASK;
             AD1CON1bits.SAMP = 0;
-            ADC_count_stm++;
+            ADC_stm++;
             break;
         case ADC_STM_WAIT_CONV:
             if(IFS1bits.AD1IF == 0) break;
-            ADC_count_stm++;
+#ifdef DEBUG_ADC            
+            LogMessage("[ADCTask] End SAMPLE");
+#endif
+            ADC_stm++;
             break;
         case ADC_STM_END_CONV:
-            switch(ADC_count_channel)
+            switch(ADC_channel)
             {
                 case 1:
-                    g_control_io.stat3 = ADC1BUF0 * 3300l / 1023;
+                    ADC_input1_value = ADC1BUF0 * 3300l / 1023;
+                    LogMessage("[ADCTask] AN11 (IO3) Val: %i", ADC_input1_value);
                     break;
                 case 2:
-                    g_control_io.stat4 = ADC1BUF0 * 3300l / 1023;
-                    break;
-                case 3:
-                    /* TODO: Implementar captura de entrada analogica externa */
+                    ADC_input2_value = ADC1BUF0 * 3300l / 1023;
+                    LogMessage("[ADCTask] AN4 (IO4) Val: %i", ADC_input2_value);
                     break;
             }
-            ADC_count_time = 10;
-            ADC_count_channel++;
-            ADC_count_stm = ADC_STM_NONE;
+            ADC_count_time = 100;
+            ADC_stm = ADC_STM_NONE;
             break;
     }
-
-
-    
 }
 
 void ADCTimer(void)
 {
     if(ADC_count_time) ADC_count_time--;
         
+}
+
+// Channel 1: RB3/AN11 (IO3)
+// Channel 2: RB2/AN4 (IO4)
+int ADCGet(int ch)
+{
+    switch(ch)
+    {
+        case 1:
+            return ADC_input1_value;
+        case 2:
+            return ADC_input2_value;
+        default:
+            return (-1);
+    }
 }
