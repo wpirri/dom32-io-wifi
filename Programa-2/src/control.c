@@ -29,17 +29,15 @@
 #include "sd/fsio.h"
 #include "config.h"
 #include "rtcc.h"
-
-
 #include "wifi/wifi.h"
-#include "adc.h"
-#include "io.h"
 #include "misc/strfunc.h"
-
 #include "misc/beep.h"
 #include "http.h"
 #include "system.h"
 #include "rtcc.h"
+
+#include "adc.h"
+#include "io.h"
 #include "wiegand.h"
 
 #define _DEBUG_MSG
@@ -243,9 +241,11 @@ void ControlHostKeepAlive(void)
     int i;
     
     sprintf(url, "%s/infoio.cgi", g_wifi_config.u.config.rqst_path);
-    sprintf(data, "ID=%s&TYP=%s&FW=%s&AT=%s&SDK=%s%s", 
-            WiFiMAC(), WIFI_HW_Name, ControlVersion(), WiFiAT(), WiFiSDK(),
-            IOGetStatus());
+    sprintf(data, "ID=%s&TYP=%s&FW=%s&AT=%s&SDK=%s", 
+            WiFiMAC(), WIFI_HW_Name, ControlVersion(), WiFiAT(), WiFiSDK());
+
+	/* Agrego el estadop de la I/O */
+	strcat(data, IOGetStatus());
     
     /* Agrego la tarjeta */
     if(strlen(g_control_c_wiegand_card_code))
