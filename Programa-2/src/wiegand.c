@@ -33,12 +33,16 @@ typedef struct _wgnd_data
     {
         struct
         {
+            unsigned char h;
+            unsigned char g;
+            unsigned char f;
+            unsigned char e;
             unsigned char d;
             unsigned char c;
             unsigned char b;
             unsigned char a;
         } bytes;
-        unsigned long ldata;
+        int64_t i64data;
     } udata;
 } wgnd_data;
 
@@ -50,14 +54,14 @@ void WGND_Ack( void )
 {
     /* Reseteo todo para una nueva recepci�n */
     gWGND_BitCount = 0;
-    gWGND_Data.udata.ldata = 0l;
+    gWGND_Data.udata.i64data = 0L;
 }
 
 void WGND_Init( void )
 {
     gWGND_TimerCount = 0;
     gWGND_BitCount = 0;
-    gWGND_Data.udata.ldata = 0l;
+    gWGND_Data.udata.i64data = 0L;
 
     if(g_wifi_config.u.config.enable_wiegand == 1)
     {
@@ -112,7 +116,7 @@ void WGND_Init( void )
  */
 void WGND_Timer( void )
 {
-    char cardHexa[9];
+    char cardHexa[17];
     
     if(g_wifi_config.u.config.enable_wiegand == 0) return;
     
@@ -124,18 +128,22 @@ void WGND_Timer( void )
 #ifdef DEBUG_WIEGAND            
             LogMessage("[WIEGAND] bit-count: %d", gWGND_BitCount);
 #endif
-            if(gWGND_BitCount == 26)
+            if(gWGND_BitCount == 26 || gWGND_BitCount == 34)
             {
-                /* desplazo los bits para alinearlos a 32 */
-                gWGND_Data.udata.ldata >>= 6;
+                /* desplazo los bits para alinearlos a 64 */
+                //gWGND_Data.udata.i64data >>= (64-gWGND_BitCount);
                 /* los 6 bits mas significativos no van */
-                gWGND_Data.udata.ldata &= 0x3FFFFFFF;
+                //gWGND_Data.udata.i64data &= 0x3FFFFFFF;
 
-                sprintf(cardHexa, "%02X%02X%02X%02X",
+                sprintf(cardHexa, "%02X%02X%02X%02X%02X%02X%02X%02X",
                         gWGND_Data.udata.bytes.a,
                         gWGND_Data.udata.bytes.b,
                         gWGND_Data.udata.bytes.c,
-                        gWGND_Data.udata.bytes.d);
+                        gWGND_Data.udata.bytes.d,
+                        gWGND_Data.udata.bytes.e,
+                        gWGND_Data.udata.bytes.f,
+                        gWGND_Data.udata.bytes.g,
+                        gWGND_Data.udata.bytes.h);
                 LogMessage("[WIEGAND] CRD: %s", cardHexa);
                 ControlNotificarTarjeta(cardHexa);
             }
@@ -152,10 +160,10 @@ void WGND_IntData( unsigned char d0, unsigned char d1 )
     if(g_wifi_config.u.config.enable_wiegand == 0) return;
     if(d0 == d1) return;
 
-    gWGND_Data.udata.ldata >>= 1;
+    gWGND_Data.udata.i64data >>= 1;
     
-    if(d1)  gWGND_Data.udata.ldata |= 0x80000000;
-    else    gWGND_Data.udata.ldata &= 0x7FFFFFFF;
+    if(d1)  gWGND_Data.udata.i64data |= 0x80000000;
+    else    gWGND_Data.udata.i64data &= 0x7FFFFFFF;
 
     gWGND_BitCount++;
     gWGND_TimerCount = 2;

@@ -60,7 +60,7 @@ typedef enum
 
 enum_control_wifi_stm control_wifi_stm;
 unsigned int control_wifi_stm_delay;
-char g_control_c_wiegand_card_code[16];
+char g_control_c_wiegand_card_code[17];
 
 /* **** Control ************************************************************ */
 bool status_sd_ok;
@@ -252,6 +252,12 @@ void ControlHostKeepAlive(void)
     {
         strcat(data, "&CARD=");
         strcat(data, g_control_c_wiegand_card_code);
+    }
+    
+    /* Solicito configuración inicial */
+    if(g_wifi_config.u.config.io_config_default)
+    {
+        strcat(data, "&UPDATEIO=1");
     }
     
     /* Agrego mi estado */
