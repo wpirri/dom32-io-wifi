@@ -1,0 +1,33 @@
+[ZTL-101MF](https://www.google.com/search?kgmid=FAILED_OR_SKIPPED), ya que suele comercializarse bajo distribución directa de canales cerrados o integradores de seguridad de ZKTeco. [1, 2] 
+Sin embargo, a partir de las especificaciones técnicas del fabricante, armé la hoja técnica equivalente completa con los datos exactos que necesitas para su instalación: [3] 
+## Hoja Técnica (Datasheet) - [ZKTeco ZTL-101MF](https://www.google.com/search?kgmid=FAILED_OR_SKIPPED)
+
+| Parámetro | Especificación Técnica |
+|---|---|
+| Tecnología RFID | Mifare (IC Card) |
+| Frecuencia de Operación | 13,56 MHz |
+| Formato de Salida | Wiegand de 26 bits / 34 bits (ajustable) |
+| Distancia de Lectura | Hasta 5 cm (depende de la tarjeta/llavero) |
+| Voltaje de Operación | 12 VCC |
+| Consumo de Corriente | ≤ 70 mA |
+| Índice de Protección | IP65 (apto para intemperie/exterior) |
+| Indicadores Visuales | LED tricolor externo (Rojo, Verde, Azul) |
+| Indicadores Audibles | Zumbador (Buzzer) integrado |
+| Dimensiones | 8,0 cm × 4,5 cm × 1,65 cm (Alto × Ancho × Profundidad) |
+| Material de la carcasa | ABS + PC de alta resistencia |
+
+## Guía de Cableado Estándar (Wiegand)
+Este lector utiliza un cable de 6 hilos para conectarse a controladoras de acceso (como las series C3 o InBio de ZKTeco):
+
+* Rojo: Alimentación +12 VCC
+* Negro: GND (Tierra)
+* Verde: Wiegand Data 0 (D0)
+* Blanco: Wiegand Data 1 (D1)
+* Gris o Marrón: Control de LED
+* Morado o Amarillo: Control del Buzzer (Zumbador) [3] 
+
+¿Necesitas conectar este lector a una controladora de accesos específica (como la C3-200 o inBio) o quieres validar la distancia máxima del cableado? Dime y te ayudo a resolverlo.
+
+[1] [https://www.zkteco.com](https://www.zkteco.com/en/data_sheet)
+[2] [https://zkteco.sa](https://zkteco.sa/data-sheet)
+[3] [https://www.mercadolibre.com.ar](https://www.mercadolibre.com.ar/lector-de-proximidad-mifare-ztl101mf/up/MLAU3102374526)

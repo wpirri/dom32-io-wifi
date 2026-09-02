@@ -111,7 +111,13 @@ int WiFiStart( void )
     g_wifi_soporte_ssl = 1;
     if(WiFiCommand("AT+CIPSSLCCONF?", "OK", 150) < 0)
     {
+        LogMessage("[WIFI] SSL no disponible");    
         g_wifi_soporte_ssl = 0;
+    }
+    else
+    {
+        LogMessage("[WIFI] SSL disponible");    
+        g_wifi_soporte_ssl = 1;
     }
     /* Seteo el modo AP+ST para poder tomar las MAC */
     if(WiFiCommand("AT+CWMODE=3", "OK", 150) < 0) return (-1);
@@ -148,12 +154,19 @@ int WiFiSetMode(int mode)
 {
     char cmd[128];
 
-    LogMessage("[WIFI] SetMode %i", mode);    
-    
     if(mode != WIFI_MODE_AP && mode != WIFI_MODE_ST ) return (-1);
 
     g_wifi_c_ap_conectado = 0;
     g_wifi_c_mode = 0;
+    
+    if(mode == WIFI_MODE_AP)
+    {
+        LogMessage("[WIFI] Modo Access Point", mode);
+    }
+    else
+    {
+        LogMessage("[WIFI] Modo Station", mode);
+    }
 
     /* Apago cualquier LISTEN que pueda haber - Puede dar error */
     WiFiCommand("AT+CIPSERVER=0", "OK", 150);
@@ -453,10 +466,12 @@ int WiFiCheckUnsolMsg(char* msg)
     }
     else if( !memcmp(msg, "AT version:", 11))
     {
+        LogMessage("[WiFi] %s", msg);
         strcpy(g_at_version, &msg[11]);
     }
     else if( !memcmp(msg, "SDK version:", 12))
     {
+        LogMessage("[WiFi] %s", msg);
         strcpy(g_sdk, &msg[12]);
     }
     else if( !memcmp(msg, "+IPD", 4))
