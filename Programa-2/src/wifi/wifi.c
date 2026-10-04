@@ -162,11 +162,11 @@ int WiFiSetMode(int mode)
     
     if(mode == WIFI_MODE_AP)
     {
-        LogMessage("[WIFI] Modo Access Point", mode);
+        LogMessage("[WIFI] Modo Access Point");
     }
     else
     {
-        LogMessage("[WIFI] Modo Station", mode);
+        LogMessage("[WIFI] Modo Station");
     }
 
     /* Apago cualquier LISTEN que pueda haber - Puede dar error */
