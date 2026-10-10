@@ -28,7 +28,7 @@
 #include "control.h"
 #include "log.h"
 
-#define _DEBUG_ADC
+#define DEBUG_ADC
 
 typedef enum
 {
@@ -59,7 +59,7 @@ void ADCInit(void)
     
     ADC_stm = ADC_STM_NONE;
     ADC_count_time = 0;
-    ADC_channel = 0;
+    ADC_channel = 1;
 }
 
 void ADCTask(void)
@@ -165,6 +165,7 @@ void ADCTask(void)
             ADC_stm++;
             break;
         case ADC_STM_END_CONV:
+            LogMessage("[ADCTask] Select get from channel %i", ADC_channel);
             switch(ADC_channel)
             {
                 case 1:

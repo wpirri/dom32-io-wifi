@@ -493,15 +493,12 @@ int HttpDownload(const char* filename)
 
 void HTTPCommandSwitch( const char *obj_name )
 {
-    /*
-     newAJAXCommand('/cgi-bin/abmassign.cgi?funcion=switch&Objeto=".$Nombre."'
-     */
     char url[256];
     char rqst[1024];
 
     if( !HttpOnLine()) return;
 
-    snprintf(url, 250, "%s/abmassign.cgi?funcion=switch&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
+    snprintf(url, 250, "%s/switch&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
     url_encode(url, url);
     /*
      * GET
@@ -514,15 +511,12 @@ void HTTPCommandSwitch( const char *obj_name )
 
 void HTTPCommandPulse( const char *obj_name )
 {
-    /*
-     newAJAXCommand('/cgi-bin/abmassign.cgi?funcion=switch&Objeto=".$Nombre."'
-     */
     char url[256];
     char rqst[1024];
 
     if( !HttpOnLine()) return;
 
-    snprintf(url, 250, "%s/abmassign.cgi?funcion=pulse&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
+    snprintf(url, 250, "%s/pulse&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
     url_encode(url, url);
     /*
      * GET

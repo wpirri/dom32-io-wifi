@@ -240,7 +240,7 @@ void ControlHostKeepAlive(void)
     char resp_err_msg[256];
     int i;
     
-    sprintf(url, "%s/infoio.cgi", g_wifi_config.u.config.rqst_path);
+    sprintf(url, "%s/infoio", g_wifi_config.u.config.rqst_path);
     sprintf(data, "ID=%s&TYP=%s&FW=%s&AT=%s&SDK=%s", 
             WiFiMAC(), WIFI_HW_Name, ControlVersion(), WiFiAT(), WiFiSDK());
 
