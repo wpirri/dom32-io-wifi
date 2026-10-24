@@ -57,7 +57,7 @@ const char http_c_http_404[] = "HTTP/1.1 404 Not found\r\n"
  */
 const char http_c_http_post[] = "POST %s HTTP/1.1\r\n"
                                 "Host: %s\r\n"
-                                "Connection: keep-alive\r\n"
+                                "Connection: close\r\n"
                                 "Content-Length: %d\r\n"
                                 "User-Agent: Dom32io/1.00 (Microchip;PIC32)\r\n"
                                 "Accept: text/html,text/xml\r\n"
