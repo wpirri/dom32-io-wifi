@@ -272,6 +272,8 @@ void ControlHostKeepAlive(void)
 #ifdef DEBUG_MSG
         LogMessage("[ControlHostKeepAlive] HTTP Req Ok");
 #endif
+        /* Borro la tarjeta al recibir HTTP 200 para evitar bucle infinito de reintentos */
+        g_control_c_wiegand_card_code[0] = 0;
         /* Si la respuesta vino entre [""] le hago limpieza */
         if(data[0] == '[' && data[1] == '\"')
         {

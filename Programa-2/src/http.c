@@ -34,8 +34,11 @@
 #define _DEBUG_HTTP
 #define DEBUG_QUERY_HOST
 
+#define HTTP_MAX_CONSECUTIVE_ERRORS 3
+
 int g_http_c_host_conectado;
 int g_http_c_go_host_conectado;
+int g_http_c_error_count;
 
 const char http_c_xml_200[] = "HTTP/1.1 200 OK\r\n"
                               "Connection: close\r\n"
@@ -100,7 +103,7 @@ void HttpInit(void)
 {
     g_http_c_host_conectado = 0;
     g_http_c_go_host_conectado = 0;
-
+    g_http_c_error_count = 0;
 }
 
 void HttpTask(void)
@@ -151,16 +154,24 @@ void HttpConexionOk( void )
     {
         LogMessage("**** ONLINE ****");
     }
+    g_http_c_error_count = 0;
     g_http_c_host_conectado = g_http_c_go_host_conectado;
 }
 
 void HttpConexionError( void )
 {
-    if(g_http_c_host_conectado)
+    if(g_http_c_error_count < 255)
     {
-        LogMessage("**** OFFLINE ****");
+        g_http_c_error_count++;
     }
-    g_http_c_host_conectado = 0;
+    if(g_http_c_error_count >= HTTP_MAX_CONSECUTIVE_ERRORS)
+    {
+        if(g_http_c_host_conectado)
+        {
+            LogMessage("**** OFFLINE ****");
+        }
+        g_http_c_host_conectado = 0;
+    }
 }
 
 void HttpSwitchHost( void )
@@ -498,7 +509,7 @@ void HTTPCommandSwitch( const char *obj_name )
 
     if( !HttpOnLine()) return;
 
-    snprintf(url, 250, "%s/switch&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
+    snprintf(url, 250, "%s/switch?Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
     url_encode(url, url);
     /*
      * GET
@@ -516,7 +527,7 @@ void HTTPCommandPulse( const char *obj_name )
 
     if( !HttpOnLine()) return;
 
-    snprintf(url, 250, "%s/pulse&Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
+    snprintf(url, 250, "%s/pulse?Objeto=%s", g_wifi_config.u.config.rqst_path, obj_name);
     url_encode(url, url);
     /*
      * GET
