@@ -87,28 +87,26 @@ int main(void)
    
     SystemInit();
     
-    LogInit(true, false);
     
     if( FSInit() )
     {
         status_sd_ok = true;
-        LogMessage("[MAIN] File System Ok");
     }
     else
     {
         status_sd_ok = false;
-        LogMessage("[MAIN] File System Error");
     }
-    LogMessage("[MAIN] Compilacion %s", ControlVersion());
-    LogMessage("[MAIN] Compilador %s", ControlCompilador());
     
     if(status_sd_ok) FSremove(FIRMWARE_FILENAME);
 
-    LogMessage("[MAIN] Configuracion");
     ConfigInit();
     if(status_sd_ok) ConfigLoad();
-    DumpConfig();
 
+    LogInit(true, false);
+    LogMessage("[MAIN] Compilacion %s", ControlVersion());
+    LogMessage("[MAIN] Compilador %s", ControlCompilador());
+    DumpConfig();
+    
     LogMessage("[MAIN] Init RTCC");
     RTCC_Initialize();
 

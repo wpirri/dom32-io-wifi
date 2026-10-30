@@ -643,14 +643,17 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
             }
             break;
         }
-        else if(recv_len && recv_msg)
+        else if(recv_len)
         {
+            recv_len += rc;
+            if(recv_msg)
+            {
             #ifdef __DEBUG_WIFI__    
                 LogMessage("[WiFiQueryHost] Agregando a recv_msg");
             #endif
-            recv_len += rc;
-            strcpy(recv_msg, cmd);
-            recv_msg += rc;
+                strcpy(recv_msg, cmd);
+                recv_msg += rc;
+            }
 
             /* Tomo datos de la cabecera HTTP */
             /* Parseo la cabacara http */
@@ -692,13 +695,13 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
                 break;
             }
             cmd[rc] = 0;
+            recv_len += rc;
             if(recv_msg)
             {
                 memcpy(recv_msg, cmd, rc);
                 recv_msg += rc;
                 *recv_msg = 0;
             }
-            recv_len += rc;
 
 #ifdef __DEBUG_WIFI__
             LogMessage("[WiFiQueryHost] Recibidos %i bytes [%-40.40s]...", rc, cmd);
@@ -733,13 +736,13 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
                     recv_len = rc - ((int)(p - &cmd[0]));
 
                     /* Escribir p x rc - ((int)(p - &cmd[0])) bytes al archivo */
+                    total_escrito += recv_len;
                     if(recv_msg)
                     {
                         memcpy(recv_msg, p, recv_len);
                         recv_msg += recv_len;
                         *recv_msg = 0;
                     }
-                    total_escrito += recv_len;
                 }                
             }
             else if( !memcmp(cmd, "0,CLOSED", 8))

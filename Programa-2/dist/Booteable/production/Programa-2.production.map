@@ -1,211 +1,211 @@
 Archive member included to satisfy reference by file (symbol)
 
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-bootstrap-exception-handler.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (_bootstrap_exception_handler)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (_bootstrap_exception_handler)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-reset.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (_on_reset)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (_on_reset)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-bootstrap.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (_on_bootstrap)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (_on_bootstrap)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-nmi-handler.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (_nmi_handler)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (_nmi_handler)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_core.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (__pic32_data_init)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (__pic32_data_init)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(general-exception.o)
-                              C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o (_general_exception_context)
+                              C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o (_general_exception_context)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector1.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_1)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_1)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector2.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_2)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_2)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector3.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_3)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_3)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector4.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_4)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_4)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector5.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_5)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_5)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector6.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_6)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_6)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector7.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_7)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_7)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector8.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_8)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_8)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector10.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_10)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_10)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector11.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_11)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_11)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector12.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_12)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_12)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector13.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_13)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_13)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector14.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_14)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_14)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector15.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_15)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_15)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector16.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_16)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_16)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector18.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_18)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_18)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector19.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_19)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_19)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector20.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_20)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_20)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector21.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_21)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_21)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector22.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_22)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_22)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector23.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_23)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_23)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector24.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_24)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_24)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector25.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_25)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_25)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector26.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_26)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_26)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector27.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_27)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_27)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector28.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_28)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_28)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector29.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_29)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_29)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector30.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_30)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_30)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector31.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_31)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_31)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector32.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_32)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_32)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector33.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_33)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_33)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector34.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_34)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_34)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector35.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_35)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_35)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector36.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_36)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_36)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector37.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_37)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_37)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector38.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_38)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_38)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector39.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_39)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_39)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector40.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_40)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_40)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector41.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_41)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_41)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector42.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_42)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_42)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector43.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_43)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_43)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector44.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_44)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_44)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector45.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_45)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_45)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector46.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_46)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_46)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector47.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_47)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_47)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector48.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_48)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_48)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector49.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_49)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_49)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector50.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_50)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_50)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector51.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_51)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_51)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector52.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_52)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_52)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector54.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_54)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_54)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector56.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_56)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_56)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector57.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_57)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_57)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector58.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_58)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_58)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector59.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_59)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_59)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector60.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_60)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_60)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector61.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_61)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_61)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector62.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_62)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_62)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector63.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_63)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_63)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector64.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_64)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_64)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector65.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_65)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_65)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector66.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_66)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_66)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector67.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_67)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_67)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector68.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_68)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_68)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector69.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_69)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_69)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector70.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_70)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_70)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector71.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_71)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_71)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector72.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_72)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_72)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector73.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_73)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_73)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector74.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_74)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_74)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector75.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_75)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_75)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector76.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_76)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_76)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector77.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_77)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_77)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector78.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_78)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_78)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector79.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_79)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_79)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector80.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_80)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_80)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector81.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_81)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_81)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector82.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_82)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_82)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector83.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_83)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_83)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector84.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_84)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_84)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector85.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_85)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_85)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector86.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_86)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_86)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector87.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_87)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_87)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector88.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_88)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_88)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector89.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_89)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_89)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector90.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_90)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_90)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector91.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_91)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_91)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector92.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_92)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_92)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector93.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_93)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_93)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector94.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_94)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_94)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector95.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_95)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_95)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector96.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_96)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_96)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector97.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_97)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_97)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector98.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_98)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_98)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector99.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_99)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_99)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector100.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_100)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_100)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector101.o)
-                              C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o (__vector_dispatch_101)
+                              C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o (__vector_dispatch_101)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(defaultinterrupt.o)
                               c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(vector1.o) (_DefaultInterrupt)
 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memcmp.o)
@@ -327,102 +327,101 @@ kseg0 Program-Memory Usage
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
 .text                   0x9d009490         0x4020       16416  App's exec code 
-.text                   0x9d00d4b0         0x23c0        9152  App's exec code 
-.text                   0x9d00f870         0x138c        5004  App's exec code 
-.rodata.str1.4          0x9d010bfc          0xe34        3636   
-.text.__fmt_fp          0x9d011a30          0x5b0        1456   
-.text.__fmt_a           0x9d011fe0          0x590        1424   
-.text.fma               0x9d012570          0x530        1328   
-.text                   0x9d012aa0          0x510        1296  App's exec code 
-.text.__printf_core     0x9d012fb0          0x444        1092   
-.text.dp32mul           0x9d0133f4          0x3f8        1016   
-.text                   0x9d0137ec          0x3ec        1004  App's exec code 
-.text.dp32subadd        0x9d013bd8          0x37c         892   
-.rodata.str1.4          0x9d013f54          0x33c         828   
-.text                   0x9d014290          0x654        1620  App's exec code 
-.text                   0x9d0148e4          0x628        1576  App's exec code 
-.text                   0x9d014f0c          0x620        1568  App's exec code 
-.text.dp32mul           0x9d01552c          0x298         664   
-.rodata                 0x9d0157c4          0x220         544  Read-only const 
-.rodata.str1.4          0x9d0159e4          0x1fc         508   
-.text                   0x9d015be0          0x194         404  App's exec code 
-.rodata.str1.4          0x9d015d74          0x2d4         724   
-.rodata.str1.4          0x9d016048          0x158         344   
-.text                   0x9d0161a0          0x154         340  App's exec code 
-.text.__fmt_x           0x9d0162f4          0x150         336   
-.dinit                  0x9d016444          0x110         272   
-.rodata.str1.4          0x9d016554          0x100         256   
-.text.__pop_int         0x9d016654           0xfc         252   
-.rodata                 0x9d016750           0xf0         240  Read-only const 
-.text.dpcmp             0x9d016840           0xdc         220   
-.text.dfcmplt           0x9d01691c           0xdc         220   
-.text.dptofp            0x9d0169f8           0xd4         212   
-.text.__fmt_d           0x9d016acc           0xcc         204   
-.text                   0x9d016b98          0x184         388  App's exec code 
-.text.__cvt_u           0x9d016d1c           0xa8         168   
-.text.scalbn            0x9d016dc4           0xa8         168   
-.text.__pop_ptr         0x9d016e6c           0x9c         156   
-.text.__pad             0x9d016f08           0x98         152   
-.rodata.str1.4          0x9d016fa0           0x88         136   
-.text.__fmt_o           0x9d017028           0x84         132   
-.text.general_exception 0x9d0170ac           0x80         128   
-.text.__strchrnul       0x9d01712c           0x80         128   
-.text.fptodp            0x9d0171ac           0x80         128   
-.text.dptoli            0x9d01722c           0x74         116   
-.text.normalize         0x9d0172a0           0x6c         108   
-.text.__fmt_u           0x9d01730c           0x68         104   
-.text.vsnprintf         0x9d017374           0x64         100   
-.text.litodp            0x9d0173d8           0x60          96   
-.text                   0x9d017438           0x5c          92  App's exec code 
-.text.strstr            0x9d017494           0x5c          92   
-.text.__fmt_s           0x9d0174f0           0x5c          92   
-.text.atoi              0x9d01754c           0x58          88   
-.text.atol              0x9d0175a4           0x58          88   
-.text.stpncpy           0x9d0175fc           0x54          84   
-.text                   0x9d017650           0x50          80  App's exec code 
-.rodata.str1.4          0x9d0176a0           0x50          80   
-.text.a_clz_64          0x9d0176f0           0x48          72   
-.text.main_entry        0x9d017738           0x44          68   
-.text                   0x9d01777c           0x84         132  App's exec code 
-.text.__fmt_state       0x9d017800           0x38          56   
-.text._bootstrap_except 0x9d017838           0x34          52   
-.rodata                 0x9d01786c           0x30          48  Read-only const 
-.vector_default         0x9d01789c           0x30          48   
-.text.__pop_float       0x9d0178cc           0x30          48   
-.text.__string_out      0x9d0178fc           0x30          48   
-.text                   0x9d01792c           0x2c          44  App's exec code 
-.rodata.cst8            0x9d017958           0x28          40   
-.text                   0x9d017980           0x50          80  App's exec code 
-.rodata                 0x9d0179d0           0x20          32  Read-only const 
-.text.memcmp            0x9d0179f0           0x20          32   
-.text.strcat            0x9d017a10           0x20          32   
-.text.strcmp            0x9d017a30           0x20          32   
-.text.vfprintf          0x9d017a50           0x20          32   
-.rodata.cst8            0x9d017a70           0x40          64   
-.text.strlen            0x9d017ab0           0x1c          28   
-.text.strchr            0x9d017acc           0x1c          28   
-.text.vsprintf          0x9d017ae8           0x1c          28   
-.text                   0x9d017b04           0x1c          28  App's exec code 
-.MIPS.abiflags          0x9d017b20           0x18          24   
-.text                   0x9d017b38           0x18          24  App's exec code 
-.text.memcpy            0x9d017b50           0x18          24   
-.text.memset            0x9d017b68           0x18          24   
-.text.stpcpy            0x9d017b80           0x18          24   
-.text.snprintf          0x9d017b98           0x18          24   
-.text.sprintf           0x9d017bb0           0x18          24   
-.rodata                 0x9d017bc8           0x2c          44  Read-only const 
-.text.strcpy            0x9d017bf4           0x14          20   
-.text.strncpy           0x9d017c08           0x14          20   
-.text.tolower           0x9d017c1c           0x14          20   
-.text.toupper           0x9d017c30           0x14          20   
-.rodata.str1.4          0x9d017c44           0x20          32   
-.text._on_reset         0x9d017c64            0x4           4   
-.rodata.cst8            0x9d017c68           0x10          16   
-.text                   0x9d017c78           0x10          16  App's exec code 
-.rodata.str1.4          0x9d017c88            0xc          12   
-.text._on_bootstrap     0x9d017c94            0x4           4   
-.rodata.cst8            0x9d017c98           0x10          16   
-      Total kseg0_program_mem used  :      0xe818       59416  26.5% of 0x36b70
+.text                   0x9d00d4b0         0x23bc        9148  App's exec code 
+.text                   0x9d00f86c         0x138c        5004  App's exec code 
+.rodata.str1.4          0x9d010bf8          0xe34        3636   
+.text.__fmt_fp          0x9d011a2c          0x5b0        1456   
+.text.__fmt_a           0x9d011fdc          0x590        1424   
+.text.fma               0x9d01256c          0x530        1328   
+.text                   0x9d012a9c          0x510        1296  App's exec code 
+.text.__printf_core     0x9d012fac          0x444        1092   
+.text.dp32mul           0x9d0133f0          0x3f8        1016   
+.text                   0x9d0137e8          0x3ec        1004  App's exec code 
+.text.dp32subadd        0x9d013bd4          0x37c         892   
+.rodata.str1.4          0x9d013f50          0x33c         828   
+.text                   0x9d01428c          0x654        1620  App's exec code 
+.text                   0x9d0148e0          0x628        1576  App's exec code 
+.text                   0x9d014f08          0x620        1568  App's exec code 
+.text.dp32mul           0x9d015528          0x298         664   
+.rodata                 0x9d0157c0          0x220         544  Read-only const 
+.rodata.str1.4          0x9d0159e0          0x374         884   
+.rodata.str1.4          0x9d015d54          0x2b4         692   
+.text                   0x9d016008          0x154         340  App's exec code 
+.text.__fmt_x           0x9d01615c          0x150         336   
+.text                   0x9d0162ac          0x13c         316  App's exec code 
+.dinit                  0x9d0163e8          0x110         272   
+.text.__pop_int         0x9d0164f8           0xfc         252   
+.rodata                 0x9d0165f4           0xf0         240  Read-only const 
+.text.dpcmp             0x9d0166e4           0xdc         220   
+.text.dfcmplt           0x9d0167c0           0xdc         220   
+.text.dptofp            0x9d01689c           0xd4         212   
+.text.__fmt_d           0x9d016970           0xcc         204   
+.text                   0x9d016a3c          0x184         388  App's exec code 
+.rodata.str1.4          0x9d016bc0           0xb4         180   
+.text.__cvt_u           0x9d016c74           0xa8         168   
+.text.scalbn            0x9d016d1c           0xa8         168   
+.text.__pop_ptr         0x9d016dc4           0x9c         156   
+.text.__pad             0x9d016e60           0x98         152   
+.rodata.str1.4          0x9d016ef8           0x88         136   
+.text.__fmt_o           0x9d016f80           0x84         132   
+.text.general_exception 0x9d017004           0x80         128   
+.text.__strchrnul       0x9d017084           0x80         128   
+.text.fptodp            0x9d017104           0x80         128   
+.text.dptoli            0x9d017184           0x74         116   
+.text.normalize         0x9d0171f8           0x6c         108   
+.text.__fmt_u           0x9d017264           0x68         104   
+.text.vsnprintf         0x9d0172cc           0x64         100   
+.text.litodp            0x9d017330           0x60          96   
+.text                   0x9d017390           0x5c          92  App's exec code 
+.text.strstr            0x9d0173ec           0x5c          92   
+.text.__fmt_s           0x9d017448           0x5c          92   
+.text.atoi              0x9d0174a4           0x58          88   
+.text.atol              0x9d0174fc           0x58          88   
+.text.stpncpy           0x9d017554           0x54          84   
+.text                   0x9d0175a8           0x50          80  App's exec code 
+.rodata.str1.4          0x9d0175f8           0x50          80   
+.text.a_clz_64          0x9d017648           0x48          72   
+.text.main_entry        0x9d017690           0x44          68   
+.text                   0x9d0176d4           0x84         132  App's exec code 
+.text.__fmt_state       0x9d017758           0x38          56   
+.text._bootstrap_except 0x9d017790           0x34          52   
+.rodata                 0x9d0177c4           0x30          48  Read-only const 
+.vector_default         0x9d0177f4           0x30          48   
+.text.__pop_float       0x9d017824           0x30          48   
+.text.__string_out      0x9d017854           0x30          48   
+.text                   0x9d017884           0x2c          44  App's exec code 
+.rodata.cst8            0x9d0178b0           0x28          40   
+.text                   0x9d0178d8           0x50          80  App's exec code 
+.rodata                 0x9d017928           0x20          32  Read-only const 
+.text.memcmp            0x9d017948           0x20          32   
+.text.strcat            0x9d017968           0x20          32   
+.text.strcmp            0x9d017988           0x20          32   
+.text.vfprintf          0x9d0179a8           0x20          32   
+.rodata.cst8            0x9d0179c8           0x40          64   
+.text.strlen            0x9d017a08           0x1c          28   
+.text.strchr            0x9d017a24           0x1c          28   
+.text.vsprintf          0x9d017a40           0x1c          28   
+.text                   0x9d017a5c           0x1c          28  App's exec code 
+.MIPS.abiflags          0x9d017a78           0x18          24   
+.text                   0x9d017a90           0x18          24  App's exec code 
+.text.memcpy            0x9d017aa8           0x18          24   
+.text.memset            0x9d017ac0           0x18          24   
+.text.stpcpy            0x9d017ad8           0x18          24   
+.text.snprintf          0x9d017af0           0x18          24   
+.text.sprintf           0x9d017b08           0x18          24   
+.rodata                 0x9d017b20           0x2c          44  Read-only const 
+.text.strcpy            0x9d017b4c           0x14          20   
+.text.strncpy           0x9d017b60           0x14          20   
+.text.tolower           0x9d017b74           0x14          20   
+.text.toupper           0x9d017b88           0x14          20   
+.rodata.str1.4          0x9d017b9c           0x20          32   
+.text._on_reset         0x9d017bbc            0x4           4   
+.rodata.cst8            0x9d017bc0           0x10          16   
+.text                   0x9d017bd0           0x10          16  App's exec code 
+.rodata.str1.4          0x9d017be0            0xc          12   
+.text._on_bootstrap     0x9d017bec            0x4           4   
+.rodata.cst8            0x9d017bf0           0x10          16   
+      Total kseg0_program_mem used  :      0xe770       59248  26.4% of 0x36b70
 
 kseg0 Boot-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -436,7 +435,7 @@ section                    address  length [bytes]      (dec)  Description
 .bev_excpt              0x9d009380            0xc          12  BEV-Exception 
          Total kseg1_boot_mem used  :       0x14c         332  28.4% of 0x490
         --------------------------------------------------------------------------
-         Total Program Memory used  :      0xe964       59748  26.5% of 0x37000
+         Total Program Memory used  :      0xe8bc       59580  26.4% of 0x37000
         --------------------------------------------------------------------------
 
 
@@ -471,7 +470,7 @@ Microchip PIC32 Memory-Usage Report By Module
         text        data         bss         dec         hex    basename                                 filename
 --------------------------------------------------------------------------------
        10832          12        1475       12319        301f    fsio.o                               build/Booteable/production/src/sd/fsio.o
-        7044           0         553        7597        1dad    wifi.o                               build/Booteable/production/src/wifi/wifi.o
+        7040           0         553        7593        1da9    wifi.o                               build/Booteable/production/src/wifi/wifi.o
         5960           0        1108        7068        1b9c    io.o                                 build/Booteable/production/src/io.o
          804           0        4113        4917        1335    uart1.o                              build/Booteable/production/src/wifi/uart1.o
         4684           0          12        4696        1258    http.o                               build/Booteable/production/src/http.o
@@ -491,8 +490,8 @@ Microchip PIC32 Memory-Usage Report By Module
          788           0           0         788         314    _umoddi3.o                           libgcc.a
          784           0           0         784         310    _udivdi3.o                           libgcc.a
          664           0           0         664         298    dp32mul.o                            libm.a
-         660           0           0         660         294    main.o                               build/Booteable/production/src/main.o
-         412           0           0         412         19c    ccCAgi8N.o                           C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+         496           0           0         496         1f0    main.o                               build/Booteable/production/src/main.o
+         412           0           0         412         19c    ccsnsbZv.o                           C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
          340           0           2         342         156    log.o                                build/Booteable/production/src/log.o
          336           0           0         336         150    __fmt_x.o                            libc-musl.a
          272           0           0         272         110    data_init                            data_init
@@ -651,7 +650,7 @@ Microchip PIC32 Memory-Usage Report By Module
            4           0           0           4           4    default-on-reset.o                   libpic32.a
            0           0           0          12           c    padding                              padding
 --------------------------------------------------------------------------------
-       60576          16        7967       68571       10bdb    dist/Booteable/production/Programa-2.production.elf
+       60408          16        7967       68403       10b33    dist/Booteable/production/Programa-2.production.elf
 
 
 Discarded input sections
@@ -722,7 +721,7 @@ Discarded input sections
  .debug_frame   0x0000000000000000      0x2a0 build/Booteable/production/src/wifi/wifi.o
  .debug_info    0x0000000000000000     0x2737 build/Booteable/production/src/wifi/wifi.o
  .debug_abbrev  0x0000000000000000      0x447 build/Booteable/production/src/wifi/wifi.o
- .debug_loc     0x0000000000000000     0x1236 build/Booteable/production/src/wifi/wifi.o
+ .debug_loc     0x0000000000000000     0x122b build/Booteable/production/src/wifi/wifi.o
  .debug_aranges
                 0x0000000000000000       0x20 build/Booteable/production/src/wifi/wifi.o
  .debug_ranges  0x0000000000000000       0x18 build/Booteable/production/src/wifi/wifi.o
@@ -798,12 +797,12 @@ Discarded input sections
  .MIPS.abiflags
                 0x0000000000000000       0x18 build/Booteable/production/src/main.o
  .debug_frame   0x0000000000000000       0x2c build/Booteable/production/src/main.o
- .debug_info    0x0000000000000000      0x5f3 build/Booteable/production/src/main.o
+ .debug_info    0x0000000000000000      0x557 build/Booteable/production/src/main.o
  .debug_abbrev  0x0000000000000000      0x111 build/Booteable/production/src/main.o
- .debug_loc     0x0000000000000000       0x32 build/Booteable/production/src/main.o
+ .debug_loc     0x0000000000000000       0x24 build/Booteable/production/src/main.o
  .debug_aranges
                 0x0000000000000000       0x20 build/Booteable/production/src/main.o
- .debug_line    0x0000000000000000      0x2b0 build/Booteable/production/src/main.o
+ .debug_line    0x0000000000000000      0x2a7 build/Booteable/production/src/main.o
  .debug_str     0x0000000000000000      0x445 build/Booteable/production/src/main.o
  .data          0x0000000000000000        0x0 build/Booteable/production/src/rtcc.o
  .bss           0x0000000000000000        0x0 build/Booteable/production/src/rtcc.o
@@ -869,25 +868,25 @@ Discarded input sections
                 0x0000000000000000       0x20 build/Booteable/production/src/adc.o
  .debug_line    0x0000000000000000      0x31a build/Booteable/production/src/adc.o
  .debug_str     0x0000000000000000      0x5c3 build/Booteable/production/src/adc.o
- .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
- .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
- .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
- .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+ .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+ .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+ .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+ .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
- .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
- .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
- .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
- .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
+                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+ .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
+ .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
+ .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
+ .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
- .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
- .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
- .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
- .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
+                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
+ .text          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
+ .data          0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
+ .bss           0x0000000000000000        0x0 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
+ .reginfo       0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
  .MIPS.abiflags
-                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
- .discard       0x0000000000000000      0x198 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
+                0x0000000000000000       0x18 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
+ .discard       0x0000000000000000      0x198 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
  .data          0x0000000000000000        0x0 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
  .bss           0x0000000000000000        0x0 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
  .reginfo       0x0000000000000000       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
@@ -3052,16 +3051,16 @@ LOAD build/Booteable/production/src/adc.o
 
 .reset          0x000000009d009000      0x140
  *(.reset)
- .reset         0x000000009d009000        0x8 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+ .reset         0x000000009d009000        0x8 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
                 0x000000009d009001                _reset
  *(.reset.startup)
  .reset.startup
-                0x000000009d009008      0x138 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+                0x000000009d009008      0x138 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
                 0x000000009d009009                _startup
 
 .bev_excpt      0x000000009d009380        0xc
  *(.bev_handler)
- .bev_handler   0x000000009d009380        0xc C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+ .bev_handler   0x000000009d009380        0xc C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
 
 .dbg_excpt      0x000000009d009480        0x0
                 0x000000009d009480                . = (. + DEFINED (_DEBUGGER)?0x8:0x0)
@@ -3071,7 +3070,7 @@ LOAD build/Booteable/production/src/adc.o
 
 .app_excpt      0x000000009d008180        0xc
  *(.gen_handler)
- .gen_handler   0x000000009d008180        0xc C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+ .gen_handler   0x000000009d008180        0xc C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
 
 .vector_0       0x000000009d008200        0x8
  *(.vector_0)
@@ -4219,11 +4218,11 @@ LOAD build/Booteable/production/src/adc.o
  .gnu.attributes
                 0x0000000000000100       0x10 build/Booteable/production/src/adc.o
  .gnu.attributes
-                0x0000000000000110       0x10 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
+                0x0000000000000110       0x10 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
  .gnu.attributes
-                0x0000000000000120       0x10 C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
+                0x0000000000000120       0x10 C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
  .gnu.attributes
-                0x0000000000000130       0x10 C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
+                0x0000000000000130       0x10 C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
  .gnu.attributes
                 0x0000000000000140       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
  .gnu.attributes
@@ -4546,9 +4545,9 @@ LOAD build/Booteable/production/src/adc.o
                 0x0000000000000b30       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_clear.o)
  .gnu.attributes
                 0x0000000000000b40       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_copy.o)
-LOAD C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
-LOAD C:\Users\walte\AppData\Local\Temp\cc0eVNuC.o
-LOAD C:\Users\walte\AppData\Local\Temp\ccy0Ko1J.o
+LOAD C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+LOAD C:\Users\walte\AppData\Local\Temp\ccMF1ipw.o
+LOAD C:\Users\walte\AppData\Local\Temp\ccrsv0rP.o
 LOAD c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
 LOAD c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a
 START GROUP
@@ -4671,8 +4670,8 @@ LOAD stack
                 0x000000009d00d321                IOLedControl
                 0x000000009d00d3ad                IOTimer
 
-.text           0x000000009d00d4b0     0x23c0
- .text          0x000000009d00d4b0     0x134c build/Booteable/production/src/wifi/wifi.o
+.text           0x000000009d00d4b0     0x23bc
+ .text          0x000000009d00d4b0     0x1348 build/Booteable/production/src/wifi/wifi.o
                 0x000000009d00d4b1                WiFiInit
                 0x000000009d00d4ed                WiFiTimer
                 0x000000009d00d501                WiFiTask
@@ -4695,561 +4694,559 @@ LOAD stack
                 0x000000009d00dc01                WiFiStart
                 0x000000009d00dd3d                WiFiSetMode
                 0x000000009d00df99                WiFiQueryHost
-                0x000000009d00e375                WiFiQueryHostToFile
- .text          0x000000009d00e7fc     0x1074 build/Booteable/production/src/sd/sd_spi.o
-                0x000000009d00e7fd                getcSPI
-                0x000000009d00e811                putcSPI
-                0x000000009d00e829                getsSPI
-                0x000000009d00e889                putsSPI
-                0x000000009d00e8e1                MDD_SDSPI_MediaDetect
-                0x000000009d00e8e5                MDD_SDSPI_ReadSectorSize
-                0x000000009d00e8ed                MDD_SDSPI_ReadCapacity
-                0x000000009d00e8f5                MDD_SDSPI_InitIO
-                0x000000009d00e9a9                MDD_SDSPI_ShutdownMedia
-                0x000000009d00e9d1                SendMMCCmd
-                0x000000009d00eccd                MDD_SDSPI_AsyncReadTasks
-                0x000000009d00ef3d                MDD_SDSPI_SectorRead
-                0x000000009d00ef79                MDD_SDSPI_AsyncWriteTasks
-                0x000000009d00f34d                MDD_SDSPI_SectorWrite
-                0x000000009d00f39d                MDD_SDSPI_WriteProtectState
-                0x000000009d00f3a1                CloseSPIM
-                0x000000009d00f3b5                WriteSPIM
-                0x000000009d00f3dd                MDD_SDSPI_ReadMedia
-                0x000000009d00f405                InitSPISlowMode
-                0x000000009d00f461                InitSPIFastMode
-                0x000000009d00f489                MDD_SDSPI_MediaInitialize
+                0x000000009d00e371                WiFiQueryHostToFile
+ .text          0x000000009d00e7f8     0x1074 build/Booteable/production/src/sd/sd_spi.o
+                0x000000009d00e7f9                getcSPI
+                0x000000009d00e80d                putcSPI
+                0x000000009d00e825                getsSPI
+                0x000000009d00e885                putsSPI
+                0x000000009d00e8dd                MDD_SDSPI_MediaDetect
+                0x000000009d00e8e1                MDD_SDSPI_ReadSectorSize
+                0x000000009d00e8e9                MDD_SDSPI_ReadCapacity
+                0x000000009d00e8f1                MDD_SDSPI_InitIO
+                0x000000009d00e9a5                MDD_SDSPI_ShutdownMedia
+                0x000000009d00e9cd                SendMMCCmd
+                0x000000009d00ecc9                MDD_SDSPI_AsyncReadTasks
+                0x000000009d00ef39                MDD_SDSPI_SectorRead
+                0x000000009d00ef75                MDD_SDSPI_AsyncWriteTasks
+                0x000000009d00f349                MDD_SDSPI_SectorWrite
+                0x000000009d00f399                MDD_SDSPI_WriteProtectState
+                0x000000009d00f39d                CloseSPIM
+                0x000000009d00f3b1                WriteSPIM
+                0x000000009d00f3d9                MDD_SDSPI_ReadMedia
+                0x000000009d00f401                InitSPISlowMode
+                0x000000009d00f45d                InitSPIFastMode
+                0x000000009d00f485                MDD_SDSPI_MediaInitialize
 
-.text           0x000000009d00f870     0x138c
- .text          0x000000009d00f870      0xa30 build/Booteable/production/src/http.o
-                0x000000009d00f871                strcasestr
-                0x000000009d00f8d5                HttpInit
-                0x000000009d00f8e5                HttpTask
-                0x000000009d00f8e9                HttpTimerInt
-                0x000000009d00f8ed                HttpOnLine
-                0x000000009d00f911                HttpCurrentHost
-                0x000000009d00f931                HttpCurrentPort
-                0x000000009d00f951                HttpConexionOk
-                0x000000009d00f979                HttpConexionError
-                0x000000009d00f9b5                HttpSwitchHost
-                0x000000009d00f9c9                HttpGetRequest
-                0x000000009d00fa29                HTTPGetFormData
-                0x000000009d00fa91                HTTPGetHeadData
-                0x000000009d00fb19                HTTPHeadResponse
-                0x000000009d00fb51                HTTPFormResponse
-                0x000000009d00fbc5                HttpQueryHost
-                0x000000009d00fd59                HttpDownload
-                0x000000009d00fe1d                HTTPCommandSwitch
-                0x000000009d00fed9                HTTPCommandPulse
-                0x000000009d00ff95                Convert2CharToHex
-                0x000000009d01000d                HttpDecodeFormData
-                0x000000009d0100a1                HttpReturnWiFiFormConfig
-                0x000000009d0101b5                HttpProcessRequest
- .text          0x000000009d0102a0      0x95c build/Booteable/production/src/control.o
-                0x000000009d0102a1                ControlInit
-                0x000000009d01030d                ControlVersion
-                0x000000009d010319                ControlCompilador
-                0x000000009d010325                ControlTimer
-                0x000000009d01036d                ControlSaveConfig
-                0x000000009d010375                ControlSystemReset
-                0x000000009d010395                DownloadFile
-                0x000000009d01039d                ProcessGeneralConfig
-                0x000000009d010695                ControlHostKeepAlive
-                0x000000009d01088d                ProcesarDownloadList
-                0x000000009d010985                ControlFileFlags
-                0x000000009d010a05                ControlTask
-                0x000000009d010b15                Control_WiFi_Task
-                0x000000009d010bed                ControlNotificarTarjeta
+.text           0x000000009d00f86c     0x138c
+ .text          0x000000009d00f86c      0xa30 build/Booteable/production/src/http.o
+                0x000000009d00f86d                strcasestr
+                0x000000009d00f8d1                HttpInit
+                0x000000009d00f8e1                HttpTask
+                0x000000009d00f8e5                HttpTimerInt
+                0x000000009d00f8e9                HttpOnLine
+                0x000000009d00f90d                HttpCurrentHost
+                0x000000009d00f92d                HttpCurrentPort
+                0x000000009d00f94d                HttpConexionOk
+                0x000000009d00f975                HttpConexionError
+                0x000000009d00f9b1                HttpSwitchHost
+                0x000000009d00f9c5                HttpGetRequest
+                0x000000009d00fa25                HTTPGetFormData
+                0x000000009d00fa8d                HTTPGetHeadData
+                0x000000009d00fb15                HTTPHeadResponse
+                0x000000009d00fb4d                HTTPFormResponse
+                0x000000009d00fbc1                HttpQueryHost
+                0x000000009d00fd55                HttpDownload
+                0x000000009d00fe19                HTTPCommandSwitch
+                0x000000009d00fed5                HTTPCommandPulse
+                0x000000009d00ff91                Convert2CharToHex
+                0x000000009d010009                HttpDecodeFormData
+                0x000000009d01009d                HttpReturnWiFiFormConfig
+                0x000000009d0101b1                HttpProcessRequest
+ .text          0x000000009d01029c      0x95c build/Booteable/production/src/control.o
+                0x000000009d01029d                ControlInit
+                0x000000009d010309                ControlVersion
+                0x000000009d010315                ControlCompilador
+                0x000000009d010321                ControlTimer
+                0x000000009d010369                ControlSaveConfig
+                0x000000009d010371                ControlSystemReset
+                0x000000009d010391                DownloadFile
+                0x000000009d010399                ProcessGeneralConfig
+                0x000000009d010691                ControlHostKeepAlive
+                0x000000009d010889                ProcesarDownloadList
+                0x000000009d010981                ControlFileFlags
+                0x000000009d010a01                ControlTask
+                0x000000009d010b11                Control_WiFi_Task
+                0x000000009d010be9                ControlNotificarTarjeta
 
-.rodata.str1.4  0x000000009d010bfc      0xe34
+.rodata.str1.4  0x000000009d010bf8      0xe34
  .rodata.str1.4
-                0x000000009d010bfc      0x838 build/Booteable/production/src/wifi/wifi.o
+                0x000000009d010bf8      0x838 build/Booteable/production/src/wifi/wifi.o
  .rodata.str1.4
-                0x000000009d011434      0x5fc build/Booteable/production/src/http.o
+                0x000000009d011430      0x5fc build/Booteable/production/src/http.o
 
-.text.__fmt_fp  0x000000009d011a30      0x5b0
+.text.__fmt_fp  0x000000009d011a2c      0x5b0
  .text.__fmt_fp
-                0x000000009d011a30      0x5b0 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
-                0x000000009d011a31                __fmt_f_needed
-                0x000000009d011a31                __fmt_fp
+                0x000000009d011a2c      0x5b0 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
+                0x000000009d011a2d                __fmt_f_needed
+                0x000000009d011a2d                __fmt_fp
 
-.text.__fmt_a   0x000000009d011fe0      0x590
- .text.__fmt_a  0x000000009d011fe0      0x590 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
-                0x000000009d011fe1                __fmt_a_needed
-                0x000000009d011fe1                __fmt_a
+.text.__fmt_a   0x000000009d011fdc      0x590
+ .text.__fmt_a  0x000000009d011fdc      0x590 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
+                0x000000009d011fdd                __fmt_a_needed
+                0x000000009d011fdd                __fmt_a
 
-.text.fma       0x000000009d012570      0x530
- .text.fma      0x000000009d012570      0x530 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
-                0x000000009d012571                fma
+.text.fma       0x000000009d01256c      0x530
+ .text.fma      0x000000009d01256c      0x530 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
+                0x000000009d01256d                fma
 
-.text           0x000000009d012aa0      0x510
- .text          0x000000009d012aa0      0x510 build/Booteable/production/src/rtcc.o
-                0x000000009d012aa1                WeekDay
-                0x000000009d012b9d                RTCC_Initialize
-                0x000000009d012c11                RTCC_AdjustClk
-                0x000000009d012c15                RTCC_TimeGet
-                0x000000009d012cb1                RTCC_TimeSet
-                0x000000009d012ec1                RTCC_BCDTimeGet
-                0x000000009d012f05                RTCC_BCDTimeSet
-                0x000000009d012f79                RTCC_TimeReset
-                0x000000009d012f81                RTCC_CallBack
-                0x000000009d012f85                RTCC_Task
+.text           0x000000009d012a9c      0x510
+ .text          0x000000009d012a9c      0x510 build/Booteable/production/src/rtcc.o
+                0x000000009d012a9d                WeekDay
+                0x000000009d012b99                RTCC_Initialize
+                0x000000009d012c0d                RTCC_AdjustClk
+                0x000000009d012c11                RTCC_TimeGet
+                0x000000009d012cad                RTCC_TimeSet
+                0x000000009d012ebd                RTCC_BCDTimeGet
+                0x000000009d012f01                RTCC_BCDTimeSet
+                0x000000009d012f75                RTCC_TimeReset
+                0x000000009d012f7d                RTCC_CallBack
+                0x000000009d012f81                RTCC_Task
 
 .text.__printf_core
-                0x000000009d012fb0      0x444
+                0x000000009d012fac      0x444
  .text.__printf_core
-                0x000000009d012fb0      0x444 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
-                0x000000009d012fb1                __printf_core
+                0x000000009d012fac      0x444 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+                0x000000009d012fad                __printf_core
 
-.text.dp32mul   0x000000009d0133f4      0x3f8
- .text.dp32mul  0x000000009d0133f4      0x3f8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32div.o)
-                0x000000009d0133f5                __divdf3
-                0x000000009d0133f5                dpdiv
+.text.dp32mul   0x000000009d0133f0      0x3f8
+ .text.dp32mul  0x000000009d0133f0      0x3f8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32div.o)
+                0x000000009d0133f1                __divdf3
+                0x000000009d0133f1                dpdiv
 
-.text           0x000000009d0137ec      0x3ec
- .text          0x000000009d0137ec      0x3ec build/Booteable/production/src/system.o
-                0x000000009d0137ed                _general_exception_handler
-                0x000000009d013919                _CORE_TIMER_ISR
-                0x000000009d013a01                _TIMER1_IRS
-                0x000000009d013a49                SystemInit
-                0x000000009d013ba9                SystemReset
+.text           0x000000009d0137e8      0x3ec
+ .text          0x000000009d0137e8      0x3ec build/Booteable/production/src/system.o
+                0x000000009d0137e9                _general_exception_handler
+                0x000000009d013915                _CORE_TIMER_ISR
+                0x000000009d0139fd                _TIMER1_IRS
+                0x000000009d013a45                SystemInit
+                0x000000009d013ba5                SystemReset
 
 .text.dp32subadd
-                0x000000009d013bd8      0x37c
+                0x000000009d013bd4      0x37c
  .text.dp32subadd
-                0x000000009d013bd8      0x37c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32subadd.o)
-                0x000000009d013bd9                __subdf3
-                0x000000009d013bd9                dpsub
-                0x000000009d013be1                dpadd
-                0x000000009d013be1                __adddf3
+                0x000000009d013bd4      0x37c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32subadd.o)
+                0x000000009d013bd5                __subdf3
+                0x000000009d013bd5                dpsub
+                0x000000009d013bdd                dpadd
+                0x000000009d013bdd                __adddf3
 
-.rodata.str1.4  0x000000009d013f54      0x33c
+.rodata.str1.4  0x000000009d013f50      0x33c
  .rodata.str1.4
-                0x000000009d013f54      0x33c build/Booteable/production/src/config.o
+                0x000000009d013f50      0x33c build/Booteable/production/src/config.o
 
-.text           0x000000009d014290      0x654
- .text          0x000000009d014290      0x338 build/Booteable/production/src/wiegand.o
-                0x000000009d014291                WGND_Ack
-                0x000000009d0142a5                WGND_Init
-                0x000000009d014399                WGND_Timer
-                0x000000009d01445d                WGND_IntData
-                0x000000009d0144ad                _CHANGE_NOTICE_B
- .text          0x000000009d0145c8      0x31c build/Booteable/production/src/config.o
-                0x000000009d0145c9                ConfigLoadDefault
-                0x000000009d01463d                ConfigInit
-                0x000000009d01465d                DumpConfig
-                0x000000009d014795                ConfigSave
-                0x000000009d014819                ConfigLoad
+.text           0x000000009d01428c      0x654
+ .text          0x000000009d01428c      0x338 build/Booteable/production/src/wiegand.o
+                0x000000009d01428d                WGND_Ack
+                0x000000009d0142a1                WGND_Init
+                0x000000009d014395                WGND_Timer
+                0x000000009d014459                WGND_IntData
+                0x000000009d0144a9                _CHANGE_NOTICE_B
+ .text          0x000000009d0145c4      0x31c build/Booteable/production/src/config.o
+                0x000000009d0145c5                ConfigLoadDefault
+                0x000000009d014639                ConfigInit
+                0x000000009d014659                DumpConfig
+                0x000000009d014791                ConfigSave
+                0x000000009d014815                ConfigLoad
 
-.text           0x000000009d0148e4      0x628
- .text          0x000000009d0148e4      0x314 build/Booteable/production/src/wifi/uart1.o
-                0x000000009d0148e5                UART1_Init
-                0x000000009d0149d1                UART1_IsRxReady
-                0x000000009d0149e1                UART1_Write
-                0x000000009d0149f9                UART1_Read
-                0x000000009d014a29                _UART1_RX
-                0x000000009d014b0d                UART1_Overflow
-                0x000000009d014b4d                _UART1_ERR
- .text          0x000000009d014bf8      0x314 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_umoddi3.o)
-                0x000000009d014bf9                __umoddi3
+.text           0x000000009d0148e0      0x628
+ .text          0x000000009d0148e0      0x314 build/Booteable/production/src/wifi/uart1.o
+                0x000000009d0148e1                UART1_Init
+                0x000000009d0149cd                UART1_IsRxReady
+                0x000000009d0149dd                UART1_Write
+                0x000000009d0149f5                UART1_Read
+                0x000000009d014a25                _UART1_RX
+                0x000000009d014b09                UART1_Overflow
+                0x000000009d014b49                _UART1_ERR
+ .text          0x000000009d014bf4      0x314 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_umoddi3.o)
+                0x000000009d014bf5                __umoddi3
 
-.text           0x000000009d014f0c      0x620
- .text          0x000000009d014f0c      0x310 build/Booteable/production/src/adc.o
-                0x000000009d014f0d                ADCInit
-                0x000000009d014f65                ADCTask
-                0x000000009d0151f1                ADCTimer
-                0x000000009d015201                ADCGet
- .text          0x000000009d01521c      0x310 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_udivdi3.o)
-                0x000000009d01521d                __udivdi3
+.text           0x000000009d014f08      0x620
+ .text          0x000000009d014f08      0x310 build/Booteable/production/src/adc.o
+                0x000000009d014f09                ADCInit
+                0x000000009d014f61                ADCTask
+                0x000000009d0151ed                ADCTimer
+                0x000000009d0151fd                ADCGet
+ .text          0x000000009d015218      0x310 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_udivdi3.o)
+                0x000000009d015219                __udivdi3
 
-.text.dp32mul   0x000000009d01552c      0x298
- .text.dp32mul  0x000000009d01552c      0x298 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32mul.o)
-                0x000000009d01552d                __muldf3
-                0x000000009d01552d                dpmul
+.text.dp32mul   0x000000009d015528      0x298
+ .text.dp32mul  0x000000009d015528      0x298 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dp32mul.o)
+                0x000000009d015529                __muldf3
+                0x000000009d015529                dpmul
 
-.rodata         0x000000009d0157c4      0x220
- .rodata        0x000000009d0157c4      0x220 build/Booteable/production/src/http.o
-                0x000000009d0157c4                http_c_http_get
-                0x000000009d015840                http_c_http_post
-                0x000000009d015904                http_c_http_404
-                0x000000009d015948                http_c_http_200
-                0x000000009d0159a4                http_c_xml_200
+.rodata         0x000000009d0157c0      0x220
+ .rodata        0x000000009d0157c0      0x220 build/Booteable/production/src/http.o
+                0x000000009d0157c0                http_c_http_get
+                0x000000009d01583c                http_c_http_post
+                0x000000009d015900                http_c_http_404
+                0x000000009d015944                http_c_http_200
+                0x000000009d0159a0                http_c_xml_200
 
-.rodata.str1.4  0x000000009d0159e4      0x1fc
+.rodata.str1.4  0x000000009d0159e0      0x374
  .rodata.str1.4
-                0x000000009d0159e4      0x1fc build/Booteable/production/src/control.o
-
-.text           0x000000009d015be0      0x194
- .text          0x000000009d015be0      0x194 build/Booteable/production/src/main.o
-                0x000000009d015be1                main
-
-.rodata.str1.4  0x000000009d015d74      0x2d4
+                0x000000009d0159e0      0x1fc build/Booteable/production/src/control.o
  .rodata.str1.4
-                0x000000009d015d74      0x178 build/Booteable/production/src/io.o
+                0x000000009d015bdc      0x178 build/Booteable/production/src/io.o
+
+.rodata.str1.4  0x000000009d015d54      0x2b4
  .rodata.str1.4
-                0x000000009d015eec      0x15c build/Booteable/production/src/system.o
-
-.rodata.str1.4  0x000000009d016048      0x158
+                0x000000009d015d54      0x15c build/Booteable/production/src/system.o
  .rodata.str1.4
-                0x000000009d016048      0x158 build/Booteable/production/src/adc.o
+                0x000000009d015eb0      0x158 build/Booteable/production/src/adc.o
 
-.text           0x000000009d0161a0      0x154
- .text          0x000000009d0161a0      0x154 build/Booteable/production/src/log.o
-                0x000000009d0161a1                LogInit
-                0x000000009d016279                LogMessage
+.text           0x000000009d016008      0x154
+ .text          0x000000009d016008      0x154 build/Booteable/production/src/log.o
+                0x000000009d016009                LogInit
+                0x000000009d0160e1                LogMessage
 
-.text.__fmt_x   0x000000009d0162f4      0x150
- .text.__fmt_x  0x000000009d0162f4      0x150 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_x.o)
-                0x000000009d0162f5                __fmt_x_needed
-                0x000000009d0162f5                __fmt_x
+.text.__fmt_x   0x000000009d01615c      0x150
+ .text.__fmt_x  0x000000009d01615c      0x150 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_x.o)
+                0x000000009d01615d                __fmt_x_needed
+                0x000000009d01615d                __fmt_x
 
-.dinit          0x000000009d016444      0x110
- .dinit         0x000000009d016444      0x110 data_init
+.text           0x000000009d0162ac      0x13c
+ .text          0x000000009d0162ac      0x13c build/Booteable/production/src/main.o
+                0x000000009d0162ad                main
 
-.rodata.str1.4  0x000000009d016554      0x100
- .rodata.str1.4
-                0x000000009d016554      0x100 build/Booteable/production/src/main.o
+.dinit          0x000000009d0163e8      0x110
+ .dinit         0x000000009d0163e8      0x110 data_init
 
 .text.__pop_int
-                0x000000009d016654       0xfc
+                0x000000009d0164f8       0xfc
  .text.__pop_int
-                0x000000009d016654       0xfc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_int.o)
-                0x000000009d016655                __pop_int_needed
-                0x000000009d016655                __pop_int
+                0x000000009d0164f8       0xfc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_int.o)
+                0x000000009d0164f9                __pop_int_needed
+                0x000000009d0164f9                __pop_int
 
-.rodata         0x000000009d016750       0xf0
- .rodata        0x000000009d016750       0xf0 build/Booteable/production/src/sd/sd_spi.o
-                0x000000009d016750                sdmmc_cmdtable
+.rodata         0x000000009d0165f4       0xf0
+ .rodata        0x000000009d0165f4       0xf0 build/Booteable/production/src/sd/sd_spi.o
+                0x000000009d0165f4                sdmmc_cmdtable
 
-.text.dpcmp     0x000000009d016840       0xdc
- .text.dpcmp    0x000000009d016840       0xdc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dpcmp.o)
-                0x000000009d016841                __gtdf2
-                0x000000009d016841                dpcmp
-                0x000000009d016841                __nedf2
-                0x000000009d016841                __gedf2
-                0x000000009d016841                __eqdf2
+.text.dpcmp     0x000000009d0166e4       0xdc
+ .text.dpcmp    0x000000009d0166e4       0xdc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dpcmp.o)
+                0x000000009d0166e5                __gtdf2
+                0x000000009d0166e5                dpcmp
+                0x000000009d0166e5                __nedf2
+                0x000000009d0166e5                __gedf2
+                0x000000009d0166e5                __eqdf2
 
-.text.dfcmplt   0x000000009d01691c       0xdc
- .text.dfcmplt  0x000000009d01691c       0xdc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dpcmplt.o)
-                0x000000009d01691d                __ltdf2
-                0x000000009d01691d                __ledf2
-                0x000000009d01691d                dpcmplt
+.text.dfcmplt   0x000000009d0167c0       0xdc
+ .text.dfcmplt  0x000000009d0167c0       0xdc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dpcmplt.o)
+                0x000000009d0167c1                __ltdf2
+                0x000000009d0167c1                __ledf2
+                0x000000009d0167c1                dpcmplt
 
-.text.dptofp    0x000000009d0169f8       0xd4
- .text.dptofp   0x000000009d0169f8       0xd4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dptofp.o)
-                0x000000009d0169f9                __truncdfsf2
-                0x000000009d0169f9                dptofp
+.text.dptofp    0x000000009d01689c       0xd4
+ .text.dptofp   0x000000009d01689c       0xd4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dptofp.o)
+                0x000000009d01689d                __truncdfsf2
+                0x000000009d01689d                dptofp
 
-.text.__fmt_d   0x000000009d016acc       0xcc
- .text.__fmt_d  0x000000009d016acc       0xcc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_d.o)
-                0x000000009d016acd                __fmt_d
-                0x000000009d016acd                __fmt_d_needed
+.text.__fmt_d   0x000000009d016970       0xcc
+ .text.__fmt_d  0x000000009d016970       0xcc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_d.o)
+                0x000000009d016971                __fmt_d
+                0x000000009d016971                __fmt_d_needed
 
-.text           0x000000009d016b98      0x184
- .text          0x000000009d016b98       0xc4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(floor32.o)
-                0x000000009d016b99                floor
-                0x000000009d016b99                floorl
-                0x000000009d016b99                dpfloor
- .text          0x000000009d016c5c       0xc0 build/Booteable/production/src/misc/strfunc.o
-                0x000000009d016c5d                str_section
-                0x000000009d016cb5                url_encode
+.text           0x000000009d016a3c      0x184
+ .text          0x000000009d016a3c       0xc4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(floor32.o)
+                0x000000009d016a3d                floor
+                0x000000009d016a3d                floorl
+                0x000000009d016a3d                dpfloor
+ .text          0x000000009d016b00       0xc0 build/Booteable/production/src/misc/strfunc.o
+                0x000000009d016b01                str_section
+                0x000000009d016b59                url_encode
 
-.text.__cvt_u   0x000000009d016d1c       0xa8
- .text.__cvt_u  0x000000009d016d1c       0xa8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__cvt_u.o)
-                0x000000009d016d1d                __cvt_u
+.rodata.str1.4  0x000000009d016bc0       0xb4
+ .rodata.str1.4
+                0x000000009d016bc0       0xb4 build/Booteable/production/src/main.o
 
-.text.scalbn    0x000000009d016dc4       0xa8
- .text.scalbn   0x000000009d016dc4       0xa8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(scalbn.o)
-                0x000000009d016dc5                scalbn
+.text.__cvt_u   0x000000009d016c74       0xa8
+ .text.__cvt_u  0x000000009d016c74       0xa8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__cvt_u.o)
+                0x000000009d016c75                __cvt_u
+
+.text.scalbn    0x000000009d016d1c       0xa8
+ .text.scalbn   0x000000009d016d1c       0xa8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(scalbn.o)
+                0x000000009d016d1d                scalbn
 
 .text.__pop_ptr
-                0x000000009d016e6c       0x9c
+                0x000000009d016dc4       0x9c
  .text.__pop_ptr
-                0x000000009d016e6c       0x9c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_ptr.o)
-                0x000000009d016e6d                __pop_ptr
-                0x000000009d016e6d                __pop_ptr_needed
+                0x000000009d016dc4       0x9c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_ptr.o)
+                0x000000009d016dc5                __pop_ptr
+                0x000000009d016dc5                __pop_ptr_needed
 
-.text.__pad     0x000000009d016f08       0x98
- .text.__pad    0x000000009d016f08       0x98 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
-                0x000000009d016f09                __pad
+.text.__pad     0x000000009d016e60       0x98
+ .text.__pad    0x000000009d016e60       0x98 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+                0x000000009d016e61                __pad
 
-.rodata.str1.4  0x000000009d016fa0       0x88
+.rodata.str1.4  0x000000009d016ef8       0x88
  .rodata.str1.4
-                0x000000009d016fa0       0x88 build/Booteable/production/src/rtcc.o
+                0x000000009d016ef8       0x88 build/Booteable/production/src/rtcc.o
 
-.text.__fmt_o   0x000000009d017028       0x84
- .text.__fmt_o  0x000000009d017028       0x84 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_o.o)
-                0x000000009d017029                __fmt_o
-                0x000000009d017029                __fmt_o_needed
+.text.__fmt_o   0x000000009d016f80       0x84
+ .text.__fmt_o  0x000000009d016f80       0x84 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_o.o)
+                0x000000009d016f81                __fmt_o
+                0x000000009d016f81                __fmt_o_needed
 
 .text.general_exception
-                0x000000009d0170ac       0x80
+                0x000000009d017004       0x80
  .text.general_exception
-                0x000000009d0170ac       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(general-exception.o)
-                0x000000009d0170ad                _general_exception_context
+                0x000000009d017004       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(general-exception.o)
+                0x000000009d017005                _general_exception_context
 
 .text.__strchrnul
-                0x000000009d01712c       0x80
+                0x000000009d017084       0x80
  .text.__strchrnul
-                0x000000009d01712c       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strchrnul.o)
-                0x000000009d01712d                strchrnul
-                0x000000009d01712d                __strchrnul
+                0x000000009d017084       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strchrnul.o)
+                0x000000009d017085                strchrnul
+                0x000000009d017085                __strchrnul
 
-.text.fptodp    0x000000009d0171ac       0x80
- .text.fptodp   0x000000009d0171ac       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(fptodp.o)
-                0x000000009d0171ad                fptodp
-                0x000000009d0171ad                __extendsfdf2
+.text.fptodp    0x000000009d017104       0x80
+ .text.fptodp   0x000000009d017104       0x80 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(fptodp.o)
+                0x000000009d017105                fptodp
+                0x000000009d017105                __extendsfdf2
 
-.text.dptoli    0x000000009d01722c       0x74
- .text.dptoli   0x000000009d01722c       0x74 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dptoli.o)
-                0x000000009d01722d                dptoli
-                0x000000009d01722d                __fixdfsi
+.text.dptoli    0x000000009d017184       0x74
+ .text.dptoli   0x000000009d017184       0x74 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(dptoli.o)
+                0x000000009d017185                dptoli
+                0x000000009d017185                __fixdfsi
 
 .text.normalize
-                0x000000009d0172a0       0x6c
+                0x000000009d0171f8       0x6c
  .text.normalize
-                0x000000009d0172a0       0x6c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
+                0x000000009d0171f8       0x6c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
 
-.text.__fmt_u   0x000000009d01730c       0x68
- .text.__fmt_u  0x000000009d01730c       0x68 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_u.o)
-                0x000000009d01730d                __fmt_u_needed
-                0x000000009d01730d                __fmt_u
+.text.__fmt_u   0x000000009d017264       0x68
+ .text.__fmt_u  0x000000009d017264       0x68 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_u.o)
+                0x000000009d017265                __fmt_u_needed
+                0x000000009d017265                __fmt_u
 
 .text.vsnprintf
-                0x000000009d017374       0x64
+                0x000000009d0172cc       0x64
  .text.vsnprintf
-                0x000000009d017374       0x64 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vsnprintf.o)
-                0x000000009d017375                vsnprintf
+                0x000000009d0172cc       0x64 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vsnprintf.o)
+                0x000000009d0172cd                vsnprintf
 
-.text.litodp    0x000000009d0173d8       0x60
- .text.litodp   0x000000009d0173d8       0x60 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(litodp.o)
-                0x000000009d0173d9                litodp
-                0x000000009d0173d9                __floatsidf
+.text.litodp    0x000000009d017330       0x60
+ .text.litodp   0x000000009d017330       0x60 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm.a(litodp.o)
+                0x000000009d017331                litodp
+                0x000000009d017331                __floatsidf
 
-.text           0x000000009d017438       0x5c
- .text          0x000000009d017438       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_core.o)
-                0x000000009d017439                __dinit_copy_emb
-                0x000000009d017439                __dinit_decompress
-                0x000000009d017439                __dinit_copy_val_data
-                0x000000009d01743d                __pic32_data_init
+.text           0x000000009d017390       0x5c
+ .text          0x000000009d017390       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_core.o)
+                0x000000009d017391                __dinit_copy_emb
+                0x000000009d017391                __dinit_decompress
+                0x000000009d017391                __dinit_copy_val_data
+                0x000000009d017395                __pic32_data_init
 
-.text.strstr    0x000000009d017494       0x5c
- .text.strstr   0x000000009d017494       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strstr.o)
-                0x000000009d017495                strstr
+.text.strstr    0x000000009d0173ec       0x5c
+ .text.strstr   0x000000009d0173ec       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strstr.o)
+                0x000000009d0173ed                strstr
 
-.text.__fmt_s   0x000000009d0174f0       0x5c
- .text.__fmt_s  0x000000009d0174f0       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_s.o)
-                0x000000009d0174f1                __fmt_s
-                0x000000009d0174f1                __fmt_0_needed
-                0x000000009d0174f1                __fmt_s_needed
+.text.__fmt_s   0x000000009d017448       0x5c
+ .text.__fmt_s  0x000000009d017448       0x5c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_s.o)
+                0x000000009d017449                __fmt_s
+                0x000000009d017449                __fmt_0_needed
+                0x000000009d017449                __fmt_s_needed
 
-.text.atoi      0x000000009d01754c       0x58
- .text.atoi     0x000000009d01754c       0x58 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(atoi.o)
-                0x000000009d01754d                atoi
+.text.atoi      0x000000009d0174a4       0x58
+ .text.atoi     0x000000009d0174a4       0x58 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(atoi.o)
+                0x000000009d0174a5                atoi
 
-.text.atol      0x000000009d0175a4       0x58
- .text.atol     0x000000009d0175a4       0x58 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(atol.o)
-                0x000000009d0175a5                atol
+.text.atol      0x000000009d0174fc       0x58
+ .text.atol     0x000000009d0174fc       0x58 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(atol.o)
+                0x000000009d0174fd                atol
 
-.text.stpncpy   0x000000009d0175fc       0x54
- .text.stpncpy  0x000000009d0175fc       0x54 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(stpncpy.o)
-                0x000000009d0175fd                __stpncpy
-                0x000000009d0175fd                stpncpy
+.text.stpncpy   0x000000009d017554       0x54
+ .text.stpncpy  0x000000009d017554       0x54 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(stpncpy.o)
+                0x000000009d017555                __stpncpy
+                0x000000009d017555                stpncpy
 
-.text           0x000000009d017650       0x50
- .text          0x000000009d017650       0x50 build/Booteable/production/src/misc/delay.o
-                0x000000009d017651                Delayms
+.text           0x000000009d0175a8       0x50
+ .text          0x000000009d0175a8       0x50 build/Booteable/production/src/misc/delay.o
+                0x000000009d0175a9                Delayms
 
-.rodata.str1.4  0x000000009d0176a0       0x50
+.rodata.str1.4  0x000000009d0175f8       0x50
  .rodata.str1.4
-                0x000000009d0176a0       0x50 build/Booteable/production/src/wiegand.o
+                0x000000009d0175f8       0x50 build/Booteable/production/src/wiegand.o
 
-.text.a_clz_64  0x000000009d0176f0       0x48
+.text.a_clz_64  0x000000009d017648       0x48
  .text.a_clz_64
-                0x000000009d0176f0       0x48 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
+                0x000000009d017648       0x48 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
 
 .text.main_entry
-                0x000000009d017738       0x44
+                0x000000009d017690       0x44
  .text.main_entry
-                0x000000009d017738       0x44 C:\Users\walte\AppData\Local\Temp\ccCAgi8N.o
-                0x000000009d017763                __crt0_exit
+                0x000000009d017690       0x44 C:\Users\walte\AppData\Local\Temp\ccsnsbZv.o
+                0x000000009d0176bb                __crt0_exit
 
-.text           0x000000009d01777c       0x84
- .text          0x000000009d01777c       0x44 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_floatdidf.o)
-                0x000000009d01777d                __floatdidf
- .text          0x000000009d0177c0       0x40 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
-                0x000000009d0177c1                __pic32_software_reset
+.text           0x000000009d0176d4       0x84
+ .text          0x000000009d0176d4       0x44 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_floatdidf.o)
+                0x000000009d0176d5                __floatdidf
+ .text          0x000000009d017718       0x40 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\pic32_software_reset.o
+                0x000000009d017719                __pic32_software_reset
 
 .text.__fmt_state
-                0x000000009d017800       0x38
+                0x000000009d017758       0x38
  .text.__fmt_state
-                0x000000009d017800       0x38 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
-                0x000000009d017801                __fmt_state
+                0x000000009d017758       0x38 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+                0x000000009d017759                __fmt_state
 
 .text._bootstrap_exception_handler
-                0x000000009d017838       0x34
+                0x000000009d017790       0x34
  .text._bootstrap_exception_handler
-                0x000000009d017838       0x34 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-bootstrap-exception-handler.o)
-                0x000000009d017839                _bootstrap_exception_handler
+                0x000000009d017790       0x34 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+                0x000000009d017791                _bootstrap_exception_handler
 
-.rodata         0x000000009d01786c       0x30
- .rodata        0x000000009d01786c       0x30 build/Booteable/production/src/rtcc.o
+.rodata         0x000000009d0177c4       0x30
+ .rodata        0x000000009d0177c4       0x30 build/Booteable/production/src/rtcc.o
 
 .vector_default
-                0x000000009d01789c       0x30
+                0x000000009d0177f4       0x30
  .vector_default
-                0x000000009d01789c       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(defaultinterrupt.o)
-                0x000000009d01789d                _DefaultInterrupt
+                0x000000009d0177f4       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(defaultinterrupt.o)
+                0x000000009d0177f5                _DefaultInterrupt
 
 .text.__pop_float
-                0x000000009d0178cc       0x30
+                0x000000009d017824       0x30
  .text.__pop_float
-                0x000000009d0178cc       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_float.o)
-                0x000000009d0178cd                __pop_float_needed
-                0x000000009d0178cd                __pop_float
+                0x000000009d017824       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__pop_float.o)
+                0x000000009d017825                __pop_float_needed
+                0x000000009d017825                __pop_float
 
 .text.__string_out
-                0x000000009d0178fc       0x30
+                0x000000009d017854       0x30
  .text.__string_out
-                0x000000009d0178fc       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
-                0x000000009d0178fd                __out
+                0x000000009d017854       0x30 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+                0x000000009d017855                __out
 
-.text           0x000000009d01792c       0x2c
- .text          0x000000009d01792c       0x2c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(floatunsidf.o)
-                0x000000009d01792d                __floatunsidf
+.text           0x000000009d017884       0x2c
+ .text          0x000000009d017884       0x2c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(floatunsidf.o)
+                0x000000009d017885                __floatunsidf
 
-.rodata.cst8    0x000000009d017958       0x28
- .rodata.cst8   0x000000009d017958       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
+.rodata.cst8    0x000000009d0178b0       0x28
+ .rodata.cst8   0x000000009d0178b0       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
 
-.text           0x000000009d017980       0x50
- .text          0x000000009d017980       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_lshrdi3.o)
-                0x000000009d017981                __lshrdi3
- .text          0x000000009d0179a8       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_ashldi3.o)
-                0x000000009d0179a9                __ashldi3
+.text           0x000000009d0178d8       0x50
+ .text          0x000000009d0178d8       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_lshrdi3.o)
+                0x000000009d0178d9                __lshrdi3
+ .text          0x000000009d017900       0x28 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_ashldi3.o)
+                0x000000009d017901                __ashldi3
 
-.rodata         0x000000009d0179d0       0x20
- .rodata        0x000000009d0179d0       0x20 build/Booteable/production/src/control.o
-                0x000000009d0179d0                version_compilador
-                0x000000009d0179d8                fecha_compilacion
+.rodata         0x000000009d017928       0x20
+ .rodata        0x000000009d017928       0x20 build/Booteable/production/src/control.o
+                0x000000009d017928                version_compilador
+                0x000000009d017930                fecha_compilacion
 
-.text.memcmp    0x000000009d0179f0       0x20
- .text.memcmp   0x000000009d0179f0       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memcmp.o)
-                0x000000009d0179f1                memcmp
+.text.memcmp    0x000000009d017948       0x20
+ .text.memcmp   0x000000009d017948       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memcmp.o)
+                0x000000009d017949                memcmp
 
-.text.strcat    0x000000009d017a10       0x20
- .text.strcat   0x000000009d017a10       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcat.o)
-                0x000000009d017a11                strcat
+.text.strcat    0x000000009d017968       0x20
+ .text.strcat   0x000000009d017968       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcat.o)
+                0x000000009d017969                strcat
 
-.text.strcmp    0x000000009d017a30       0x20
- .text.strcmp   0x000000009d017a30       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcmp.o)
-                0x000000009d017a31                strcmp
+.text.strcmp    0x000000009d017988       0x20
+ .text.strcmp   0x000000009d017988       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcmp.o)
+                0x000000009d017989                strcmp
 
-.text.vfprintf  0x000000009d017a50       0x20
+.text.vfprintf  0x000000009d0179a8       0x20
  .text.vfprintf
-                0x000000009d017a50       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vfprintf.o)
-                0x000000009d017a51                vfprintf
+                0x000000009d0179a8       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vfprintf.o)
+                0x000000009d0179a9                vfprintf
 
-.rodata.cst8    0x000000009d017a70       0x40
- .rodata.cst8   0x000000009d017a70       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
- .rodata.cst8   0x000000009d017a90       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
+.rodata.cst8    0x000000009d0179c8       0x40
+ .rodata.cst8   0x000000009d0179c8       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
+ .rodata.cst8   0x000000009d0179e8       0x20 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(fma.o)
 
-.text.strlen    0x000000009d017ab0       0x1c
- .text.strlen   0x000000009d017ab0       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strlen.o)
-                0x000000009d017ab1                strlen
+.text.strlen    0x000000009d017a08       0x1c
+ .text.strlen   0x000000009d017a08       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strlen.o)
+                0x000000009d017a09                strlen
 
-.text.strchr    0x000000009d017acc       0x1c
- .text.strchr   0x000000009d017acc       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strchr.o)
-                0x000000009d017acd                strchr
+.text.strchr    0x000000009d017a24       0x1c
+ .text.strchr   0x000000009d017a24       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strchr.o)
+                0x000000009d017a25                strchr
 
-.text.vsprintf  0x000000009d017ae8       0x1c
+.text.vsprintf  0x000000009d017a40       0x1c
  .text.vsprintf
-                0x000000009d017ae8       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vsprintf.o)
-                0x000000009d017ae9                vsprintf
+                0x000000009d017a40       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(vsprintf.o)
+                0x000000009d017a41                vsprintf
 
-.text           0x000000009d017b04       0x1c
- .text          0x000000009d017b04       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_copy.o)
-                0x000000009d017b05                __dinit_copy_needed
-                0x000000009d017b05                __dinit_copy
+.text           0x000000009d017a5c       0x1c
+ .text          0x000000009d017a5c       0x1c c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_copy.o)
+                0x000000009d017a5d                __dinit_copy_needed
+                0x000000009d017a5d                __dinit_copy
 
-.MIPS.abiflags  0x000000009d017b20       0x18
+.MIPS.abiflags  0x000000009d017a78       0x18
  .MIPS.abiflags
-                0x000000009d017b20       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\debug-exception-return.o
+                0x000000009d017a78       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\debug-exception-return.o
 
-.text           0x000000009d017b38       0x18
- .text          0x000000009d017b38       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-nmi-handler.o)
-                0x000000009d017b39                _nmi_handler
+.text           0x000000009d017a90       0x18
+ .text          0x000000009d017a90       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-nmi-handler.o)
+                0x000000009d017a91                _nmi_handler
 
-.text.memcpy    0x000000009d017b50       0x18
- .text.memcpy   0x000000009d017b50       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memcpy.o)
-                0x000000009d017b51                memcpy
+.text.memcpy    0x000000009d017aa8       0x18
+ .text.memcpy   0x000000009d017aa8       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memcpy.o)
+                0x000000009d017aa9                memcpy
 
-.text.memset    0x000000009d017b68       0x18
- .text.memset   0x000000009d017b68       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memset.o)
-                0x000000009d017b69                memset
+.text.memset    0x000000009d017ac0       0x18
+ .text.memset   0x000000009d017ac0       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(memset.o)
+                0x000000009d017ac1                memset
 
-.text.stpcpy    0x000000009d017b80       0x18
- .text.stpcpy   0x000000009d017b80       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(stpcpy.o)
-                0x000000009d017b81                __stpcpy
-                0x000000009d017b81                stpcpy
+.text.stpcpy    0x000000009d017ad8       0x18
+ .text.stpcpy   0x000000009d017ad8       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(stpcpy.o)
+                0x000000009d017ad9                __stpcpy
+                0x000000009d017ad9                stpcpy
 
-.text.snprintf  0x000000009d017b98       0x18
+.text.snprintf  0x000000009d017af0       0x18
  .text.snprintf
-                0x000000009d017b98       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(snprintf.o)
-                0x000000009d017b99                snprintf
+                0x000000009d017af0       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(snprintf.o)
+                0x000000009d017af1                snprintf
 
-.text.sprintf   0x000000009d017bb0       0x18
- .text.sprintf  0x000000009d017bb0       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(sprintf.o)
-                0x000000009d017bb1                sprintf
+.text.sprintf   0x000000009d017b08       0x18
+ .text.sprintf  0x000000009d017b08       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(sprintf.o)
+                0x000000009d017b09                sprintf
 
-.rodata         0x000000009d017bc8       0x2c
- .rodata        0x000000009d017bc8       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
- .rodata        0x000000009d017be0       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_core.o)
+.rodata         0x000000009d017b20       0x2c
+ .rodata        0x000000009d017b20       0x18 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+ .rodata        0x000000009d017b38       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_core.o)
 
-.text.strcpy    0x000000009d017bf4       0x14
- .text.strcpy   0x000000009d017bf4       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcpy.o)
-                0x000000009d017bf5                strcpy
+.text.strcpy    0x000000009d017b4c       0x14
+ .text.strcpy   0x000000009d017b4c       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strcpy.o)
+                0x000000009d017b4d                strcpy
 
-.text.strncpy   0x000000009d017c08       0x14
- .text.strncpy  0x000000009d017c08       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strncpy.o)
-                0x000000009d017c09                strncpy
+.text.strncpy   0x000000009d017b60       0x14
+ .text.strncpy  0x000000009d017b60       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-size-musl.a(strncpy.o)
+                0x000000009d017b61                strncpy
 
-.text.tolower   0x000000009d017c1c       0x14
- .text.tolower  0x000000009d017c1c       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(tolower.o)
-                0x000000009d017c1d                tolower
+.text.tolower   0x000000009d017b74       0x14
+ .text.tolower  0x000000009d017b74       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(tolower.o)
+                0x000000009d017b75                tolower
 
-.text.toupper   0x000000009d017c30       0x14
- .text.toupper  0x000000009d017c30       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(toupper.o)
-                0x000000009d017c31                toupper
+.text.toupper   0x000000009d017b88       0x14
+ .text.toupper  0x000000009d017b88       0x14 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(toupper.o)
+                0x000000009d017b89                toupper
 
-.rodata.str1.4  0x000000009d017c44       0x20
+.rodata.str1.4  0x000000009d017b9c       0x20
  .rodata.str1.4
-                0x000000009d017c44       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
+                0x000000009d017b9c       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_a.o)
  .rodata.str1.4
-                0x000000009d017c54       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
+                0x000000009d017bac       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__fmt_fp.o)
 
-.rodata.cst8    0x000000009d017c68       0x10
- .rodata.cst8   0x000000009d017c68       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(scalbn.o)
+.rodata.cst8    0x000000009d017bc0       0x10
+ .rodata.cst8   0x000000009d017bc0       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libm-musl.a(scalbn.o)
 
-.text           0x000000009d017c78       0x10
- .text          0x000000009d017c78       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_clear.o)
-                0x000000009d017c79                __dinit_clear
-                0x000000009d017c79                __dinit_clear_needed
+.text           0x000000009d017bd0       0x10
+ .text          0x000000009d017bd0       0x10 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(pic32_data_init_clear.o)
+                0x000000009d017bd1                __dinit_clear
+                0x000000009d017bd1                __dinit_clear_needed
 
-.rodata.str1.4  0x000000009d017c88        0xc
+.rodata.str1.4  0x000000009d017be0        0xc
  .rodata.str1.4
-                0x000000009d017c88        0xc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
+                0x000000009d017be0        0xc c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libc-musl.a(__printf_core.o)
 
-.rodata.cst8    0x000000009d017c98       0x10
- .rodata.cst8   0x000000009d017c98        0x8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_floatdidf.o)
- .rodata.cst8   0x000000009d017ca0        0x8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(floatunsidf.o)
+.rodata.cst8    0x000000009d017bf0       0x10
+ .rodata.cst8   0x000000009d017bf0        0x8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(_floatdidf.o)
+ .rodata.cst8   0x000000009d017bf8        0x8 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/micromips\libgcc.a(floatunsidf.o)
 
 .text._on_reset
-                0x000000009d017c64        0x4
+                0x000000009d017bbc        0x4
  .text._on_reset
-                0x000000009d017c64        0x4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-reset.o)
-                0x000000009d017c65                _on_reset
+                0x000000009d017bbc        0x4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-reset.o)
+                0x000000009d017bbd                _on_reset
 
 .text._on_bootstrap
-                0x000000009d017c94        0x4
+                0x000000009d017bec        0x4
  .text._on_bootstrap
-                0x000000009d017c94        0x4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-bootstrap.o)
-                0x000000009d017c95                _on_bootstrap
+                0x000000009d017bec        0x4 c:/program files/microchip/xc32/v4.45/bin/bin/../../lib/gcc/pic32mx/8.3.1/../../../../pic32mx/lib/micromips\libpic32.a(default-on-bootstrap.o)
+                0x000000009d017bed                _on_bootstrap

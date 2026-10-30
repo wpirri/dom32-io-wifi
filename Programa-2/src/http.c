@@ -505,7 +505,7 @@ int HttpDownload(const char* filename)
 void HTTPCommandSwitch( const char *obj_name )
 {
     char url[256];
-    char rqst[1024];
+    char http_buffer[1024];
 
     if( !HttpOnLine()) return;
 
@@ -516,14 +516,14 @@ void HTTPCommandSwitch( const char *obj_name )
      * 1.- %s: URI
      * 2.- %s: Host
      */
-    snprintf(rqst, 1000, http_c_http_get, url, HttpCurrentHost());
-    WiFiQueryHost(HttpCurrentHost(), HttpCurrentPort(), rqst, NULL);
+    snprintf(http_buffer, (sizeof(http_buffer)-1), http_c_http_get, url, HttpCurrentHost());
+    WiFiQueryHost(HttpCurrentHost(), HttpCurrentPort(), http_buffer, NULL);
 }
 
 void HTTPCommandPulse( const char *obj_name )
 {
     char url[256];
-    char rqst[1024];
+    char http_buffer[1024];
 
     if( !HttpOnLine()) return;
 
@@ -534,8 +534,8 @@ void HTTPCommandPulse( const char *obj_name )
      * 1.- %s: URI
      * 2.- %s: Host
      */
-    snprintf(rqst, 1000, http_c_http_get, url, HttpCurrentHost());
-    WiFiQueryHost(HttpCurrentHost(), HttpCurrentPort(), rqst, NULL);
+    snprintf(http_buffer, (sizeof(http_buffer)-1), http_c_http_get, url, HttpCurrentHost());
+    WiFiQueryHost(HttpCurrentHost(), HttpCurrentPort(), http_buffer, NULL);
 }
 
 int HttpProcessRequest(const char* request, const char* uri, const char* host,
