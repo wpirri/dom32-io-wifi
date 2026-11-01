@@ -51,4 +51,8 @@ const char* WiFiSDK( void );
 int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_msg);
 int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const char* filename);
 
+void WiFiScan(int ap);
+void WiFiGetSignalLevel();
+int WiFiSignalLevel();
+
 #endif /* _WIFI_H_ */

@@ -49,9 +49,11 @@ int g_wifi_c_ap_conectado;
 int g_wifi_c_go_ap_conectado;
 int g_wifi_c_sta_conectado;
 char g_wifi_c_hw_mac[13];
+char g_wifi_c_ap_mac[18];
 unsigned char g_wifi_soporte_ssl;
 char g_at_version[256];
 char g_sdk[256];
+int g_wifi_signal_level;
 
 void WifiWrite( const char *buffer );
 void WifiWriteLine( const char *line );
@@ -71,6 +73,8 @@ void WiFiInit( void )
     g_wifi_c_go_mode = 0;
     g_wifi_c_sta_conectado = 0;
     g_wifi_soporte_ssl = 0;
+    g_wifi_signal_level = 0;
+    g_wifi_c_ap_mac[0] = 0;
 
     // Reset
     TRISBbits.TRISB13 = 0;
@@ -126,7 +130,7 @@ int WiFiStart( void )
     if(WiFiCommand("AT+CIFSR", "OK", 150) < 0) return (-1);
     /* Me quedo en Modo 0 - Puede devolver error*/
     WiFiCommand("AT+CWMODE=0", "OK", 150);
-    
+
     return 0;
 }
 
@@ -212,25 +216,21 @@ int WiFiSetMode(int mode)
         {
             g_wifi_c_go_ap_conectado = 1;
         }
+        
+        WiFiScan(g_wifi_c_go_ap_conectado);
+        
+        /*
+         *    AT+CWJAP=<ssid>,<pwd>[,<bssid>]
+         */
         if(g_wifi_c_go_ap_conectado == 1)
         {
             /* Uso el AP1 */
             LogMessage("[WifiTaskSTMode] Conectando con AP1 %s (%s).",
                     g_wifi_config.u.config.wifi_ap1,
                     g_wifi_config.u.config.wifi_ap1_pass);
-            if(g_wifi_config.u.config.wifi_ap1_pass[0])
-            {
-                /* Con clave */
-                sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"",
-                    g_wifi_config.u.config.wifi_ap1,
-                    g_wifi_config.u.config.wifi_ap1_pass);
-            }
-            else
-            {
-                /* Sin clave */
-                sprintf(cmd, "AT+CWJAP=\"%s\"",
-                    g_wifi_config.u.config.wifi_ap1);
-            }
+            sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"",
+                g_wifi_config.u.config.wifi_ap1,
+                g_wifi_config.u.config.wifi_ap1_pass);
         }
         else
         {
@@ -238,20 +238,18 @@ int WiFiSetMode(int mode)
             LogMessage("[WifiTaskSTMode] Conectando con AP2 %s (%s).",
                     g_wifi_config.u.config.wifi_ap2,
                     g_wifi_config.u.config.wifi_ap2_pass);
-            if(g_wifi_config.u.config.wifi_ap2_pass[0])
-            {
-                /* Con clave */
-                sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"",
-                    g_wifi_config.u.config.wifi_ap2,
-                    g_wifi_config.u.config.wifi_ap2_pass);
-            }
-            else
-            {
-                /* Sin clave */
-                sprintf(cmd, "AT+CWJAP=\"%s\"",
-                    g_wifi_config.u.config.wifi_ap2);
-            }
+            sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"",
+                g_wifi_config.u.config.wifi_ap2,
+                g_wifi_config.u.config.wifi_ap2_pass);
         }
+        /* Si tengo una MAC preferida la agrego */
+        if(g_wifi_c_ap_mac[0] != 0)
+        {
+            strcat(cmd, ",\"");
+            strcat(cmd, g_wifi_c_ap_mac);
+            strcat(cmd, "\"");
+        }
+        /* */
         if(WiFiCommand(cmd, "OK", 1000) < 0) return (-1);
         /* IP y MAC cuando conecte va a devolver la IP */
         if(WiFiCommand("AT+CIFSR", "OK", 300) < 0) return (-1);
@@ -401,11 +399,18 @@ void WiFiWait(int t)
 
 int WiFiCheckUnsolMsg(char* msg)
 {
+    char str_tmp[128];
+    int i, j;
+    
 #ifdef __DEBUG_WIFI__
     LogMessage("[WIFI] Unsol [%s]", msg);
 #endif
 
-    if( !memcmp(msg, "WIFI CONNECTED", 14))
+    if( !memcmp(msg, "+IPD", 4))
+    {
+        WiFiReadUnsolIPD(msg);
+    }
+    else if( !memcmp(msg, "WIFI CONNECTED", 14))
     {
         /* ST Conectada al Router */
     }
@@ -461,6 +466,57 @@ int WiFiCheckUnsolMsg(char* msg)
             }
         }
     }
+    else if( !memcmp(msg, "+CWJAP:", 7))
+    {
+        char str_tmp[256];
+        
+        /* +CWJAP:"SSID","MAC",CH,LVL,0 */
+        LogMessage("[WiFi] %s", msg);
+        /*
+         Interpretación del RSSI (dBm):
+            -30 a -60 dBm: Señal excelente / muy buena.
+            -60 a -75 dBm: Señal buena / aceptable.
+            -75 a -85 dBm: Señal débil, propensa a desconexiones o baja velocidad.
+            Peor de -85 dBm: Señal muy mala o al límite de desconexión.
+        */
+        if(str_section(msg, ',', 3, str_tmp))
+        {
+            g_wifi_signal_level = atoi(str_tmp);
+        }
+    }
+    else if( !memcmp(msg, "+CWLAP:", 7))
+    {
+        /* +CWLAP:(4,"SSID",LVL,"MAC",13,-7,0,5,3,7,0)
+           +CWLAP:(4,"872e",-60,"78:98:e8:d6:69:3f",13,-7,0,5,3,7,0)
+         */
+        LogMessage("[WiFi] %s", msg);
+        /* Me guardo la MAC con mejor señal */
+        /* El primero que llega */
+        if(str_section(msg, ',', 2, str_tmp))
+        {
+            if(g_wifi_signal_level == 0 || atoi(str_tmp) > g_wifi_signal_level )
+            {
+                g_wifi_signal_level = atoi(str_tmp);
+                /* Copio la MAC sin las comillas */
+                if(str_section(msg, ',', 3, str_tmp))
+                {
+                    i = 0;
+                    j = 0;
+
+                    while(str_tmp[i])
+                    {
+                        if(str_tmp[i] != '\"')
+                        {
+                            g_wifi_c_ap_mac[j] = str_tmp[i];
+                            j++;
+                        }
+                        i++;
+                    }
+                    g_wifi_c_ap_mac[j] = 0;
+                }                
+            }
+        }
+    }
     else if( !memcmp(msg, "AT version:", 11))
     {
         LogMessage("[WiFi] %s", msg);
@@ -470,10 +526,6 @@ int WiFiCheckUnsolMsg(char* msg)
     {
         LogMessage("[WiFi] %s", msg);
         strcpy(g_sdk, &msg[12]);
-    }
-    else if( !memcmp(msg, "+IPD", 4))
-    {
-        WiFiReadUnsolIPD(msg);
     }
     
     return 0;
@@ -547,6 +599,9 @@ int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_m
         return (-1);
     }
     LED_Verde_SetHigh();
+    
+    WiFiGetSignalLevel();
+    
     /* Conexión */
     sprintf(cmd, "AT+CIPSTART=0,\"%s\",\"%s\",%i",
             (g_wifi_config.u.config.enable_https)?"SSL":"TCP", host, port);
@@ -1149,4 +1204,43 @@ void WiFiReadUnsolIPD(const char* msg)
         }
     }
     WiFiCommand("AT+CIPCLOSE=0", "OK", 100);
+}
+
+void WiFiScan(int ap)
+{
+    char cmd[128];
+
+    if(ap == 1)
+    {
+        sprintf(cmd, "AT+CWLAP=\"%s\"", g_wifi_config.u.config.wifi_ap1);
+    }
+    else if(ap == 2)
+    {
+        sprintf(cmd, "AT+CWLAP=\"%s\"", g_wifi_config.u.config.wifi_ap2);
+    }
+    else
+    {
+        strcpy(cmd, "AT+CWLAP");
+    }
+    
+    if(WiFiCommand(cmd, "OK", 500) < 0)
+    {
+        g_wifi_c_ap_mac[0] = 0;
+    }
+    else if(ap != 0)
+    {
+        LogMessage("[WiFiScan] Mejor señal: [%s]", g_wifi_c_ap_mac);
+    }
+
+}
+
+void WiFiGetSignalLevel()
+{
+    WiFiCommand("AT+CWJAP?", "OK", 150);
+    
+}
+
+int WiFiSignalLevel()
+{
+    return g_wifi_signal_level;
 }
