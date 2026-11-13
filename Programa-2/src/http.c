@@ -160,17 +160,18 @@ void HttpConexionOk( void )
 
 void HttpConexionError( void )
 {
-    if(g_http_c_error_count < 255)
-    {
-        g_http_c_error_count++;
-    }
-    if(g_http_c_error_count >= HTTP_MAX_CONSECUTIVE_ERRORS)
+    g_http_c_error_count++;
+    if(g_http_c_error_count == HTTP_MAX_CONSECUTIVE_ERRORS)
     {
         if(g_http_c_host_conectado)
         {
             LogMessage("**** OFFLINE ****");
         }
         g_http_c_host_conectado = 0;
+    }
+    if(g_http_c_error_count > 600)
+    {
+        ControlSystemReset(1);
     }
 }
 
