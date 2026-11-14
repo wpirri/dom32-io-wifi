@@ -1210,6 +1210,9 @@ void WiFiScan(int ap)
 {
     char cmd[128];
 
+    g_wifi_signal_level = 0;
+    g_wifi_c_ap_mac[0] = 0;
+    
     if(ap == 1)
     {
         sprintf(cmd, "AT+CWLAP=\"%s\"", g_wifi_config.u.config.wifi_ap1);
