@@ -50,8 +50,12 @@ typedef enum
     WIFI_MODO_AP_OK,
     WIFI_MODO_ST,
     WIFI_MODO_ST_OK,
-    WIFI_MODO_ST_LOOP,
-    WIFI_ERROR
+    WIFI_CONECTAR_A_HOST,
+    WIFI_CONECTADO_A_HOST,
+    WIFI_DESCONECTADO_DE_HOST,
+    WIFI_ERROR,
+    WIFI_ERROR_FATAL,
+    WIFI_ERROR_FATAL_LOOP
 } enum_control_wifi_stm;
 
 enum_control_wifi_stm control_wifi_stm;
@@ -72,7 +76,6 @@ char filename_to_download[256];
 unsigned int download_list_count;
 const char fecha_compilacion[] = __DATE__ " " __TIME__;
 const char version_compilador[] = __VERSION__;
-unsigned int wifi_connect_error_count;
 
 void DownloadFile(const char* filename);
 void ControlHostKeepAlive(void);
@@ -90,7 +93,6 @@ void ControlInit( bool sd_ok )
     assinc_timer_flag = false;
     control_file_flags = 6000;
     download_list_count = 0;
-    wifi_connect_error_count = 0;
     
     /* **** WiFi *********************************************************** */
     control_wifi_stm = WIFI_INIT;
@@ -603,17 +605,19 @@ void Control_WiFi_Task(void)
                 control_wifi_stm = WIFI_MODO_ST;
             }
             break;
-        case WIFI_MODO_ST_LOOP:
+        case WIFI_CONECTAR_A_HOST:
+            break;
+        case WIFI_CONECTADO_A_HOST:
+            break;
+        case WIFI_DESCONECTADO_DE_HOST:
             break;
         case WIFI_ERROR:
+            break;
+        case WIFI_ERROR_FATAL:
+            break;
+        case WIFI_ERROR_FATAL_LOOP:
+            break;
         default:
-            control_wifi_stm_delay = 1000;
-            control_wifi_stm = WIFI_INIT;
-            wifi_connect_error_count++;
-            if(wifi_connect_error_count >= 10)
-            {
-                ControlSystemReset(1);
-            }
             break;
     }    
 }
