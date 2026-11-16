@@ -142,8 +142,11 @@ int main(void)
     {
         CLRWDT();
         ControlTask();
-        ADCTask();
         Control_WiFi_Task();
+        if(HttpOnLine())
+        {
+            ADCTask();
+        }
     }
     return 0;
 }

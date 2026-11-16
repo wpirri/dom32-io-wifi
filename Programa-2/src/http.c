@@ -118,7 +118,7 @@ void HttpTimerInt(void)
 
 int HttpOnLine( void )
 {
-    if(WiFiConectado() == 0) g_http_c_host_conectado = 0;
+    if( !WiFiConectado() ) g_http_c_host_conectado = 0;
     return (g_http_c_host_conectado > 0)?1:0;
 }
 
@@ -354,7 +354,7 @@ int HttpQueryHost(const char* url, const char* msg_send, char* resp_header, char
     int head_len;
     int http_rc = 0;
 
-    if(WiFiConectado() == 0)
+    if( !WiFiConectado() )
     {
         LogMessage("[HttpQueryHost] ERROR: WiFi no conectado");
         return (-1);

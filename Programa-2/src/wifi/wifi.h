@@ -39,9 +39,8 @@ void WiFiTimer( void );
 void WiFiTask( void );
 
 int WiFiMode( void );
-int WiFiConectado( void );
+const char* WiFiConectado( void );
 int WiFiStaConectado( void );
-void WiFiSwitchRouter( void );
 int WiFiSetMode(int mode);
 void WiFiCheckUnsol( void );
 const char* WiFiMAC( void );
@@ -51,7 +50,6 @@ const char* WiFiSDK( void );
 int WiFiQueryHost(const char* host, int port, const char* send_msg, char* recv_msg);
 int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const char* filename);
 
-void WiFiScan(int ap);
 void WiFiGetSignalLevel();
 int WiFiSignalLevel();
 

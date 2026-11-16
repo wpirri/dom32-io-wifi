@@ -50,12 +50,7 @@ typedef enum
     WIFI_MODO_AP_OK,
     WIFI_MODO_ST,
     WIFI_MODO_ST_OK,
-    WIFI_CONECTAR_A_HOST,
-    WIFI_CONECTADO_A_HOST,
-    WIFI_DESCONECTADO_DE_HOST,
-    WIFI_ERROR,
-    WIFI_ERROR_FATAL,
-    WIFI_ERROR_FATAL_LOOP
+    WIFI_ERROR
 } enum_control_wifi_stm;
 
 enum_control_wifi_stm control_wifi_stm;
@@ -594,30 +589,16 @@ void Control_WiFi_Task(void)
             }
             break;
         case WIFI_MODO_ST_OK:
-            if(WiFiConectado() > 0)
+            if( !WiFiConectado())
             {
-                control_wifi_stm++;
-            }
-            else
-            {
-                WiFiSwitchRouter();
                 control_wifi_stm_delay = 500;
                 control_wifi_stm = WIFI_MODO_ST;
             }
             break;
-        case WIFI_CONECTAR_A_HOST:
-            break;
-        case WIFI_CONECTADO_A_HOST:
-            break;
-        case WIFI_DESCONECTADO_DE_HOST:
-            break;
         case WIFI_ERROR:
-            break;
-        case WIFI_ERROR_FATAL:
-            break;
-        case WIFI_ERROR_FATAL_LOOP:
-            break;
         default:
+            control_wifi_stm_delay = 500;
+            control_wifi_stm = WIFI_INIT;
             break;
     }    
 }
