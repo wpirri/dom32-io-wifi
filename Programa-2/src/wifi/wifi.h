@@ -52,5 +52,6 @@ int WiFiQueryHostToFile(const char* host, int port, const char* send_msg, const 
 
 void WiFiGetSignalLevel();
 int WiFiSignalLevel();
+int WiFiScan( void );
 
 #endif /* _WIFI_H_ */

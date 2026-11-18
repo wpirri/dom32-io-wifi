@@ -67,6 +67,7 @@ unsigned int reset_timer_count;
 unsigned int update_firmware_timer_count;
 unsigned int save_config_timer_count;
 unsigned int control_file_flags;
+unsigned int control_signal_level;
 char filename_to_download[256];
 unsigned int download_list_count;
 const char fecha_compilacion[] = __DATE__ " " __TIME__;
@@ -87,6 +88,7 @@ void ControlInit( bool sd_ok )
     save_config_timer_count = 0;
     assinc_timer_flag = false;
     control_file_flags = 6000;
+    control_signal_level = 6000;
     download_list_count = 0;
     
     /* **** WiFi *********************************************************** */
@@ -132,23 +134,39 @@ void ControlTimer( void )
     if(wifi_config_timer_count) wifi_config_timer_count--;
     if(WiFiConectado() && keep_alive_timer_count) keep_alive_timer_count--;
     if(control_file_flags) control_file_flags--;
+    if(control_signal_level) control_signal_level--;
 }
 
 void ControlTask(void)
 {
-    if(WiFiConectado() && keep_alive_timer_count == 0)
-    {
-        ControlHostKeepAlive();
-    }
     
-    if(control_file_flags == 0)
+    if(WiFiConectado())
     {
-        control_file_flags = 1000;
-        if(HttpOnLine())
+        if(keep_alive_timer_count == 0)
         {
-            ControlFileFlags();
+            keep_alive_timer_count = 10000;
+            ControlHostKeepAlive();
+        }
+
+        if(control_file_flags == 0)
+        {
+            control_file_flags = 1000;
+            if(HttpOnLine())
+            {
+                ControlFileFlags();
+                if(control_signal_level == 0)
+                {
+                    control_signal_level = 6000;
+                    if(WiFiScan() != 0)
+                    {
+                        /* No estoy en la mejor conexión */
+                        control_wifi_stm = WIFI_INIT;
+                    }
+                }
+            }
         }
     }
+    
     
     /* Para las cosas que dependen del timer pero no pueden estar en una interrupcion */
     if(assinc_timer_flag)

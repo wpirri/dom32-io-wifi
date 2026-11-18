@@ -55,6 +55,7 @@ int g_wifi_ap_conectado;
 int g_wifi_signal_level;
 char g_wifi_best_ap_ssid[33];
 char g_wifi_best_ap_mac[18];
+char g_wifi_actual_ap_mac[18];
 int  g_wifi_best_signal_level;
 char g_wifi_actual_ap_ssid[33];
 
@@ -67,7 +68,6 @@ void WiFiWait(int t);
 int WiFiCheckUnsolMsg(char* msg);
 int WiFiCommand(const char* cmd, const char* wait, int to);
 void WiFiReadUnsolIPD(const char* msg);
-void WiFiScan( void );
 void WiFiScanAP(const char* ssid);
 
 /* ************************************************************************* */
@@ -80,6 +80,7 @@ void WiFiInit( void )
     g_wifi_signal_level = 0;
     g_wifi_best_ap_ssid[0] = 0;
     g_wifi_best_ap_mac[0] = 0;
+    g_wifi_actual_ap_mac[0] = 0;
     g_wifi_best_signal_level = 0;
     g_wifi_actual_ap_ssid[0] = 0;
     g_wifi_ap_conectado = 0;
@@ -136,7 +137,7 @@ int WiFiStart( void )
     /* Obtengo la MAC */
     if(WiFiCommand("AT+CIFSR", "OK", 150) < 0) return (-1);
     /* Me quedo en Modo 0 - Puede devolver error*/
-    WiFiCommand("AT+CWMODE=0", "OK", 150);
+    //WiFiCommand("AT+CWMODE=0", "OK", 150);
 
     return 0;
 }
@@ -184,7 +185,7 @@ int WiFiSetMode(int mode)
     /* Apago cualquier LISTEN que pueda haber - Puede dar error */
     WiFiCommand("AT+CIPSERVER=0", "OK", 150);
     /* Si estaba en otro modo me muevo al 0 - Puede dar error*/
-    WiFiCommand("AT+CWMODE=0", "OK", 150);
+    //WiFiCommand("AT+CWMODE=0", "OK", 150);
     /* Seteo el modo */
     sprintf(cmd, "AT+CWMODE=%i", mode);
     if(WiFiCommand(cmd, "OK", 150) < 0) return (-1);
@@ -195,7 +196,11 @@ int WiFiSetMode(int mode)
     if(mode == WIFI_MODE_AP)
     {
         sprintf(cmd, "AT+CWSAP=\"WiFi-%s-%s\",\"\",1,0,4,0", WIFI_HW_Name, &g_wifi_c_hw_mac[6]);
-        if(WiFiCommand(cmd, "OK", 150) < 0) return (-1);
+        if(WiFiCommand(cmd, "OK", 150) < 0)
+        {
+            /* Pruebo de nuevo */
+            if(WiFiCommand(cmd, "OK", 150) < 0) return (-1);
+        }
         /* Max conexiones */
         if(WiFiCommand("AT+CIPSERVERMAXCONN=1", "OK", 150) < 0) return (-1);
         /* LISTEN en port 80 */
@@ -226,8 +231,8 @@ int WiFiSetMode(int mode)
         {
             strcpy(pass, g_wifi_config.u.config.wifi_ap2_pass);
         }
-        LogMessage("[WifiTaskSTMode] Conectando con %s (%s).",
-                g_wifi_best_ap_ssid, pass);
+        LogMessage("[WifiTaskSTMode] Conectando con SSID: %s PASS: %s MAC: %s.",
+                g_wifi_best_ap_ssid, pass, g_wifi_best_ap_mac);
         /*
          *  Conecto con una MAC espcifica ya que el ESP-02D no soporta Roaming
          *    AT+CWJAP=<ssid>,<pwd>[,<bssid>]
@@ -237,8 +242,10 @@ int WiFiSetMode(int mode)
         if(WiFiCommand(cmd, "OK", 1000) < 0) return (-1);
         /* IP y MAC local. Cuando conecte va a devolver la IP */
         if(WiFiCommand("AT+CIFSR", "OK", 300) < 0) return (-1);
-        /* */
+        /* Me copio los datos del AP donde me conecté */
         strcpy(g_wifi_actual_ap_ssid, g_wifi_best_ap_ssid);
+        g_wifi_signal_level = g_wifi_best_signal_level;
+        strcpy(g_wifi_actual_ap_mac, g_wifi_best_ap_mac);
     }
     g_wifi_c_mode = mode;
     return 0;
@@ -1211,7 +1218,7 @@ void WiFiReadUnsolIPD(const char* msg)
     WiFiCommand("AT+CIPCLOSE=0", "OK", 100);
 }
 
-void WiFiScan( void )
+int WiFiScan( void )
 {
     g_wifi_best_ap_ssid[0] = 0;
     g_wifi_best_ap_mac[0] = 0;
@@ -1230,7 +1237,23 @@ void WiFiScan( void )
         {
             WiFiScanAP(g_wifi_config.u.config.wifi_ap2);
         }
-    }    
+    }
+    
+    if(g_wifi_ap_conectado)
+    {
+        /* Estoy conectado al de mejor señal? */
+        if( strcmp(g_wifi_actual_ap_mac, g_wifi_best_ap_mac) )
+        {
+            return 1;
+        }
+        else
+        {
+            /* Aprovecho y me guardo el nivel de señal */
+            g_wifi_signal_level = g_wifi_best_signal_level;
+        }
+    }
+    
+    return 0;
 }
 
 void WiFiScanAP(const char* ssid)
